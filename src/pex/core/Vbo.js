@@ -15,16 +15,16 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     size = size || 3
     usage = usage || this.usage;
 
-  	var attrib = {};
-  	attrib.name = name;
-  	attrib.data = data;
-  	attrib.size = size;
-  	attrib.location = -1;
-  	attrib.buffer = this.gl.createBuffer();
+    var attrib = {};
+    attrib.name = name;
+    attrib.data = data;
+    attrib.size = size;
+    attrib.location = -1;
+    attrib.buffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-  	this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), usage);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), usage);
 
-  	this.attributes[attrib.name] = attrib;
+    this.attributes[attrib.name] = attrib;
   }
 
   Vbo.prototype.updateAttrib = function(name, data) {
@@ -47,7 +47,7 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
       this.indices.buffer = this.gl.createBuffer();
     }
     this.indices.data = new Uint16Array(data);
-  	this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.data, usage);
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
   }
@@ -138,14 +138,18 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
 
     var indices = [];
 
-    if (useEdges) {
+    if (!useEdges && geom.edges && !geom.faces) {
+      useEdges = true;
+    }
+
+    if (useEdges && geom.edges) {
       for(var i=0; i < geom.edges.length; ++i) {
         var edge = geom.edges[i];
         indices.push(edge.a);
         indices.push(edge.b);
       }
     }
-    else {
+    else if (geom.faces) {
       for(var i=0; i < geom.faces.length; ++i) {
         var face = geom.faces[i];
         if (face instanceof Face4) {
