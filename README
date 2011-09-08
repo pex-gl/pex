@@ -1,5 +1,6 @@
 Javascript 3d engine for WebGL and Plask by Marcin Ignac
 based on 
+- requirejs
 - Plask and PreGL by Dean McNamee
 - Embr by Ryan Alexander
  

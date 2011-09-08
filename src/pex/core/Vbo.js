@@ -1,12 +1,12 @@
-define([], function() {
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], function(Vec2, Vec3, Face3, Face4) {
   
   // |primitiveType| gl.POINTS, gl.TRIANGLES etc..
   // |usage| gl.STATIC_DRAW, gl.STREAM_DRAW or gl.DYNAMIC_DRAW
   // |attributes| an array of objects in the format: [{ data: [], size: 3 }]
 
-  function Vbo(gl, primitiveType, usage, attributes) {
+  function Vbo(gl, primitiveType, usage) {
     this.gl = gl;
-    this.primitiveType = primitiveType;
+    this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
     this.attributes = {};
     this.usage = usage || this.gl.STATIC_DRAW;
   }
@@ -62,68 +62,22 @@ define([], function() {
       //look for required attribs by shader inside mesh
       if (attrib.location === undefined || attrib.location == -1) {
         attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);      
-        console.log(name + " location is " + attrib.location);
+        //console.log(name + " location is " + attrib.location);
       }              
       if (attrib.location >= 0) {         
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
         this.gl.vertexAttribPointer(attrib.location, attrib.size, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(attrib.location);
       }                      
-    }  
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
-    this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);          
+    }
+    if (this.indices) {
+      this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
+      this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);          
+    }
+    else if (this.attributes["position"]){
+      this.gl.drawArrays(this.primitiveType, 0, this.attributes["position"].data.length/3);
+    }
 
-    /*
-    for(var i in this.attribs) {         
-      var attrib = this.attribs[i];
-      if (attrib.location >= 0) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, attrib.buffer);
-        gl.disableVertexAttribArray(attrib.location);
-      }                      
-    }                                                 
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);                   
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-    */
-      /*
-      for(var name in this.attributes){
-          var attr = this.attributes[name];
-          if (attr.location >= 0){
-              gl.bindBuffer(gl.ARRAY_BUFFER, attr.buffer);
-              gl.vertexAttribPointer(attr.location, attr.size, gl.FLOAT, false, 0, 0);
-              gl.enableVertexAttribArray(attr.location);
-          }
-      }
-      
-      if (this.indices) {
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
-        gl.drawElements(primitive, this.indices.data.length, gl.UNSIGNED_SHORT, 0);
-      }
-      else {
-      //  throw "Vbo.draw error : No index buffer found";
-      }
-      */
-      
-      /*
-      else {
-        if(!this.attributes.index){
-            this.length = Number.MAX_VALUE;
-            for(var name in this.attributes)
-                this.length = Math.min(this.length, this.attributes[name].length);
-        }
-        gl.drawArrays(this.primitiveType, 0, )
-      }
-      */
-      
-      /*     
-      var index = this.attributes.index;
-      if (index){
-          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index.buffer);
-          gl.drawElements(this.primitiveType, index.length, gl.UNSIGNED_SHORT, 0);
-      }
-      else{
-          gl.drawArrays(this.primitiveType, 0, this.length);
-      }
-      */
   }
   
   Vbo.prototype.dispose = function() {
@@ -135,6 +89,65 @@ define([], function() {
     }
   }
   
+  Vbo.fromGeometry = function(gl, geom, primitiveType) {
+    var vbo = new Vbo(gl, primitiveType, gl.STATIC_DRAW);
+    
+    var positions = [];        
+    
+    for(var i=0; i< geom.vertices.length; ++i) {
+      positions.push(geom.vertices[i].x, geom.vertices[i].y, geom.vertices[i].z); 
+    }
+        
+    vbo.addAttrib("position", positions, 3);
+    
+    if (geom.texCoords && geom.texCoords.length > 0) {
+      var texCoords = [];
+      
+      for(var i=0; i< geom.texCoords.length; ++i) {
+        for(var j in geom.texCoords[i]) {
+          texCoords.push(geom.texCoords[i][j]); 
+        }        
+      }
+      var size = 1;
+      if (geom.texCoords[0] instanceof Vec2) size = 2;
+      if (geom.texCoords[0] instanceof Vec3) size = 3;
+      vbo.addAttrib("texCoord", texCoords, size);
+    }
+    
+    if (geom.normals && geom.normals.length > 0) {
+      var normals = [];
+      
+      for(var i=0; i< geom.normals.length; ++i) {
+        normals.push(geom.normals[i].x, geom.normals[i].y, geom.normals[i].z); 
+      }
+      vbo.addAttrib("normal", normals, 3);
+    }
+    
+    var indices = [];
+        
+    for(var i=0; i < geom.faces.length; ++i) {
+      var face = geom.faces[i];
+      if (face instanceof Face4) {
+        indices.push(face.a);
+        indices.push(face.b);
+        indices.push(face.d);
+        indices.push(face.d);
+        indices.push(face.b);
+        indices.push(face.c);
+      }
+      if (face instanceof Face3) {
+        indices.push(face.a);
+        indices.push(face.b);
+        indices.push(face.c);
+      }
+    }
+
+    vbo.setIndices(indices);
+
+    return vbo;
+  }
+  
+  /*
   Vbo.fromGeometry = function(gl, geom) {
     var vbo = new Vbo(gl, gl.TRIANGLES, gl.STATIC_DRAW);
         
@@ -169,6 +182,7 @@ define([], function() {
     
     return vbo;
   }
+  */
   
   
   return Vbo;
