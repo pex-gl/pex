@@ -1,13 +1,79 @@
-define([], function() {
+define(["plask", "fs"], function(plask, fs) {
+  
+  //IO functions when used in plask
+  
   var NodeIO = (function() {
-    var fs = require("fs");
+    function IO() {}
     
-    function IO() {
-      
+    IO.loadTextFile = function(path, callback) {
+      var data = fs.readFileSync(path, 'utf8');
+      if (callback) {
+        callback(data);
+      }
+    }
+    
+    IO.loadImageData = function(gl, texture, target, path, callback) {      
+      console.log("IO.loadImageData " + path);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(texture.target, texture.handle);
+      var canvas = plask.SkCanvas.createFromImage(path);
+      gl.texImage2DSkCanvasNoFlip(target, 0, canvas);
+      if (callback) {
+        callback(canvas);
+      } 
     }
     
     return IO;
   })();
   
-  return NodeIO;
+  //IO functions when used in the browser
+  
+  var WebIO = (function() {
+    function IO() {}
+    
+    IO.loadTextFile = function(url, callback) {
+      
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.onreadystatechange = function (e) {
+        if (request.readyState == 4) {
+          if(request.status == 200) {
+             if (callback) {
+               callback(request.responseText);
+             }
+          }
+          else {
+             console.log('WebIO.loadTextFile error : ', request.statusText);
+          }
+        }
+      };
+      request.send(null);
+    }
+    
+    IO.loadImageData = function(gl, texture, target, url, callback) {
+      var image = new Image();
+      image.onload = function() {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(texture.target, texture.handle);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(
+          target, 0, gl.RGBA, gl.RGBA, 
+          gl.UNSIGNED_BYTE, image
+        );        
+        if (callback) {
+          callback(image);
+        }
+      }
+      image.src = url;
+    }
+    
+    return IO;
+  })();
+  
+  if (require.nodeRequire) {
+    return NodeIO;
+  }
+  else {
+    return WebIO;
+  }
 });

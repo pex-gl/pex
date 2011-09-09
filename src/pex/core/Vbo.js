@@ -40,21 +40,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
   }
   
-  Vbo.prototype.draw = function(program, camera) {
-    if (camera) {          
-      var modelViewMatrix = camera.getModelViewMatrix(this.position, this.rotation, this.scale);
-      if (program.uniforms.modelViewMatrix) {			
-    	  program.uniforms.modelViewMatrix(modelViewMatrix);                                           	
-  	  } 
-  	  if (program.uniforms.projectionMatrix) {			
-    	  program.uniforms.projectionMatrix(camera.projectionMatrix);                                           	
-  	  }
-    	if (program.uniforms.normalMatrix) {                                                  
-    	  var normalMatrix = modelViewMatrix.invert().transpose();
-    	  program.uniforms.normalMatrix(normalMatrix);
-    	}
-    }
-        
+  Vbo.prototype.draw = function(program) {
     for(var name in this.attributes) {         
       var attrib = this.attributes[name];
       //this should go another way
@@ -146,44 +132,6 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
 
     return vbo;
   }
-  
-  /*
-  Vbo.fromGeometry = function(gl, geom) {
-    var vbo = new Vbo(gl, gl.TRIANGLES, gl.STATIC_DRAW);
-        
-    function vectorsToFloats(arr, elementSize) {
-      elementSize = elementSize || 3;
-      var result = [];
-      if (elementSize == 2) {
-        for(var i=0; i<arr.length; i++) {
-          result.push(arr[i].x, arr[i].y);
-        }
-      }
-      if (elementSize == 3) {
-        for(var i=0; i<arr.length; i++) {
-          result.push(arr[i].x, arr[i].y, arr[i].z);
-        }
-      }
-      return result;
-    }
-    
-    if (geom.positions) {
-      vbo.addAttrib("position", vectorsToFloats(geom.positions), 3);
-    }
-    if (geom.normals) {
-      vbo.addAttrib("normal", vectorsToFloats(geom.normals), 3);
-    }
-    if (geom.texCoords) {
-      vbo.addAttrib("texCoord", vectorsToFloats(geom.texCoord), 2);
-    }
-    if (geom.indices) {
-      vbo.setIndices(geom.indices);
-    }
-    
-    return vbo;
-  }
-  */
-  
   
   return Vbo;
 });

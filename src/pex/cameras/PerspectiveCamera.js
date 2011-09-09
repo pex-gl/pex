@@ -89,7 +89,15 @@ define(["pex/core/Core"], function(Core) {
     );  
   }
   
-  PerspectiveCamera.prototype.getModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
+  PerspectiveCamera.prototype.getViewMatrix = function() {
+    return this.viewMatrix;
+  }
+  
+  PerspectiveCamera.prototype.getProjectionMatrix = function() {
+    return this.projectionMatrix;
+  }
+  
+  PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
     var t = modelTranslation ? modelTranslation : new Core.Vec3(0, 0, 0);
     var r = modelRotation ? modelRotation : new Core.Vec4(0, 1, 0, 0);
     var s = modelScale ? modelScale : new Core.Vec3(1, 1, 1);
