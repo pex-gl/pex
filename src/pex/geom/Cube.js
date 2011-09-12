@@ -1,4 +1,4 @@
-define(["pex/core/Core"], function(Core) {
+define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
   function Cube(sx, sy, sz, nx, ny, nz) {
     sx = sx || 1;
     sy = sy || 1;
@@ -57,6 +57,8 @@ define(["pex/core/Core"], function(Core) {
     makePlane('x', 'z', 'y', sx, sz, nx, nz,  sy/2,  1,  1); //top
     makePlane('x', 'z', 'y', sx, sz, nx, nz, -sy/2,  1, -1); //bottom
   }
+
+  Cube.prototype = new Geometry();
 
   return Cube;
 });

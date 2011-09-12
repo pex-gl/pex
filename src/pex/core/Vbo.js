@@ -86,7 +86,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
 
     var positions = [];
 
-    for(var i=0; i< geom.vertices.length; ++i) {
+    for(var i=0; i<geom.vertices.length; ++i) {
       positions.push(geom.vertices[i].x, geom.vertices[i].y, geom.vertices[i].z);
     }
 
@@ -118,7 +118,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
     if (geom.colors && geom.colors.length > 0) {
       var colors = [];
 
-      for(var i=0; i< geom.colors.length; ++i) {
+      for(var i=0; i<geom.colors.length; ++i) {
         colors.push(geom.colors[i].x, geom.colors[i].y, geom.colors[i].z, geom.colors[i].w);
       }
       vbo.addAttrib("color", colors, 4);
@@ -126,6 +126,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
 
     var indices = [];
 
+    console.log("Vbo.fromGeometry useEdges:" + useEdges);
     if (useEdges) {
       for(var i=0; i < geom.edges.length; ++i) {
         var edge = geom.edges[i];

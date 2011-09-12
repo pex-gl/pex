@@ -1,18 +1,18 @@
-define(["pex/core/Edge"], function(Edge) {
+define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
   function LineBuilder() {
     this.vertices = [];
     this.colors = [];
-     this.faces = [];
-     this.edges = [];
-     this.vertexCount = 0;
+    this.edges = [];
+    this.vertexCount = 0;
 
     this.reset();
   }
 
+  LineBuilder.prototype = new Geometry();
+
   LineBuilder.prototype.reset = function() {
     this.vertices = [];
     this.colors = [];
-    this.faces = [];
     this.edges = [];
     this.vertexCount = 0;
   }
@@ -22,7 +22,7 @@ define(["pex/core/Edge"], function(Edge) {
     this.vertices.push(pos2);
     this.colors.push(color1);
     this.colors.push(color2);
-    this.edges.push(new Edge(this.vertexCount, this.vertexCount + 1));
+    this.edges.push(new Core.Edge(this.vertexCount, this.vertexCount + 1));
     this.vertexCount += 2;
   }
 
@@ -32,7 +32,7 @@ define(["pex/core/Edge"], function(Edge) {
       this.colors.push(colors[i]);
 
       if (i > 0) {
-        this.edges.push(new Edge(this.vertexCount + i - 1, this.vertexCount + i));
+        this.edges.push(new Core.Edge(this.vertexCount + i - 1, this.vertexCount + i));
       }
     }
 
@@ -41,14 +41,14 @@ define(["pex/core/Edge"], function(Edge) {
 
   LineBuilder.prototype.addCircle = function(pos, r, color, transform) {
     for(var i=0; i<36; i++) {
-      var dpos = new plask.Vec3(r * Math.cos(Math.PI * 2 * i / 36), r * Math.sin(Math.PI * 2 * i / 36), 0);
+      var dpos = new Core.Vec3(r * Math.cos(Math.PI * 2 * i / 36), r * Math.sin(Math.PI * 2 * i / 36), 0);
       if (transform) {
         dpos = transform.multVec3(dpos);
       }
       var p = pos.added(dpos);
       this.vertices.push(p);
       this.colors.push(color);
-      this.edges.push(new Edge(this.vertexCount + i, this.vertexCount + (i + 1) % 36));
+      this.edges.push(new Core.Edge(this.vertexCount + i, this.vertexCount + (i + 1) % 36));
     }
     this.vertexCount += 36;
   }
