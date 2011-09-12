@@ -4,7 +4,7 @@ define(["pex/io/IO"], function(IO) {
   var kShaderPrefix         = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
   var kVertexShaderPrefix   = kShaderPrefix + "#define VERT\n";
   var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";
-  
+
   function makeUniformSetter(gl, type, location){
     var setterFun = null;
     switch(type){
@@ -19,7 +19,7 @@ define(["pex/io/IO"], function(IO) {
           }
           else {
             gl.uniform1i(location, value);
-          }                    
+          }
         };
         break;
       case gl.FLOAT:
@@ -48,7 +48,7 @@ define(["pex/io/IO"], function(IO) {
         };
         break;
     }
-    
+
     if (setterFun) {
       setterFun.type = type;
       return setterFun;
@@ -57,26 +57,26 @@ define(["pex/io/IO"], function(IO) {
       throw "Unknown uniform type: " + type;
     };
   }
-  
+
   function Program(gl, vertSrc, fragSrc){
-    
+
     this.gl = gl;
-    
+
     this.handle = gl.createProgram();
     this.uniforms  = {};
     this.attributes = {};
     this.addSources(vertSrc, fragSrc);
     if (this.vertShader && this.fragShader) this.link();
   }
-  
+
   Program.prototype.addSources = function(vertSrc, fragSrc) {
     vertSrc = vertSrc ? vertSrc : null;
     fragSrc = fragSrc ? fragSrc : vertSrc;
-    
+
     if (vertSrc) this.addVertexSource(vertSrc);
-    if (fragSrc) this.addFragmentSource(vertSrc);
+    if (fragSrc) this.addFragmentSource(fragSrc);
   }
-  
+
   Program.prototype.addVertexSource = function(vertSrc) {
     var gl = this.gl;
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
@@ -85,7 +85,7 @@ define(["pex/io/IO"], function(IO) {
     if (gl.getShaderParameter(vert, gl.COMPILE_STATUS) !== true)
         throw gl.getShaderInfoLog(vert);
   }
-  
+
   Program.prototype.addFragmentSource = function(fragSrc) {
     var gl = this.gl;
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -94,19 +94,19 @@ define(["pex/io/IO"], function(IO) {
     if (gl.getShaderParameter(frag, gl.COMPILE_STATUS) !== true)
         throw gl.getShaderInfoLog(frag);
   }
-  
+
   Program.prototype.link = function(){
     var gl = this.gl;
     var handle = this.handle;
-    
+
     gl.attachShader(handle, this.vertShader);
     gl.attachShader(handle, this.fragShader);
     gl.linkProgram(handle);
-    
+
     if(gl.getProgramParameter(handle, gl.LINK_STATUS) !== true)
         throw gl.getProgramInfoLog(handle);
 
-    
+
     var numUniforms = gl.getProgramParameter(handle, gl.ACTIVE_UNIFORMS);
 
     for(var i = 0; i < numUniforms; ++i){
@@ -120,22 +120,22 @@ define(["pex/io/IO"], function(IO) {
       var info     = gl.getActiveAttrib(handle, i);
       var location = gl.getAttribLocation(handle, info.name);
       this.attributes[info.name] = location;
-    } 
+    }
 
     return this;
   };
 
   Program.prototype.use = function(){
-    
+
     this.gl.useProgram(this.handle);
   };
-  
+
   Program.prototype.dispose = function(){
     this.gl.deleteShader(this.vertShader);
     this.gl.deleteShader(this.fragShader);
     this.gl.deleteProgram(this.handle);
   };
-  
+
   Program.load = function(gl, url) {
     var program = new Program(gl);
     IO.loadTextFile(url, function(source) {
@@ -144,6 +144,6 @@ define(["pex/io/IO"], function(IO) {
     });
     return program;
   }
-  
+
   return Program;
 });
