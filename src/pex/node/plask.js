@@ -659,53 +659,53 @@ define([], function() {
 
     return out;
   };
-  
+
   var requestAnimFrameFps = 60;
-  
+
   window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       || 
-            window.webkitRequestAnimationFrame || 
-            window.mozRequestAnimationFrame    || 
-            window.oRequestAnimationFrame      || 
-            window.msRequestAnimationFrame     || 
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            window.oRequestAnimationFrame      ||
+            window.msRequestAnimationFrame     ||
             function(/* function */ callback, /* DOMElement */ element){
               window.setTimeout(callback, 1000 / requestAnimFrameFps);
             };
   })();
 
 
-     
-  
+
+
   function simpleWindow(obj) {
     var canvas = document.createElement('canvas');
     canvas.width = obj.width = obj.settings.width || 800;
-    canvas.height = obj.height = obj.settings.height || 600;    
+    canvas.height = obj.height = obj.settings.height || 600;
     canvas.style = "border: 1px solid red";
     document.body.appendChild(canvas);
-    
+
     var gl = null;
     try {
-        gl = canvas.getContext('experimental-webgl');
+        gl = canvas.getContext('experimental-webgl', {antialias: false, premultipliedAlpha : true});
     }
     catch(err){
         console.error(err);
         return;
     }
-    
+
     obj.framerate = function(fps) {
       requestAnimFrameFps = fps;
     }
-    
+
     obj.gl = gl;
     obj.init();
-    
+
     function drawloop() {
       obj.draw();
       requestAnimFrame(drawloop);
     }
-    
+
     requestAnimFrame(drawloop);
-  } 
+  }
 
   return {
     Vec2 : Vec2,
