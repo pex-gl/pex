@@ -1,4 +1,4 @@
-define([
+require([
   "plask",
   "pex/core/Core",
   "pex/cameras/PerspectiveCamera",
