@@ -1,4 +1,4 @@
-define(["pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4"], function(Vbo, Vec3, Vec4) {
+define(["pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "pex/geom/Geometry"], function(Vbo, Vec3, Vec4, Geometry) {
 
   //  Parameters:
   //    gl - gl context
@@ -12,13 +12,23 @@ define(["pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4"], function(Vbo, Vec3, V
     this.options = options || {};
     this.gl = gl;
     this.material = material;
+    this.vbos = [];
 
     if (meshData instanceof Vbo) {
-      this.vbo = meshData;
+      this.vbos.push(meshData);
     }
     else {
       this.geometry = meshData;
-      this.vbo = Vbo.fromGeometry(gl, meshData, this.options.primitiveType, this.options.useEdges);
+      if (this.geometry.vertices.length > Geometry.MAX_VERTICES) {
+        console.log("Mesh.Mesh numVertices " + this.geometry.vertices.length + " > " + Geometry.MAX_VERTICES + ". Splitting...");
+        var geometries = this.geometry.split();
+        for(var i=0; i<geometries.length; i++) {
+          this.vbos.push(Vbo.fromGeometry(gl, geometries[i], this.options.primitiveType, this.options.useEdges));
+        }
+      }
+      else {
+        this.vbos.push(Vbo.fromGeometry(gl, this.geometry, this.options.primitiveType, this.options.useEdges));
+      }
     }
 
     this.position = new Vec3(0,0,0);
@@ -36,8 +46,9 @@ define(["pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4"], function(Vbo, Vec3, V
     }
 
     this.material.use();
-
-    this.vbo.draw(this.material.program);
+    for(var i=0; i<this.vbos.length; i++) {
+      this.vbos[i].draw(this.material.program);
+    }
   }
 
   return Mesh;
