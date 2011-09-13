@@ -1,5 +1,6 @@
+var path = require('path');
 var requirejs = require('requirejs');
-
+var workingDirectory = path.dirname(module.parent.filename);
 var path = __filename.replace("pex-plask.js", "");
 
 module.exports = {
@@ -13,14 +14,14 @@ module.exports = {
       return;
     }
     requirejs.config({
-      baseUrl: this.require.baseUrl || ".",
+      baseUrl: this.require.baseUrl || workingDirectory,
       paths: { "pex": path },
       nodeRequire: require
     });
   },
-  run: function(module) {
+  run: function(moduleName) {
     this.config();
-    requirejs([module], function() {
+    requirejs([moduleName], function() {
     });
   },
   ready: function(handler) {
@@ -28,3 +29,5 @@ module.exports = {
     handler(); //execute immediately
   }
 };
+
+

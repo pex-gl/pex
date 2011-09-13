@@ -19,7 +19,7 @@ define([
       },
       init: function() {
         var gl = this.gl;
-        gl.clearColor(0, 0, 0, 1);
+        gl.clearColor(0, 0, 0, 0);
 
         this.camera = new PerspectiveCamera(60, this.width/this.height);
         this.camera.setPosition(new Core.Vec4(3, 3, 3));
@@ -49,11 +49,11 @@ define([
         this.drawScene();
 
         //alpha blending
-        gl.viewport(2*this.width/3, 0, this.width/3, this.height);
-        //doesn't work like in desktop OpenGL so we have to use blendFuncSeparate
-        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        gl.blendEquationSeparate( gl.FUNC_ADD, gl.FUNC_ADD );
-        gl.blendFuncSeparate( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA );
+        gl.viewport(2*this.width/3, 0, this.width/3, this.height);        
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        //possibly better solution
+        //gl.blendEquationSeparate( gl.FUNC_ADD, gl.FUNC_ADD );
+        //gl.blendFuncSeparate( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA );
         this.drawScene();
 
         this.mesh.rotation = new Core.Vec4(0, 1, 0, Util.Time.seconds);

@@ -3,7 +3,7 @@
 Usage:
 
 <script src="../../src/pex/pex-webgl.js"></script>
-<script> 
+<script>
 
 Pex.run("example");
 
@@ -11,15 +11,15 @@ or
 
 Pex.ready(function() {
 	Pex.require(["example"], function(example) {
-		
+
 	});
 });
-</script> 
+</script>
 
 */
 
 //require js config object
-var require = {  
+var require = {
 }
 
 var Pex = {
@@ -42,20 +42,20 @@ var Pex = {
       }
     }
   };
-  
+
   var src = findMe('script', 'src', 'pex-webgl.js');
   if (!src) {
     alert("pex-webgl.js source not found");
   }
-  
+
   var path = src.replace("pex-webgl.js", "");
-  
+
   require.baseUrl = '';
   require.paths = { "pex": path };
   require.packages = [
     { name: "plask", location: path + "node", main: "plask" },
     { name: "fs", location: path + "node", main: "fs" }
-  ];  
+  ];
   require.ready = function() {
     Pex.require = require;
     if (Pex.readyHandler) {
@@ -64,9 +64,9 @@ var Pex = {
     if (Pex.runModule) {
       require([Pex.runModule], function() { });
     }
-    
+
   }
-  
+
   var head = document.getElementsByTagName('head')[0];
   var script = document.createElement('script');
   script.type = 'text/javascript';
