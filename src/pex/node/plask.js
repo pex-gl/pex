@@ -680,7 +680,7 @@ define([], function() {
     var canvas = document.createElement('canvas');
     canvas.width = obj.width = obj.settings.width || 800;
     canvas.height = obj.height = obj.settings.height || 600;
-    canvas.style = "border: 1px solid red";
+    canvas.style.backgroundColor = "#000000";    
     document.body.appendChild(canvas);
 
     var gl = null;
