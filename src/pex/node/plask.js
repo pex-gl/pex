@@ -674,13 +674,46 @@ define([], function() {
   })();
 
 
+  function makeMouseDownHandler(canvas, handler) {
+    canvas.addEventListener('mousedown', function(e) {
+      handler({
+        x: e.clientX,
+        y: e.clientY
+      });
+    })
+  }
 
+  function makeMouseDraggedHandler(canvas, handler) {
+    var down = false;
+    canvas.addEventListener('mousedown', function(e) {
+      down = true;
+    });
+    canvas.addEventListener('mouseup', function(e) {
+      down = false;
+    });
+    canvas.addEventListener('mousemove', function(e) {
+      if (down) {
+        handler({
+          x: e.clientX,
+          y: e.clientY
+        });
+      }
+    })
+  }
+
+  function makeScrollWheelHandler(canvas, handler) {
+    window.onmousewheel = function(e) {
+      handler({
+        dy: e.wheelDelta
+      });
+    }
+  }
 
   function simpleWindow(obj) {
     var canvas = document.createElement('canvas');
     canvas.width = obj.width = obj.settings.width || 800;
     canvas.height = obj.height = obj.settings.height || 600;
-    canvas.style.backgroundColor = "#000000";    
+    canvas.style.backgroundColor = "#000000";
     document.body.appendChild(canvas);
 
     var gl = null;
@@ -694,6 +727,14 @@ define([], function() {
 
     obj.framerate = function(fps) {
       requestAnimFrameFps = fps;
+    }
+
+    obj.on = function(eventName, handler) {
+      switch(eventName) {
+        case 'leftMouseDown': makeMouseDownHandler(canvas, handler); break;
+        case 'mouseDragged': makeMouseDraggedHandler(canvas, handler); break;
+        case 'scrollWheel': makeScrollWheelHandler(canvas, handler); break;
+      }
     }
 
     obj.gl = gl;
