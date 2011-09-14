@@ -1,7 +1,19 @@
-define(["pex/materials/SolidColorMaterial"], function(SolidColorMaterial) {
-  var Materials = {
-    SolidColorMaterial : SolidColorMaterial
-  };
+define([
+  "pex/materials/SolidColorMaterial",
+  "pex/materials/TestMaterial",
+  "pex/materials/TexturedMaterial"
+  ],
+  function(
+    SolidColorMaterial,
+    TestMaterial,
+    TexturedMaterial
+  ) {
+    var Materials = {
+      SolidColorMaterial : SolidColorMaterial,
+      TestMaterial : TestMaterial,
+      TexturedMaterial : TexturedMaterial
+    };
 
-  return Materials;
-});
+    return Materials;
+  }
+);
