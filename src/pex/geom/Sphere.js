@@ -1,8 +1,8 @@
 define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
   function Sphere(r, nsides, nsegments) {
     r = r || 0.5;
-    nsides = 36;
-    nsegments = 18;
+    nsides = nsides || 36;
+    nsegments = nsegments || 18;
 
     var vertices = this.vertices = [];
     var texCoords = this.texCoords = [];
