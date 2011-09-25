@@ -70,6 +70,12 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4"], function(Edge, Fac
 
   Geometry.prototype.computeEdges = function() {
     this.edges = [];
+    this.vertexEdges = [];
+
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertexEdges.push([]);
+    }
+
     for(var i=0; i<this.faces.length; i++) {
       var face = this.faces[i];
       if (face instanceof Face3) {
@@ -95,6 +101,8 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4"], function(Edge, Fac
           j--;
         }
       }
+      this.vertexEdges[edgeI.a].push(edgeI);
+      this.vertexEdges[edgeI.b].push(edgeI);
     }
   }
 
