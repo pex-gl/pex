@@ -27,6 +27,18 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
   	this.attributes[attrib.name] = attrib;
   }
 
+  Vbo.prototype.updateAttrib = function(name, data) {
+    var attrib = this.attributes[name];
+    if (!attrib) {
+      return;
+    }
+
+    attrib.data = new Float32Array(data);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, this.gl.STATIC_DRAW);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
+  }
+
   Vbo.prototype.setIndices = function(data, usage) {
     usage = usage || this.usage;
 
