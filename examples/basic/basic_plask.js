@@ -1,14 +1,13 @@
 var Pex = require("../../src/pex/pex-plask");
 Pex.ready(function() {
 	Pex.require([
-    "plask",
     "pex/core/Core",
     "pex/cameras/PerspectiveCamera",
     "pex/geom/Geom",
     "pex/materials/Materials"
     ],
-    function(plask, Core, PerspectiveCamera, Geom, Materials) {
-      plask.simpleWindow({
+    function(Core, PerspectiveCamera, Geom, Materials) {
+      Pex.window({
         settings: {
           width: 1280,
           height: 720,
@@ -19,17 +18,18 @@ Pex.ready(function() {
           center: true
         },
         init: function() {
-          var gl = this.gl;
+          console.log("Window.init");
+          var gl = Core.Context.currentContext;
           gl.clearColor(0, 0, 0, 1);
 
           this.camera = new PerspectiveCamera(60, this.width/this.height);
-          this.mesh = new Core.Mesh(this.gl, new Geom.Cube(), new Materials.SolidColorMaterial(this.gl));
+          this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial(this.gl));
           this.mesh.material.uniforms.color = new Core.Vec4(1.0, 0.0, 0.0, 1.0);
 
           this.framerate(30);
         },
         draw: function() {
-          var gl = this.gl;
+          var gl = Core.Context.currentContext;
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
           this.mesh.draw(this.camera);

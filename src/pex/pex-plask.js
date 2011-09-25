@@ -2,6 +2,8 @@ var path = require('path');
 var requirejs = require('requirejs');
 var workingDirectory = path.dirname(module.parent.filename);
 var path = __filename.replace("pex-plask.js", "");
+var plask = require('plask');
+var context = requirejs
 
 module.exports = {
   require : requirejs,
@@ -27,6 +29,21 @@ module.exports = {
   ready: function(handler) {
     this.config();
     handler(); //execute immediately
+  },
+  window: function(obj) {
+    //we overwrite obj's init function to capture GL context before init() gets executed
+    obj.__init = obj.init;
+    obj.init = function() {
+      var gl = this.gl;
+      requirejs(["pex/core/Context"], function(Context) {
+        Context.currentContext = gl;
+        if (obj.__init) {
+          obj.__init();
+        }
+      });
+    }
+
+    plask.simpleWindow(obj);
   }
 };
 

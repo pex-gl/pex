@@ -18,18 +18,20 @@ define([
         center: true
       },
       init: function() {
-        var gl = this.gl;
+        //because we use plask.simpleWindow instead of Pex.simpleWindow we have to setup the context manually
+        var gl = Core.Context.currentContext = this.gl;
+
         gl.clearColor(0, 0, 0, 0);
 
         this.camera = new PerspectiveCamera(60, this.width/this.height);
         this.camera.setPosition(new Core.Vec4(3, 3, 3));
-        this.mesh = new Core.Mesh(this.gl, new Geom.Cube(), new Materials.SolidColorMaterial(this.gl));
+        this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial());
         this.mesh.material.uniforms.color = new Core.Vec4(1.0, 0.0, 0.0, 0.25);
 
         this.framerate(30);
       },
       draw: function() {
-        var gl = this.gl;
+        var gl = Core.Context.currentContext;
 
         Util.Time.update();
 
@@ -49,7 +51,7 @@ define([
         this.drawScene();
 
         //alpha blending
-        gl.viewport(2*this.width/3, 0, this.width/3, this.height);        
+        gl.viewport(2*this.width/3, 0, this.width/3, this.height);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         //possibly better solution
         //gl.blendEquationSeparate( gl.FUNC_ADD, gl.FUNC_ADD );

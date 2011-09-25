@@ -34,10 +34,9 @@ define(["pex/core/Core"], function(Core) {
     + "}";
 
 
-  function TestMaterial(gl) {
-      console.log(solidColorFrag);
-      this.gl = gl;
-      this.program = new Core.Program(this.gl, solidColorVert, solidColorFrag);
+  function TestMaterial() {
+      this.gl = Core.Context.currentContext;
+      this.program = new Core.Program(solidColorVert, solidColorFrag);
   }
 
   TestMaterial.prototype = new Core.Material();

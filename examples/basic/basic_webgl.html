@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Pex</title>
-    <script src="../../src/pex/pex-webgl.js"></script>
-    <script> 
-	
+<head>
+	<title>Pex</title>
+	<script src="../../src/pex/pex-webgl.js"></script>
+	<script>
+
 	Pex.ready(function() {
 		Pex.require([
-	    "plask",
 	    "pex/core/Core",
 	    "pex/cameras/PerspectiveCamera",
 	    "pex/geom/Geom",
 	    "pex/materials/Materials"
 	    ],
-	    function(plask, Core, PerspectiveCamera, Geom, Materials) {
-	      plask.simpleWindow({
+	    function(Core, PerspectiveCamera, Geom, Materials) {
+	      Pex.window({
 	        settings: {
 	          width: 1280,
 	          height: 720,
@@ -25,7 +24,7 @@
 	          center: true
 	        },
 	        init: function() {
-	          var gl = this.gl;
+	          var gl = Core.Context.currentContext;
 	          gl.clearColor(0, 0, 0, 1);
 
 	          this.camera = new PerspectiveCamera(60, this.width/this.height);
@@ -35,7 +34,7 @@
 	          this.framerate(30);
 	        },
 	        draw: function() {
-	          var gl = this.gl;
+	          var gl = Core.Context.currentContext;
 	          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	          this.mesh.draw(this.camera);
@@ -45,10 +44,8 @@
 	  );
 	});
 
-	
-	
-    </script>
-    </head>
-    <body>
-    </body>
+  </script>
+</head>
+<body>
+</body>
 </html>

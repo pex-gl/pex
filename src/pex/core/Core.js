@@ -1,4 +1,5 @@
 define( [
+  "pex/core/Context",
   "pex/core/Vec2",
   "pex/core/Vec3",
   "pex/core/Vec4",
@@ -15,8 +16,9 @@ define( [
   "pex/core/Texture2D",
   "pex/core/TextureCube"
   ],
-  function(Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube) {
+  function(Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube) {
     return {
+      Context : Context,
       Vec2 : Vec2,
       Vec3 : Vec3,
       Vec4 : Vec4,

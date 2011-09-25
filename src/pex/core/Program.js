@@ -1,6 +1,6 @@
 //based on work of Rayan Alexander in Embr https://github.com/notlion/embr
 
-define(["pex/io/IO"], function(IO) {
+define(["pex/core/Context", "pex/io/IO"], function(Context, IO) {
   var kShaderPrefix         = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
   var kVertexShaderPrefix   = kShaderPrefix + "#define VERT\n";
   var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";
@@ -58,11 +58,10 @@ define(["pex/io/IO"], function(IO) {
     };
   }
 
-  function Program(gl, vertSrc, fragSrc){
+  function Program(vertSrc, fragSrc){
+    this.gl = Context.currentContext;
 
-    this.gl = gl;
-
-    this.handle = gl.createProgram();
+    this.handle = this.gl.createProgram();
     this.uniforms  = {};
     this.attributes = {};
     this.addSources(vertSrc, fragSrc);
@@ -136,8 +135,8 @@ define(["pex/io/IO"], function(IO) {
     this.gl.deleteProgram(this.handle);
   };
 
-  Program.load = function(gl, url) {
-    var program = new Program(gl);
+  Program.load = function(url) {
+    var program = new Program();
     IO.loadTextFile(url, function(source) {
       program.addSources(source);
       program.link();

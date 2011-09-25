@@ -20,6 +20,8 @@ Pex.ready(function() {
 
 //require js config object
 var require = {
+  //anti cache
+  urlArgs: "bust=" +  (new Date()).getTime()
 }
 
 var Pex = {
@@ -29,6 +31,22 @@ var Pex = {
   },
   ready: function(handler) {
     this.readyHandler = handler;
+  },
+  window: function(obj) {
+    require(["plask"], function(plask) {
+      //we overwrite obj's init function to capture GL context before init() gets executed
+      obj.__init = obj.init;
+      obj.init = function() {
+        var gl = this.gl;
+        requirejs(["pex/core/Context"], function(Context) {
+          Context.currentContext = gl;
+          if (obj.__init) {
+            obj.__init();
+          }
+        });
+      }
+      plask.simpleWindow(obj);
+    });
   }
 };
 

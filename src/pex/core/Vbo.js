@@ -1,11 +1,11 @@
-define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], function(Vec2, Vec3, Face3, Face4) {
+define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], function(Context, Vec2, Vec3, Face3, Face4) {
 
   // |primitiveType| gl.POINTS, gl.TRIANGLES etc..
   // |usage| gl.STATIC_DRAW, gl.STREAM_DRAW or gl.DYNAMIC_DRAW
   // |attributes| an array of objects in the format: [{ data: [], size: 3 }]
 
-  function Vbo(gl, primitiveType, usage) {
-    this.gl = gl;
+  function Vbo(primitiveType, usage) {
+    this.gl = Context.currentContext;
     this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
     this.attributes = {};
     this.usage = usage || this.gl.STATIC_DRAW;
@@ -79,8 +79,10 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
   //geom
   //primitiveType = e.g.: gl.TRIANGLES
   //useEdges = false/true - use faces or edges
-  Vbo.fromGeometry = function(gl, geom, primitiveType, useEdges) {
-    var vbo = new Vbo(gl, primitiveType, gl.STATIC_DRAW);
+  Vbo.fromGeometry = function(geom, primitiveType, useEdges) {
+    var gl = Context.currentContext;;
+
+    var vbo = new Vbo(primitiveType, gl.STATIC_DRAW);
 
     useEdges = useEdges || false;
 
@@ -126,7 +128,6 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], fu
 
     var indices = [];
 
-    console.log("Vbo.fromGeometry useEdges:" + useEdges);
     if (useEdges) {
       for(var i=0; i < geom.edges.length; ++i) {
         var edge = geom.edges[i];

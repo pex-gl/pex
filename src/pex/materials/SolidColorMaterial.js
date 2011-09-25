@@ -16,9 +16,9 @@ define(["pex/core/Core"], function(Core) {
     + "}";
 
 
-  function SolidColorMaterial(gl) {
-      this.gl = gl;
-      this.program = new Core.Program(this.gl, solidColorVert, solidColorFrag);
+  function SolidColorMaterial() {
+      this.gl = Core.Context.currentContext;
+      this.program = new Core.Program(solidColorVert, solidColorFrag);
       this.uniforms = {
        color : new Core.Vec4(1, 1, 1, 1)
       }

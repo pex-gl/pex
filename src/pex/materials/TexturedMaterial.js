@@ -20,9 +20,9 @@ define(["pex/core/Core"], function(Core) {
     + "}";
 
 
-  function TexturedMaterial(gl, uniforms) {
-      this.gl = gl;
-      this.program = new Core.Program(this.gl, solidColorVert, solidColorFrag);
+  function TexturedMaterial(uniforms) {
+      this.gl = Core.Context.currentContext;
+      this.program = new Core.Program(solidColorVert, solidColorFrag);
       this.uniforms = uniforms || {}
   }
 

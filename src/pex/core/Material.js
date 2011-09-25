@@ -1,19 +1,19 @@
-define(["pex/core/Program"], function(Program) {
-  function Material(gl, program, uniforms, options) {
-    this.gl = gl;
+define(["pex/core/Context", "pex/core/Program"], function(Context, Program) {
+  function Material(program, uniforms, options) {
+    this.gl = Context.currentContext;
     this.program = program;
-    this.uniforms = uniforms || {};    
+    this.uniforms = uniforms || {};
     this.options = options || {};
   }
-  
-  Material.prototype.use = function() {    
-    this.program.use();    
+
+  Material.prototype.use = function() {
+    this.program.use();
     var numTextures = 0;
     for(var name in this.uniforms) {
       if (this.program.uniforms[name]) {
         if (this.program.uniforms[name].type == this.gl.SAMPLER_2D || this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
           this.gl.activeTexture(this.gl.TEXTURE0 + numTextures++);
-          this.gl.bindTexture(this.uniforms[name].target,  this.uniforms[name].handle);          
+          this.gl.bindTexture(this.uniforms[name].target,  this.uniforms[name].handle);
         }
         else {
           this.program.uniforms[name]( this.uniforms[name] );
@@ -21,6 +21,6 @@ define(["pex/core/Program"], function(Program) {
       }
     }
   }
-  
+
   return Material;
 });
