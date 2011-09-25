@@ -12,6 +12,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
       require(["pex/core/Context"], function(Context) {
         Context.currentContext = gl;
         if (obj.__init) {
+          obj.framerate(60); //default to 60fps
           obj.__init();
         }
       });
