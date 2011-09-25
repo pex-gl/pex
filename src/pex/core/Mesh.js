@@ -19,7 +19,6 @@ define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "p
     }
     else {
       this.geometry = meshData;
-      console.log(this.geometry);
       if (this.geometry.vertices.length > Geometry.MAX_VERTICES) {
         console.log("Mesh.Mesh numVertices " + this.geometry.vertices.length + " > " + Geometry.MAX_VERTICES + ". Splitting...");
         var geometries = this.geometry.split();

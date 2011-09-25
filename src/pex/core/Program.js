@@ -1,6 +1,6 @@
 //based on work of Rayan Alexander in Embr https://github.com/notlion/embr
 
-define(["pex/core/Context", "pex/io/IO"], function(Context, IO) {
+define(["pex/core/Context", "pex/sys/IO"], function(Context, IO) {
   var kShaderPrefix         = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
   var kVertexShaderPrefix   = kShaderPrefix + "#define VERT\n";
   var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";

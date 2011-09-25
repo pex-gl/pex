@@ -1,4 +1,4 @@
-define(["pex/io/IO"], function(IO) {
+define(["pex/sys/IO"], function(IO) {
   function TextureCube() {
 
   }

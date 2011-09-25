@@ -2,12 +2,13 @@ var Pex = require("../../src/pex/pex-plask");
 Pex.ready(function() {
 	Pex.require([
     "pex/core/Core",
+    "pex/sys/Window",
     "pex/cameras/PerspectiveCamera",
     "pex/geom/Geom",
     "pex/materials/Materials"
     ],
-    function(Core, PerspectiveCamera, Geom, Materials) {
-      Pex.window({
+    function(Core, Window, PerspectiveCamera, Geom, Materials) {
+      Window.create({
         settings: {
           width: 1280,
           height: 720,

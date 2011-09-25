@@ -1,13 +1,13 @@
 define([
-  "plask",
   "pex/core/Core",
+  "pex/sys/Window",
   "pex/util/Util",
   "pex/cameras/PerspectiveCamera",
   "pex/geom/Geom",
   "pex/materials/Materials"
   ],
-  function(plask, Core, Util, PerspectiveCamera, Geom, Materials) {
-    plask.simpleWindow({
+  function(Core, Window, Util, PerspectiveCamera, Geom, Materials) {
+    Window.create({
         settings: {
         width: 1280,
         height: 720,

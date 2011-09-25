@@ -1,4 +1,4 @@
-define(["pex/Core/Context","pex/io/IO"], function(Context, IO) {
+define(["pex/Core/Context","pex/sys/IO"], function(Context, IO) {
   function Texture2D() {
 
   }

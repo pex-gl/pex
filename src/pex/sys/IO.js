@@ -18,7 +18,6 @@ define(["plask", "fs"], function(plask, fs) {
       fs.writeFileSync(path, data);
     }
 
-
     IO.loadImageData = function(gl, texture, target, path, callback) {
       console.log("IO.loadImageData " + path);
       gl.activeTexture(gl.TEXTURE0);
