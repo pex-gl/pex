@@ -1,4 +1,4 @@
-define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4"], function(Edge, Face3, Face4) {
+define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3"], function(Edge, Face3, Face4, Vec3) {
   function Geometry() {
 
   }
@@ -66,6 +66,35 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4"], function(Edge, Fac
 
 
     return geometries;
+  }
+
+  Geometry.prototype.computeNormals = function() {
+    this.normals = [];
+    for(var i=0; i<this.vertices.length; i++) {
+      this.normals.push(new Vec3(0,0,0));
+    }
+    for(var i=0; i<this.faces.length; i++) {
+      var face = this.faces[i];
+      if (face instanceof Face3) {
+        var a = this.vertices[face.a];
+        var b = this.vertices[face.b];
+        var c = this.vertices[face.c];
+        var ab = b.subbed(a);
+        var ac = c.subbed(a);
+        var n = ab.cross(ac);
+        n.normalize();
+        face.normal = n;
+
+
+        this.normals[face.a].add(n);
+        this.normals[face.b].add(n);
+        this.normals[face.c].add(n);
+      }
+    }
+
+    for(var i=0; i<this.normals.length; i++) {
+      this.normals[i].normalize();
+    }
   }
 
   Geometry.prototype.computeEdges = function() {

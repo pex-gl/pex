@@ -75,7 +75,6 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     else if (this.attributes["position"]){
       this.gl.drawArrays(this.primitiveType, 0, this.attributes["position"].data.length/3);
     }
-
   }
 
   Vbo.prototype.dispose = function() {
