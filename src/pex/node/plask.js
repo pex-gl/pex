@@ -716,9 +716,11 @@ define([], function() {
     canvas.style.backgroundColor = "#000000";
     document.body.appendChild(canvas);
 
+    if (obj.stencil === undefined) obj.stencil = false;
+
     var gl = null;
     try {
-        gl = canvas.getContext('experimental-webgl', {antialias: false, premultipliedAlpha : true});
+        gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.stencil});
     }
     catch(err){
         console.error(err);
