@@ -1,3 +1,4 @@
+var preloadCore;
 var path = require('path');
 var requirejs = require('requirejs');
 var workingDirectory = path.dirname(module.parent.filename);
@@ -17,6 +18,7 @@ module.exports = {
     }
     requirejs.config({
       baseUrl: this.require.baseUrl || workingDirectory,
+      priority : preloadCore ? [ path + "pex-core.js" ] : null,
       paths: { "pex": path },
       nodeRequire: require
     });

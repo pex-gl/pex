@@ -18,6 +18,8 @@ Pex.ready(function() {
 
 */
 
+var preloadCore;
+
 //require js config object
 var require = {
   //anti cache
@@ -54,6 +56,7 @@ var Pex = {
 
   require.baseUrl = '';
   require.paths = { "pex": path };
+  require.priority = preloadCore ? [ path + "pex-core.js" ] : null,
   require.packages = [
     { name: "plask", location: path + "node", main: "plask" },
     { name: "fs", location: path + "node", main: "fs" }
@@ -67,11 +70,12 @@ var Pex = {
       require([Pex.runModule], function() { });
     }
 
+    console.log(require);
   }
 
   var head = document.getElementsByTagName('head')[0];
   var script = document.createElement('script');
   script.type = 'text/javascript';
-  script.src = path + "lib/require.js";
+  script.src = path + (preloadCore ? "" : "lib/") + "require.js";
   head.appendChild(script);
 })();
