@@ -13,14 +13,15 @@ define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
     + "}";
 
   var frag = ""
-    + "uniform vec4 color;"
+    + "uniform vec4 ambientColor;"
+    + "uniform vec4 diffuseColor;"
     + "uniform vec3 lightPos;"
     + "varying vec3 vNormal;"
     + "void main() {"
     +  "vec3 N = normalize(vNormal);"
     +  "vec3 L = normalize(lightPos);"
-    +  "float NdotL = max(0.1, dot(N, L));"
-    +  "gl_FragColor = color * NdotL;"
+    +  "float NdotL = max(0.0, dot(N, L));"
+    +  "gl_FragColor = ambientColor + diffuseColor * NdotL;"
     + "}";
 
 
@@ -29,8 +30,9 @@ define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
       this.program = new Core.Program(vert, frag);
 
       var defaults = {
-       color : new Core.Vec4(1, 1, 1, 1),
-       lightPos : new Core.Vec3(10, 10, -10)
+        ambientColor : new Core.Vec4(0.2, 0.2, 0.2, 1),
+        diffuseColor : new Core.Vec4(1, 1, 1, 1),
+        lightPos : new Core.Vec3(10, 10, 10)
       }
 
       this.uniforms = Util.mergeObjects(defaults, uniforms);

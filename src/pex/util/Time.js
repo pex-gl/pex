@@ -25,7 +25,10 @@ define([], function() {
     	Time.fps = Time.fpsFrames / Time.fpsTime;
     	Time.fpsTime = 0;
     	Time.fpsFrames = 0;
-    	console.log("FPS: " + Time.fps);
+        if (console !== undefined) {
+            console.log("FPS: " + Time.fps);
+        }
+
     }
     return Time.seconds;
   }

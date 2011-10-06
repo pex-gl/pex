@@ -7,6 +7,12 @@ define(["pex/util/Time"], function(Time) {
 
   Util.Time = Time;
 
+  Util.log = function(msg) {
+    if (console !== undefined) {
+      console.log(msg);
+    }
+  }
+
   Util.checkGLErrors = function(gl, msg) {
     msg = msg || "";
     var err = gl.getError();
@@ -33,7 +39,7 @@ define(["pex/util/Time"], function(Time) {
     var seconds = (now - startOfMeasuredTime)/1000;
 
     if (msg) {
-      console.log(msg + seconds)
+      Util.log(msg + seconds)
     }
     return seconds;
   }

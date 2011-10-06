@@ -1,4 +1,4 @@
-define(["plask", "fs"], function(plask, fs) {
+define(["plask", "fs", "pex/util/Util"], function(plask, fs, Util) {
 
   //IO functions when used in plask
 
@@ -19,7 +19,7 @@ define(["plask", "fs"], function(plask, fs) {
     }
 
     IO.loadImageData = function(gl, texture, target, path, callback) {
-      console.log("IO.loadImageData " + path);
+      Util.log("IO.loadImageData " + path);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
       var canvas = plask.SkCanvas.createFromImage(path);
@@ -51,7 +51,7 @@ define(["plask", "fs"], function(plask, fs) {
              }
           }
           else {
-             console.log('WebIO.loadTextFile error : ', request.statusText);
+             Util.log('WebIO.loadTextFile error : ', request.statusText);
           }
         }
       };

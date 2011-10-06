@@ -1,4 +1,4 @@
-define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3"], function(Edge, Face3, Face4, Vec3) {
+define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "pex/util/Util"], function(Edge, Face3, Face4, Vec3, Util) {
   function Geometry() {
 
   }
@@ -16,16 +16,16 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3"], f
     var attributes = {"vertices":"", "texCoords":"", "normals":"", "colors":""};
 
     if (this.faces) {
-      console.log("Geometry.split ERROR : Only edge meshes are supported at the moment");
+      Util.log("Geometry.split ERROR : Only edge meshes are supported at the moment");
       return;
     }
     else if (this.edges) {
-      console.log("Geometry.split edges");
+      Util.log("Geometry.split edges");
       var geometry = null;
       var numVertices = 0;
       for(var i=0; i<this.edges.length; i++) {
         if (geometry == null) {
-          console.log("Geometry.split geometries.length : " + (geometries.length + 1));
+          Util.log("Geometry.split geometries.length : " + (geometries.length + 1));
           geometry = new Geometry();
           geometry.edges = [];
           for(var attribName in attributes) {
@@ -52,8 +52,6 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3"], f
         numVertices += 2;
 
         if (full) {
-          //console.log(geometry.edges);
-          //console.log(geometry.vertices.length);
           geometry = null;
           //return geometries;
         }

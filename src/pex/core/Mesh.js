@@ -1,4 +1,4 @@
-define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "pex/geom/Geometry"], function(Context, Vbo, Vec3, Vec4, Geometry) {
+define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "pex/geom/Geometry", "pex/util/Util"], function(Context, Vbo, Vec3, Vec4, Geometry, Util) {
 
   //  Parameters:
   //    gl - gl context
@@ -20,7 +20,7 @@ define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "p
     else {
       this.geometry = meshData;
       if (this.geometry.vertices.length > Geometry.MAX_VERTICES) {
-        console.log("Mesh.Mesh numVertices " + this.geometry.vertices.length + " > " + Geometry.MAX_VERTICES + ". Splitting...");
+        Util.log("Mesh.Mesh numVertices " + this.geometry.vertices.length + " > " + Geometry.MAX_VERTICES + ". Splitting...");
         var geometries = this.geometry.split();
         for(var i=0; i<geometries.length; i++) {
           this.vbos.push(Vbo.fromGeometry(geometries[i], this.options.primitiveType, this.options.useEdges));

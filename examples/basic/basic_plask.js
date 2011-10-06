@@ -19,7 +19,6 @@ Pex.ready(function() {
           center: true
         },
         init: function() {
-          console.log("Window.init");
           var gl = Core.Context.currentContext;
           gl.clearColor(0, 0, 0, 1);
 
