@@ -60,7 +60,6 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
       //look for required attribs by shader inside mesh
       if (attrib.location === undefined || attrib.location == -1) {
         attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
-        //console.log(name + " location is " + attrib.location);
       }
       if (attrib.location >= 0) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);

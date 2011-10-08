@@ -69,8 +69,6 @@ var Pex = {
     if (Pex.runModule) {
       require([Pex.runModule], function() { });
     }
-
-    console.log(require);
   }
 
   var head = document.getElementsByTagName('head')[0];
