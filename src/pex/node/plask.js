@@ -701,6 +701,15 @@ define([], function() {
     })
   }
 
+  function makeMouseMovedHandler(canvas, handler) {
+    canvas.addEventListener('mousemove', function(e) {
+      handler({
+        x: e.clientX,
+        y: e.clientY
+      });
+    })
+  }
+
   function makeScrollWheelHandler(canvas, handler) {
     window.onmousewheel = function(e) {
       handler({
@@ -735,6 +744,7 @@ define([], function() {
       switch(eventName) {
         case 'leftMouseDown': makeMouseDownHandler(canvas, handler); break;
         case 'mouseDragged': makeMouseDraggedHandler(canvas, handler); break;
+        case 'mouseMoved': makeMouseMovedHandler(canvas, handler); break;
         case 'scrollWheel': makeScrollWheelHandler(canvas, handler); break;
       }
     }
