@@ -1,4 +1,9 @@
-define([
+var Pex;
+if (!Pex) {
+  Pex = require("../../src/pex/pex-plask");
+}
+
+Pex.run([
   "pex/core/Core",
   "pex/sys/Window",
   "pex/util/Util",

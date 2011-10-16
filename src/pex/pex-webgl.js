@@ -5,14 +5,10 @@ Usage:
 <script src="../../src/pex/pex-webgl.js"></script>
 <script>
 
-Pex.run("example");
-
-or
-
 Pex.ready(function() {
-	Pex.require(["example"], function(example) {
+  Pex.require(["example"], function(example) {
 
-	});
+  });
 });
 </script>
 
@@ -27,13 +23,10 @@ var require = {
 }
 
 var Pex = {
-  require: require,
-  run: function(module) {
-    this.runModule = module;
+  run: function(initModules, initCallback) {
+    this.initModules = initModules;
+    this.initCallback = initCallback;
   },
-  ready: function(handler) {
-    this.readyHandler = handler;
-  }
 };
 
 (function() {
@@ -63,11 +56,8 @@ var Pex = {
   ];
   require.ready = function() {
     Pex.require = require;
-    if (Pex.readyHandler) {
-      Pex.readyHandler();
-    }
-    if (Pex.runModule) {
-      require([Pex.runModule], function() { });
+    if (Pex.initModules && Pex.initCallback) {
+      Pex.require(Pex.initModules, Pex.initCallback);
     }
   }
 

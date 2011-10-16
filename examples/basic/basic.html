@@ -1,6 +1,10 @@
-var Pex = require("../../src/pex/pex-plask");
-Pex.ready(function() {
-	Pex.require([
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pex</title>
+  <script src="../../src/pex/pex-webgl.js"></script>
+  <script>
+  Pex.run([
     "pex/core/Core",
     "pex/sys/Window",
     "pex/cameras/PerspectiveCamera",
@@ -37,5 +41,8 @@ Pex.ready(function() {
       });
     }
   );
-});
-
+  </script>
+</head>
+<body>
+</body>
+</html>
