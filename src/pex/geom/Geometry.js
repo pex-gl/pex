@@ -67,6 +67,10 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "p
   }
 
   Geometry.prototype.computeNormals = function() {
+    if (!this.faces || this.faces.length == 0) {
+      return;
+    }
+
     this.normals = [];
     for(var i=0; i<this.vertices.length; i++) {
       this.normals.push(new Vec3(0,0,0));
