@@ -10,21 +10,21 @@ define([], function() {
     fps: 0
   }
 
-  Time.update = function() {
+  Time.update = function(delta) {
     if (Time.prev == 0) {
       Time.prev = (new Date()).getTime();
     }
     Time.now = (new Date()).getTime();
-    Time.delta = (Time.now - Time.prev)/1000;
+    Time.delta = (delta !== undefined) ? delta : (Time.now - Time.prev)/1000;
     Time.prev = Time.now;
     Time.seconds += Time.delta;
     Time.fpsTime += Time.delta;
     Time.frameNumber++;
     Time.fpsFrames++;
     if (Time.fpsTime > 5) {
-    	Time.fps = Time.fpsFrames / Time.fpsTime;
-    	Time.fpsTime = 0;
-    	Time.fpsFrames = 0;
+      Time.fps = Time.fpsFrames / Time.fpsTime;
+      Time.fpsTime = 0;
+      Time.fpsFrames = 0;
         if (console !== undefined) {
             console.log("FPS: " + Time.fps);
         }
