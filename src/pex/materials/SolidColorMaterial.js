@@ -1,12 +1,13 @@
-define(["pex/core/Core"], function(Core) {
+define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
 
   var solidColorVert = ""
     + "uniform mat4 projectionMatrix;"
     + "uniform mat4 modelViewMatrix;"
+    + "uniform float pointSize;"
     + "attribute vec3 position;"
     + "void main() {"
     +  "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);"
-    +  "gl_PointSize = 2.0;"
+    +  "gl_PointSize = pointSize;"
     + "}";
 
   var solidColorFrag = ""
@@ -21,10 +22,11 @@ define(["pex/core/Core"], function(Core) {
       this.program = new Core.Program(solidColorVert, solidColorFrag);
 
       var defaults = {
-       color : new Core.Vec4(1, 1, 1, 1)
+       color : new Core.Vec4(1, 1, 1, 1),
+       pointSize : 0
       }
 
-      this.uniforms = uniforms || defaults;
+      this.uniforms = Util.mergeObjects(defaults, uniforms);
   }
 
   SolidColorMaterial.prototype = new Core.Material();
