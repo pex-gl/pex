@@ -1,4 +1,4 @@
-define(["pex/util/Time"], function(Time) {
+define(["pex/util/Time", "pex/util/RandUtil"], function(Time, RandUtil) {
   var gl_enums = null;
 
   function Util() {
@@ -6,6 +6,7 @@ define(["pex/util/Time"], function(Time) {
   };
 
   Util.Time = Time;
+  Util.RandUtil = RandUtil;
 
   Util.log = function(msg) {
     if (console !== undefined) {
