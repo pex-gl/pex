@@ -20,6 +20,7 @@ Pex.run([
       },
       init: function() {
         var gl = Core.Context.currentContext;
+
         gl.clearColor(0, 0, 0, 1);
 
         this.camera = new PerspectiveCamera(60, this.width/this.height);

@@ -1,6 +1,6 @@
 define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "pex/util/Util"], function(Edge, Face3, Face4, Vec3, Util) {
   function Geometry() {
-
+    this.vertices = [];
   }
 
   Geometry.MAX_VERTICES = 65536;

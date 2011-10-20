@@ -23,7 +23,7 @@ define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
 
       var defaults = {
        color : new Core.Vec4(1, 1, 1, 1),
-       pointSize : 0
+       pointSize : 1
       }
 
       this.uniforms = Util.mergeObjects(defaults, uniforms);
