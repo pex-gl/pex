@@ -1,10 +1,9 @@
-define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "pex/util/Util"], function(Edge, Face3, Face4, Vec3, Util) {
+define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "pex/util/Log"], function(Edge, Face3, Face4, Vec3, Log) {
   function Geometry() {
     this.vertices = [];
   }
 
   Geometry.MAX_VERTICES = 65536;
-
 
   //We should be more inteligent here and split by faces and then
   //recompute edges or sth like that. For now Ijust assume that if
@@ -16,16 +15,16 @@ define(["pex/core/Edge", "pex/core/Face3", "pex/core/Face4", "pex/core/Vec3", "p
     var attributes = {"vertices":"", "texCoords":"", "normals":"", "colors":""};
 
     if (this.faces) {
-      Util.log("Geometry.split ERROR : Only edge meshes are supported at the moment");
+      Log.message("Geometry.split ERROR : Only edge meshes are supported at the moment");
       return;
     }
     else if (this.edges) {
-      Util.log("Geometry.split edges");
+      Log.message("Geometry.split edges");
       var geometry = null;
       var numVertices = 0;
       for(var i=0; i<this.edges.length; i++) {
         if (geometry == null) {
-          Util.log("Geometry.split geometries.length : " + (geometries.length + 1));
+          Log.message("Geometry.split geometries.length : " + (geometries.length + 1));
           geometry = new Geometry();
           geometry.edges = [];
           for(var attribName in attributes) {

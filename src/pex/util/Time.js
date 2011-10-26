@@ -1,4 +1,4 @@
-define([], function() {
+define(["pex/util/Log"], function(Log) {
   var Time = {
     now: 0,
     prev: 0,
@@ -25,13 +25,27 @@ define([], function() {
       Time.fps = Time.fpsFrames / Time.fpsTime;
       Time.fpsTime = 0;
       Time.fpsFrames = 0;
-        if (console !== undefined) {
-            console.log("FPS: " + Time.fps);
-        }
-
+      Log.message("FPS: " + Time.fps);
     }
     return Time.seconds;
   }
+
+  var startOfMeasuredTime = 0;
+  Time.startMeasuringTime = function() {
+    startOfMeasuredTime = (new Date()).getTime();
+  }
+
+  Time.stopMeasuringTime = function(msg) {
+    var now = (new Date()).getTime();
+
+    var seconds = (now - startOfMeasuredTime)/1000;
+
+    if (msg) {
+      Log.msg(msg + seconds)
+    }
+    return seconds;
+  }
+
 
   return Time;
 });

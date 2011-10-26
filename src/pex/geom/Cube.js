@@ -1,4 +1,4 @@
-define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/geom/Geometry"], function(Vec2, Vec3, Face4, Geometry) {
   function Cube(sx, sy, sz, nx, ny, nz) {
     sx = sx || 1;
     sy = sy || 1;
@@ -25,16 +25,16 @@ define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
       var vertShift = vertices.length;
       for(var j=0; j<=nv; ++j) {
         for(var i=0; i<=nu; ++i) {
-          var vert = new Core.Vec3();
+          var vert = new Vec3();
           vert[u] = (-su/2 + i*su/nu) * flipu;
           vert[v] = (-sv/2 + j*sv/nv) * flipv;
           vert[w] = pw;
           vertices.push(vert);
 
-          var texCoord = new Core.Vec2(i/nu, j/nv);
+          var texCoord = new Vec2(i/nu, j/nv);
           texCoords.push(texCoord);
 
-          var normal = new Core.Vec3();
+          var normal = new Vec3();
           normal[u] = 0;
           normal[v] = 0;
           normal[w] = pw/Math.abs(pw);
@@ -44,7 +44,7 @@ define(["pex/core/Core", "pex/geom/Geometry"], function(Core, Geometry) {
       for(var j=0; j<nv; ++j) {
         for(var i=0; i<nu; ++i) {
           var n = vertShift + j * (nu + 1) + i;
-          var face = new Core.Face4(n, n + nu  + 1, n + nu + 2, n + 1);
+          var face = new Face4(n, n + nu  + 1, n + nu + 2, n + 1);
           faces.push(face);
         }
       }

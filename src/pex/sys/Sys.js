@@ -1,10 +1,10 @@
 define( [
-  "pex/sys/Sys",
+  "pex/sys/IO",
   "pex/sys/Window"
   ],
-  function(Sys, Window) {
+  function(IO, Window) {
     return {
-      Sys : Sys,
+      IO : IO,
       Window : Window
     };
 });

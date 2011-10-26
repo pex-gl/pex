@@ -1,4 +1,4 @@
-define(["pex/core/Core"], function(Core) {
+define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
 
   var solidColorVert = ""
     + "uniform mat4 projectionMatrix;"
@@ -23,7 +23,7 @@ define(["pex/core/Core"], function(Core) {
   function TexturedMaterial(uniforms) {
       this.gl = Core.Context.currentContext;
       this.program = new Core.Program(solidColorVert, solidColorFrag);
-      this.uniforms = uniforms || {}
+      this.uniforms = ObjUtils.mergeObjects({}, uniforms);
   }
 
   TexturedMaterial.prototype = new Core.Material();

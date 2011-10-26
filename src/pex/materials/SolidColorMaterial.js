@@ -1,4 +1,4 @@
-define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
+define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
 
   var solidColorVert = ""
     + "uniform mat4 projectionMatrix;"
@@ -26,7 +26,7 @@ define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
        pointSize : 1
       }
 
-      this.uniforms = Util.mergeObjects(defaults, uniforms);
+      this.uniforms = ObjUtils.mergeObjects(defaults, uniforms);
   }
 
   SolidColorMaterial.prototype = new Core.Material();

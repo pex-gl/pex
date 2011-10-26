@@ -1,4 +1,4 @@
-define(["pex/core/Core"], function(Core) {
+define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4, Mat4) {
 
   function PerspectiveCamera(fov, aspectRatio, near, far, position, target, up) {
 
@@ -6,12 +6,12 @@ define(["pex/core/Core"], function(Core) {
     this.aspectRatio = aspectRatio || 4/3;
     this.near = near || 0.1;
     this.far = far || 100;
-    this.position = position || new Core.Vec3(0, 0, 5);
+    this.position = position || new Vec3(0, 0, 5);
 
-    this.target = target || new Core.Vec3(0, 0, 0);
-    this.up = up || new Core.Vec3(0, 1, 0);
-    this.projectionMatrix = new Core.Mat4();
-    this.viewMatrix = new Core.Mat4();
+    this.target = target || new Vec3(0, 0, 0);
+    this.up = up || new Vec3(0, 1, 0);
+    this.projectionMatrix = new Mat4();
+    this.viewMatrix = new Mat4();
     this.updateMatrices();
   }
 
@@ -98,19 +98,19 @@ define(["pex/core/Core"], function(Core) {
   }
 
   PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
-    var t = modelTranslation ? modelTranslation : new Core.Vec3(0, 0, 0);
-    var r = modelRotation ? modelRotation : new Core.Vec4(0, 1, 0, 0);
-    var s = modelScale ? modelScale : new Core.Vec3(1, 1, 1);
+    var t = modelTranslation ? modelTranslation : new Vec3(0, 0, 0);
+    var r = modelRotation ? modelRotation : new Vec4(0, 1, 0, 0);
+    var s = modelScale ? modelScale : new Vec3(1, 1, 1);
 
-    var modelWorldMatrix = new Core.Mat4();
-  	modelWorldMatrix.translate(t.x, t.y, t.z);
-  	modelWorldMatrix.rotate(r.w, r.x, r.y, r.z);
+    var modelWorldMatrix = new Mat4();
+    modelWorldMatrix.translate(t.x, t.y, t.z);
+    modelWorldMatrix.rotate(r.w, r.x, r.y, r.z);
     modelWorldMatrix.scale(s.x, s.y, s.z);
 
-  	var modelViewMatrix = this.viewMatrix.dup();
+    var modelViewMatrix = this.viewMatrix.dup();
 
-  	modelViewMatrix.mul(modelWorldMatrix);
-  	return modelViewMatrix;
+    modelViewMatrix.mul(modelWorldMatrix);
+    return modelViewMatrix;
   }
 
   return PerspectiveCamera;
@@ -121,8 +121,8 @@ define(["pex/core/Core"], function(Core) {
 //starting from near top left and going forward in clock wise order
 Pex.PerspectiveCamera.prototype.getFrustumCorners = function() {
   var hnear = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.near;
- 	var wnear = hnear * this.aspectRatio;
- 	var hfar = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.far;
+  var wnear = hnear * this.aspectRatio;
+  var hfar = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.far;
   var wfar = hfar * this.aspectRatio;
 
   var corners = [];

@@ -1,4 +1,4 @@
-define('pex/Pex',[
+define("pex/Pex", [
     "pex/cameras/Cameras",
     "pex/core/Core",
     "pex/geom/Geom",
@@ -15,5 +15,6 @@ define('pex/Pex',[
       Sys : Sys,
       Util : Util
     }
+    return Pex;
   }
 )

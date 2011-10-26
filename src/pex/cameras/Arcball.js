@@ -1,16 +1,14 @@
 //a shameless copy&paste from Embr by Ryan Alexander
-define(["pex/core/Core"], function(Core) {
-  var Vec3 = Core.Vec3;
-  var Quat = Core.Quat;
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3, Quat) {
 
-  function Arcball(window, camera, center, radius, distance) {
+  function Arcball(window, camera, distance) {
     this.distance = distance || 2;
     this.minDistance = 0.3;
     this.maxDistance = 5;
     this.camera = camera;
     this.window = window;
-    this.center = center;
-    this.radius = radius;
+    this.center = new Vec2(window.width/2, window.height/2);
+    this.radius = 0.9 * Math.min(window.width/2, window.height/2);
     this.orientation = Quat.identity();
 
     this.updateCamera();

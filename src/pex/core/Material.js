@@ -1,4 +1,4 @@
-define(["pex/core/Context", "pex/core/Program"], function(Context, Program) {
+define(["pex/core/Context"], function(Context) {
   function Material(program, uniforms, options) {
     this.gl = Context.currentContext;
     this.program = program;

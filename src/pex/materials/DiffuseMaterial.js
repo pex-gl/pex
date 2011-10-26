@@ -1,4 +1,4 @@
-define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
+define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
 
   var vert = ""
     + "uniform mat4 projectionMatrix;"
@@ -35,7 +35,7 @@ define(["pex/core/Core", "pex/util/Util"], function(Core, Util) {
         lightPos : new Core.Vec3(10, 10, 10)
       }
 
-      this.uniforms = Util.mergeObjects(defaults, uniforms);
+      this.uniforms = ObjUtils.mergeObjects(defaults, uniforms);
   }
 
   DiffuseMaterial.prototype = new Core.Material();
