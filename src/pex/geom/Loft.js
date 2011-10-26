@@ -107,22 +107,17 @@ define([
     var baseRight = new Vec3(0.05,0,0);
     var baseUp = new Vec3(0,0.05,0);
     var baseForward = new Vec3(0,0,0.05);
-    var firstBase;
-    var lastBase;
     var center;
     for (var i=0; i<numSteps; i++) {
       if (i == 0) {
         frame = ptFirstFrame(points[0], points[1], tangents[0]);
-        firstBase = frame.mulVec3(baseUp);
       }
       else {
         frame = ptNextFrame(frame, points[i-1], points[i], tangents[i-1], tangents[i], stepRotation);
-        lastBase = frame.mulVec3(baseUp);
       }
 
       var right = frame.mulVec3(baseRight);
       var up = frame.mulVec3(baseUp);
-      if (!firstBase) firstBase = up.dup();
       var forward = frame.mulVec3(baseForward);
 
       center = path.getPointAt(i/(numSteps-1));
