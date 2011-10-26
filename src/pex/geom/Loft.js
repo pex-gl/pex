@@ -14,11 +14,9 @@ define([
   ],
   function(Vec2, Vec3, Vec4, Color, Mat4, Edge, Face3, Geometry) {
 
-  var lineBuilder;
-
   var ptFirstFrame = function(first_pnt, second_pnt, first_tan){
       var n = first_tan.dup().cross(second_pnt.subbed(first_pnt));
-      if(n.lengthSquared() === 0){
+      if (n.lengthSquared() === 0) {
           var atx = Math.abs(first_tan.x);
           var aty = Math.abs(first_tan.y);
           var atz = Math.abs(first_tan.z);
@@ -82,17 +80,11 @@ define([
     var firstBase = firstFrame.mulVec3(baseUp).sub(points[i]).normalize();
     var lastBase = frame.mulVec3(baseUp).sub(points[i]).normalize();
     var a = firstBase.dot(lastBase);
-    console.log(firstBase.scale(10));
-    console.log(lastBase.scale(10));
-    console.log(a);
     a = Math.acos(a);
-    console.log(a);
-    return a;//firstBase.sub(lastBase);
+    return a;
   }
 
-  function Loft(path, builder) {
-    lineBuilder = builder;
-
+  function Loft(path) {
     this.vertices = [];
     this.texCoords = [];
     this.faces = [];
@@ -100,7 +92,7 @@ define([
 
     var numSteps = 150;
     var numSegments = 8;
-    var r = 0.05;
+    var r = 0.1;
 
     var index = 0;
 
@@ -118,7 +110,7 @@ define([
     var firstBase;
     var lastBase;
     var center;
-    for(var i=0; i<numSteps; i++) {
+    for (var i=0; i<numSteps; i++) {
       if (i == 0) {
         frame = ptFirstFrame(points[0], points[1], tangents[0]);
         firstBase = frame.mulVec3(baseUp);
@@ -135,11 +127,6 @@ define([
 
       center = path.getPointAt(i/(numSteps-1));
 
-      if (lineBuilder) lineBuilder.addLine(center, forward, Color.Red.toVec4());
-      if (lineBuilder) lineBuilder.addLine(center, up, Color.Pink.toVec4());
-      if (lineBuilder) lineBuilder.addLine(center, right, Color.Yellow.toVec4());
-
-      var d = 0.05;
       for(var j=0; j<numSegments; j++) {
         var a = j/numSegments * 2 * Math.PI;
 
@@ -170,9 +157,6 @@ define([
       index += numSegments;
     }
 
-    if (lineBuilder) lineBuilder.addLine(center, firstBase, Color.Green.toVec4());
-    if (lineBuilder) lineBuilder.addLine(center, lastBase, Color.Cyan.toVec4());
-
     this.computeNormals();
   }
 
@@ -191,10 +175,6 @@ define([
     for(var i=0; i<=numSteps; i++) {
       var prevPos = path.getPointAt((i-0.1)/(numSteps-1));
       var nextPos = path.getPointAt((i+0.1)/(numSteps-1));
-      if (lineBuilder) {
-        var currPos = path.getPointAt((i  )/(numSteps-1));
-        lineBuilder.addLine(prevPos, currPos, Color.Grey.toVec4());
-      }
       var t = nextPos.subbed(prevPos);
       t.normalize();
       tangents.push(t);
