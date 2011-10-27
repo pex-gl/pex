@@ -1,14 +1,15 @@
-define(["plask", "fs", "pex/util/Log"], function(plask, fs, Log) {
+define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
 
   //IO functions when used in plask
 
   var NodeIO = (function() {
     function IO() {}
 
-    IO.baseDir = "";
+    IO.baseDir = require.pexBaseUrl;
 
-    IO.loadTextFile = function(path, callback) {
-      var data = fs.readFileSync(path, 'utf8');
+    IO.loadTextFile = function(file, callback) {
+      var fullPath = path.resolve(IO.baseDir, file);
+      var data = fs.readFileSync(fullPath, 'utf8');
       if (callback) {
         callback(data);
       }
@@ -40,7 +41,6 @@ define(["plask", "fs", "pex/util/Log"], function(plask, fs, Log) {
     IO.baseDir = "";
 
     IO.loadTextFile = function(url, callback) {
-
       var request = new XMLHttpRequest();
       request.open('GET', url, true);
       request.onreadystatechange = function (e) {

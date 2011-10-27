@@ -52,10 +52,12 @@ var Pex = {
   require.priority = preloadCore ? [ path + "pex-core.js" ] : null,
   require.packages = [
     { name: "plask", location: path + "node", main: "plask" },
-    { name: "fs", location: path + "node", main: "fs" }
+    { name: "fs", location: path + "node", main: "fs" },
+    { name: "path", location: path + "node", main: "path" }
   ];
   require.ready = function() {
     Pex.require = require;
+    Pex.require.pexBaseUrl = "";
     if (Pex.initModules && Pex.initCallback) {
       Pex.require(Pex.initModules, Pex.initCallback);
     }
