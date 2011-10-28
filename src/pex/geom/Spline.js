@@ -72,7 +72,12 @@ define(["pex/core/Vec3"], function(Vec3) {
   //
   //`d` - *{ Number } <0, 1>*
   Spline.prototype.getPointAt = function ( d ) {
-    d = (d + 1 ) % 1;
+    if (this.loop) {
+      d = (d + 1 ) % 1;
+    }
+    else {
+      d = Math.max(0, Math.min(d, 1));
+    }
 
     if (this.dirtyLength) {
       this.precalculateLength();
@@ -81,7 +86,7 @@ define(["pex/core/Vec3"], function(Vec3) {
     //TODO: try binary search
     var k = 0;
     for(var i=0; i<this.accumulatedLengthRatios.length; i++) {
-      if (this.accumulatedLengthRatios[i] > d) {
+      if (this.accumulatedLengthRatios[i] >= d) {
         k = this.accumulatedRatios[i];
         break;
       }
