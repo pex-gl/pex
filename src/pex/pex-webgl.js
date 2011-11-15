@@ -22,6 +22,8 @@ var require = {
   urlArgs: "bust=" +  (new Date()).getTime()
 }
 
+//Initialization code of Pex when running in the browser.
+
 var Pex = {
   run: function(initModules, initCallback) {
     this.initModules = initModules;
