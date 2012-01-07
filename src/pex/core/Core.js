@@ -9,6 +9,7 @@ define( [
   "pex/core/Edge",
   "pex/core/Face3",
   "pex/core/Face4",
+  "pex/core/Color",
   "pex/core/Ray",
   "pex/core/Vbo",
   "pex/core/Mesh",
@@ -21,7 +22,7 @@ define( [
   "pex/core/Spline",  
   ],
   function(
-      Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, 
+      Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
       Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube, 
       Fbo, Geometry, Spline
     ) {
@@ -35,6 +36,7 @@ define( [
       Edge : Edge,
       Face3 : Face3,
       Face4 : Face4,
+      Color : Color,
       Ray : Ray,
       Vbo : Vbo,
       Mesh : Mesh,
