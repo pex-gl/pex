@@ -60,7 +60,7 @@ function scanFile(file) {
   }
   
   filesToGenerate++;
-  //var child = exec('docco ' + file, 
+  var child = exec('docco ' + file,
   //var child = exec('/Users/vorg/Dev/docco/bin/docco --structured ' + file,
   //var child = exec('/Users/vorg/Dev/docco-mbrevoort/bin/docco ' + file,  
     function (error, stdout, stderr) {
@@ -90,10 +90,11 @@ function makeIndexFile() {
   for(var i=0; i<moduleNames.length; i++) {
     var title = moduleNames[i];
     var moduleClasses = modules[moduleNames[i]];
-    if (title != "pex") title = "pex." + title;
+    var modulePath = (title == "pex") ? "pex/" : "pex/" + title + "/";
+    if (title != "pex") title = modulePath;
     s += "<h3>" + title + "</h3>\n";
     for(var j=0; j<moduleClasses.length; j++) {
-      s += "&nbsp;- <a href='" + moduleClasses[j] + ".html'>" + moduleClasses[j] + "</a><br/>\n";
+      s += "&nbsp;- <a href='" + "src/" + modulePath + moduleClasses[j] + ".html'>" + moduleClasses[j] + "</a><br/>\n";
     }
     s += "<br/>";
   }

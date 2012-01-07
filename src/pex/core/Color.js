@@ -1,4 +1,16 @@
+//RGBA color.
+
+//## Example use
+//     var c1 = new Color(1.0, 0.0, 0.0, 1.0); //red
+//     var c2 = Color.Red; //red
+
+//## Reference
 define(["pex/core/Vec4"], function(Vec4) {
+  //### Color ( r, g, b, a )
+  //`r` - red value *{ Number }* <0, 1> = 1  
+  //`g` - green value *{ Number }* <0, 1> = 1  
+  //`b` - blue value *{ Number }* <0, 1> = 1  
+  //`a` - alpha - transparency value *{ Number }* <0, 1> = 1  
   function Color(r, g, b, a) {
     this.r = (r !== undefined) ? r : 1;
     this.g = (g !== undefined) ? g : 1;
@@ -6,14 +18,19 @@ define(["pex/core/Vec4"], function(Vec4) {
     this.a = (a !== undefined) ? a : 1;
   }
 
+  //### toVec4 ( )
+  //Returns vector representation of the color where RGBA is mapped to XYZW *{ Vec4 }*
   Color.prototype.toVec4 = function() {
     return new Vec4(this.r, this.g, this.b, this.a);
   }
 
+  //### toArray ( )
+  //Returns [r,g,b,a] array the color components *{ Array of Number }*
   Color.prototype.toArray = function() {
     return [this.r, this.g, this.b, this.a];
   }
 
+  //### Predefinied Colors
   Color.Black = new Color(0, 0, 0, 1);
   Color.Grey = new Color(1, 1, 1, 1);
   Color.Grey = new Color(0.5, 0.5, 0.5, 1);

@@ -1,4 +1,20 @@
-define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/geom/Geometry"], function(Vec2, Vec3, Face4, Geometry) {
+//Cube geometry generator.
+
+//## Parent class : [Geometry](../core/Geometry.html)
+
+//## Example use
+//      var cube = new Cube(1, 1, 1, 10, 10, 10);
+//      var cubeMesh = new Mesh(cube, new Materials.TestMaterial());
+
+//## Reference
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/core/Geometry"], function(Vec2, Vec3, Face4, Geometry) {
+  //### Cube ( sx, sy, sz, nx, ny, nz )
+  //`sx` - size x / width *{ Number }*  
+  //`sy` - size y / height *{ Number }*  
+  //`sz` - size z / depth *{ Number }*  
+  //`nx` - number of subdivisions on x axis *{ Number/Int }*  
+  //`ny` - number of subdivisions on y axis *{ Number/Int }*  
+  //`nz` - number of subdivisions on z axis *{ Number/Int }*
   function Cube(sx, sy, sz, nx, ny, nz) {
     sx = sx || 1;
     sy = sy || 1;
@@ -12,6 +28,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/geom/Geometry"]
     var normals = this.normals = [];
     var faces = this.faces = [];
 
+    // How faces are constructed:
     //
     //     0-----1 . . 2       n  <----  n+1
     //     |   / .     .       |         A
@@ -57,6 +74,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/geom/Geometry"]
     makePlane('x', 'z', 'y', sx, sz, nx, nz,  sy/2,  1,  1); //top
     makePlane('x', 'z', 'y', sx, sz, nx, nz, -sy/2,  1, -1); //bottom
   }
+
 
   Cube.prototype = new Geometry();
 

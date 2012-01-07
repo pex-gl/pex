@@ -1,6 +1,6 @@
 define(["pex/core/Core"], function(Core) {
 
-  var solidColorVert = ""
+  var vert = ""
     + "uniform mat4 projectionMatrix;"
     + "uniform mat4 modelViewMatrix;"
     + "attribute vec3 position;"
@@ -15,7 +15,7 @@ define(["pex/core/Core"], function(Core) {
     +  "vTexCoord = texCoord;"
     + "}";
 
-  var solidColorFrag = ""
+  var frag = ""
     + "vec4 checker(vec2 uv) {"
     +   "float checkSize = 8.0;"
     +   "float fmodResult = mod(floor(checkSize * uv.x) + floor(checkSize * uv.y),2.0);"
@@ -36,7 +36,7 @@ define(["pex/core/Core"], function(Core) {
 
   function TestMaterial() {
       this.gl = Core.Context.currentContext;
-      this.program = new Core.Program(solidColorVert, solidColorFrag);
+      this.program = new Core.Program(vert, frag);
   }
 
   TestMaterial.prototype = new Core.Material();

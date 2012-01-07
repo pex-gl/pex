@@ -1,5 +1,23 @@
+//Makes your things look more 3d.
+
+//## Example use
+//     var camera = new PerspectiveCamera(60, this.width/this.height);
+//     camera.setPosition(new Vec3(0, 0, 3));
+//     camera.setTarget(new Vec3(0, 0, 0));
+//
+//     mesh.draw(camera);
+
+//## Reference
 define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4, Mat4) {
 
+  //### PerspectiveCamera ( fov, aspectRatio, near, far, position, target, up )
+  //`fov` - field of view *{ Number }* = 60    
+  //`aspectRatio` - window/viewport aspect ratio *{ Number }* = 4/3  
+  //`near` - near clipping plane *{ Number }* = 0.1  
+  //`far` - far clipping plane *{ Number }* = 100  
+  //`position` - camera position *{ Vec3 }* = (0, 0, 5)  
+  //`target` - the point camera is looking at *{ Vec3 }* = (0, 0, 0)  
+  //`up` - up vector - camera orientation *{ Vec3 }* = (0, 1, 0)
   function PerspectiveCamera(fov, aspectRatio, near, far, position, target, up) {
 
     this.fov = fov || 60;
@@ -15,69 +33,112 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4,
     this.updateMatrices();
   }
 
+  //### setPosition ( position )
+  //`position` - camera position *{ Vec3 }*
   PerspectiveCamera.prototype.setPosition = function(position) {
     this.position = position;
     this.updateMatrices();
   }
 
+  //### getPosition (  )
+  //Returns the camera position *{ Vec3 }*
   PerspectiveCamera.prototype.getPosition = function() {
     return this.position;
   }
 
+  //### setTarget ( target )
+  //`target` - the point camera is looking at *{ Vec3 }*
   PerspectiveCamera.prototype.setTarget = function(target) {
     this.target = target;
     this.updateMatrices();
   }
 
+  //### getTarget ( )
+  //Returns the point camera is looking at *{ Vec3 }*
   PerspectiveCamera.prototype.getTarget = function() {
     return this.target;
   }
 
+  //### setUp ( target )
+  //`up` - up vector - camera orientation *{ Vec3 }*
   PerspectiveCamera.prototype.setUp = function(up) {
     this.up = up;
     this.updateMatrices();
   }
 
+  //### getUp ( )
+  //Returns the up vector - camera orientation *{ Vec3 }*
   PerspectiveCamera.prototype.getUp = function() {
     return this.up;
   }
 
+  //### setNear ( near )
+  //`near` - near clipping plane *{ Number }*
   PerspectiveCamera.prototype.setNear = function(near) {
     this.near = near;
     this.updateMatrices();
   }
 
+  //### getNear ( )
+  //Returns near clipping plane *{ Number }*
   PerspectiveCamera.prototype.getNear = function() {
     return this.near;
   }
 
+  //### setFar ( far )
+  //`far` - far clipping plane *{ Number }*
   PerspectiveCamera.prototype.setFar = function(far) {
     this.far = far;
     this.updateMatrices();
   }
 
+  //### getFar ( far )
+  //returns the far clipping plane *{ Number }*
   PerspectiveCamera.prototype.getFar = function() {
     return this.far;
   }
 
+  //### setFov ( fov )
+  //`fov` - field of view *{ Number }*
   PerspectiveCamera.prototype.setFov = function(fov) {
     this.fov = fov;
     this.updateMatrices();
   }
 
+  //### getFov ( )
+  //Returns the field of view *{ Number }*
   PerspectiveCamera.prototype.getFov = function() {
     return this.fov;
   }
 
+  //### setAspectRatio ( ratio )
+  //`ratio` - window/viewport aspect ratio *{ Number }*
   PerspectiveCamera.prototype.setAspectRatio = function(ratio) {
     this.aspectRatio = ratio;
     this.updateMatrices();
   }
 
+  //### getAspectRatio ( )
+  //Returns the camera aspect ratio *{ Number }*
   PerspectiveCamera.prototype.getAspectRatio = function() {
     return this.aspectRatio;
   }
 
+  //### getViewMatrix ( )
+  //Returns camera view matrix *{ Mat4 }*
+  PerspectiveCamera.prototype.getViewMatrix = function() {
+    return this.viewMatrix;
+  }
+
+  //### getProjectionMatrix ( )
+  //Returns camera projection matrix *{ Mat4 }*
+  PerspectiveCamera.prototype.getProjectionMatrix = function() {
+    return this.projectionMatrix;
+  }
+
+  //### updateMatrices ( )
+  //Updates camera projection and view matrices.
+  //Called automaticaly when camera parameters change.
   PerspectiveCamera.prototype.updateMatrices = function() {
     this.projectionMatrix.reset();
     this.projectionMatrix.perspective(this.fov, this.aspectRatio, this.near, this.far);
@@ -89,14 +150,13 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4,
     );
   }
 
-  PerspectiveCamera.prototype.getViewMatrix = function() {
-    return this.viewMatrix;
-  }
 
-  PerspectiveCamera.prototype.getProjectionMatrix = function() {
-    return this.projectionMatrix;
-  }
-
+  //### calcModelViewMatrix ( modelTranslation, modelRotation, modelScale )
+  //Utility function for calculating model view matrix
+  //
+  //`modelTranslation` - model position *{ Vec3 }* = {0, 0, 0}  
+  //`modelRotation` - model rotation (x, y, z, angle) *{ Vec4 }* = {0, 1, 0, 0}  
+  //`modelScale` - model scale *{ Vec3 }* = {1, 1, 1}
   PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
     var t = modelTranslation ? modelTranslation : new Vec3(0, 0, 0);
     var r = modelRotation ? modelRotation : new Vec4(0, 1, 0, 0);
@@ -117,8 +177,8 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4,
 });
 
 /*
-//returns array of near and far frustrum corners in view coordinates
-//starting from near top left and going forward in clock wise order
+returns array of near and far frustrum corners in view coordinates
+starting from near top left and going forward in clock wise order
 Pex.PerspectiveCamera.prototype.getFrustumCorners = function() {
   var hnear = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.near;
   var wnear = hnear * this.aspectRatio;

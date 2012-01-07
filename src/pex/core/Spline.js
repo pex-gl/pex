@@ -1,33 +1,32 @@
-//Camtull-Rom spline implementation
-//inspired by code from [Tween.js][1]
+//Camtull-Rom spline implementation  
+//Inspired by code from [Tween.js][1]
 //[1]: http://sole.github.com/tween.js/examples/05_spline.html
 
 //## Example use 
 //
 //     var points = [ 
-//       new Vec3(0,  0, 0), 
-//       new Vec3(1,  0, 0), 
-//       new Vec3(2,  1, 0), 
-//       new Vec3(4, -1, 0) 
+//       new Core.Vec3(-2,  0, 0), 
+//       new Core.Vec3(-1,  0, 0), 
+//       new Core.Vec3( 1,  1, 0), 
+//       new Core.Vec3( 2, -1, 0) 
 //     ];
 //
 //     var spline = new Spline(points);
 //
 //     spline.getPointAt(0.25);
-//
-//
+
 //## Reference
 
 define(["pex/core/Vec3"], function(Vec3) {
 
   //### Spline ( points, [ loop ] )
-  //
   //`points` - *{ Array of Vec3 }*  
   //`loop` - is the spline a connected loop? *{ Boolean }*  
   function Spline(points, loop) {
     this.points = points;
     this.dirtyLength = true;
     this.loop = loop || false;
+    this.samplesCount = 2000;
   }
 
   //### getPoint ( t )
@@ -107,13 +106,21 @@ define(["pex/core/Vec3"], function(Vec3) {
       return null;
     }
   }
+  
+  //### getLength ( )
+  //Returns the total length of the spline.
+  Spline.prototype.getLength = function() {
+    if (this.dirtyLength) {
+      this.precalculateLength();
+    }
+    return this.length;
+  }
 
   //### precalculateLength ( )
   //Goes through all the segments of the curve and calculates total length and
   //the ratio of each segment.
   Spline.prototype.precalculateLength = function() {
-    var samplesCount = 2000;
-    var step = 1/samplesCount;
+    var step = 1/this.samplesCount;
     var k = 0;
     var totalLength = 0;
     this.accumulatedRatios = [];
@@ -123,7 +130,7 @@ define(["pex/core/Vec3"], function(Vec3) {
     var point;
     var prevPoint;
     var k = 0;
-    for(var i=0; i<samplesCount; i++) {
+    for(var i=0; i<this.samplesCount; i++) {
       prevPoint = point;
       point = this.getPoint(k);
 
@@ -138,7 +145,7 @@ define(["pex/core/Vec3"], function(Vec3) {
       k += step;
     }
 
-    for(var i=0; i<samplesCount; i++) {
+    for(var i=0; i<this.samplesCount; i++) {
       this.accumulatedLengthRatios.push(this.accumulatedLengths[i] / totalLength);
     }
 

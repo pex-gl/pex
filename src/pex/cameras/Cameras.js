@@ -1,12 +1,11 @@
+//Module wrapper for camera related classes.
 define([
   "pex/cameras/Arcball",
   "pex/cameras/PerspectiveCamera"
   ], function(Arcball, PerspectiveCamera) {
-    var Cameras = {
+    return {
       Arcball : Arcball,
       PerspectiveCamera : PerspectiveCamera
     }
-
-    return Cameras;
   }
 );

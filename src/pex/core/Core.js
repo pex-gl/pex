@@ -1,3 +1,4 @@
+//Module wrapper for the core classes.
 define( [
   "pex/core/Context",
   "pex/core/Vec2",
@@ -14,9 +15,16 @@ define( [
   "pex/core/Program",
   "pex/core/Material",
   "pex/core/Texture2D",
-  "pex/core/TextureCube"
+  "pex/core/TextureCube",
+  "pex/core/Fbo",
+  "pex/core/Geometry",    
+  "pex/core/Spline",  
   ],
-  function(Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube) {
+  function(
+      Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, 
+      Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube, 
+      Fbo, Geometry, Spline
+    ) {
     return {
       Context : Context,
       Vec2 : Vec2,
@@ -33,6 +41,9 @@ define( [
       Program : Program,
       Material : Material,
       Texture2D : Texture2D,
-      TextureCube: TextureCube
+      TextureCube: TextureCube,
+      Fbo : Fbo,
+      Geometry : Geometry,
+      Spline : Spline
     };
 });

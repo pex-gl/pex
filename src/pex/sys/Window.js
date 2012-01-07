@@ -1,11 +1,52 @@
+//Window represents a view backed up with a GL context.  
+//It's implemented using Cocoa Window in Plask or HTML Canvas when in the web browser.
+
+//## Example use
+//     Window.create({
+//       settings: {
+//         width: 1280,
+//         height: 720,
+//         type: '3d',
+//         vsync: true,    
+//         multisample: true,
+//         fullscreen: false,
+//         center: true
+//       },
+//       init: function() {
+//         var gl = Core.Context.currentContext;
+//         gl.clearColor(0, 0, 0, 1);
+//         this.framerate(30);
+//       },
+//       draw: function() {
+//         var gl = Core.Context.currentContext;
+//         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
+//       }
+//     });
+
+//## Reference
 define(["plask", "pex/core/Context"], function(plask, Context) {
 
-  function Window() {}
+  //### Window ( )
+  //Empty constructor.  
+  //
+  //*Note: Use create(obj) instead.*
+  function Window() {
+  }
+
+  //### create ( obj )
+  //Creates new window instance.
+  //
+  //`obj` - program object object *{ Object }*
+  //
+  //Supported program object properties    
+  //`settings` - window settings *{ Object }*
+  //`init` - function called after window is created *{ function() }*  
+  //`draw` - function called every frame *{ function() }*  
 
   Window.create = function(obj) {
     var gl = null;
 
-    //we overwrite obj's init function to capture GL context before init() gets executed
+    /*We overwrite obj's init function to capture GL context before init() gets executed*/
     obj.__init = obj.init;
     obj.init = function() {
       gl = this.gl;

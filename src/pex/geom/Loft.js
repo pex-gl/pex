@@ -1,6 +1,21 @@
-//     4          0              n + j + s  -  n + (j + 1) % s + s
-//   7   5      3   1            |             |
-//     6          2              n + j      -  n + (j + 1) % s
+//Extrudes circle along given spline using Parallel Transport Frame
+
+//## Parent class : [Geometry](../core/Geometry.html)
+
+//## Example use 
+//
+//     var points = [ 
+//       new Core.Vec3(-2,  0, 0), 
+//       new Core.Vec3(-1,  0, 0), 
+//       new Core.Vec3( 1,  1, 0), 
+//       new Core.Vec3( 2, -1, 0) 
+//     ];
+//
+//     var spline = new Spline(points);
+//     var loft = new Loft(spline);
+//     var loftMesh = new Mesh(loft, new Materials.TestMaterial());
+//
+//## Reference
 
 define([
   "pex/core/Vec2",
@@ -10,13 +25,152 @@ define([
   "pex/core/Mat4",
   "pex/core/Edge",
   "pex/core/Face3",
-  "pex/geom/Geometry"
+  "pex/core/Geometry",
+  "pex/util/ObjUtils"
   ],
-  function(Vec2, Vec3, Vec4, Color, Mat4, Edge, Face3, Geometry) {
+  function(Vec2, Vec3, Vec4, Color, Mat4, Edge, Face3, Geometry, ObjUtils) {
 
+  //###Loft ( path, options )
+  //`path` - curve along extrusion will occur *{ Spline }*  
+  //`options` - *{ Object }*  
+  //
+  //Default options:  
+  //`numSteps` - number of curve steps *{ Number/Int }* = 200  
+  //`numSegments` - number of circle segments *{ Number/Int }* = 8  
+  //`r` - radius *{ Number }*  = 0.5   
+  function Loft(path, options) {
+    var defaults = {
+      numSteps: 200,
+      numSegments: 8,
+      r: 0.05,
+      lineBuilder: null
+    };
+
+    options = ObjUtils.mergeObjects(defaults, options);
+
+
+    this.vertices = [];
+    this.texCoords = [];
+    this.normals = [];
+    this.faces = [];
+    this.edges = [];
+
+    lineBuilder = options.lineBuilder;
+    var numSteps = options.numSteps;
+    var numSegments = options.numSegments;
+    var r = options.r;
+
+    var index = 0;
+
+    var points = this.computePoints(path, numSteps);
+    var tangents = this.computeTangents(path, numSteps);
+    var frame = null;
+
+    var totalRotation = ptCalcRotation(numSteps, points, tangents);
+    var stepRotation = totalRotation * 1/(numSteps);
+
+    var baseRight = new Vec3(0.05,0,0);
+    var baseUp = new Vec3(0,0.05,0);
+    var baseForward = new Vec3(0,0,0.05);
+    var center;
+
+    for(var i=0; i<=numSteps; i++) {
+      if (i == 0) {
+        frame = ptFirstFrame(points[0], points[1], tangents[0]);
+      }
+      else {
+        frame = ptNextFrame(frame, points[i-1], points[i], tangents[i-1], tangents[i], stepRotation);
+      }
+
+      var right = frame.mulVec3(baseRight);
+      var up = frame.mulVec3(baseUp);
+      var forward = frame.mulVec3(baseForward);
+
+      center = path.getPointAt(i/numSteps);
+
+      if (lineBuilder) lineBuilder.addLine(center, forward, Color.Red);
+      if (lineBuilder) lineBuilder.addLine(center, up, Color.Pink);
+      if (lineBuilder) lineBuilder.addLine(center, right, Color.Yellow);
+
+      for(var j=0; j<=numSegments; j++) {
+        var a = j/numSegments * 2 * Math.PI;
+
+        var p = new Vec3(r * Math.cos(a), r * Math.sin(a), 0);
+        p = frame.mulVec3(p);
+
+        this.vertices.push(p);
+        this.texCoords.push(new Vec2(j/numSegments, i/numSteps));
+        this.normals.push(p.subbed(center).normalize());
+
+        /*     95         40             n+j+s+1  -  n+j+1+s+1
+         *   8   6      3   1            |           |
+         *    7          2              n+j      -  n+j+1 
+         */
+        if (i < numSteps && j < numSegments) {
+           this.faces.push(new Face3(index + j, index + j + 1, index + j + (numSegments + 1)));
+           this.faces.push(new Face3(index + j + (numSegments + 1), index + j + 1, index + j + 1 + (numSegments + 1)));
+
+           this.edges.push(new Edge(index + j, index + j + 1));
+           this.edges.push(new Edge(index + j + 1, index + j + (numSegments + 1)));
+           this.edges.push(new Edge(index + j, index + j + (numSegments + 1)));
+         }
+      }
+
+      index += numSegments + 1;
+    }
+  }
+
+  Loft.prototype = new Geometry();
+
+  //### computePoints ( path, numSteps )
+  //Calculates points on the curve used as a base for building orientation frames.  
+  //
+  //`path` - curve to sample from *{ Spline }*  
+  //`numSteps` - number of points to sample *{ Number/Int }*
+  Loft.prototype.computePoints = function(path, numSteps) {
+    var points = [];
+    for(var i=0; i<=numSteps; i++) {
+      points.push(path.getPointAt(i/numSteps));
+    }
+    return points;
+  }
+
+  //### computeTangents ( path, numSteps )
+  //Calculates tantents of the path at the same positions as points from computePoints method.
+  //
+  //`path` - curve to sample from *{ Spline }*  
+  //`numSteps` - number of points to sample *{ Number/Int }*
+  Loft.prototype.computeTangents = function(path, numSteps) {
+    var tangents = [];
+    for(var i=0; i<=numSteps; i++) {
+      var prevPos = path.getPointAt((i-0.1)/(numSteps));
+      var nextPos = path.getPointAt((i+0.1)/(numSteps));
+      if (lineBuilder) {
+        var currPos = path.getPointAt((i  )/(numSteps));
+        lineBuilder.addLine(prevPos, currPos, Color.Grey);
+      }
+      var t = nextPos.subbed(prevPos);
+      t.normalize();
+      tangents.push(t);
+    }
+    return tangents;
+  }
+
+  //## Private methods and variables
+
+  //### lineBuilder
+  //Line builder instance used for drawing debug lines.
+  var lineBuilder;
+
+  //### ptFirstFrame ( first_pnt, second_pnt, first_tan)
+  //Calculates the first frame of parallel transport frame sequence.  
+  //
+  //`first_pnt` - first point *{ Vec3 }*  
+  //`second_pnt` - seconds point *{ Vec3 }*   
+  //`first_tan` - first tangent *{ Vec3 }*
   var ptFirstFrame = function(first_pnt, second_pnt, first_tan){
       var n = first_tan.dup().cross(second_pnt.subbed(first_pnt));
-      if (n.lengthSquared() === 0) {
+      if(n.lengthSquared() === 0){
           var atx = Math.abs(first_tan.x);
           var aty = Math.abs(first_tan.y);
           var atz = Math.abs(first_tan.z);
@@ -39,8 +193,21 @@ define([
       );
   };
 
+  //### ptRotationSum
+  //Sum of rotation along the curve causing offset between the first and the last frame.
   var ptRotationSum = 0;
 
+  //### ptNextFrame ( prev_mtx, prev_pnt, current_pnt, prev_tan, current_tan, stepRotation )
+  //Calculates next frame of parallel transport frame sequence.  
+  //
+  //`prev_mtx` - previous frame *{ Mat4 }*  
+  //`prev_pnt` - previous point *{ Vec3 }*  
+  //`current_pnt` - current point *{ Vec3 }*  
+  //`prev_tan` - previous tangent *{ Vec3 }*  
+  //`current_tan` - current tangent *{ Vec3 }*  
+  //`stepRotation` - rotation used to compensate for curve twist *{ Number }* = 0
+  //
+  //*Note: stepRotation values comes from ptCalcRotation() divided by number of sampled points.*
   var ptNextFrame = function(prev_mtx, prev_pnt, current_pnt, prev_tan, current_tan, stepRotation){
       var theta = Math.acos(prev_tan.dot(current_tan));
       var axis = prev_tan.dup().cross(current_tan);
@@ -64,11 +231,15 @@ define([
           .mul(prev_mtx);
   };
 
+  //### ptCalcRotation ( numSteps, points, tangents )
+  //Calculates rotation difference between the first and the last frame.  
+  //
+  //*Note: Used to calculate value of stepRotation in ptNextFrame().*
   var ptCalcRotation = function(numSteps, points, tangents) {
     var frame;
     var firstFrame;
     var baseUp = new Vec3(0, 1, 0);
-    for(var i=0; i<numSteps; i++) {
+    for(var i=0; i<=numSteps; i++) {
       if (i == 0) {
         frame = ptFirstFrame(points[0], points[1], tangents[0]);
         firstFrame = frame.dup();
@@ -77,104 +248,12 @@ define([
         frame = ptNextFrame(frame, points[i-1], points[i], tangents[i-1], tangents[i], 0);
       }
     }
-    var firstBase = firstFrame.mulVec3(baseUp).sub(points[i]).normalize();
-    var lastBase = frame.mulVec3(baseUp).sub(points[i]).normalize();
-    var a = firstBase.dot(lastBase);
-    a = Math.acos(a);
-    return a;
-  }
-
-  function Loft(path) {
-    this.vertices = [];
-    this.texCoords = [];
-    this.faces = [];
-    this.edges = [];
-
-    var numSteps = 150;
-    var numSegments = 8;
-    var r = 0.1;
-
-    var index = 0;
-
-    var points = this.computePoints(path, numSteps);
-    var tangents = this.computeTangents(path, numSteps);
-    var frame = 0;
-    var firstFrame = 0;//temp;
-
-    var totalRotation = ptCalcRotation(numSteps, points, tangents);
-    var stepRotation = totalRotation * 1/numSteps;
-
-    var baseRight = new Vec3(0.05,0,0);
-    var baseUp = new Vec3(0,0.05,0);
-    var baseForward = new Vec3(0,0,0.05);
-    var center;
-    for (var i=0; i<numSteps; i++) {
-      if (i == 0) {
-        frame = ptFirstFrame(points[0], points[1], tangents[0]);
-      }
-      else {
-        frame = ptNextFrame(frame, points[i-1], points[i], tangents[i-1], tangents[i], stepRotation);
-      }
-
-      var right = frame.mulVec3(baseRight);
-      var up = frame.mulVec3(baseUp);
-      var forward = frame.mulVec3(baseForward);
-
-      center = path.getPointAt(i/(numSteps-1));
-
-      for(var j=0; j<numSegments; j++) {
-        var a = j/numSegments * 2 * Math.PI;
-
-        var p = new Vec3(r * Math.cos(a), r * Math.sin(a), 0);
-        p = frame.mulVec3(p);
-
-        this.vertices.push(p);
-        this.texCoords.push(new Vec2(j/numSegments, i/numSteps));
-
-        if (i < numSteps - 2) {
-          this.faces.push(new Face3(index + j, index + (j + 1 ) % numSegments, index + j + numSegments));
-          this.faces.push(new Face3(index + j + numSegments, index + (j + 1 ) % numSegments, index + (j + 1 ) % numSegments + numSegments));
-
-          this.edges.push(new Edge(index + j, index + (j + 1 ) % numSegments));
-          this.edges.push(new Edge(index + (j + 1 ) % numSegments, index + j + numSegments));
-          this.edges.push(new Edge(index + j, index + j + numSegments));
-        }
-        else if (i < numSteps - 1) {
-          this.faces.push(new Face3(index + j, index + (j + 1 ) % numSegments, j));
-          this.faces.push(new Face3(j, index + (j + 1 ) % numSegments, (j + 1 ) % numSegments));
-
-          this.edges.push(new Edge(index + j, index + (j + 1 ) % numSegments));
-          this.edges.push(new Edge(index + (j + 1 ) % numSegments, j));
-          this.edges.push(new Edge(index + j, j));
-        }
-      }
-
-      index += numSegments;
-    }
-
-    this.computeNormals();
-  }
-
-  Loft.prototype = new Geometry();
-
-  Loft.prototype.computePoints = function(path, numSteps) {
-    var points = [];
-    for(var i=0; i<=numSteps; i++) {
-      points.push(path.getPointAt((i  )/(numSteps-1)));
-    }
-    return points;
-  }
-
-  Loft.prototype.computeTangents = function(path, numSteps) {
-    var tangents = [];
-    for(var i=0; i<=numSteps; i++) {
-      var prevPos = path.getPointAt((i-0.1)/(numSteps-1));
-      var nextPos = path.getPointAt((i+0.1)/(numSteps-1));
-      var t = nextPos.subbed(prevPos);
-      t.normalize();
-      tangents.push(t);
-    }
-    return tangents;
+    var lastCenter = points[points.length - 1];
+    var firstBase = firstFrame.mulVec3(baseUp).sub(lastCenter).normalize();
+    var lastBase = frame.mulVec3(baseUp).sub(lastCenter).normalize();
+    var fdotl = Math.max(0, Math.min(firstBase.dot(lastBase), 1.0));
+    var angle = Math.acos(fdotl);
+    return angle;
   }
 
   return Loft;

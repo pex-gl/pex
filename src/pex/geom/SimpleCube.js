@@ -1,4 +1,16 @@
-define(["pex/core/Vec3", "pex/core/Face3", "pex/geom/Geometry"], function(Vec3, Face3, Geometry) {
+//Simple cube geometry generator.  
+//No tex coords, no normals, just faces.
+
+//## Parent class : [Geometry](../core/Geometry.html)
+
+//## Example use
+//      var cube = new SimpleCube(1);
+//      var sphereMesh = new Mesh(sphere, new Materials.TestMaterial());
+
+//## Reference
+define(["pex/core/Vec3", "pex/core/Face3", "pex/core/Geometry"], function(Vec3, Face3, Geometry) {
+  //### SimpleCube ( size )
+  //`size` - size of the cube *{ Number }* = 1
   function SimpleCube(size) {
     size = size || 1;
     var s = size/2;

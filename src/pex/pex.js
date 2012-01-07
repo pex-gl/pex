@@ -1,3 +1,4 @@
+//Module wrapper for the whole Pex library.
 define("pex/Pex", [
     "pex/cameras/Cameras",
     "pex/core/Core",

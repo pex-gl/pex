@@ -14,7 +14,7 @@ requirejs.config({
   nodeRequire: require
 });
 
-requirejs.pexBaseUrl = workingDirectory;
+requirejs.pexWorkingDirectory = workingDirectory;
 
 module.exports = {
   require : requirejs,

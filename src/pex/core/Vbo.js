@@ -1,9 +1,30 @@
-define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","pex/core/Face4"], function(Context, Vec2, Vec3, Face3, Face4) {
+//Vertex Buffer Object.
 
-  // |primitiveType| gl.POINTS, gl.TRIANGLES etc..
-  // |usage| gl.STATIC_DRAW, gl.STREAM_DRAW or gl.DYNAMIC_DRAW
-  // |attributes| an array of objects in the format: [{ data: [], size: 3 }]
+//## Example use
+//     var positions = [ 0,0,0, 0,1,0, 1,1,0 ];
+//     var colors = [ 1,0,0,1, 0,1,0,1, 0,0,1,1 ];
+//     var indices = [ 0,1,2 ];
+//
+//     var vbo = new Vbo(gl.TRIANGLES, gl.STATIC_DRAW);
+//     vbo.addAttrib("position", positions);
+//     vbo.addAttrib("color", colors, 4);
+//     vbo.setIndices(indices);
+//
+//     var program = Program.load("showColor.glsl");
+//     vbo.draw(program);
 
+//## Reference
+define([
+  "pex/core/Context", 
+  "pex/core/Vec2", 
+  "pex/core/Vec3", 
+  "pex/core/Face3",
+  "pex/core/Face4"
+  ], function(Context, Vec2, Vec3, Face3, Face4) {
+
+  //### Vbo ( primitiveType, usage )
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
+  //`usage` : GL buffer usage *{ Number/Int }* = *STATIC_DRAW*  
   function Vbo(primitiveType, usage) {
     this.gl = Context.currentContext;
     this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
@@ -11,6 +32,15 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     this.usage = usage || this.gl.STATIC_DRAW;
   }
 
+  //### addAttrib ( name, data, size, usage )
+  //Adds vector attribute to the buffer.  
+  //
+  //`name` - name of the attribute *{ String }*  
+  //`data` - attribute data *{ Array of Numbers }*  
+  //`size` - number of elements per vertex *{ Number/Int }*  
+  //*For example if position is Vec3 then is has 3 elements X, Y, Z per vertex.*    
+  //`usage` : GL buffer usage *{ Number/Int }*  
+  //*If no usage is specified the default from the Vbo constructor will be used.*
   Vbo.prototype.addAttrib = function(name, data, size, usage) {
     size = size || 3
     usage = usage || this.usage;
@@ -27,6 +57,11 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     this.attributes[attrib.name] = attrib;
   }
 
+  //### updateAttrib ( name, data )
+  //Uploads new data for the given attribute to the GPU.  
+  //
+  //`name` - name of the attribute to update *{ String }*   
+  //`data` - new data *{ Array of Numbers }*   
   Vbo.prototype.updateAttrib = function(name, data) {
     var attrib = this.attributes[name];
     if (!attrib) {
@@ -39,6 +74,12 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
   }
 
+  //### setIndices ( data, usage )
+  //Sets the index buffer data.  
+  //
+  //`data` - indices data *{ Array of Numbers/Ints }*  
+  //`usage` : GL buffer usage *{ Number/Int }*  
+  //*If no usage is specified the default from the Vbo constructor will be used.*
   Vbo.prototype.setIndices = function(data, usage) {
     usage = usage || this.usage;
 
@@ -52,12 +93,18 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
   }
 
-  Vbo.prototype.draw = function(program) {
+  //### draw ( program )
+  //Binds all the vertex attributes and draws all the primitives.  
+  //
+  //`program` - shader program to draw with *{ Program }*
+  Vbo.prototype.draw = function(program) {    
     for(var name in this.attributes) {
       var attrib = this.attributes[name];
-      //this should go another way
-      //instad of searching for mesh atribs in shader
-      //look for required attribs by shader inside mesh
+      /*
+      TODO:this should go another way
+      instad of searching for mesh atribs in shader
+      look for required attribs by shader inside mesh
+      */
       if (attrib.location === undefined || attrib.location == -1) {
         attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
       }
@@ -67,15 +114,25 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
         this.gl.enableVertexAttribArray(attrib.location);
       }
     }
+
     if (this.indices) {
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
-      this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
+      this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, null);
     }
     else if (this.attributes["position"]){
       this.gl.drawArrays(this.primitiveType, 0, this.attributes["position"].data.length/3);
     }
+
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      if (attrib.location >= 0) {
+        this.gl.disableVertexAttribArray(attrib.location);
+      }
+    }
   }
 
+  //### dispose ( )
+  //Frees all the buffers data.
   Vbo.prototype.dispose = function() {
     for(var name in this.attributes) {
       this.gl.deleteBuffer(this.attributes[name].buffer);
@@ -85,14 +142,16 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
     }
   }
 
-  //gl
-  //geom
-  //primitiveType = e.g.: gl.TRIANGLES
-  //useEdges = false/true - use faces or edges
+  //### fromGeometry ( geom, primitiveType, useEdges )
+  //Builds new VBO from geometry data.
+  //
+  //`geom` - geometry to build from *{ Geometry }*  
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
+  //`useEdges` - use edges instead of faces? *{ Boolean }* = *false*
   Vbo.fromGeometry = function(geom, primitiveType, useEdges) {
     var gl = Context.currentContext;;
 
-    var vbo = new Vbo(primitiveType, gl.STATIC_DRAW);
+    var vbo = new Vbo(primitiveType, gl.DYNAMIC_DRAW);
 
     useEdges = useEdges || false;
 
@@ -131,7 +190,7 @@ define(["pex/core/Context", "pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3","
       var colors = [];
 
       for(var i=0; i<geom.colors.length; ++i) {
-        colors.push(geom.colors[i].x, geom.colors[i].y, geom.colors[i].z, geom.colors[i].w);
+        colors.push(geom.colors[i].r, geom.colors[i].g, geom.colors[i].b, geom.colors[i].a);
       }
       vbo.addAttrib("color", colors, 4);
     }

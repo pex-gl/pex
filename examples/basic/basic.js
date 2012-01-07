@@ -24,7 +24,7 @@ Pex.run([
         gl.clearColor(0, 0, 0, 1);
 
         this.camera = new PerspectiveCamera(60, this.width/this.height);
-        this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial(this.gl));
+        this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial()));
         this.mesh.material.uniforms.color = new Core.Vec4(1.0, 0.0, 0.0, 1.0);
 
         this.framerate(30);

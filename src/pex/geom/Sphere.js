@@ -1,4 +1,17 @@
-define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3", "pex/geom/Geometry"], function(Vec2, Vec3, Face3, Geometry) {
+//Sphere geometry generator.
+
+//## Parent class : [Geometry](../core/Geometry.html)
+
+//## Example use
+//      var sphere = new Sphere(1, 36, 36);
+//      var sphereMesh = new Mesh(sphere, new Materials.TestMaterial());
+
+//## Reference
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3", "pex/core/Geometry"], function(Vec2, Vec3, Face3, Geometry) {
+  //### Sphere ( r, nsides, nsegments )
+  //`r` - radius of the sphere *{ Number }*  
+  //`nsides` - number of subdivisions on XZ axis *{ Number }*  
+  //`nsegments` - number of subdivisions on Y axis *{ Number }*
   function Sphere(r, nsides, nsegments) {
     r = r || 0.5;
     nsides = nsides || 36;
@@ -13,8 +26,6 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face3", "pex/geom/Geometry"]
 
     var dphi   = 360.0/nsides;
     var dtheta = 180.0/nsegments;
-
-    //var estimatedNumPoints = (Math.floor(360/dtheta) + 1) * (Math.floor(180/dphi) + 1);
 
     function evalPos(theta, phi) {
       var pos = new Vec3();

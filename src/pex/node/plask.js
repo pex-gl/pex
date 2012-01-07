@@ -1,5 +1,6 @@
-// Vector and Matrix utilities from Plask
-// http://plask.org
+//Vector and Matrix utilities from [Plask](http://plask.org).  
+//
+//*Note: Normally Plask runs on top of Node.js so to use it in the browser I had to copy all the shared code here.* 
 
 define([], function() {
 
@@ -680,7 +681,7 @@ define([], function() {
         x: e.clientX,
         y: e.clientY
       });
-    })
+    })   
   }
 
   function makeMouseDraggedHandler(canvas, handler) {
@@ -710,11 +711,30 @@ define([], function() {
     })
   }
 
+  function makeKeyDownHandler(canvas, handler) {
+    var timeout = 0;
+    window.addEventListener('keydown', function(e) {
+      timeout = setTimeout(function() {
+        handler({
+          str: "",
+          keyCode: e.keyCode
+        }, 1);
+      })
+    })
+    window.addEventListener('keypress', function(e) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = 0;
+      }
+      handler({
+        str: String.fromCharCode(e.charCode),
+        keyCode: e.keyCode
+      });
+    })
+  }
+
   function makeScrollWheelHandler(canvas, handler) {
     window.onmousewheel = function(e) {
-      handler({
-        dy: e.wheelDelta
-      });
     }
   }
 
@@ -746,6 +766,7 @@ define([], function() {
         case 'mouseDragged': makeMouseDraggedHandler(canvas, handler); break;
         case 'mouseMoved': makeMouseMovedHandler(canvas, handler); break;
         case 'scrollWheel': makeScrollWheelHandler(canvas, handler); break;
+        case 'keyDown': makeKeyDownHandler(canvas, handler); break;
       }
     }
 

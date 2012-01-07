@@ -1,16 +1,51 @@
-define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "pex/geom/Geometry", "pex/util/Log"], function(Context, Vbo, Vec3, Vec4, Geometry, Log) {
+//Untility class binding Geometry data, Material style used for rendering and
+//3d transforms in one place.
 
-  //  Parameters:
-  //    gl - gl context
-  //    meshData - vbo or geometry
-  //    material - mesh material
-  //    options = {
-  //      primitiveType : eg.: gl.POINTS,
-  //      useEdges : true / false
-  //    }
+//## Example use
+//     var material = new Materials.TestMaterial();
+//     var camera = new PerspectiveCamera();
+//
+//     var cube = new Mesh(new Cube(), material);
+//     cube.position.x = 1;
+//     cube.rotation = new Vec4(0, 1, 0, Math.PI/2);
+//     cube.draw(camera);
+
+//## Reference
+define([
+  "pex/core/Context", 
+  "pex/core/Vbo", 
+  "pex/core/Vec3", 
+  "pex/core/Vec4", 
+  "pex/core/Geometry", 
+  "pex/util/Log",
+  "pex/util/ObjUtils"
+  ], function(Context, Vbo, Vec3, Vec4, Geometry, Log, ObjUtils) {
+
+  //### Mesh ( meshData, material, options )
+  //`meshData` - *{ Vbo }* or *{ Geometry }*  
+  //`material` - material to use for rendering *{ Material }*  
+  //`options` - *{ Object }*  
+  //
+  //Default options:     
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
+  //`useEdges` : favor edges instead of faces? *{ Boolean }* = *false*  
+  //
+  //Default mesh transforms:  
+  //`position` - *{ Vec3 }*  = (0, 0, 0)  
+  //`rotation` - *{ Vec4 }* = (0, 1, 0, 0)  
+  //`scale`  - *{ Vec3 }*  = (1, 1, 1)  
+  //
+  //*Note: If Geometry is used as meshData it will be converted into VBOs.*    
   function Mesh(meshData, material, options) {
-    this.options = options || {};
     this.gl = Context.currentContext;
+
+    var defaults = {
+      primitiveType : this.gl.TRIANGLES,
+      useEdges : false
+    }
+
+    this.options = ObjUtils.mergeObjects(defaults, options);
+
     this.material = material;
     this.vbos = [];
 
@@ -27,14 +62,19 @@ define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "p
     this.scale = new Vec3(1, 1, 1);
   }
 
+  //### buildVbosFromGeometry ( )
+  //Converts geometry into VBO.
+  //The geometry might be split into smaller once if required resulting in many VBOs.
   Mesh.prototype.buildVbosFromGeometry = function() {
     for(var i=0; i<this.vbos.length; i++) {
       this.vbos[i].dispose();
     }
     this.vbos = [];
 
-    if (this.geometry.vertices.length > Geometry.MAX_VERTICES) {
-      Log.message("Mesh.Mesh numVertices " + this.geometry.vertices.length + " > " + Geometry.MAX_VERTICES + ". Splitting...");
+    var numVertices = this.geometry.vertices.length;
+
+    if (numVertices > Geometry.MAX_VERTICES) {
+      Log.message("Mesh.Mesh numVertices " + numVertices + " > " + Geometry.MAX_VERTICES + ". Splitting...");
       var geometries = this.geometry.split();
       for(var i=0; i<geometries.length; i++) {
         this.vbos.push(Vbo.fromGeometry(geometries[i], this.options.primitiveType, this.options.useEdges));
@@ -45,8 +85,15 @@ define(["pex/core/Context", "pex/core/Vbo", "pex/core/Vec3", "pex/core/Vec4", "p
     }
   }
 
+  //### draw ( camera )
+  //Draws the mesh using given camera.
+  //`camera` - *{ PerspectiveCamera }*
+  //
+  //*Note: Camera projection and view matrices will be passed over to shader uniforms. 
+  //Model View and Normal matrices will be computed and passed as well.*
   Mesh.prototype.draw = function(camera) {
     if (this.geometry && this.geometry.dirty) {
+      this.geometry.dirty = false;
       this.buildVbosFromGeometry();
     }
 

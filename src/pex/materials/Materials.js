@@ -1,3 +1,4 @@
+//Module wrapper for material classes.
 define([
   "pex/materials/SolidColorMaterial",
   "pex/materials/ShowColorMaterial",

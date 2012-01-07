@@ -25,6 +25,12 @@ var require = {
 //Initialization code of Pex when running in the browser.
 
 var Pex = {
+  requireConfig: null,
+  require: {
+    config: function(o) {
+      Pex.requireConfig = o;
+    }
+  }, 
   run: function(initModules, initCallback) {
     this.initModules = initModules;
     this.initCallback = initCallback;
@@ -49,7 +55,7 @@ var Pex = {
 
   var path = src.replace("pex-webgl.js", "");
 
-  require.baseUrl = '';
+  require.baseUrl = Pex.require.baseUrl || '';
   require.paths = { "pex": path };
   require.priority = preloadCore ? [ path + "pex-core.js" ] : null,
   require.packages = [
@@ -59,11 +65,20 @@ var Pex = {
   ];
   require.ready = function() {
     Pex.require = require;
-    Pex.require.pexBaseUrl = "";
-    if (Pex.initModules && Pex.initCallback) {
-      Pex.require(Pex.initModules, Pex.initCallback);
+    Pex.require.pexWorkingDirectory = "";
+    if (Pex.requireConfig) {
+      Pex.require.config(Pex.requireConfig);
+    }
+    if (Pex.initModules) {
+      if (Pex.initCallback) {
+        Pex.require(Pex.initModules, Pex.initCallback);
+      }    
+      else {
+        Pex.require([Pex.initModules]);
+      }  
     }
   }
+
 
   var head = document.getElementsByTagName('head')[0];
   var script = document.createElement('script');

@@ -1,10 +1,11 @@
-define(["pex/util/Log"], function(Log) {
+define(["pex/util/Log", "pex/core/Context"], function(Log, Context) {
   function GLUtils() {
   }
 
   var gl_enums = null;
 
-  GLUtils.checkGLErrors = function(gl, msg) {
+  GLUtils.checkGLErrors = function(msg) {
+    var gl = Context.currentContext;
     msg = msg || "";
     var err = gl.getError();
     if (err !== gl.NO_ERROR){
