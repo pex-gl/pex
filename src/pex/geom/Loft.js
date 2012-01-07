@@ -26,9 +26,10 @@ define([
   "pex/core/Edge",
   "pex/core/Face3",
   "pex/core/Geometry",
+  "pex/geom/Path",
   "pex/util/ObjUtils"
   ],
-  function(Vec2, Vec3, Vec4, Color, Mat4, Edge, Face3, Geometry, ObjUtils) {
+  function(Vec2, Vec3, Vec4, Color, Mat4, Edge, Face3, Geometry, Path, ObjUtils) {
 
   //###Loft ( path, options )
   //`path` - curve along extrusion will occur *{ Spline }*  
@@ -37,17 +38,22 @@ define([
   //Default options:  
   //`numSteps` - number of curve steps *{ Number/Int }* = 200  
   //`numSegments` - number of circle segments *{ Number/Int }* = 8  
-  //`r` - radius *{ Number }*  = 0.5   
+  //`r` - radius *{ Number }*  = 0.5  
+  //`lineBuilder` - debug lines *{ LineBuilder }* = null  
+  //`shapePath` - shape to be extruded *{ Path }* = null  
+  //
+  //Note: If shapePath is null a circle with numSegments and radius r will be created.  
+  //Note: Shape path has to be on the XY plane to be extruded properly.  
   function Loft(path, options) {
     var defaults = {
       numSteps: 200,
       numSegments: 8,
       r: 0.05,
-      lineBuilder: null
+      lineBuilder: null,
+      shapePath: null
     };
 
     options = ObjUtils.mergeObjects(defaults, options);
-
 
     this.vertices = [];
     this.texCoords = [];
@@ -74,6 +80,19 @@ define([
     var baseForward = new Vec3(0,0,0.05);
     var center;
 
+    var shapePath = options.shapePath;
+    if (!shapePath) {
+      shapePath = new Path();
+      for(var i=0; i<numSegments; i++) {
+        var a = i/numSegments * 2 * Math.PI;
+        var p = new Vec3(r * Math.cos(a), r * Math.sin(a), 0);
+        shapePath.addPoint(p);
+      }
+      shapePath.close();
+    }
+
+    numSegments = shapePath.vertices.length
+
     for(var i=0; i<=numSteps; i++) {
       if (i == 0) {
         frame = ptFirstFrame(points[0], points[1], tangents[0]);
@@ -93,9 +112,7 @@ define([
       if (lineBuilder) lineBuilder.addLine(center, right, Color.Yellow);
 
       for(var j=0; j<=numSegments; j++) {
-        var a = j/numSegments * 2 * Math.PI;
-
-        var p = new Vec3(r * Math.cos(a), r * Math.sin(a), 0);
+        var p = shapePath.vertices[j % numSegments];
         p = frame.mulVec3(p);
 
         this.vertices.push(p);
@@ -169,28 +186,32 @@ define([
   //`second_pnt` - seconds point *{ Vec3 }*   
   //`first_tan` - first tangent *{ Vec3 }*
   var ptFirstFrame = function(first_pnt, second_pnt, first_tan){
-      var n = first_tan.dup().cross(second_pnt.subbed(first_pnt));
-      if(n.lengthSquared() === 0){
-          var atx = Math.abs(first_tan.x);
-          var aty = Math.abs(first_tan.y);
-          var atz = Math.abs(first_tan.z);
-          if(atz < atx && atz < aty)
-              n = first_tan.dup().cross(new Vec3(0, 0, first_tan.z));
-          else if(aty > atx && aty > atz)
-              n = first_tan.dup().cross(new Vec3(0, first_tan.y, 0));
-          else
-              n = first_tan.dup().cross(new Vec3(first_tan.x, 0, 0));
+    var n = first_tan.dup().cross(second_pnt.subbed(first_pnt));
+    if(n.lengthSquared() === 0){
+      var atx = Math.abs(first_tan.x);
+      var aty = Math.abs(first_tan.y);
+      var atz = Math.abs(first_tan.z);
+      if (atz < atx && atz <= aty) {
+        n = first_tan.dup().cross(new Vec3(0, 0, 1)); //first_tan.z
       }
-      n.normalize();
+      else if(aty > atx && aty >= atz) {
+        n = first_tan.dup().cross(new Vec3(0, 1, 0)); //first_tan.y
+      }
+      else {
+        n = first_tan.dup().cross(new Vec3(1, 0, 0)); //first_tan.x
+      }
+    }
 
-      var b = first_tan.dup().cross(n);
+    n.normalize();
 
-      return new Mat4().set4x4r(
-          b.x, n.x, first_tan.x, first_pnt.x,
-          b.y, n.y, first_tan.y, first_pnt.y,
-          b.z, n.z, first_tan.z, first_pnt.z,
-            0,   0,           0,           1
-      );
+    var b = first_tan.dup().cross(n);
+
+    return new Mat4().set4x4r(
+        b.x, n.x, first_tan.x, first_pnt.x,
+        b.y, n.y, first_tan.y, first_pnt.y,
+        b.z, n.z, first_tan.z, first_pnt.z,
+          0,   0,           0,           1
+    );
   };
 
   //### ptRotationSum
