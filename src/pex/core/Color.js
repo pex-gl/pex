@@ -32,7 +32,7 @@ define(["pex/core/Vec4"], function(Vec4) {
 
   //### Predefinied Colors
   Color.Black = new Color(0, 0, 0, 1);
-  Color.Grey = new Color(1, 1, 1, 1);
+  Color.White = new Color(1, 1, 1, 1);
   Color.Grey = new Color(0.5, 0.5, 0.5, 1);
   Color.Red = new Color(1, 0, 0, 1);
   Color.Green = new Color(0, 1, 0, 1);
