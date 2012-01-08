@@ -20,10 +20,10 @@
 define(["pex/core/Vec3"], function(Vec3) {
 
   //### Spline ( points, [ loop ] )
-  //`points` - *{ Array of Vec3 }*  
-  //`loop` - is the spline a connected loop? *{ Boolean }*  
+  //`points` - *{ Array of Vec3 }* = [ ]  
+  //`loop` - is the spline a connected loop? *{ Boolean }* = false
   function Spline(points, loop) {
-    this.points = points;
+    this.points = points || [];
     this.dirtyLength = true;
     this.loop = loop || false;
     this.samplesCount = 2000;
@@ -65,8 +65,17 @@ define(["pex/core/Vec3"], function(Vec3) {
     return vec;
   }
 
+  //### addPoint ( p )
+  //Adds point to the spline
+  //
+  //`p` - point to be added *{ Vec3 }* 
+  Spline.prototype.addPoint = function ( p ) {
+    this.dirtyLength = true;
+    this.points.push(p)
+  }
+
   //### getPointAt ( d )
-  //Get position based on d-th of total length of the curve.
+  //Gets position based on d-th of total length of the curve.
   //Precise but might be slow at the first use due to need to precalculate length.
   //
   //`d` - *{ Number } <0, 1>*
@@ -95,7 +104,7 @@ define(["pex/core/Vec3"], function(Vec3) {
   }
 
   //### getPointAtIndex ( i )
-  //Get position of i-th point forming the curve
+  //Returns position of i-th point forming the curve
   //
   //`i` - *{ Number } <0, Spline.points.length)*
   Spline.prototype.getPointAtIndex = function ( i ) {
@@ -107,6 +116,12 @@ define(["pex/core/Vec3"], function(Vec3) {
     }
   }
   
+  //### getNumPoints ( )
+  //Return number of base points in the spline
+  Spline.prototype.getNumPoints = function() {
+    return this.points.length;
+  }
+
   //### getLength ( )
   //Returns the total length of the spline.
   Spline.prototype.getLength = function() {
