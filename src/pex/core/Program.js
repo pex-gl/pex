@@ -94,7 +94,6 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
     for(var i = 0; i < numUniforms; ++i){
       var info     = gl.getActiveUniform(handle, i);
       var location = gl.getUniformLocation(handle, info.name);
-      console.log(info.name);
       this.uniforms[info.name] = makeUniformSetter(gl, info.type, location);
     }
 
