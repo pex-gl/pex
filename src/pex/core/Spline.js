@@ -115,7 +115,7 @@ define(["pex/core/Vec3"], function(Vec3) {
       return null;
     }
   }
-  
+
   //### getNumPoints ( )
   //Return number of base points in the spline
   Spline.prototype.getNumPoints = function() {
@@ -166,6 +166,18 @@ define(["pex/core/Vec3"], function(Vec3) {
 
     this.length = totalLength;
     this.dirtyLength = false;
+  }
+
+  //### close ( )
+  //Closes the spline. It will form a loop now.
+  Spline.prototype.close = function( ) {
+    this.loop = true;
+  }
+
+  //### isClosed ( )
+  //Returns true if spline is closed (forms a loop) *{ Boolean }*
+  Spline.prototype.isClosed = function() {
+    return this.loop;
   }
 
   //### interpolate ( p0, p1, p2, p3, t)
