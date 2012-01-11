@@ -37,7 +37,12 @@ define([
   //### Geometry.MAX_VERTICES
   //Maximum number of different vertices per geometry. Limited by the type of 
   //index buffer variables which according to WebGL is a 16 bit integer.
-  Geometry.MAX_VERTICES = 65536;
+  Geometry.MAX_VERTICES = 10*65536;
+
+  Geometry.POINTS = 0;
+  Geometry.LINES = 1;
+  Geometry.TRIANGLES = 4;
+  Geometry.QUADS = 7;
 
   //### computeNormals ( )
   //Computes per vertex normal by averaging the normals of faces connected
@@ -132,7 +137,7 @@ define([
     var attributes = {"vertices":"", "texCoords":"", "normals":"", "colors":""};
 
     if (this.faces) {
-      Log.eror("Geometry.split ERROR : Only edge meshes are supported at the moment");
+      Log.error("Geometry.split ERROR : Only edge meshes are supported at the moment");
       return;
     }
     else if (this.edges) {

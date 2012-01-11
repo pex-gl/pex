@@ -8,7 +8,7 @@
 //     mesh.draw(camera);
 
 //## Reference
-define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4, Mat4) {
+define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], function(Vec3, Vec4, Mat4, Ray) {
 
   //### PerspectiveCamera ( fov, aspectRatio, near, far, position, target, up )
   //`fov` - field of view *{ Number }* = 60    
@@ -150,7 +150,6 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4,
     );
   }
 
-
   //### calcModelViewMatrix ( modelTranslation, modelRotation, modelScale )
   //Utility function for calculating model view matrix
   //
@@ -171,6 +170,33 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4"], function(Vec3, Vec4,
 
     modelViewMatrix.mul(modelWorldMatrix);
     return modelViewMatrix;
+  }
+
+  //Gets ray in world coordinates for a x,y screen position
+  //
+  //`x` - x position *{ Number }*  
+  //`y` - y position *{ Number }*  
+  //`windowWidth` - width of the window *{ Number }*  
+  //`windowHeight` - height of the window *{ Number }*
+  PerspectiveCamera.prototype.getWorldRay = function(x, y, windowWidth, windowHeight) {
+    var x = (x - windowWidth/2) / (windowWidth/2);
+    var y = -(y - windowHeight/2) / (windowHeight/2);
+
+    var hNear = 2 * Math.tan(this.getFov()/180*Math.PI / 2) * this.getNear();
+    var wNear = hNear * this.getAspectRatio();
+
+    x *= wNear / 2;
+    y *= hNear / 2;
+
+    var vOrigin = new Vec3(0, 0, 0);
+    var vTarget = new Vec3(x, y, -this.getNear());
+    var invViewMatrix = this.getViewMatrix().dup().invert();
+
+    var wOrigin = invViewMatrix.mulVec3(vOrigin);
+    var wTarget = invViewMatrix.mulVec3(vTarget);
+    var wDirection = wTarget.subbed(wOrigin);
+
+    return new Ray(wOrigin, wDirection);
   }
 
   return PerspectiveCamera;
