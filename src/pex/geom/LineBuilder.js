@@ -42,7 +42,7 @@ define([
     this.vertices = [];
     this.colors = [];
     this.edges = [];
-    this.vertexCount = 0;
+    this.vertexCount = 0;     
   }
 
   //### addLine ( pos1, pos2 , color1, color2 )
