@@ -16,13 +16,14 @@
 
 //## Reference
 define([
-  "pex/core/Vec3", 
-  "pex/core/Vec4", 
-  "pex/core/Edge", 
-  "pex/core/Mat4", 
+  "pex/core/Vec3",
+  "pex/core/Vec4",
+  "pex/core/Edge",
+  "pex/core/Mat4",
+  "pex/core/Color",
   "pex/core/Geometry"
 ], 
-  function(Vec3, Vec4, Edge, Mat4, Geometry) {
+  function(Vec3, Vec4, Edge, Mat4, Color, Geometry) {
   //### LineBuilder ( )
   function LineBuilder() {
     this.vertices = [];
@@ -105,7 +106,18 @@ define([
         this.edges.push(new Edge(this.vertexCount + i, this.vertexCount + (i + 1) % 36));
       }
       this.vertexCount += 36;
-    }    
+    }
+  }
+
+  LineBuilder.prototype.addPlane = function(pos, normal, up, r, color) {
+    var front = normal;
+    var right = up.crossed(front);
+    var nLines = 20;
+    for(var i=0; i<nLines; i++) {
+      var f = r * (-1 + 2*i/(nLines-1));
+      this.addLine(pos.subbed(right.scaled(r)).added(up.scaled(f)), pos.added(right.scaled(r)).added(up.scaled(f)), color);
+      this.addLine(pos.added(right.scaled(f)).subbed(up.scaled(r)), pos.added(right.scaled(f)).added(up.scaled(r)), color);
+    }
   }
 
   //### addCircle ( pos, r, color )
@@ -113,7 +125,7 @@ define([
   // 
   //`pos` - position *{ Vec3 }*  
   //`r` - radius *{ Number }*  
-  //`color` - position *{ Color }* = null  
+  //`color` - line color *{ Color }* = null  
   //`transform` - transformation matrix *{ Mat4 }* = null
   //
   //*Note: transform is useful e.g. for making screen aligned circles in 3d space.*
@@ -129,6 +141,48 @@ define([
       this.edges.push(new Edge(this.vertexCount + i, this.vertexCount + (i + 1) % 36));
     }
     this.vertexCount += 36;
+  }
+
+  //### addRect ( pos, width, height, color, transform, corner )
+  //Adds a rectangle.
+  //
+  //`pos` - position *{ Vec3 }*  
+  //`width` - width *{ Number }*  
+  //`height` - width *{ Number }*  
+  //`color` - line color *{ Color }* = null  
+  //`transform` - transformation matrix *{ Mat4 }* = null
+  //`center` - is position the center or a top left corner of the rect = *{ Boolean }* false (corner)
+  //
+  //*Note: transform is useful e.g. for making screen aligned rectangles in 3d space.*
+  LineBuilder.prototype.addRect = function(pos, width, height, color, transform, center) {
+    var points = [];
+
+    if (center) {
+      points.push(new Vec3(-width/2, -height/2, 0));
+      points.push(new Vec3( width/2, -height/2, 0));
+      points.push(new Vec3( width/2,  height/2, 0));
+      points.push(new Vec3(-width/2,  height/2, 0));
+    }
+    else {
+      points.push(new Vec3(0, 0, 0));
+      points.push(new Vec3(width, 0, 0));
+      points.push(new Vec3(width, height, 0));
+      points.push(new Vec3(0, height, 0));
+    }
+
+    for(var i=0; i<4; i++) {
+      var d = points[i];
+      if (transform) d = transform.multVec3(d);
+      this.vertices.push(pos.added(d));
+      if (color) this.colors.push(color);
+    }
+
+    this.edges.push(new Edge(this.vertexCount + 0, this.vertexCount + 1));
+    this.edges.push(new Edge(this.vertexCount + 1, this.vertexCount + 2));
+    this.edges.push(new Edge(this.vertexCount + 2, this.vertexCount + 3));
+    this.edges.push(new Edge(this.vertexCount + 3, this.vertexCount + 0));
+
+    this.vertexCount += 4;
   }
 
   return LineBuilder;
