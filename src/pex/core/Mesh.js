@@ -110,5 +110,14 @@ define([
     }
   }
 
+  //### dispose ( )
+  //Frees memory taken by the mesh
+  Mesh.prototype.dispose = function() {
+    for(var i=0; i<this.vbos.length; i++) {
+      this.vbos[i].dispose();
+    }
+    this.vbos = [];
+  }
+
   return Mesh;
 });
