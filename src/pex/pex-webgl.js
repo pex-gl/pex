@@ -61,7 +61,9 @@ var Pex = {
   require.packages = [
     { name: "plask", location: path + "node", main: "plask" },
     { name: "fs", location: path + "node", main: "fs" },
-    { name: "path", location: path + "node", main: "path" }
+    { name: "path", location: path + "node", main: "path" },
+    { name: "sys", location: path + "node", main: "sys" },
+    { name: "events", location: path + "node", main: "events" }
   ];
   require.ready = function() {
     Pex.require = require;
