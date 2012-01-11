@@ -12,7 +12,9 @@ var configWebGL = {
   packages:[
     { name:"plask",location:"../src/pex/node", main:"plask" },
     { name:"fs", location:"../src/pex/node", main:"fs" },
-    { name:"path", location:"../src/pex/node", main:"path" }
+    { name:"path", location:"../src/pex/node", main:"path" },
+    { name:"sys", location: path + "../src/pex/node", main: "sys" },
+    { name:"events", location: path + "../src/pex/node", main: "events" }    
   ],
   optimize : "none"
 };
@@ -21,11 +23,13 @@ var configPlask = {
   baseUrl : "src",
   name : "pex/Pex",
   out : "build/plask/pex-core.js",
-  exclude:[ "plask", "fs", "path" ],
+  exclude:[ "plask", "fs", "path", "sys", "events" ],
   packages:[
     { name:"plask",location:"../src/pex/node", main:"plask" },
     { name:"fs", location:"../src/pex/node", main:"fs" },
-    { name:"path", location:"../src/pex/node", main:"path" }
+    { name:"path", location:"../src/pex/node", main:"path" },
+    { name:"sys", location: path + "../src/pex/node", main: "sys" },
+    { name:"events", location: path + "../src/pex/node", main: "events" }
   ],
   optimize : "none"
 };
