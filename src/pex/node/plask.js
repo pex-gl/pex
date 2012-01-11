@@ -678,10 +678,25 @@ define([], function() {
   function makeMouseDownHandler(canvas, handler) {
     canvas.addEventListener('mousedown', function(e) {
       handler({
-        x: e.clientX,
-        y: e.clientY
+        x: e.offsetX || e.clientX - e.target.offsetLeft,
+        y: e.offsetY || e.clientY - e.target.offsetTop,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
       });
-    })   
+    })
+  }
+
+  function makeMouseUpHandler(canvas, handler) {
+    canvas.addEventListener('mouseup', function(e) {
+      handler({
+        x: e.offsetX || e.clientX - e.target.offsetLeft,
+        y: e.offsetY || e.clientY - e.target.offsetTop,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
+      });
+    })
   }
 
   function makeMouseDraggedHandler(canvas, handler) {
@@ -695,8 +710,11 @@ define([], function() {
     canvas.addEventListener('mousemove', function(e) {
       if (down) {
         handler({
-          x: e.clientX,
-          y: e.clientY
+          x: e.offsetX || e.clientX - e.target.offsetLeft,
+          y: e.offsetY || e.clientY - e.target.offsetTop,
+          option: e.altKey,
+          shift: e.shiftKey,
+          control: e.ctrlKey
         });
       }
     })
@@ -705,11 +723,29 @@ define([], function() {
   function makeMouseMovedHandler(canvas, handler) {
     canvas.addEventListener('mousemove', function(e) {
       handler({
-        x: e.clientX,
-        y: e.clientY
+        x: e.offsetX || e.clientX - e.target.offsetLeft,
+        y: e.offsetY || e.clientY - e.target.offsetTop,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
       });
     })
   }
+
+  function makeScrollWheelHandler(canvas, handler) {
+    window.onmousewheel = function(e) {
+      handler({
+        x: e.offsetX || e.layerX,
+        y: e.offsetY || e.layerY,
+        dy: e.wheelDelta,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
+      });
+      return false;
+    }
+  }
+
 
   function makeKeyDownHandler(canvas, handler) {
     var timeout = 0;
@@ -731,11 +767,6 @@ define([], function() {
         keyCode: e.keyCode
       });
     })
-  }
-
-  function makeScrollWheelHandler(canvas, handler) {
-    window.onmousewheel = function(e) {
-    }
   }
 
   function simpleWindow(obj) {
@@ -763,6 +794,7 @@ define([], function() {
     obj.on = function(eventName, handler) {
       switch(eventName) {
         case 'leftMouseDown': makeMouseDownHandler(canvas, handler); break;
+        case 'leftMouseUp': makeMouseUpHandler(canvas, handler); break;
         case 'mouseDragged': makeMouseDraggedHandler(canvas, handler); break;
         case 'mouseMoved': makeMouseMovedHandler(canvas, handler); break;
         case 'scrollWheel': makeScrollWheelHandler(canvas, handler); break;
