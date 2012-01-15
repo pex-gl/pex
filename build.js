@@ -13,8 +13,8 @@ var configWebGL = {
     { name:"plask",location:"../src/pex/node", main:"plask" },
     { name:"fs", location:"../src/pex/node", main:"fs" },
     { name:"path", location:"../src/pex/node", main:"path" },
-    { name:"sys", location: path + "../src/pex/node", main: "sys" },
-    { name:"events", location: path + "../src/pex/node", main: "events" }    
+    { name:"sys", location: "../src/pex/node", main: "sys" },
+    { name:"events", location: "../src/pex/node", main: "events" }
   ],
   optimize : "none"
 };
@@ -28,8 +28,8 @@ var configPlask = {
     { name:"plask",location:"../src/pex/node", main:"plask" },
     { name:"fs", location:"../src/pex/node", main:"fs" },
     { name:"path", location:"../src/pex/node", main:"path" },
-    { name:"sys", location: path + "../src/pex/node", main: "sys" },
-    { name:"events", location: path + "../src/pex/node", main: "events" }
+    { name:"sys", location: "../src/pex/node", main: "sys" },
+    { name:"events", location: "../src/pex/node", main: "events" }
   ],
   optimize : "none"
 };

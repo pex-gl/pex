@@ -10,7 +10,10 @@ var plask = require('plask');
 requirejs.config({
   baseUrl: workingDirectory,
   priority : preloadCore ? [ pexPath + "pex-core.js" ] : null,
-  paths: { "pex": pexPath },
+  paths: {
+    "pex": pexPath,
+    "text" : pexPath + "lib/text"
+  },
   nodeRequire: require
 });
 
@@ -20,5 +23,3 @@ module.exports = {
   require : requirejs,
   run : requirejs,
 };
-
-

@@ -56,7 +56,10 @@ var Pex = {
   var path = src.replace("pex-webgl.js", "");
 
   require.baseUrl = Pex.require.baseUrl || '';
-  require.paths = { "pex": path };
+  require.paths = {
+    "pex": path,
+    "text" : path + "lib/text"
+  };
   require.priority = preloadCore ? [ path + "pex-core.js" ] : null,
   require.packages = [
     { name: "plask", location: path + "node", main: "plask" },
@@ -80,7 +83,6 @@ var Pex = {
       }  
     }
   }
-
 
   var head = document.getElementsByTagName('head')[0];
   var script = document.createElement('script');
