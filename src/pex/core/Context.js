@@ -3,20 +3,21 @@
 //*[Program](Program.html)* or *[Vbo](Vbo.html)*.
 
 //## Example use
-//     var gl = Context.currentContext;
+//     var gl = Core.Context.currentContext.gl;
 //     gl.clearColor(0, 0, 0, 1);
 
 //## Reference
 define([], function() {
   //### Context
-  //Empty constructor.
-  function Context() {
+  //`gl` - OpenGL or WebGL context *{ GL }*  
+  function Context(gl) {
+    this.gl = gl;
   }
 
   //### currentContext
-  //Static variable holding current WebGL context *{ GL }*.  
+  //Static variable holding current *{ Context }* object linked with WebGL context *{ GL }*.  
   //Set by each *[Window](Window.html)* just before calling *draw()*.
-  Context.currentContext = null;
+  Context.currentContext.gl = null;
 
   return Context;
 });

@@ -34,7 +34,7 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
     w = w || 256;
     h = h || 256;
 
-    var gl = Context.currentContext;
+    var gl = Core.Context.currentContext.gl;
 
     var handle = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
@@ -76,7 +76,7 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
     w = w || 256;
     h = h || 256;
 
-    var gl = Context.currentContext;
+    var gl = Core.Context.currentContext.gl;
 
     var handle = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
@@ -121,7 +121,7 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
   //*Note: In Plask the texture is ready immediately, in the web browser it's 
   //first black until the file is loaded and texture can be populated with the image data.*
   Texture2D.load = function(src) {
-    var gl = Context.currentContext;
+    var gl = Core.Context.currentContext.gl;
 
     var texture = new Texture2D();
     texture.handle = gl.createTexture();

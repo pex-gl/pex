@@ -19,7 +19,7 @@ define(["pex/core/Context"], function(Context) {
   //`uniforms` - initial values for the shader program uniforms  *{ Object }*  
   //The format for uniforms is  *{ uniform1Name : uniform1Value, ... }*
   function Material(program, uniforms ) {
-    this.gl = Context.currentContext;
+    this.gl = Core.Context.currentContext.gl;
     this.program = program;
     this.uniforms = uniforms || {};
   }

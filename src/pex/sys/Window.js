@@ -13,12 +13,12 @@
 //         center: true
 //       },
 //       init: function() {
-//         var gl = Core.Context.currentContext;
+//         var gl = Core.Core.Context.currentContext.gl;
 //         gl.clearColor(0, 0, 0, 1);
 //         this.framerate(30);
 //       },
 //       draw: function() {
-//         var gl = Core.Context.currentContext;
+//         var gl = Core.Core.Context.currentContext.gl;
 //         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
 //       }
 //     });
@@ -45,13 +45,15 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
   Window.create = function(obj) {
     var gl = null;
+    var context = null;
 
     /*We overwrite obj's init function to capture GL context before init() gets executed*/
     obj.__init = obj.init;
     obj.init = function() {
       gl = this.gl;
       require(["pex/core/Context"], function(Context) {
-        Context.currentContext = gl;
+        context = new Context(gl);
+        Context.currentContext.gl = context;
         if (obj.__init) {
           obj.framerate(60); //default to 60fps
           obj.__init();
@@ -61,7 +63,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
     obj.__draw = obj.draw;
     obj.draw = function() {
-      Context.currentContext = gl;
+      Context.currentContext.gl = context;
       if (obj.__draw) {
         obj.__draw();
       }

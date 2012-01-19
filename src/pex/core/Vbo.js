@@ -26,7 +26,7 @@ define([
   //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
   //`usage` : GL buffer usage *{ Number/Int }* = *STATIC_DRAW*  
   function Vbo(primitiveType, usage) {
-    this.gl = Context.currentContext;
+    this.gl = Core.Context.currentContext.gl;
     this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
     this.attributes = {};
     this.usage = usage || this.gl.STATIC_DRAW;
@@ -149,7 +149,7 @@ define([
   //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
   //`useEdges` - use edges instead of faces? *{ Boolean }* = *false*
   Vbo.fromGeometry = function(geom, primitiveType, useEdges) {
-    var gl = Context.currentContext;;
+    var gl = Core.Context.currentContext.gl;;
 
     var vbo = new Vbo(primitiveType, gl.DYNAMIC_DRAW);
 

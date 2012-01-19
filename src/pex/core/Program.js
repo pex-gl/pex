@@ -30,7 +30,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   //`vertScr` - optional vertex shader source *{ String }*  
   //`fragSrc` - optional fragment shader source *{ String }*  
   function Program(vertSrc, fragSrc) {
-    this.gl = Context.currentContext;
+    this.gl = Core.Context.currentContext.gl;
 
     this.handle = this.gl.createProgram();
     this.uniforms  = {};

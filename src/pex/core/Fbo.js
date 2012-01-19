@@ -44,7 +44,7 @@ define(["pex/core/Context"], function(Context) {
   //*{ Number/Int }* e.g. *DEPTH_COMPONENT16*  
   //
   function Fbo(width, height, formats) {
-    this.gl = Context.currentContext;
+    this.gl = Core.Context.currentContext.gl;
     this.width = width;
     this.height = height;
     this.buildBuffers(formats);

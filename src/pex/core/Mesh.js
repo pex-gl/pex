@@ -37,7 +37,7 @@ define([
   //
   //*Note: If Geometry is used as meshData it will be converted into VBOs.*    
   function Mesh(meshData, material, options) {
-    this.gl = Context.currentContext;
+    this.gl = Core.Context.currentContext.gl;
 
     var defaults = {
       primitiveType : this.gl.TRIANGLES,

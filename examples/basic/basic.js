@@ -19,7 +19,7 @@ Pex.run([
         center: true
       },
       init: function() {
-        var gl = Core.Context.currentContext;
+        var gl = Core.Context.currentContext.gl;
 
         gl.clearColor(0, 0, 0, 1);
 
@@ -30,7 +30,7 @@ Pex.run([
         this.framerate(30);
       },
       draw: function() {
-        var gl = Core.Context.currentContext;
+        var gl = Core.Context.currentContext.gl;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         this.mesh.draw(this.camera);

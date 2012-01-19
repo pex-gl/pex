@@ -23,8 +23,7 @@ Pex.run([
         center: true
       },
       init: function() {
-        //because we use plask.simpleWindow instead of Pex.simpleWindow we have to setup the context manually
-        var gl = Core.Context.currentContext = this.gl;
+        var gl = Core.Core.Context.currentContext.gl;
 
         gl.clearColor(0, 0, 0, 0);
 
@@ -36,7 +35,7 @@ Pex.run([
         this.framerate(30);
       },
       draw: function() {
-        var gl = Core.Context.currentContext;
+        var gl = Core.Core.Context.currentContext.gl;
 
         Util.Time.update();
 
