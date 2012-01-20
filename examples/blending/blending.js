@@ -23,7 +23,7 @@ Pex.run([
         center: true
       },
       init: function() {
-        var gl = Core.Core.Context.currentContext.gl;
+        var gl = Core.Context.currentContext.gl;
 
         gl.clearColor(0, 0, 0, 0);
 
@@ -35,7 +35,7 @@ Pex.run([
         this.framerate(30);
       },
       draw: function() {
-        var gl = Core.Core.Context.currentContext.gl;
+        var gl = Core.Context.currentContext.gl;
 
         Util.Time.update();
 

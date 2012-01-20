@@ -35,7 +35,7 @@ define(["pex/core/Core"], function(Core) {
 
 
   function TestMaterial() {
-      this.gl = Core.Core.Context.currentContext.gl;
+      this.gl = Core.Context.currentContext.gl;
       this.program = new Core.Program(vert, frag);
   }
 

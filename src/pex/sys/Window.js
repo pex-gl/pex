@@ -13,12 +13,12 @@
 //         center: true
 //       },
 //       init: function() {
-//         var gl = Core.Core.Context.currentContext.gl;
+//         var gl = Context.currentContext.gl;
 //         gl.clearColor(0, 0, 0, 1);
 //         this.framerate(30);
 //       },
 //       draw: function() {
-//         var gl = Core.Core.Context.currentContext.gl;
+//         var gl = Context.currentContext.gl;
 //         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
 //       }
 //     });
@@ -53,7 +53,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
       gl = this.gl;
       require(["pex/core/Context"], function(Context) {
         context = new Context(gl);
-        Context.currentContext.gl = context;
+        Context.currentContext = context;
         if (obj.__init) {
           obj.framerate(60); //default to 60fps
           obj.__init();
@@ -63,7 +63,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
     obj.__draw = obj.draw;
     obj.draw = function() {
-      Context.currentContext.gl = context;
+      Context.currentContext = context;
       if (obj.__draw) {
         obj.__draw();
       }

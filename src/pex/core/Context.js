@@ -3,7 +3,7 @@
 //*[Program](Program.html)* or *[Vbo](Vbo.html)*.
 
 //## Example use
-//     var gl = Core.Context.currentContext.gl;
+//     var gl = Context.currentContext.gl;
 //     gl.clearColor(0, 0, 0, 1);
 
 //## Reference
@@ -17,7 +17,7 @@ define([], function() {
   //### currentContext
   //Static variable holding current *{ Context }* object linked with WebGL context *{ GL }*.  
   //Set by each *[Window](Window.html)* just before calling *draw()*.
-  Context.currentContext.gl = null;
+  Context.currentContext = new Context(null);
 
   return Context;
 });

@@ -18,7 +18,7 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
 
 
   function SolidColorMaterial(uniforms) {
-      this.gl = Core.Core.Context.currentContext.gl;
+      this.gl = Core.Context.currentContext.gl;
       this.program = new Core.Program(solidColorVert, solidColorFrag);
 
       var defaults = {

@@ -36,7 +36,7 @@ define(["pex/core/Context", "pex/sys/IO"], function(Context, IO) {
   //first black until the file is loaded and texture can be populated with the image data.*
   TextureCube.load = function(src) {
 
-    var gl = Core.Context.currentContext.gl;
+    var gl = Context.currentContext.gl;
 
     var texture = new TextureCube();
     texture.handle = gl.createTexture();

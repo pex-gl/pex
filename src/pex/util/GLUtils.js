@@ -5,7 +5,7 @@ define(["pex/util/Log", "pex/core/Context"], function(Log, Context) {
   var gl_enums = null;
 
   GLUtils.checkGLErrors = function(msg) {
-    var gl = Core.Context.currentContext.gl;
+    var gl = Context.currentContext.gl;
     msg = msg || "";
     var err = gl.getError();
     if (err !== gl.NO_ERROR){
