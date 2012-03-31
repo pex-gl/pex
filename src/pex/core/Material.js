@@ -35,6 +35,7 @@ define(["pex/core/Context"], function(Context) {
         ||  this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
           this.gl.activeTexture(this.gl.TEXTURE0 + numTextures++);
           this.gl.bindTexture(this.uniforms[name].target,  this.uniforms[name].handle);
+          this.program.uniforms[name](numTextures-1);
         }
         else {
           this.program.uniforms[name]( this.uniforms[name] );
