@@ -6,14 +6,16 @@ define([
   "pex/geom/LineBuilder",
   "pex/geom/Path",
   "pex/geom/Loft",
+  "pex/geom/Plane"
   ],
-  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft) {
+  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft, Plane) {
     return {
       Cube : Cube,
       SimpleCube : SimpleCube,
       Sphere : Sphere,
       LineBuilder : LineBuilder,
       Path : Path,
-      Loft : Loft
+      Loft : Loft,
+      Plane : Plane
     };
 });

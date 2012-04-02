@@ -17,8 +17,8 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Face4", "pex/core/Geometry"]
   //`nz` - number of subdivisions on z axis *{ Number/Int }*
   function Cube(sx, sy, sz, nx, ny, nz) {
     sx = sx || 1;
-    sy = sy || 1;
-    sz = sz || 1;
+    sy = sy || sx || 1;
+    sz = sz || sx || 1;
     nx = nx || 1;
     ny = ny || 1;
     nz = nz || 1;
