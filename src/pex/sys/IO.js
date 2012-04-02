@@ -22,16 +22,16 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     function IO() {}
 
     //### getWorkingDirectory()
-    //Returns base path used for expanding relative path names.  
+    //Returns base path used for expanding relative path names.
     //In Plask it defaults to the same directory as the main script.
     IO.getWorkingDirectory = function() {
       return require.pexWorkingDirectory;
     }
 
     //### loadTextFile ( file, callback )
-    //Load UTF-8 encoded text data from a file.  
+    //Load UTF-8 encoded text data from a file.
     //
-    //`file` - path to the file *{ String }*  
+    //`file` - path to the file *{ String }*
     //`callback` - function to be called upon successful load taking data as parameter *{ function(String) }*
     IO.loadTextFile = function(file, callback) {
       var fullPath = path.resolve(IO.getWorkingDirectory(), file);
@@ -42,9 +42,9 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     }
 
     //### saveTextFile ( file, data )
-    //Load UTF-8 encoded text data from a file.  
+    //Load UTF-8 encoded text data from a file.
     //
-    //`file` - path to the file *{ String }*  
+    //`file` - path to the file *{ String }*
     //`data` - UTF-8 endcoded text data *{ String }*
     IO.saveTextFile = function(file, data) {
       fs.writeFileSync(file, data);
@@ -53,10 +53,10 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     //### loadImageData ( gl, texture, target, file, callback )
     //Loads binary data and uploads in to texture memory.
     //
-    //`gl` - GL context *{ GL }*  
-    //`texture` - texture object to which upload the pixels *{ Texture2D }*  
-    //`target` - GL texture target *{ Number/Int }* e.g. *TEXTURE_2D*  
-    //`file` - path to the file *{ String }*  
+    //`gl` - GL context *{ GL }*
+    //`texture` - texture object to which upload the pixels *{ Texture2D }*
+    //`target` - GL texture target *{ Number/Int }* e.g. *TEXTURE_2D*
+    //`file` - path to the file *{ String }*
     //`callback` - function to be called upon successful load taking Plask SkCanvas as a parameter *{ function(SkCanvas) }*
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = path.resolve(IO.getWorkingDirectory(), file);
@@ -79,15 +79,22 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     function IO() {}
 
     //### baseDir
-    //Base path used for expanding relative path names.  
+    //Base path used for expanding relative path names.
     //In the browser it defaults to the same url as the current HTML file.
     IO.baseDir = "";
 
+    //### getWorkingDirectory()
+    //Returns base path used for expanding relative path names.
+    //In the Browser it defaults to the same path as the main html file.
+    IO.getWorkingDirectory = function() {
+      return "";
+    }
+
     //### loadTextFile ( url, callback )
-    //Load UTF-8 encoded text data from an url.  
+    //Load UTF-8 encoded text data from an url.
     //
-    //`url` - url of resource to load *{ String }*  
-    //`callback` - function to be called upon successful load  
+    //`url` - url of resource to load *{ String }*
+    //`callback` - function to be called upon successful load
     //*{ function(String) }*
     IO.loadTextFile = function(url, callback) {
       var request = new XMLHttpRequest();
@@ -111,15 +118,15 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     //Not implemented.
     IO.saveTextFile = function(path, data) {
       throw "IO.saveTextFile not available in Web mode";
-    }    
+    }
 
     //### loadImageData ( gl, texture, target, url, callback )
     //Loads binary data and uploads in to texture memory.
     //
-    //`gl` - GL context *{ GL }*  
-    //`texture` - texture object to which upload the pixels *{ Texture2D }*  
-    //`target` - GL texture target *{ Number/Int }* e.g. *TEXTURE_2D*  
-    //`url` - path to the file *{ String }*  
+    //`gl` - GL context *{ GL }*
+    //`texture` - texture object to which upload the pixels *{ Texture2D }*
+    //`target` - GL texture target *{ Number/Int }* e.g. *TEXTURE_2D*
+    //`url` - path to the file *{ String }*
     //`callback` - function to be called upon successful load taking HTML Image as a parameter *{ function(Image) }*
     IO.loadImageData = function(gl, texture, target, url, callback) {
       var image = new Image();
