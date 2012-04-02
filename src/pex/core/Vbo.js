@@ -15,16 +15,16 @@
 
 //## Reference
 define([
-  "pex/core/Context", 
-  "pex/core/Vec2", 
-  "pex/core/Vec3", 
+  "pex/core/Context",
+  "pex/core/Vec2",
+  "pex/core/Vec3",
   "pex/core/Face3",
   "pex/core/Face4"
   ], function(Context, Vec2, Vec3, Face3, Face4) {
 
   //### Vbo ( primitiveType, usage )
-  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
-  //`usage` : GL buffer usage *{ Number/Int }* = *STATIC_DRAW*  
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*
+  //`usage` : GL buffer usage *{ Number/Int }* = *STATIC_DRAW*
   function Vbo(primitiveType, usage) {
     this.gl = Context.currentContext.gl;
     this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
@@ -33,17 +33,19 @@ define([
   }
 
   //### addAttrib ( name, data, size, usage )
-  //Adds vector attribute to the buffer.  
+  //Adds vector attribute to the buffer.
   //
-  //`name` - name of the attribute *{ String }*  
-  //`data` - attribute data *{ Array of Numbers }*  
-  //`size` - number of elements per vertex *{ Number/Int }*  
-  //*For example if position is Vec3 then is has 3 elements X, Y, Z per vertex.*    
-  //`usage` : GL buffer usage *{ Number/Int }*  
+  //`name` - name of the attribute *{ String }*
+  //`data` - attribute data *{ Array of Numbers }*
+  //`size` - number of elements per vertex *{ Number/Int }*
+  //*For example if position is Vec3 then is has 3 elements X, Y, Z per vertex.*
+  //`usage` : GL buffer usage *{ Number/Int }*
   //*If no usage is specified the default from the Vbo constructor will be used.*
   Vbo.prototype.addAttrib = function(name, data, size, usage) {
     size = size || 3
     usage = usage || this.usage;
+
+    var dataArr = data ? new Float32Array(data) : null;
 
     var attrib = {};
     attrib.name = name;
@@ -52,33 +54,39 @@ define([
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), usage);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, dataArr, usage);
 
     this.attributes[attrib.name] = attrib;
   }
 
   //### updateAttrib ( name, data )
-  //Uploads new data for the given attribute to the GPU.  
+  //Uploads new data for the given attribute to the GPU.
   //
-  //`name` - name of the attribute to update *{ String }*   
-  //`data` - new data *{ Array of Numbers }*   
+  //`name` - name of the attribute to update *{ String }*
+  //`data` - new data *{ Array of Numbers }*
   Vbo.prototype.updateAttrib = function(name, data) {
     var attrib = this.attributes[name];
     if (!attrib) {
       return;
     }
 
-    attrib.data = new Float32Array(data);
+    if (data) {
+      if (data.subarray)
+        attrib.data = data;
+      else
+        attrib.data = new Float32Array(data);
+    }
+
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, this.gl.STATIC_DRAW);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
   }
 
   //### setIndices ( data, usage )
-  //Sets the index buffer data.  
+  //Sets the index buffer data.
   //
-  //`data` - indices data *{ Array of Numbers/Ints }*  
-  //`usage` : GL buffer usage *{ Number/Int }*  
+  //`data` - indices data *{ Array of Numbers/Ints }*
+  //`usage` : GL buffer usage *{ Number/Int }*
   //*If no usage is specified the default from the Vbo constructor will be used.*
   Vbo.prototype.setIndices = function(data, usage) {
     usage = usage || this.usage;
@@ -94,10 +102,10 @@ define([
   }
 
   //### draw ( program )
-  //Binds all the vertex attributes and draws all the primitives.  
+  //Binds all the vertex attributes and draws all the primitives.
   //
   //`program` - shader program to draw with *{ Program }*
-  Vbo.prototype.draw = function(program) {    
+  Vbo.prototype.draw = function(program) {
     for(var name in this.attributes) {
       var attrib = this.attributes[name];
       /*
@@ -120,7 +128,8 @@ define([
       this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, null);
     }
     else if (this.attributes["position"]){
-      this.gl.drawArrays(this.primitiveType, 0, this.attributes["position"].data.length/3);
+      var num = this.attributes["position"].data.length/3;
+      this.gl.drawArrays(this.primitiveType, 0, num);
     }
 
     for(var name in this.attributes) {
@@ -145,8 +154,8 @@ define([
   //### fromGeometry ( geom, primitiveType, useEdges )
   //Builds new VBO from geometry data.
   //
-  //`geom` - geometry to build from *{ Geometry }*  
-  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
+  //`geom` - geometry to build from *{ Geometry }*
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*
   //`useEdges` - use edges instead of faces? *{ Boolean }* = *false*
   Vbo.fromGeometry = function(geom, primitiveType, useEdges) {
     var gl = Context.currentContext.gl;;
@@ -166,14 +175,16 @@ define([
     if (geom.texCoords && geom.texCoords.length > 0) {
       var texCoords = [];
 
-      for(var i=0; i< geom.texCoords.length; ++i) {
-        for(var j in geom.texCoords[i]) {
-          texCoords.push(geom.texCoords[i][j]);
-        }
-      }
       var size = 1;
       if (geom.texCoords[0] instanceof Vec2) size = 2;
       if (geom.texCoords[0] instanceof Vec3) size = 3;
+      var axis = ['x', 'y', 'z'];
+      for(var i=0; i< geom.texCoords.length; ++i) {
+        for(var j=0; j<size; j++) {
+          texCoords.push(geom.texCoords[i][axis[j]]);
+        }
+      }
+
       vbo.addAttrib("texCoord", texCoords, size);
     }
 
