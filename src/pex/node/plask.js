@@ -1,6 +1,6 @@
-//Vector and Matrix utilities from [Plask](http://plask.org).  
+//Vector and Matrix utilities from [Plask](http://plask.org).
 //
-//*Note: Normally Plask runs on top of Node.js so to use it in the browser I had to copy all the shared code here.* 
+//*Note: Normally Plask runs on top of Node.js so to use it in the browser I had to copy all the shared code here.*
 
 define([], function() {
 
@@ -733,17 +733,18 @@ define([], function() {
   }
 
   function makeScrollWheelHandler(canvas, handler) {
-    window.onmousewheel = function(e) {
+    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
+    document.addEventListener(mousewheelevt, function(e) {
       handler({
         x: e.offsetX || e.layerX,
         y: e.offsetY || e.layerY,
-        dy: e.wheelDelta,
+        dy: e.wheelDelta || -e.detail,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
       });
       return false;
-    }
+    });
   }
 
 

@@ -13,8 +13,8 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3,
   //`distance` - distance from the camera target *{ Number }*
   function Arcball(window, camera, distance) {
     this.distance = distance || 2;
-    this.minDistance = 0.3;
-    this.maxDistance = 5;
+    this.minDistance = distance/2 || 0.3;
+    this.maxDistance = distance*2 || 5;
     this.camera = camera;
     this.window = window;
     this.center = new Vec2(window.width/2, window.height/2);
@@ -34,7 +34,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3,
     });
 
     window.on('scrollWheel', function(e) {
-      self.distance = Math.min(self.maxDistance, Math.max(self.distance + e.dy/100, self.minDistance));
+      self.distance = Math.min(self.maxDistance, Math.max(self.distance + e.dy/100*(self.maxDistance-self.minDistance), self.minDistance));
       self.updateCamera();
     });
   }
