@@ -3,8 +3,8 @@ define(["pex/core/Mat4"], function(Mat4) {
   var kEpsilon = Math.pow(2, -24);
 
   //### Quat ( x, y, z, w )
-  //Builds a quaternion representing rotation around an axis  
-  //`x, y, z` - axis vector *{ Number }*  
+  //Builds a quaternion representing rotation around an axis
+  //`x, y, z` - axis vector *{ Number }*
   //`w` - rotation (in radians) *{ Number }*
   function Quat(x, y, z, w) {
       this.x = x; this.y = y; this.z = z; this.w = w;
@@ -36,10 +36,11 @@ define(["pex/core/Mat4"], function(Mat4) {
     var ax = a.x, ay = a.y, az = a.z, aw = a.w
     ,   bx = b.x, by = b.y, bz = b.z, bw = b.w;
 
-    this.x = bw*ax + bx*aw + by*az - bz*ay;
-    this.y = bw*ay + by*aw + bz*ax - bx*az;
-    this.z = bw*az + bz*aw + bx*ay - by*ax;
-    this.w = bw*aw - bx*ax - by*ay - bz*az;
+    this.x  = bw * ax + bx * aw + ay * bz - by * az;
+    this.y  = bw * ay + by * aw + az * bx - bz * ax;
+    this.z  = bw * az + bz * aw + ax * by - bx * ay;
+    this.w  = bw * aw - bx * ax - ay * by - bz * az;
+
 
     return this;
   }
@@ -91,6 +92,26 @@ define(["pex/core/Mat4"], function(Mat4) {
     return this;
   }
 
+  Quat.prototype.mulVec3 = function(v) {
+
+        var x = v.x, y = v.y, z = v.z;
+        var qx = this.x, qy = this.y, qz = this.z, qw = this.w;
+
+            // calculate quat * vec
+            ix = qw * x + qy * z - qz * y,
+            iy = qw * y + qz * x - qx * z,
+            iz = qw * z + qx * y - qy * x,
+            iw = -qx * x - qy * y - qz * z;
+
+        // calculate result * inverse quat
+        var dest = v.dup();
+        dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+        dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+        dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+        return dest;
+
+  }
+
   Quat.prototype.toMat4 = function(){
     var xs = this.x + this.x
     ,   ys = this.y + this.y
@@ -111,10 +132,21 @@ define(["pex/core/Mat4"], function(Mat4) {
         xz - wy,     yz + wx,      1 - (xx+yy), 0,
         0,           0,            0,           1
     );
+
+//    return new Mat4().set4x4r(
+//        1 - (yy+zz), xy + wz,      xz - wy,     0,
+//        xy - wz,     1 - (xx+zz ), yz + wx,     0,
+//        xz + wy,     yz - wx,      1 - (xx+yy), 0,
+//        0,           0,            0,           1
+//    );
   }
 
   Quat.prototype.dup = function(){
     return new Quat(this.x, this.y, this.z, this.w);
+  }
+
+  Quat.fromRotationAxis = function(a, x, y, z) {
+    return Quat.identity().rotate(a, x, y, z);
   }
 
   return Quat;

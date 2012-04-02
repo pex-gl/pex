@@ -40,6 +40,7 @@ define(["pex/core/Vec4"], function(Vec4) {
   Color.Yellow = new Color(1, 1, 0, 1);
   Color.Pink = new Color(1, 0, 1, 1);
   Color.Cyan = new Color(0, 1, 1, 1);
+  Color.Orange = new Color(1, 0.5, 0, 1);
 
   return Color;
 });

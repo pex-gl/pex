@@ -1,6 +1,6 @@
-//3d XYZ Vector.  
+//3d XYZ Vector.
 //
-//This is just a copy of Vec3 from plask put into Core namespace.  
+//This is just a copy of Vec3 from plask put into Core namespace.
 //
 //For full reference see [plask](../node/plask.html).
 define(["plask"], function(plask) {
@@ -16,5 +16,6 @@ define(["plask"], function(plask) {
     var c = new plask.Vec3();
     return c.cross2(this, b);
   }
+
   return plask.Vec3;
 });
