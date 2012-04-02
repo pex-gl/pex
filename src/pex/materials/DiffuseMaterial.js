@@ -53,7 +53,7 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
   //### DiffuseMaterial ( uniforms )
   //`uniforms` - object with shader properties to overwrite the defaults *{ Object }*
   function DiffuseMaterial(uniforms) {
-      this.gl = Context.currentContext.gl;
+      this.gl = Core.Context.currentContext.gl;
       this.program = new Core.Program(vert, frag);
 
       var defaults = {
