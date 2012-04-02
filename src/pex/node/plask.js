@@ -772,6 +772,15 @@ define([], function() {
 
   function simpleWindow(obj) {
     var canvas = document.createElement('canvas');
+
+    if (obj.settings.fullscreen) {
+      document.body.style.margin = "0";
+      document.body.style.padding = "0";
+      document.body.style.overflow = "hidden";
+      obj.settings.width = window.innerWidth;
+      obj.settings.height = window.innerHeight;
+    }
+
     canvas.width = obj.width = obj.settings.width || 800;
     canvas.height = obj.height = obj.settings.height || 600;
     canvas.style.backgroundColor = "#000000";
