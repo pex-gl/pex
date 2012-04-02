@@ -1,4 +1,11 @@
-define(["HEMesh", "HEVertex", "HEEdge", "HEFace", "pex/core/Vec3"], function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
+define([
+  "pex/geom/hem/HEMesh",
+  "pex/geom/hem/HEVertex",
+  "pex/geom/hem/HEEdge",
+  "pex/geom/hem/HEFace",
+  "pex/core/Vec3"
+  ],
+  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function Extrude() {
   }
 

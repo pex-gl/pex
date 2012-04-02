@@ -2,7 +2,14 @@
 //Based on http://en.wikipedia.org/wiki/Catmull–Clark_subdivision_surface
 //Modified to follow Doo-Sabin scheme for new vertices 1/n*F + 1/n*R + (n-2)/n*v
 //http://www.cse.ohio-state.edu/~tamaldey/course/784/note20.pdf
-define(["HEMesh", "HEVertex", "HEEdge", "HEFace", "pex/core/Vec3"], function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
+define([
+  "pex/geom/hem/HEMesh",
+  "pex/geom/hem/HEVertex",
+  "pex/geom/hem/HEEdge",
+  "pex/geom/hem/HEFace",
+  "pex/core/Vec3"
+  ],
+  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function CatmullClark() {
   }
 

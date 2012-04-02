@@ -1,6 +1,6 @@
 //Half-Edge mesh data structure
 //Based on http://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml
-define(["pex/core/Vec3", "HEEdge", "HEVertex"], function(Vec3, HEEdge, HEVertex) {
+define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex"], function(Vec3, HEEdge, HEVertex) {
   function HEMesh() {
     this.vertices = [];
     this.faces = [];
