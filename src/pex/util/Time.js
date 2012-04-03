@@ -41,7 +41,7 @@ define(["pex/util/Log"], function(Log) {
     var seconds = (now - startOfMeasuredTime)/1000;
 
     if (msg) {
-      Log.msg(msg + seconds)
+      Log.message(msg + seconds)
     }
     return seconds;
   }
