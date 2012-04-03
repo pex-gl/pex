@@ -34,7 +34,8 @@ Pex.run([
         gl.enable(gl.DEPTH_TEST);
 
         this.camera = new PerspectiveCamera(60, this.width/this.height);
-        this.arcball = new Arcball(this, this.camera, 3);
+        //this.camera.setPosition(new Core.Vec3(0,3,3));
+        this.arcball = new Arcball(this, this.camera, 5);
 
         var hemesh = new HEMesh();
 
@@ -84,15 +85,15 @@ Pex.run([
         hemesh.assignEdgesToVertices();
         hemesh.assignEdgePairs();
 
-        hemesh.vertices[0].selected = true;
-        hemesh.vertices[0].edge.next.next.vert.selected = true;
+        //hemesh.vertices[0].selected = true;
+        //hemesh.vertices[0].edge.next.next.vert.selected = true;
         //hemesh.vertices[0].edge.selected = true;
         var newVertPos = hemesh.vertices[0].dup();
         newVertPos.add(hemesh.vertices[0].edge.next.vert.subbed(hemesh.vertices[0]).scale(0.5));
 
 
         hemesh.clearEdgeSelection();
-        hemesh.vertices[0].edge.face.selected = true;
+        //hemesh.vertices[0].edge.face.selected = true;
 
         //var newEdge = hemesh.splitVertex(hemesh.vertices[0], newVertPos, hemesh.vertices[0].edge, hemesh.vertices[0].edge);
         //hemesh.splitFace(hemesh.vertices[0].edge.findPrev(), newEdge);
@@ -102,9 +103,9 @@ Pex.run([
         //hemesh.splitFace(newEdge.next, newEdge.next.next.next);
 
         var topFace = hemesh.vertices[0].edge.face;
-        hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
-        hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
-        hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
+        //hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
+        //hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
+        //hemesh.splitFaceAtPoint(topFace, topFace.getCenter());
 
         hemesh.check();
 
@@ -135,8 +136,9 @@ Pex.run([
         //hemesh = catmullClark.apply(hemesh);
         //console.log(hemesh.vertices.length, hemesh.edges.length);
 
-        var scale = 3;
+        var scale = 1;
         var subdivisionLevel = 0;
+        var selection = null;
         this.on('keyDown', function(e) {
           if (e.keyCode == 48 || e.str == 's') {
             Time.startMeasuringTime();
@@ -145,20 +147,23 @@ Pex.run([
             Time.stopMeasuringTime("Camtull-Clark subdivision at level:" + subdivisionLevel + " = ");
             Time.startMeasuringTime();
             self.buildLineMesh(hemesh);
+            self.buildFlatMesh(hemesh);
             Time.stopMeasuringTime("Building line mesh at level:" + subdivisionLevel + " = ");
             //this.buildSolidMesh(hemesh);
-            //self.buildFlatMesh(hemesh);
+
             self.selection = [];
           }
           else if (e.str == ' ') {
-            self.selection = [];
-            for(var i=0; i<25; i++) {
-              self.selection.push(hemesh.faces[Math.floor(Math.random() * hemesh.faces.length)]);
-            }
+            if (!self.selection)
+              for(var i=0; i<hemesh.faces.length; i++) {
+                self.selection.push(hemesh.faces[i]);
+              }
+            Time.startMeasuringTime();
             hemesh = extrude.apply(hemesh, scale, self.selection);
+            Time.stopMeasuringTime("Extrude at level:" + subdivisionLevel + " = ");
             scale *= 0.75;
             self.buildLineMesh(hemesh);
-            //self.buildFlatMesh(hemesh);
+            self.buildFlatMesh(hemesh);
             //self.buildSolidMesh(hemesh);
           }
         })
@@ -183,12 +188,12 @@ Pex.run([
 
         this.buildLineMesh(hemesh);
         //this.buildSolidMesh(hemesh);
-        //this.buildFlatMesh(hemesh);
+        this.buildFlatMesh(hemesh);
         this.framerate(30);
       },
       buildLineMesh: function(hemesh) {
         var lineBuilder = new Geom.LineBuilder();
-        if (hemesh.vertices < 100) {
+        if (hemesh.vertices.length < 100) {
           for(var i in hemesh.vertices) {
             lineBuilder.addGizmo(hemesh.vertices[i], 0.01, hemesh.vertices[i].selected ? Core.Color.Red : Core.Color.Black);
           }
