@@ -14,7 +14,6 @@ define([
 
     for(var f=0; f<numFaces; f++) {
       var face = hemesh.faces[f];
-
       if (selection && selection.length > 0 && selection.indexOf(face) == -1) continue;
 
       var normal = face.getNormal();
@@ -37,10 +36,13 @@ define([
         edgeToSplit = edgeToSplit.next;
       } while(edgeToSplit != edge);
 
+      //go through all new corners and cut out faces from them
       var prevCornerEdge = newEdges[newEdges.length-1].next;
       for(var i=0; i<newEdges.length; i++) {
+        //we remember what's the next edge pointing to a new corner as
+        //this might change when we add new face
         var tmp = newEdges[i].next;
-        var newFace = hemesh.splitFace(prevCornerEdge, newEdges[i].next);
+        var newFace = hemesh.splitFace(newEdges[i].next, prevCornerEdge);
         prevCornerEdge = tmp;
       }
     }
