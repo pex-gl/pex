@@ -197,7 +197,6 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
       this.splitFace(newEdge.next, nextEdge);
       nextEdge = nextEdge.next;
     } while (nextEdge != newEdge);
-
   }
 
   HEMesh.prototype.clearVerticesSelection = function() {

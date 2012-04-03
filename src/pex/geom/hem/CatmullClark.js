@@ -14,22 +14,25 @@ define([
   }
 
   CatmullClark.prototype.apply = function(hemesh) {
+    hemesh.clearSelection();
+    //keep these numbers to iterate only over original faces/edges/vertices
+    var numFaces = hemesh.faces.length;
+    var numEdges = hemesh.edges.length;
     var numVertices = hemesh.vertices.length;
-    var newEdges = [];
-    var newFaces = [];
+    var i;
 
-    for(var i in hemesh.faces) {
-      var face = hemesh.faces[i];
-      var center = face.getCenter();
-      var facePoint = new HEVertex(center.x, center.y, center.z);
-      face.facePoint = facePoint;
-      hemesh.vertices.push(facePoint);
+    //For each face, add a face point - the centroid of all original
+    //points for the respective face
+    for(i=0; i<numFaces; i++) {
+      hemesh.faces[i].facePoint = hemesh.faces[i].getCenter();
     }
 
-    for(var i in hemesh.edges) {
+    //For each edge, add an edge point - the average of
+    //the two neighbouring face points and its two original endpoints.
+    for(i=0; i<numEdges; i++) {
       var edge = hemesh.edges[i];
       if (edge.edgePoint != null) continue;
-      var edgePoint = new HEVertex(0, 0, 0);
+      var edgePoint = new Vec3(0, 0, 0);
       edgePoint.add(edge.vert);
       edgePoint.add(edge.next.vert);
       edgePoint.add(edge.face.facePoint);
@@ -37,10 +40,9 @@ define([
       edgePoint.scale(1/4);
       edge.edgePoint = edgePoint;
       edge.pair.edgePoint = edge.edgePoint;
-      hemesh.vertices.push(edgePoint);
     }
 
-    for(var i=0; i<numVertices; i++) {
+    for(i=0; i<numVertices; i++) {
       var vertex = hemesh.vertices[i];
       var faceEdge = vertex.edge;
       var face = faceEdge.face;
@@ -62,37 +64,45 @@ define([
       newVert.add(vertex.scaled(n-2));
       newVert.scale(1/n);
 
+      //we can't simply duplicate vertex and make operations on it
+      //as dup() returns Vec3 not HEVertex
       vertex.x = newVert.x;
       vertex.y = newVert.y;
       vertex.z = newVert.z;
     }
 
-    for(var i in hemesh.faces) {
-      var face = hemesh.faces[i];
-      var edge = face.edge;
-      do {
-        var e0 = new HEEdge(edge.vert);
-        var e1 = new HEEdge(edge.edgePoint);
-        var e2 = new HEEdge(edge.face.facePoint);
-        var e3 = new HEEdge(edge.findPrev().edgePoint);
-        e0.next = e1;
-        e1.next = e2;
-        e2.next = e3;
-        e3.next = e0;
-        edge = edge.next;
-        newEdges.push(e0);
-        newEdges.push(e1);
-        newEdges.push(e2);
-        newEdges.push(e3);
-        var newFace = new HEFace(e0);
-        e0.face = e1.face = e2.face = e3.face = newFace;
-        newFaces.push(newFace);
-      } while (edge != face.edge);
+    var numEdges = hemesh.edges.length;
+    for(i=0; i<numEdges; i++) {
+      var edge = hemesh.edges[i];
+      if (edge.selected) continue;
+      edge.selected = true;
+      edge.pair.selected = true;
+      var edgePoint = edge.edgePoint;
+      delete edge.edgePoint;
+      delete edge.pair.edgePoint;
+      var newEdge = hemesh.splitVertex(edge.vert, edgePoint, edge, edge);
+      edge.edgePointVertex = newEdge.next.vert;
     }
-    hemesh.edges = newEdges;
-    hemesh.faces = newFaces;
-    hemesh.assignEdgesToVertices();
-    hemesh.assignEdgePairs();
+
+    var numFaces = hemesh.faces.length;
+    for(i=0; i<numFaces; i++) {
+      var face = hemesh.faces[i];
+      var vert = face.edge.next.vert;
+      var edge = face.edge.next;
+      vert.edge = edge; //to make sure we split the right face
+      var newEdge = hemesh.splitVertex(vert, face.facePoint);
+
+      var nextEdge = newEdge.next.next.next.next;
+      do {
+        hemesh.splitFace(newEdge.next, nextEdge);
+        nextEdge = nextEdge.next.next;
+      } while (nextEdge != newEdge && nextEdge.next != newEdge);
+
+      delete face.faceVertex;
+    }
+
+    hemesh.clearSelection();
+
     return hemesh;
   }
 
