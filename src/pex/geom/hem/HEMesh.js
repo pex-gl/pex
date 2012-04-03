@@ -163,17 +163,19 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
 
     splitEdge1.face = vert1Edge.face;
 
-    var face = new HEFace(splitEdge2);
-    this.faces.push(face);
+    var newFace = new HEFace(splitEdge2);
+    this.faces.push(newFace);
 
     var tmpEdge = splitEdge2;
     do {
-      tmpEdge.face = face;
+      tmpEdge.face = newFace;
       tmpEdge = tmpEdge.next;
     } while(tmpEdge != splitEdge2);
 
     //just ot make sure we don't point to one of the splitten vertices
     oldFace.edge = vert1Edge;
+
+    return newFace;
   }
 
   HEMesh.prototype.splitEdge = function(edge, ratio) {
@@ -192,10 +194,13 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
     var edge = face.edge;
     vert.edge = edge; //to make sure we split the right face
     var newEdge = this.splitVertex(vert, newPoint);
-    var nextEdge = newEdge.next.next.next;
+    var from = newEdge.next; //edge representing new added vertex
+    var to = edge.next; //next corner afther the old first
+    //split the face from the new vertex to the next corner
+    //and move one corner further
     do {
-      this.splitFace(newEdge.next, nextEdge);
-      nextEdge = nextEdge.next;
+      this.splitFace(from, to);
+      to = to.next;
     } while (nextEdge != newEdge);
   }
 
