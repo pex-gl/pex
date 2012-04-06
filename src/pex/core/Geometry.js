@@ -37,7 +37,7 @@ define([
   //### Geometry.MAX_VERTICES
   //Maximum number of different vertices per geometry. Limited by the type of 
   //index buffer variables which according to WebGL is a 16 bit integer.
-  Geometry.MAX_VERTICES = 10*65536;
+  Geometry.MAX_VERTICES = 65536;
 
   Geometry.POINTS = 0;
   Geometry.LINES = 1;
