@@ -674,10 +674,28 @@ define([], function() {
             };
   })();
 
+  var eventListeners = [];
 
-  function makeMouseDownHandler(canvas, handler) {
+  function fireEvent(eventType, event) {
+    for(var i=0; i<eventListeners.length; i++) {
+      if (eventListeners[i].eventType == eventType) {
+        eventListeners[i].handler(event);
+      }
+    }
+  }
+
+  function registerEvents(canvas) {
+    makeMouseDownHandler(canvas);
+    makeMouseUpHandler(canvas);
+    makeMouseDraggedHandler(canvas);
+    makeMouseMovedHandler(canvas);
+    makeScrollWheelHandler(canvas);
+    makeKeyDownHandler(canvas);
+  }
+
+  function makeMouseDownHandler(canvas) {
     canvas.addEventListener('mousedown', function(e) {
-      handler({
+      fireEvent("leftMouseDown", {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
@@ -687,19 +705,19 @@ define([], function() {
     })
   }
 
-  function makeMouseUpHandler(canvas, handler) {
+  function makeMouseUpHandler(canvas) {
     canvas.addEventListener('mouseup', function(e) {
-      handler({
+      fireEvent("leftMouseUp", {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
-      });
+      })
     })
   }
 
-  function makeMouseDraggedHandler(canvas, handler) {
+  function makeMouseDraggedHandler(canvas) {
     var down = false;
     canvas.addEventListener('mousedown', function(e) {
       down = true;
@@ -709,7 +727,7 @@ define([], function() {
     });
     canvas.addEventListener('mousemove', function(e) {
       if (down) {
-        handler({
+        fireEvent("mouseDragged", {
           x: e.offsetX || e.clientX - e.target.offsetLeft,
           y: e.offsetY || e.clientY - e.target.offsetTop,
           option: e.altKey,
@@ -720,9 +738,9 @@ define([], function() {
     })
   }
 
-  function makeMouseMovedHandler(canvas, handler) {
+  function makeMouseMovedHandler(canvas) {
     canvas.addEventListener('mousemove', function(e) {
-      handler({
+      fireEvent("mouseMoved", {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
@@ -732,10 +750,10 @@ define([], function() {
     })
   }
 
-  function makeScrollWheelHandler(canvas, handler) {
+  function makeScrollWheelHandler(canvas) {
     var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
     document.addEventListener(mousewheelevt, function(e) {
-      handler({
+      fireEvent("scrollWheel", {
         x: e.offsetX || e.layerX,
         y: e.offsetY || e.layerY,
         dy: e.wheelDelta || -e.detail,
@@ -748,11 +766,11 @@ define([], function() {
   }
 
 
-  function makeKeyDownHandler(canvas, handler) {
+  function makeKeyDownHandler(canvas) {
     var timeout = 0;
     window.addEventListener('keydown', function(e) {
       timeout = setTimeout(function() {
-        handler({
+        fireEvent("keyDown", {
           str: "",
           keyCode: e.keyCode
         }, 1);
@@ -763,7 +781,7 @@ define([], function() {
         clearTimeout(timeout);
         timeout = 0;
       }
-      handler({
+      fireEvent("keyDown", {
         str: String.fromCharCode(e.charCode),
         keyCode: e.keyCode
       });
@@ -786,6 +804,8 @@ define([], function() {
     canvas.style.backgroundColor = "#000000";
     document.body.appendChild(canvas);
 
+    registerEvents(canvas);
+
     if (obj.stencil === undefined) obj.stencil = false;
 
     var gl = null;
@@ -801,15 +821,8 @@ define([], function() {
       requestAnimFrameFps = fps;
     }
 
-    obj.on = function(eventName, handler) {
-      switch(eventName) {
-        case 'leftMouseDown': makeMouseDownHandler(canvas, handler); break;
-        case 'leftMouseUp': makeMouseUpHandler(canvas, handler); break;
-        case 'mouseDragged': makeMouseDraggedHandler(canvas, handler); break;
-        case 'mouseMoved': makeMouseMovedHandler(canvas, handler); break;
-        case 'scrollWheel': makeScrollWheelHandler(canvas, handler); break;
-        case 'keyDown': makeKeyDownHandler(canvas, handler); break;
-      }
+    obj.on = function(eventType, handler) {
+      eventListeners.push({eventType:eventType, handler:handler});
     }
 
     obj.gl = gl;
