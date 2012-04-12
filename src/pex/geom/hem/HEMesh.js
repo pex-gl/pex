@@ -41,20 +41,29 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
 
   var pairs = 0;
   HEMesh.prototype.fixEdgePairs = function() {
-    for(var i in this.edges) {
-      var a = this.edges[i];
-      for(var j in this.edges) {
-        if (i == j) continue;
-        var b = this.edges[j];
-        if (a.vert == b.next.vert && a.next.vert == b.vert) {
-          a.pair = b;
-          b.pair = a;
-        }
+    console.log("HEMesh.fixEdgePairs");
+    for(var i=0; i<this.edges.length; i++) {
+      this.edges[i].pair = null;
+    }
+    var numPairs = 0;
+    var hash = {};
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertices[i].index = i;
+    }
+    for(var i=0; i<this.edges.length; i++) {
+      var edge = this.edges[i];
+      var edgeHash = edge.vert.index + "," + edge.next.vert.index;
+      var pairEdgeHash = edge.next.vert.index + "," + edge.vert.index;
+      hash[edgeHash] = edge;
+      if (hash[pairEdgeHash]) {
+        edge.pair = hash[pairEdgeHash];
+        edge.pair.pair = edge;
       }
     }
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertices[i].index = -1;
+    }
   }
-
-
 
   HEMesh.prototype.getEdgeBetween = function(a, b) {
       for(var i in this.edges) {
@@ -93,11 +102,17 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       if (edge.pair == null) {
         console.log("Edge doesn't have it's pair", i);
       }
+      else if (edge.pair.pair != edge) {
+        console.log("Edge pair doesn't match", i, this.edges.indexOf(edge), this.edges.indexOf(edge.pair), this.edges.indexOf(edge.pair.pair));
+      }
 
       do {
         if (++watchDog > 100) {
           console.log("Edge watchDog break at", i, " . Wrong edge loop pointers?");
           break;
+        }
+        if (watchDog > 4) {
+          console.log("Warning! Face with " + watchDog + " vertices");
         }
         if (e.next == null) {
           console.log("Missing edge next at ", i, ". Open loop.");
