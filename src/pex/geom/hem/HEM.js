@@ -6,9 +6,10 @@ define([
   "pex/geom/hem/HEFace",
   "pex/geom/hem/CatmullClark",
   "pex/geom/hem/Extrude",
-  "pex/geom/hem/HEGeometryConverter"
+  "pex/geom/hem/HEGeometryConverter",
+  "pex/geom/hem/DooSabin"
   ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, CatmullClark, Extrude, HEGeometryConverter) {
+  function(HEMesh, HEVertex, HEEdge, HEFace, CatmullClark, Extrude, HEGeometryConverter, DooSabin) {
     return {
       HEMesh : HEMesh,
       HEVertex : HEVertex,
@@ -16,6 +17,7 @@ define([
       HEFace : HEFace,
       CatmullClark : CatmullClark,
       Extrude : Extrude,
-      HEGeometryConverter : HEGeometryConverter
+      HEGeometryConverter : HEGeometryConverter,
+      DooSabin : DooSabin
     };
 });
