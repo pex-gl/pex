@@ -1,4 +1,4 @@
-define(["pex/core/Face4", "pex/core/Geometry", "pex/geom/hem/HEMesh", "pex/geom/hem/HEVertex", "pex/geom/hem/HEEdge", "pex/geom/hem/HEFace"], 
+define(["pex/core/Face4", "pex/core/Geometry", "pex/geom/hem/HEMesh", "pex/geom/hem/HEVertex", "pex/geom/hem/HEEdge", "pex/geom/hem/HEFace"],
 function(Face4, Geometry, HEMesh, HEVertex, HEEdge, HEFace) {
   function HEGeometryConverter() {
   }
@@ -9,7 +9,7 @@ function(Face4, Geometry, HEMesh, HEVertex, HEEdge, HEFace) {
       var v = geom.vertices[i];
       hemesh.vertices.push(new HEVertex(v.x, v.y, v.z));
     }
-    
+
     var indices = ["a", "b", "c", "d"];
     var newEdges = [null, null, null, null];
     var numEdges = 3;
@@ -17,14 +17,14 @@ function(Face4, Geometry, HEMesh, HEVertex, HEEdge, HEFace) {
       var f = geom.faces[i];
       var newFace = new HEFace();
       hemesh.faces.push(newFace);
-            
+
       if (f instanceof Face4) {
         numEdges = 4;
       }
-      
+
       for(var j=0; j<numEdges; j++) {
         newEdges[j] = new HEEdge();
-        hemesh.edges.push(newEdges[j]);        
+        hemesh.edges.push(newEdges[j]);
         var vertexIndex = f[indices[j]];
         newEdges[j].vert = hemesh.vertices[vertexIndex];
         newEdges[j].face = newFace;
@@ -32,17 +32,16 @@ function(Face4, Geometry, HEMesh, HEVertex, HEEdge, HEFace) {
       for(var j=0; j<numEdges; j++) {
         newEdges[j].next = newEdges[(j+1) % numEdges];
       }
-      
+
       newFace.edge = newEdges[0];
     }
-    
     hemesh.fixDuplicatedVertices()
     hemesh.fixVertexEdges();
     hemesh.fixEdgePairs();
     hemesh.check();
     return hemesh;
   }
-  
+
   HEGeometryConverter.hemeshToFlatGeometry = function(hemesh) {
     var geometry = new Geometry();
     geometry.vertices = [];
@@ -76,10 +75,11 @@ function(Face4, Geometry, HEMesh, HEVertex, HEEdge, HEFace) {
         geometry.normals.push(faceNormal);
       }
       else {
-        throw "HEGeometryConverter.hemeshToFlatGeometry: Unsupported face vertex count:" + faceVertices.length;
-      }      
+        console.log("HEGeometryConverter.hemeshToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+        //throw("HEGeometryConverter.hemeshToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+      }
     }
-    return geometry;    
+    return geometry;
   }
 
   return HEGeometryConverter;
