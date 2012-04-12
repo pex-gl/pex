@@ -1,13 +1,38 @@
 //Half-Edge mesh data structure
 //Based on http://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml
-define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/geom/hem/HEFace"], function(Vec3, HEEdge, HEVertex, HEFace) {
+//and http://fgiesen.wordpress.com/2012/03/24/half-edge-based-mesh-representations-practice/
+define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/geom/hem/HEFace", "pex/geom/BoundingBox", "pex/geom/Octree"],
+function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   function HEMesh() {
     this.vertices = [];
     this.faces = [];
     this.edges = [];
   }
 
-  HEMesh.prototype.assignEdgesToVertices = function() {
+  HEMesh.prototype.fixDuplicatedVertices = function() {
+    var bbox = new BoundingBox(this.vertices);
+    var bboxSize = bbox.getSize();
+    var octree = new Octree(bbox.min.x, bbox.min.y, bbox.min.z, bboxSize.x, bboxSize.y, bboxSize.z);
+    var dup = 0;
+    for(var i=0; i<this.vertices.length; i++) {
+      var v = this.vertices[i];
+      var duplicate = octree.has(v);
+      if (!duplicate) {
+          octree.add(v);
+      }
+      else {
+        this.vertices.splice(i, 1);
+        i--;
+        for(var j=0; j<this.edges.length; j++) {
+          if (this.edges[j].vert == v) {
+            this.edges[j].vert = duplicate;
+          }
+        }
+      }
+    }
+  }
+
+  HEMesh.prototype.fixVertexEdges = function() {
     for(var i in this.edges) {
       var edge = this.edges[i];
       edge.vert.edge = edge;
@@ -15,7 +40,7 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
   }
 
   var pairs = 0;
-  HEMesh.prototype.assignEdgePairs = function() {
+  HEMesh.prototype.fixEdgePairs = function() {
     for(var i in this.edges) {
       var a = this.edges[i];
       for(var j in this.edges) {
@@ -28,6 +53,8 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
       }
     }
   }
+
+
 
   HEMesh.prototype.getEdgeBetween = function(a, b) {
       for(var i in this.edges) {
@@ -62,6 +89,11 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
       var edge = this.edges[i];
       var e = edge;
       var watchDog = 0;
+
+      if (edge.pair == null) {
+        console.log("Edge doesn't have it's pair", i);
+      }
+
       do {
         if (++watchDog > 100) {
           console.log("Edge watchDog break at", i, " . Wrong edge loop pointers?");
@@ -227,8 +259,6 @@ define(["pex/core/Vec3", "pex/geom/hem/HEEdge", "pex/geom/hem/HEVertex", "pex/ge
     this.clearEdgeSelection();
     this.clearFaceSelection();
   }
-
-
 
 
   return HEMesh;
