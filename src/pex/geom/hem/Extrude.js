@@ -24,7 +24,7 @@ define([
       var center = face.getCenter();
       var newEdges = [];
 
-      //we split all the corners withing the face effectively adding new internal vertices
+      //we split all the corners within the face effectively adding new internal vertices
       do {
         var newVertexPos = edgeToSplit.vert.added(normal.scaled(height));
         edgeToSplit.vert.edge = edgeToSplit; //TODO: fix that, making sure we split the right face
