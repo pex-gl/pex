@@ -15,27 +15,27 @@
 //     var material = new Materials.SolidColorMaterial();
 //     var mesh = new Mesh(geom, material);
 
-//Geometry can't be rendered by itself. First it has to be convertet to a [Vbo](Vbo.html). 
+//Geometry can't be rendered by itself. First it has to be convertet to a [Vbo](Vbo.html).
 //The [Mesh](Mesh.html) class does it for us automaticaly.
 
 //## Reference
 define([
-  "pex/core/Edge", 
-  "pex/core/Face3", 
-  "pex/core/Face4", 
-  "pex/core/Vec3", 
+  "pex/core/Edge",
+  "pex/core/Face3",
+  "pex/core/Face4",
+  "pex/core/Vec3",
   "pex/util/Log"
   ], function(Edge, Face3, Face4, Vec3, Log) {
- 
+
   //### Geometry ( )
-  //Does nothing beside setting empty *vertices* array as it's possible 
+  //Does nothing beside setting empty *vertices* array as it's possible
   //to have geometry with just points and no index buffer at all.
   function Geometry() {
     this.vertices = [];
   }
 
   //### Geometry.MAX_VERTICES
-  //Maximum number of different vertices per geometry. Limited by the type of 
+  //Maximum number of different vertices per geometry. Limited by the type of
   //index buffer variables which according to WebGL is a 16 bit integer.
   Geometry.MAX_VERTICES = 65536;
 
@@ -119,15 +119,15 @@ define([
       this.vertexEdges[edgeI.b].push(edgeI);
     }
   }
-    
+
   //### split ( maxVertices )
-  //Splits the gometry to several smaller one so that each one of them 
-  //has less than Geometry.MAX_VERTICES vertices.  
+  //Splits the gometry to several smaller one so that each one of them
+  //has less than Geometry.MAX_VERTICES vertices.
   //
   //`maxVertices` - maximum number of vertices that each geometry should contain
   //*{ Number }* = MAX_VERTICES
   //
-  //Returns an array of geometries *{ Array of Geometries }*   
+  //Returns an array of geometries *{ Array of Geometries }*
   //
   //*Note: Only meshes with edges are supported at the moment.*
   Geometry.prototype.split = function(maxVertices) {
@@ -182,8 +182,55 @@ define([
       geometries.push(this);
     }
 
-
     return geometries;
+  }
+
+  Geometry.merge = function(a, b) {
+    var vertexOffset = a.vertices.length;
+    var faceOffset = a.faces.length;
+    var normalsOffset = a.normals.length;
+
+    var vertices = [];
+    var faces = [];
+    var normals = [];
+
+    for(var i=0; i<a.vertices.length; i++) {
+      vertices.push(a.vertices[i].added(a.position));
+      normals.push(a.normals[i].dup());
+    }
+
+    for(var i=0; i<b.vertices.length; i++) {
+      vertices.push(b.vertices[i].added(b.position));
+      normals.push(b.normals[i].dup());
+    }
+
+    for(var i=0; i<a.faces.length; i++) {
+      var face = a.faces[i];
+      if (face instanceof Face3) {
+        faces.push(new Face3(face.a, face.b, face.c));
+      }
+      else if (face instanceof Face4) {
+        faces.push(new Face4(face.a, face.b, face.c, face.d));
+      }
+    }
+
+    for(var i=0; i<b.faces.length; i++) {
+      var face = b.faces[i];
+      if (face instanceof Face3) {
+        faces.push(new Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset));
+      }
+      else if (face instanceof Face4) {
+        faces.push(new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset));
+      }
+    }
+
+
+    var geom = new Geometry();
+    geom.vertices = vertices;
+    geom.faces = faces;
+    geom.normals = normals;
+
+    return geom;
   }
 
   return Geometry;
