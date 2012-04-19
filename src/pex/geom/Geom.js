@@ -7,9 +7,10 @@ define([
   "pex/geom/Path",
   "pex/geom/Loft",
   "pex/geom/Plane",
-  "pex/geom/hem/HEM"
+  "pex/geom/hem/HEM",
+  "pex/geom/BoundingBox"
   ],
-  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft, Plane, HEM) {
+  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft, Plane, HEM, BoundingBox) {
     return {
       Cube : Cube,
       SimpleCube : SimpleCube,
@@ -18,6 +19,7 @@ define([
       Path : Path,
       Loft : Loft,
       Plane : Plane,
-      HEM : HEM
+      HEM : HEM,
+      BoundingBox : BoundingBox
     };
 });
