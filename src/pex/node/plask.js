@@ -719,21 +719,31 @@ define([], function() {
 
   function makeMouseDraggedHandler(canvas) {
     var down = false;
+    var px = 0;
+    var py = 0;
     canvas.addEventListener('mousedown', function(e) {
       down = true;
+      px = e.offsetX || e.clientX - e.target.offsetLeft;
+      py = e.offsetY || e.clientY - e.target.offsetTop;
     });
     canvas.addEventListener('mouseup', function(e) {
       down = false;
     });
     canvas.addEventListener('mousemove', function(e) {
       if (down) {
+        var x = e.offsetX || e.clientX - e.target.offsetLeft;
+        var y = e.offsetY || e.clientY - e.target.offsetTop;
         fireEvent("mouseDragged", {
-          x: e.offsetX || e.clientX - e.target.offsetLeft,
-          y: e.offsetY || e.clientY - e.target.offsetTop,
+          x: x,
+          y: y,
+          dx: x - px,
+          dy: y - py,
           option: e.altKey,
           shift: e.shiftKey,
           control: e.ctrlKey
         });
+        px = x;
+        py = y;
       }
     })
   }
