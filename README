@@ -3,4 +3,6 @@ based on
 - requirejs
 - Plask and PreGL by Dean McNamee
 - Embr by Ryan Alexander
+
+Documentation is generated using my fork of Docco https://github.com/vorg/docco
  
