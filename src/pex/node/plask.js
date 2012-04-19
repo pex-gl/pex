@@ -766,7 +766,7 @@ define([], function() {
       fireEvent("scrollWheel", {
         x: e.offsetX || e.layerX,
         y: e.offsetY || e.layerY,
-        dy: e.wheelDelta || -e.detail,
+        dy: e.wheelDelta/10 || -e.detail/10,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
