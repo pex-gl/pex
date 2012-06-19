@@ -12,30 +12,30 @@
 
 //## Reference
 define([
-  "pex/core/Context", 
-  "pex/core/Vbo", 
-  "pex/core/Vec3", 
-  "pex/core/Vec4", 
-  "pex/core/Geometry", 
+  "pex/core/Context",
+  "pex/core/Vbo",
+  "pex/core/Vec3",
+  "pex/core/Vec4",
+  "pex/core/Geometry",
   "pex/util/Log",
   "pex/util/ObjUtils"
   ], function(Context, Vbo, Vec3, Vec4, Geometry, Log, ObjUtils) {
 
   //### Mesh ( meshData, material, options )
-  //`meshData` - *{ Vbo }* or *{ Geometry }*  
-  //`material` - material to use for rendering *{ Material }*  
-  //`options` - *{ Object }*  
+  //`meshData` - *{ Vbo }* or *{ Geometry }*
+  //`material` - material to use for rendering *{ Material }*
+  //`options` - *{ Object }*
   //
-  //Default options:     
-  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*  
-  //`useEdges` : favor edges instead of faces? *{ Boolean }* = *false*  
+  //Default options:
+  //`primitiveType` : GL primitive type *{ Number/Int }* = *TRIANGLES*
+  //`useEdges` : favor edges instead of faces? *{ Boolean }* = *false*
   //
-  //Default mesh transforms:  
-  //`position` - *{ Vec3 }*  = (0, 0, 0)  
-  //`rotation` - *{ Vec4 }* = (0, 1, 0, 0)  
-  //`scale`  - *{ Vec3 }*  = (1, 1, 1)  
+  //Default mesh transforms:
+  //`position` - *{ Vec3 }*  = (0, 0, 0)
+  //`rotation` - *{ Vec4 }* = (0, 1, 0, 0)
+  //`scale`  - *{ Vec3 }*  = (1, 1, 1)
   //
-  //*Note: If Geometry is used as meshData it will be converted into VBOs.*    
+  //*Note: If Geometry is used as meshData it will be converted into VBOs.*
   function Mesh(meshData, material, options) {
     this.gl = Context.currentContext.gl;
 
@@ -89,7 +89,7 @@ define([
   //Draws the mesh using given camera.
   //`camera` - *{ PerspectiveCamera }*
   //
-  //*Note: Camera projection and view matrices will be passed over to shader uniforms. 
+  //*Note: Camera projection and view matrices will be passed over to shader uniforms.
   //Model View and Normal matrices will be computed and passed as well.*
   Mesh.prototype.draw = function(camera) {
     if (this.geometry && this.geometry.dirty) {
@@ -108,6 +108,14 @@ define([
     for(var i=0; i<this.vbos.length; i++) {
       this.vbos[i].draw(this.material.program);
     }
+  }
+
+  Mesh.prototype.setMaterial = function(material) {
+    this.material = material;
+    for(var i=0; i<this.vbos.length; i++) {
+      this.vbos[i].resetAttribLocations();
+    }
+
   }
 
   //### dispose ( )

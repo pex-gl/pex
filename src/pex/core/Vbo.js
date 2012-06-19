@@ -125,7 +125,7 @@ define([
 
     if (this.indices) {
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
-      this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, null);
+      this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
     }
     else if (this.attributes["position"]){
       var num = this.attributes["position"].data.length/3;
@@ -137,6 +137,13 @@ define([
       if (attrib.location >= 0) {
         this.gl.disableVertexAttribArray(attrib.location);
       }
+    }
+  }
+
+  Vbo.prototype.resetAttribLocations = function() {
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      attrib.location = -1;
     }
   }
 
