@@ -7,7 +7,7 @@
 //     uniform mat4 modelViewMatrix;
 //     attribute vec3 position;
 //     void main() {
-//       vec4 pos = vec4(position, 1.0);  
+//       vec4 pos = vec4(position, 1.0);
 //       gl_Position = projectionMatrix * modelViewMatrix * pos;
 //     }
 //     #endif
@@ -27,8 +27,8 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";
 
   //### Program ( vertSrc, fragSrc )
-  //`vertScr` - optional vertex shader source *{ String }*  
-  //`fragSrc` - optional fragment shader source *{ String }*  
+  //`vertScr` - optional vertex shader source *{ String }*
+  //`fragSrc` - optional fragment shader source *{ String }*
   function Program(vertSrc, fragSrc) {
     this.gl = Context.currentContext.gl;
 
@@ -41,8 +41,8 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   }
 
   //### addSources ( vertScr, fragScr )
-  //Adds vertex shader and fragment shader source codes at once and compiles them.  
-  //`vertScr` - vertex shader source *{ String }*  
+  //Adds vertex shader and fragment shader source codes at once and compiles them.
+  //`vertScr` - vertex shader source *{ String }*
   //`fragSrc` - fragment shader source *{ String }*
   Program.prototype.addSources = function(vertSrc, fragSrc) {
     vertSrc = vertSrc ? vertSrc : null;
@@ -53,8 +53,8 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   }
 
   //### addVertexSource ( vertScr )
-  //Adds vertex shader source code and compiles it.  
-  //`vertScr` - vertex shader source *{ String }*  
+  //Adds vertex shader source code and compiles it.
+  //`vertScr` - vertex shader source *{ String }*
   Program.prototype.addVertexSource = function(vertSrc) {
     var gl = this.gl;
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
@@ -65,8 +65,8 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   }
 
   //### addSources ( vertScr, fragScr )
-  //Adds fragment shader source code and compiles it.  
-  //`fragSrc` - fragment shader source *{ String }*  
+  //Adds fragment shader source code and compiles it.
+  //`fragSrc` - fragment shader source *{ String }*
   Program.prototype.addFragmentSource = function(fragSrc) {
     var gl = this.gl;
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -103,7 +103,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
       var location = gl.getAttribLocation(handle, info.name);
       this.attributes[info.name] = location;
     }
-    
+
     this.ready = true;
     return this;
   };
@@ -123,7 +123,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   };
 
   //### load ( )
-  //Load the GLSL shader source from a file.  
+  //Load the GLSL shader source from a file.
   //`url` - url of the file *{ String }*
   Program.load = function(url) {
     var program = new Program();
@@ -135,11 +135,11 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   }
 
   //### makeUniformSetter
-  //Builds setter function for given uniform type.  
-  //`gl` - WebGL context *{ GL }*  
-  //`type` - uniform type *{ Number/Int }*  
-  //`location` - uniform location *{ Number/Int }*  
-  //Returns the setter *{ Function }*  
+  //Builds setter function for given uniform type.
+  //`gl` - WebGL context *{ GL }*
+  //`type` - uniform type *{ Number/Int }*
+  //`location` - uniform location *{ Number/Int }*
+  //Returns the setter *{ Function }*
   function makeUniformSetter(gl, type, location){
     var setterFun = null;
     switch(type){
@@ -186,6 +186,17 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
           gl.uniformMatrix4fv(location, false, mat4.toFloat32Array());
         };
         break;
+      default:
+        setterFun = function(value){
+          if (isNaN(value)) {
+            gl.uniform1i(location, value.handle);
+          }
+          else {
+            gl.uniform1i(location, value);
+          }
+        };
+        break;
+
     }
 
     if (setterFun) {
