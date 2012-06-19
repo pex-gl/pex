@@ -53,7 +53,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
         canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getValue(), dx + 5, dy + 13);
+        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getValue(), dx + 3, dy + 13);
       }
       else if (e.type == "button") {
         var btnColor = e.active ? this.controlHighlightPaint : this.controlBgPaint;
@@ -70,7 +70,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
         canvas.drawText(this.fontPaint, items[i].title, dx + 5 + eh - 5, dy + 13);
       }
       else if (e.type == "radiolist") {
-        canvas.drawText(this.fontPaint, e.title, dx + 5, dy + 13);
+        canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         var itemColor = this.controlBgPaint;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
@@ -80,9 +80,10 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
           canvas.drawText(this.fontPaint, item.name, dx + 5 + eh - 5, eh + j*eh + dy + 13);
         }
         e.activeArea.set(dx + 3, eh + dy + 3, eh - 5, e.items.length * eh - 5);
+        eh = eh + e.items.length * eh;
       }
       else {
-        canvas.drawText(this.fontPaint, items[i].title, dx + 5, dy + 13);
+        canvas.drawText(this.fontPaint, items[i].title, dx + 3, dy + 13);
       }
       dy += eh;
     }

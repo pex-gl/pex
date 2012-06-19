@@ -94,6 +94,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
         else if (this.activeControl.type == "radiolist") {
           var hitY = mousePos.y - this.activeControl.activeArea.y;
           var hitItemIndex = Math.floor(this.activeControl.items.length * hitY/this.activeControl.activeArea.height);
+          if (hitItemIndex < 0) continue;
+          if (hitItemIndex >= this.activeControl.items.length) continue;
           this.activeControl.contextObject[this.activeControl.attributeName] = this.activeControl.items[hitItemIndex].value;
           if (this.activeControl.onchange) {
             this.activeControl.onchange(this.activeControl.items[hitItemIndex].value);
