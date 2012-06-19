@@ -5,19 +5,22 @@
 //     texture.bind();
 
 //## Reference
-define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
+define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, Context, IO) {
 
   //### Texture2D ( )
   //Does nothing, use *load()* or one of *gen\*()* methods instead.
   function Texture2D() {
-    this.handle = null;
+    console.log("Texture2D+");
+    this.init(Context.currentContext.gl.TEXTURE_2D);
   }
 
+  Texture2D.prototype = new Texture();
+
   //### bind ( unit )
-  //Binds the texture to the current GL context.  
+  //Binds the texture to the current GL context.
   //`unit` - texture unit in which to place the texture *{ Number/Int }* = 0
   Texture2D.prototype.bind = function(unit) {
-    unit = unit ? unit : 0;    
+    unit = unit ? unit : 0;
 
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
     this.gl.bindTexture(this.gl.TEXTURE_2D,  this.handle);
@@ -25,9 +28,9 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
 
   //### getNoise ( w, h )
   //
-  //Generates texture filled with black and white noise.  
-  //`w` - width of the texture *{ Number/Int }*  
-  //`h` - height of the texture *{ Number/Int }*  
+  //Generates texture filled with black and white noise.
+  //`w` - width of the texture *{ Number/Int }*
+  //`h` - height of the texture *{ Number/Int }*
   //
   //Returns the created texture *{ Texture }*
   Texture2D.genNoise = function(w, h) {
@@ -36,9 +39,8 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
 
     var gl = Context.currentContext.gl;
 
-    var handle = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, handle);
+    var texture = new Texture2D();
+    texture.bind();
 
     var b = new ArrayBuffer(w*h);
     var pixels = new Uint8Array(b);
@@ -56,20 +58,16 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.bindTexture(gl.TEXTURE_2D, null);
 
-    var texture = new Texture2D();
-    texture.handle = handle;
     texture.width = w;
     texture.height = h;
-    texture.target = gl.TEXTURE_2D;
-    texture.gl = gl;
     return texture;
   }
 
   //### genNoiseRGBA ( w, h )
-  //Generates texture filled with colorful RGBA noise.  
+  //Generates texture filled with colorful RGBA noise.
   //
-  //`w` - width of the texture *{ Number/Int }*  
-  //`h` - height of the texture *{ Number/Int }*  
+  //`w` - width of the texture *{ Number/Int }*
+  //`h` - height of the texture *{ Number/Int }*
   //
   //Returns the created texture *{ Texture }*
   Texture2D.genNoiseRGBA = function(w, h) {
@@ -112,13 +110,13 @@ define(["pex/core/Context","pex/sys/IO"], function(Context, IO) {
   }
 
   //### load ( src )
-  //Load texture from file (in Plask) or url (in the web browser).  
+  //Load texture from file (in Plask) or url (in the web browser).
   //
-  //`src` - path to file or url *{ String }*  
+  //`src` - path to file or url *{ String }*
   //
-  //Returns the loaded texture or B/W noise if the file or url was not found *{ Texture2D }*  
-  //  
-  //*Note: In Plask the texture is ready immediately, in the web browser it's 
+  //Returns the loaded texture or B/W noise if the file or url was not found *{ Texture2D }*
+  //
+  //*Note: In Plask the texture is ready immediately, in the web browser it's
   //first black until the file is loaded and texture can be populated with the image data.*
   Texture2D.load = function(src) {
     var gl = Context.currentContext.gl;

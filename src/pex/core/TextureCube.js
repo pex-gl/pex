@@ -5,42 +5,33 @@
 //     envMap.bind();
 
 //## Reference
-define(["pex/core/Context", "pex/sys/IO"], function(Context, IO) {
+define(["pex/core/Texture", "pex/core/Context", "pex/sys/IO"], function(Texture, Context, IO) {
 
   //### TextureCube ( )
   //Does nothing, use *load()* method instead.
   function TextureCube() {
-    this.handle = null;
+    this.init(Context.currentContext.gl.TEXTURE_CUBE_MAP);
   }
 
-  //### bind ( unit )
-  //Binds the texture to the current GL context.  
-  //`unit` - texture unit in which to place the texture *{ Number/Int }* = 0
-  TextureCube.prototype.bind = function(unit) {
-    unit = unit ? unit : 0;    
-    this.gl.activeTexture(gl.TEXTURE0 + unit);
-    this.gl.bindTexture(gl.TEXTURE_CUBE,  this.handle);
-  }
+  TextureCube.prototype = new Texture();
 
   //### load ( src )
-  //Load texture from file (in Plask) or url (in the web browser).  
+  //Load texture from file (in Plask) or url (in the web browser).
   //
-  //`src` - path to file or url (e.g. *path/file_####.jpg*) *{ String }*  
+  //`src` - path to file or url (e.g. *path/file_####.jpg*) *{ String }*
   //
-  //Returns the loaded texture *{ Texture2D }*  
-  //  
-  //*Note* the path or url must contain #### that will be replaced by 
-  //id (e.g. *posx*) of the cube side*  
+  //Returns the loaded texture *{ Texture2D }*
   //
-  //*Note: In Plask the texture is ready immediately, in the web browser it's 
+  //*Note* the path or url must contain #### that will be replaced by
+  //id (e.g. *posx*) of the cube side*
+  //
+  //*Note: In Plask the texture is ready immediately, in the web browser it's
   //first black until the file is loaded and texture can be populated with the image data.*
   TextureCube.load = function(src) {
 
     var gl = Context.currentContext.gl;
 
     var texture = new TextureCube();
-    texture.handle = gl.createTexture();
-    texture.target = gl.TEXTURE_CUBE_MAP;
 
     var cubeMapTargets = [
       gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'posx',

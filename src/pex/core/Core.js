@@ -15,6 +15,7 @@ define( [
   "pex/core/Mesh",
   "pex/core/Program",
   "pex/core/Material",
+  "pex/core/Texture",
   "pex/core/Texture2D",
   "pex/core/TextureCube",
   "pex/core/Fbo",
@@ -24,7 +25,7 @@ define( [
   ],
   function(
       Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
-      Ray, Vbo, Mesh, Program, Material, Texture2D, TextureCube, 
+      Ray, Vbo, Mesh, Program, Material, Texture, Texture2D, TextureCube, 
       Fbo, Geometry, Spline, Rect
     ) {
     return {
@@ -43,6 +44,7 @@ define( [
       Mesh : Mesh,
       Program : Program,
       Material : Material,
+      Texture : Texture,
       Texture2D : Texture2D,
       TextureCube: TextureCube,
       Fbo : Fbo,
