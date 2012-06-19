@@ -65,7 +65,9 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5 + eh - 5, dy + 12);                
       }
-      
+      else if (e.type == "radiolist"){
+        throw "radio list hasn't been implemented yet";
+      }
       else {
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5, dy + 13);        
