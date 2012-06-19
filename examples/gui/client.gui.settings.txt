@@ -1,0 +1,1 @@
+{"GUI Test":"","'S' - save settings":"","'L' - load settings":"","":"","CUBE":"","Rotate":true,"Rotate speed":0.24675324675324678,"CAMERA":"","Distance":0.116502637987013,"MATERIAL":0}
