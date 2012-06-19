@@ -4,21 +4,27 @@ define([
   "pex/materials/ShowColorMaterial",
   "pex/materials/TestMaterial",
   "pex/materials/TexturedMaterial",
-  "pex/materials/DiffuseMaterial"
+  "pex/materials/DiffuseMaterial",
+  "pex/materials/ShowTexCoordsMaterial",
+  "pex/materials/ShowNormalMaterial"
   ],
   function(
     SolidColorMaterial,
     ShowColorMaterial,
     TestMaterial,
     TexturedMaterial,
-    DiffuseMaterial
+    DiffuseMaterial,
+    ShowTexCoordsMaterial,
+    ShowNormalMaterial
   ) {
     var Materials = {
       SolidColorMaterial : SolidColorMaterial,
       ShowColorMaterial : ShowColorMaterial,
       TestMaterial : TestMaterial,
       TexturedMaterial : TexturedMaterial,
-      DiffuseMaterial : DiffuseMaterial
+      DiffuseMaterial : DiffuseMaterial,
+      ShowTexCoordsMaterial : ShowTexCoordsMaterial,
+      ShowNormalMaterial : ShowNormalMaterial
     };
 
     return Materials;

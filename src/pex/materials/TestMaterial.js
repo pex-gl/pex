@@ -35,8 +35,9 @@ define(["pex/core/Core"], function(Core) {
 
 
   function TestMaterial() {
-      this.gl = Core.Context.currentContext.gl;
-      this.program = new Core.Program(vert, frag);
+    Core.Material.call(this);
+    this.gl = Core.Context.currentContext.gl;
+    this.program = new Core.Program(vert, frag);
   }
 
   TestMaterial.prototype = new Core.Material();

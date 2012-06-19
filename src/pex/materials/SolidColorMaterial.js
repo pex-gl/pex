@@ -18,15 +18,16 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
 
 
   function SolidColorMaterial(uniforms) {
-      this.gl = Core.Context.currentContext.gl;
-      this.program = new Core.Program(solidColorVert, solidColorFrag);
+    Core.Material.call(this);
+    this.gl = Core.Context.currentContext.gl;
+    this.program = new Core.Program(solidColorVert, solidColorFrag);
 
-      var defaults = {
-       color : new Core.Vec4(1, 1, 1, 1),
-       pointSize : 1
-      }
+    var defaults = {
+     color : new Core.Vec4(1, 1, 1, 1),
+     pointSize : 1
+    }
 
-      this.uniforms = ObjUtils.mergeObjects(defaults, uniforms);
+    this.uniforms = ObjUtils.mergeObjects(defaults, uniforms);
   }
 
   SolidColorMaterial.prototype = new Core.Material();
