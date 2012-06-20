@@ -53,13 +53,13 @@ Pex.run([
         this.gui.addParam("Rotate speed", this, "speed", {min:0, max:5});
         this.gui.addLabel("CAMERA");
         this.gui.addParam("Distance", this, "distance", {min:0.5, max:5});
-        this.gui.addRadioList("MATERIAL", this, "materialIndex", [
+        var radioList = this.gui.addRadioList("MATERIAL", this, "materialIndex", [
           { name:"None", value:0 },
           { name:"Test", value:1 },
           { name:"Texture", value:2 },
           { name:"Normal", value:3 },
           { name:"Diffuse", value:4 }
-        ])
+        ], function(idx) { console.log("Material changed", idx); }).setPosition(200, 90);
 
         //this.gui.load("client.gui.settings.txt");
 
@@ -81,7 +81,7 @@ Pex.run([
 
         if (this.rotate) {
           this.mesh.rotation.w += Time.delta * this.speed;
-        }        
+        }
         this.mesh.setMaterial(this.materials[this.materialIndex]);
         this.mesh.draw(this.camera);
 
