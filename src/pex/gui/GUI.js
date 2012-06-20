@@ -38,7 +38,6 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     if (options && options.min !== undefined && options.max !== undefined) {
       val = options.min + val * (options.max - options.min);
     }
-    console.log(this.attributeName, val);
     this.contextObject[this.attributeName] = val;
   }
 
@@ -55,13 +54,13 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     this.y = (y == undefined) ? 0 : y;
 
     if (plask.SkCanvas) {
-      this.renderer = new SkiaRenderer(256, window.height);
+      this.renderer = new SkiaRenderer(window.width, window.height);
     }
     else {
-      this.renderer = new HTMLCanvasRenderer(256, window.height);
+      this.renderer = new HTMLCanvasRenderer(window.width, window.height);
     }
 
-    this.screenImage = new ScreenImage(window.width, window.height, this.x, this.y, 256, window.height, this.renderer.getTexture());
+    this.screenImage = new ScreenImage(window.width, window.height, this.x, this.y, window.width, window.height, this.renderer.getTexture());
 
     this.items = [];
 
