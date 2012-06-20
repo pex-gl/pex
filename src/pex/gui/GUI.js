@@ -15,6 +15,11 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     }
   }
 
+  GUIControl.prototype.setPosition = function(x, y) {
+    this.px = x;
+    this.py = y;
+  }
+
   GUIControl.prototype.getNormalizedValue = function() {
     if (!this.contextObject) return "";
 
@@ -128,15 +133,17 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
   }
 
   GUI.prototype.addLabel = function(title) {
-    this.items.push(new GUIControl(
+    var ctrl = new GUIControl(
       { type: "label", title: title, activeArea: new Rect(0, 0, 0, 0) }
-    ));
+    );
+    this.items.push(ctrl);
+    return ctrl;
   }
 
   GUI.prototype.addParam = function(title, contextObject, attributeName, options) {
     options = options || {};
     if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
-      this.items.push(new GUIControl(
+      var ctrl = new GUIControl(
         {
           type: "toggle",
           title: title,
@@ -144,11 +151,13 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options
-        })
+        }
       );
+      this.items.push(ctrl);
+      return ctrl;
     }
     else {
-      this.items.push(new GUIControl(
+      var ctrl = new GUIControl(
         {
           type: "slider",
           title: title,
@@ -156,34 +165,42 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options
-        })
+        }
       );
+      this.items.push(ctrl);
+      return ctrl;
     }
   }
 
   GUI.prototype.addButton = function(title, contextObject, methodName) {
-    this.items.push(new GUIControl(
+    var ctrl = new GUIControl(
       {
         type: "button",
         title: title,
         contextObject: contextObject,
         methodName: methodName,
         activeArea: new Rect(0, 0, 0, 0)
-      })
+      }
     );
+    this.items.push(ctrl);
+    return ctrl;
   }
 
-  GUI.prototype.addRadioList = function(title, contextObject, attributeName, items) {
-    this.items.push(new GUIControl(
+  GUI.prototype.addRadioList = function(title, contextObject, attributeName, items, onchange) {
+    var ctrl = new GUIControl(
       {
         type: "radiolist",
         title: title,
         contextObject: contextObject,
         attributeName: attributeName,
         activeArea: new Rect(0, 0, 0, 0),
-        items: items
-      })
+        items: items,
+        onchange : onchange
+      }
     );
+    this.items.push(ctrl);
+    return ctrl;
+
   }
 
   GUI.prototype.dispose = function() {

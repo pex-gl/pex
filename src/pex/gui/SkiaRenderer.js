@@ -33,17 +33,20 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
   SkiaRenderer.prototype.draw = function(items) {
     var canvas = this.canvas;
+
     canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode); //transparent
 
-    var dy;
-    var dx;
+    var dy = 10;
+    var dx = 10;
     var w = 160;
-
-    dy = 10;
     for(var i=0; i<items.length; i++) {
       var e = items[i];
-      var dx = 10;
+      if (e.px && e.px) {
+        dx = e.px;
+        dy = e.py;
+      }
       var eh = 20;
+
 
       if (e.type == "slider") eh = 34;
       if (e.type == "button") eh = 24;
