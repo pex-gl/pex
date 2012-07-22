@@ -3,7 +3,7 @@ define([], function() {
     this.root = new Octree.Cell(x, y, z, w, h, d, 0);
   }
 
-  Octree.MaxLevel = 4;
+  Octree.MaxLevel = 8;
 
   //p = {x, y, z}
   Octree.prototype.add = function(p) {
@@ -13,6 +13,10 @@ define([], function() {
   //check if the point was already added to the octreee
   Octree.prototype.has = function(p) {
     return this.root.has(p);
+  }
+
+  Octree.prototype.findNearestPoint = function(p) {
+    return this.root.findNearestPoint(p);
   }
 
   Octree.Cell = function(x, y, z, w, h, d, level) {
@@ -98,6 +102,33 @@ define([], function() {
     for(var i=0; i<this.points.length; i++) {
       this.addToChildren(this.points[i]);
     }
+  }
+
+  Octree.Cell.prototype.findNearestPoint = function(p) {
+    if (this.children.length > 0) {
+      for(var i=0; i<this.children.length; i++) {
+        var child = this.children[i];
+        if (child.points.length > 0 && child.contains(p)) {
+          return child.findNearestPoint(p);
+        }
+      }
+      if (this.points.length > 0) {
+        var minDistSq = 99999;
+        var minPoint = null;
+        for(var i=0; i<this.points.length; i++) {
+          var distSq = this.points[i].distanceSquared(p);
+          if (distSq < minDistSq) {
+            minDistSq = distSq;
+            minPoint = this.points[i];
+          }
+        }
+        return minPoint;
+      }
+    }
+    else if (this.points.length > 0) {
+      return this.points[0];
+    }
+    else return null;
   }
 
   return Octree;
