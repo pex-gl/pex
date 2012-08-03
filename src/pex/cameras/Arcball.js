@@ -1,38 +1,39 @@
-//Arcball camera controller based on implementation in [Embr](https://github.com/notlion/embr)
+//Based on "A User Interface for Specifying Three-Dimensional Orientation Using a Mouse" by Ken Shoemake
+//http://www.talisman.org/~erlkonig/misc/shoemake92-arcball.pdf
 
 //## Example Use
 //     var camera = new PerspecitveCamera();
 //     var arball = new Arcball(this, camera, 5.0);
 
 //## Reference
-define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3, Quat) {
-
-  //### Arcball ( window, camera, distance)
-  //`window` - window used to capture mouse events *{ [Window](Window.html)) }*
-  //`camera` - controlled camera *{ [PerspectiveCamera](PerspectiveCamera.html) }*
-  //`distance` - distance from the camera target *{ Number }*
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex/core/Mat4"], function(Vec2, Vec3, Vec4, Quat, Mat4) {
   function Arcball(window, camera, distance) {
     this.distance = distance || 2;
     this.minDistance = distance/2 || 0.3;
     this.maxDistance = distance*2 || 5;
     this.camera = camera;
     this.window = window;
+    this.radius = Math.min(window.width/2, window.height/2) * 2;
     this.center = new Vec2(window.width/2, window.height/2);
-    this.radius = 0.9 * Math.min(window.width/2, window.height/2);
     this.orientation = Quat.identity();
+    this.currRot = Quat.identity();
+    this.clickRot = Quat.identity();
+    this.dragRot = Quat.identity();
+    this.clickPos = new Vec3();
+    this.dragPos = new Vec3();
+    this.rotAxis = new Vec3();
 
     this.updateCamera();
 
     var self = this;
-
     window.on('leftMouseDown', function(e) {
       if (e.handled) return;
-      self.down(e.x, e.y);
+      self.down(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('mouseDragged', function(e) {
       if (e.handled) return;
-      self.drag(e.x, e.y);
+      self.drag(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('scrollWheel', function(e) {
@@ -48,25 +49,20 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3,
   //
   //`x` - x position of the mouse *{ Number }*
   //`y` - y position of the mouse *{ Number }*
-  Arcball.prototype.screenToSphere = function(x, y){
-    var pos = new Vec3(
-      (x - this.center.x) / (this.radius * 2),
-      (y - this.center.y) / (this.radius * 2),
-      0
-    );
+  Arcball.prototype.mouseToSphere = function(x, y) {
+    var v = new Vec3(0, 0, 0);
+    v.x = (x - this.center.x) / this.radius;
+    v.y = -(y - this.center.y) / this.radius;
+    v.z = 0;
 
-    pos.y *= -1;
-
-    var len2 = pos.lengthSquared();
-      if(len2 > 1){
-      pos.scale(1 / Math.sqrt(len2));
+    var dist = (v.x * v.x) + (v.y * v.y);
+    if (dist > 1) {
+      v.normalize();
     }
     else {
-      pos.z = Math.sqrt(1 - len2);
-      pos.normalize();
+      v.z = Math.sqrt( 1.0 - dist );
     }
-
-    return pos;
+    return v;
   }
 
   //### down ( x, y )
@@ -76,8 +72,9 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3,
   //`x` - x position of the mouse *{ Number }*
   //`y` - y position of the mouse *{ Number }*
   Arcball.prototype.down = function(x, y) {
-    this.down_pos = this.screenToSphere(x, y);
-    this.down_ori = this.orientation.dup();
+    this.clickPos = this.mouseToSphere(x, y);
+    this.clickRot.setQuat( this.currRot );
+    this.updateCamera();
   }
 
   //### drag ( x, y )
@@ -86,22 +83,37 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Quat"], function(Vec2, Vec3,
   //`x` - x position of the mouse *{ Number }*
   //`y` - y position of the mouse *{ Number }*
   Arcball.prototype.drag = function(x, y) {
-    var pos  = this.screenToSphere(x, y);
-    var axis = this.down_pos.dup().cross(pos);
-    this.orientation = this.down_ori.mulled(new Quat(axis.x, axis.y, axis.z, this.down_pos.dot(pos)));
-    this.orientation.normalize();
-
+    this.dragPos = this.mouseToSphere(x, y);
+    this.rotAxis.cross2(this.clickPos, this.dragPos);
+    var theta = this.clickPos.dot(this.dragPos);
+    this.dragRot.set(this.rotAxis.x, this.rotAxis.y, this.rotAxis.z, theta);
+    this.currRot.mul2(this.dragRot, this.clickRot);
     this.updateCamera();
   }
 
   //### updateCamera ( )
   //Updates camera matrices. Called automaticaly.
   Arcball.prototype.updateCamera = function() {
-    var arcballRotation = this.orientation.toMat4();
+    //rotating object
+    //var arcballRotation = this.currRot.toMat4();
+    //var rotationMatrix = new Mat4();
+    //rotationMatrix.reset();
+    //rotationMatrix.translate(0, 0, -this.distance);
+    //rotationMatrix.mul(arcballRotation);
+    //this.camera.viewMatrix.reset();
+    //this.camera.viewMatrix.translate(0, 0, -this.distance);
+    //this.camera.viewMatrix.mul(arcballRotation);
 
-    this.camera.viewMatrix.reset();
-    this.camera.viewMatrix.translate(0, 0, -this.distance);
-    this.camera.viewMatrix.mul(arcballRotation);
+    //vs rotating the camera
+    //based on http://forum.libcinder.org/topic/apply-and-arcball-rotation-to-a-camera
+    var q = this.currRot.dup();
+    q.w *= -1;
+
+    var target = new Vec3(0, 0, 0);
+    var offset = q.mulVec3(new Vec3(0, 0, this.distance));
+    var eye = target.subbed(offset);
+    var up = q.mulVec3(new Vec3(0, 1, 0));
+    this.camera.lookAt(target, eye, up);
   }
 
   return Arcball;
