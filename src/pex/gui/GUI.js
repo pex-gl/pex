@@ -94,6 +94,9 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
         }
         else if (this.activeControl.type == "toggle") {
           this.activeControl.contextObject[this.activeControl.attributeName] = !this.activeControl.contextObject[this.activeControl.attributeName];
+          if (this.activeControl.onchange) {
+            this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+          }
         }
         else if (this.activeControl.type == "radiolist") {
           var hitY = mousePos.y - this.activeControl.activeArea.y;
@@ -119,6 +122,9 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
         var val = (e.x - aa.x) / aa.width;
         val = Math.max(0, Math.min(val, 1));
         this.activeControl.setNormalizedValue(val);
+        if (this.activeControl.onchange) {
+          this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+        }
       }
       e.handled = true;
     }
@@ -139,9 +145,24 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     return ctrl;
   }
 
-  GUI.prototype.addParam = function(title, contextObject, attributeName, options) {
+  GUI.prototype.addParam = function(title, contextObject, attributeName, options, onchange) {
     options = options || {};
-    if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
+    if (attributeName == "[]") {
+      var ctrl = new GUIControl(
+        {
+          type: "multislider",
+          title: title,
+          contextObject: contextObject,
+          attributeName: attributeName,
+          activeArea: new Rect(0, 0, 0, 0),
+          options: options,
+          onchange : onchange
+        }
+      );
+      this.items.push(ctrl);
+      return ctrl;
+    }
+    else if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
       var ctrl = new GUIControl(
         {
           type: "toggle",
@@ -149,7 +170,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
           contextObject: contextObject,
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
-          options: options
+          options: options,
+          onchange : onchange
         }
       );
       this.items.push(ctrl);
@@ -163,7 +185,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
           contextObject: contextObject,
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
-          options: options
+          options: options,
+          onchange : onchange
         }
       );
       this.items.push(ctrl);
