@@ -19,14 +19,16 @@ define( [
   "pex/core/Texture2D",
   "pex/core/TextureCube",
   "pex/core/Fbo",
-  "pex/core/Geometry",    
+  "pex/core/Geometry",
   "pex/core/Spline",
-  "pex/core/Rect"
+  "pex/core/Rect",
+  "pex/core/Line2D",
+  "pex/core/Triangle2D",
   ],
   function(
       Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
-      Ray, Vbo, Mesh, Program, Material, Texture, Texture2D, TextureCube, 
-      Fbo, Geometry, Spline, Rect, MathUtil
+      Ray, Vbo, Mesh, Program, Material, Texture, Texture2D, TextureCube,
+      Fbo, Geometry, Spline, Rect, Line2D, Triangle2D
     ) {
     return {
       Context : Context,
@@ -50,6 +52,8 @@ define( [
       Fbo : Fbo,
       Geometry : Geometry,
       Spline : Spline,
-      Rect : Rect
+      Rect : Rect,
+      Line2D : Line2D,
+      Triangle2D : Triangle2D
     };
 });
