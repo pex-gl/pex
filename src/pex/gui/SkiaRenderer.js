@@ -47,11 +47,12 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
       }
       var eh = 20;
 
-
       if (e.type == "slider") eh = 34;
       if (e.type == "button") eh = 24;
+      if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
 
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
+
       if (e.type == "slider") {
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
         canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
@@ -84,6 +85,10 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
         }
         e.activeArea.set(dx + 3, eh + dy + 3, eh - 5, e.items.length * eh - 5);
         eh = eh + e.items.length * eh;
+      }
+      else if (e.type == "texture2D") {
+        canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
       }
       else {
         canvas.drawText(this.fontPaint, items[i].title, dx + 3, dy + 13);
