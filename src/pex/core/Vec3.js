@@ -17,5 +17,15 @@ define(["plask"], function(plask) {
     return c.cross2(this, b);
   }
 
+  plask.Vec3.prototype.distance = function(v) {
+    var x = this.x, y = this.y, z = this.z;
+    return Math.sqrt((x - v.x)*(x - v.x) + (y - v.y)*(y - v.y) + (z - v.z)*(z - v.z));
+  }
+
+  plask.Vec3.prototype.distanceSquared = function(v) {
+    var x = this.x, y = this.y, z = this.z;
+    return ((x - v.x)*(x - v.x) + (y - v.y)*(y - v.y) + (z - v.z)*(z - v.z));
+  }
+
   return plask.Vec3;
 });
