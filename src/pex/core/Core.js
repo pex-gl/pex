@@ -21,8 +21,7 @@ define( [
   "pex/core/Fbo",
   "pex/core/Geometry",    
   "pex/core/Spline",
-  "pex/core/Rect",
-  "pex/core/MathUtil"
+  "pex/core/Rect"
   ],
   function(
       Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
@@ -51,7 +50,6 @@ define( [
       Fbo : Fbo,
       Geometry : Geometry,
       Spline : Spline,
-      Rect : Rect,
-      MathUtil : MathUtil
+      Rect : Rect
     };
 });
