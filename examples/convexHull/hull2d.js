@@ -4,6 +4,8 @@ Pex.run(["pex/Pex", "plask"],
   function(Pex, plask) {
     var Vec2 = Pex.Core.Vec2;
     var Edge = Pex.Core.Edge;
+    var Line2D = Pex.Core.Line2D;
+    var Triangle2D = Pex.Core.Triangle2D;
 
     Pex.Sys.Window.create({
       settings: {
@@ -12,7 +14,7 @@ Pex.run(["pex/Pex", "plask"],
         type: '2d',
       },
       points: [],
-      numPoints: 30,
+      numPoints: 1000,
       init: function() {
         this.framerate(30);
 
@@ -22,8 +24,11 @@ Pex.run(["pex/Pex", "plask"],
           return new Vec2(x + Math.random() * w, y + Math.random() * h);
         }
 
+        var center = new Vec2(this.width/2, this.height/2);
         for(var i=0; i<this.numPoints; i++) {
-          this.points.push(randomPointInRect(150, 150, this.width - 300, this.height - 300));
+          var p = randomPointInRect(50, 50, this.width - 100, this.height - 100)
+          if (p.distance(center) > this.height/2) { i--; continue; }
+          this.points.push(p);
         }
 
         var self = this;
@@ -40,52 +45,15 @@ Pex.run(["pex/Pex", "plask"],
           }
         })
 
+        console.time("QuickHull " + this.points.length);
         this.quickHull(this.points);
+        console.timeEnd("QuickHull " + this.points.length);
       },
       //http://en.wikipedia.org/wiki/QuickHull
       quickHull: function(points) {
         points.forEach(function(p) { p.used = 0; });
 
         if (points.length == 0) return;
-
-        function Line(a, b) {
-          this.a = a;
-          this.b = b;
-        }
-        //http://stackoverflow.com/questions/3461453/determine-which-side-of-a-line-a-point-lies
-        Line.prototype.isPointOnTheLeftSide = function(p){
-          return ((this.b.x - this.a.x)*(p.y - this.a.y) - (this.b.y - this.a.y)*(p.x - this.a.x)) >= 0;
-        }
-
-        Line.prototype.projectPoint = function(p) {
-          var ab = this.b.subbed(this.a).normalize();
-          var ap = p.subbed(this.a);
-          var pOnLine = this.a.added(ab.scale(ab.dot(ap)));
-          return pOnLine;
-        }
-
-        Line.prototype.distanceToPoint = function(p) {
-          var pOnLine = this.projectPoint(p);
-          return pOnLine.distance(p);
-        }
-
-        function Triangle(a, b, c) {
-          this.a = a;
-          this.b = b;
-          this.c = c;
-        }
-
-
-        //case when point lies on the line
-        Triangle.prototype.contains = function(p) {
-          var ab = new Line(this.a, this.b);
-          var bc = new Line(this.b, this.c);
-          var ca = new Line(this.c, this.a);
-          var isLeftAB = ab.isPointOnTheLeftSide(p);
-          var isLeftBC = bc.isPointOnTheLeftSide(p);
-          var isLeftCA = ca.isPointOnTheLeftSide(p);
-          return (isLeftAB && isLeftBC && isLeftCA) || (!isLeftAB && !isLeftBC && !isLeftCA);
-        }
 
         function notUsed(p) { return !p.used; }
         function neg(f) { return function(p) { return !f(p); } }
@@ -136,25 +104,22 @@ Pex.run(["pex/Pex", "plask"],
             edges.push([max.point, projectedMaxPoint, 255]);
             edges.push([max.point, dividingLine.a, 100]);
             edges.push([max.point, dividingLine.b, 100]);
-            var triangle = new Triangle(max.point, dividingLine.a, dividingLine.b);
+            var triangle = new Triangle2D(max.point, dividingLine.a, dividingLine.b);
             sidePoints.forEach(function(p) {
               if (triangle.contains(p)) {
                 p.used = -1;
               }
             })
-            //quickHullStep(sidePoints.filter(notUsed), edgePoints, new Line(max.point, projectedMaxPoint), depth + 1);
-            //quickHullStep(sidePoints.filter(notUsed), edgePoints, new Line(max.point, dividingLine.b), depth + 1);
-            //quickHullStep(sidePoints.filter(notUsed), edgePoints, new Line(max.point, dividingLine.b), depth + 1);
 
             sidePoints = sidePoints.filter(notUsed);
 
-            var paLine = new Line(max.point, dividingLine.a);
+            var paLine = new Line2D(max.point, dividingLine.a);
             var paIsLeft = paLine.isPointOnTheLeftSide(projectedMaxPoint);
             var paPoints = sidePoints.filter(function(p) {
               return paLine.isPointOnTheLeftSide(p) != paIsLeft;
             })
 
-            var pbLine = new Line(max.point, dividingLine.b);
+            var pbLine = new Line2D(max.point, dividingLine.b);
             var pbIsLeft = pbLine.isPointOnTheLeftSide(projectedMaxPoint);
             var pbPoints = sidePoints.filter(function(p) {
               return pbLine.isPointOnTheLeftSide(p) == paIsLeft;
@@ -168,7 +133,7 @@ Pex.run(["pex/Pex", "plask"],
           cleanSide(rightPoints);
         }
 
-        quickHullStep(points.filter(notUsed), edgePoints, new Line(points[minX], points[maxX]), 0);
+        quickHullStep(points.filter(notUsed), edgePoints, new Line2D(points[minX], points[maxX]), 0);
 
         this.edges = edges;
       },
