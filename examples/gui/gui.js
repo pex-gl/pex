@@ -13,7 +13,7 @@ Pex.run([
   function(Core, Window, PerspectiveCamera, Arcball, Geom, Materials, Time, GUI) {
     Window.create({
       settings: {
-        width: 1280,
+        width: 1024,
         height: 720,
         type: '3d',
         vsync: true,
@@ -21,6 +21,7 @@ Pex.run([
         fullscreen: false,
         center: true
       },
+      color: [255, 0, 128],
       materials: [],
       materialIndex: 1,
       init: function() {
@@ -49,6 +50,7 @@ Pex.run([
         this.gui.addLabel("'L' - load settings");
         this.gui.addLabel("");
         this.gui.addLabel("CUBE");
+        this.gui.addParam("Color", this, "color");
         this.gui.addParam("Rotate", this, "rotate");
         this.gui.addParam("Rotate speed", this, "speed", {min:0, max:5});
         this.gui.addLabel("CAMERA");
