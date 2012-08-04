@@ -14,19 +14,17 @@ Pex.run(["pex/Pex", "plask"],
         type: '2d',
       },
       points: [],
-      numPoints: 1000,
+      numPoints: 100,
       init: function() {
         this.framerate(30);
 
         Pex.Util.RandUtils.seed(2);
 
-        function randomPointInRect(x, y, w, h) {
-          return new Vec2(x + Math.random() * w, y + Math.random() * h);
-        }
-
+        var bounds = new Pex.Core.Rect(50, 50, this.width - 100, this.height - 100);
         var center = new Vec2(this.width/2, this.height/2);
+
         for(var i=0; i<this.numPoints; i++) {
-          var p = randomPointInRect(50, 50, this.width - 100, this.height - 100)
+          var p = Pex.Util.RandUtils.randomVec2InRect(bounds);
           if (p.distance(center) > this.height/2) { i--; continue; }
           this.points.push(p);
         }
@@ -73,9 +71,10 @@ Pex.run(["pex/Pex", "plask"],
         var dividingLine = [minX, maxX];
         edgePoints.push(points[minX]);
         edgePoints.push(points[maxX]);
-        edges.push([points[minX], points[maxX]]);
+        var dividingEdge = [points[minX], points[maxX]];
+        edges.push(dividingEdge);
 
-        function quickHullStep(points, edgePoints, dividingLine, depth) {
+        function quickHullStep(points, edgePoints, dividingLine, dividingEdge, depth) {
           function isLeft(line) { return function(p) { return line.isPointOnTheLeftSide(p); } }
           var leftPoints = points.filter(isLeft(dividingLine));
           var rightPoints = points.filter(neg(isLeft(dividingLine)));
@@ -90,20 +89,21 @@ Pex.run(["pex/Pex", "plask"],
             return max;
           }
 
-          function cleanSide(sidePoints, linePoint) {
-            if (sidePoints.length == 0) return;
+          var numEdgePoints = edgePoints.length;
+
+          function cleanSide(sidePoints, whereToPutNewEdges) {
+            if (sidePoints.length == 0) return 0;
+
             var max = sidePoints.reduce(findFurthestPoint, { distance : 0, point : null })
-            if (!max.point) {
-              sidePoints.reduce(findFurthestPoint, { distance : 0, point : null, verbose: true })
-              console.log(sidePoints);
-            }
             max.point.used = 1;
             sidePoints.splice(sidePoints.indexOf(max.point), 1);
             edgePoints.push(max.point);
             var projectedMaxPoint = dividingLine.projectPoint(max.point);
-            edges.push([max.point, projectedMaxPoint, 255]);
-            edges.push([max.point, dividingLine.a, 100]);
-            edges.push([max.point, dividingLine.b, 100]);
+            var dividingEdgeA = [max.point, dividingLine.a, 100];
+            var dividingEdgeB = [max.point, dividingLine.b, 100];
+            edges.push(dividingEdgeA);
+            edges.push(dividingEdgeB);
+
             var triangle = new Triangle2D(max.point, dividingLine.a, dividingLine.b);
             sidePoints.forEach(function(p) {
               if (triangle.contains(p)) {
@@ -125,15 +125,72 @@ Pex.run(["pex/Pex", "plask"],
               return pbLine.isPointOnTheLeftSide(p) == paIsLeft;
             })
 
-            quickHullStep(paPoints, edgePoints, paLine, depth + 1);
-            quickHullStep(pbPoints, edgePoints, pbLine, depth + 1);
+            var resultA = quickHullStep(paPoints, edgePoints, paLine, dividingEdgeA, depth + 1);
+            var resultB = quickHullStep(pbPoints, edgePoints, pbLine, dividingEdgeB, depth + 1);
+
+             if (paPoints.length > 0) edges.splice(edges.indexOf(dividingEdgeA), 1);
+             if (pbPoints.length > 0) edges.splice(edges.indexOf(dividingEdgeB), 1);
           }
 
-          cleanSide(leftPoints);
-          cleanSide(rightPoints);
+          var increasedSides = 0;
+
+          cleanSide(leftPoints, "before");
+          if (edgePoints.length > numEdgePoints) {
+            numEdgePoints = edgePoints.length;
+            increasedSides++;
+          }
+
+          cleanSide(rightPoints, "after");
+          if (edgePoints.length > numEdgePoints) {
+            numEdgePoints = edgePoints.length;
+            increasedSides++;
+          }
+
+          if (increasedSides == 2 && dividingEdge != null) {
+            var idx = edges.indexOf(dividingEdge);
+            if (idx > -1) {
+              edges.splice(idx, 1);
+            }
+          }
+
+          return increasedSides;
         }
 
-        quickHullStep(points.filter(notUsed), edgePoints, new Line2D(points[minX], points[maxX]), 0);
+        var result = quickHullStep(points.filter(notUsed), edgePoints, new Line2D(points[minX], points[maxX]), dividingEdge, 0);
+        if (result == 2) {
+          if (dividingEdge != null) {
+            var idx = edges.indexOf(dividingEdge);
+            if (idx > -1) {
+              edges.splice(idx, 1);
+            }
+          }
+        }
+
+        function swap(arr, i, j) {
+          var tmp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = tmp;
+        }
+
+        //ordering edges
+        for(var i=0; i<edges.length; i++) {
+          var edge = edges[i];
+          var start = edge[0];
+          var end = edge[1];
+          for(var j=i+1; j<edges.length; j++) {
+            var nextEdge = edges[j];
+            if (nextEdge[0] == end) {
+              swap(edges, i+1, j);
+            }
+            else if (nextEdge[1] == end) {
+              swap(edges, i+1, j);
+              var a = nextEdge[0];
+              var b = nextEdge[1];
+              nextEdge[0] = b;
+              nextEdge[1] = a;
+            }
+          }
+        }
 
         this.edges = edges;
       },
@@ -155,7 +212,7 @@ Pex.run(["pex/Pex", "plask"],
           canvas.drawLine(paint, p.x - 3, p.y - 3, p.x + 3, p.y + 3);
           canvas.drawLine(paint, p.x + 3, p.y - 3, p.x - 3, p.y + 3);
         }
-        function drawEdge(edge) {
+        function drawEdge(edge, i) {
           var a = edge[0];
           var b = edge[1];
           var alpha = edge[2];
@@ -164,6 +221,10 @@ Pex.run(["pex/Pex", "plask"],
           paint.setStrokeWidth(1);
           paint.setColor(0, 200, 0, alpha);
           canvas.drawLine(paint, a.x, a.y, b.x, b.y);
+
+          paint.setFill();
+          paint.setColor(255, 0, 0, 255);
+          canvas.drawText(paint, "" + i, (a.x + b.x)/2, (a.y + b.y)/2);
         }
         canvas.clear(250, 250, 220, 255);
 
