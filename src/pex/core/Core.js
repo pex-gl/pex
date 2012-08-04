@@ -21,12 +21,13 @@ define( [
   "pex/core/Fbo",
   "pex/core/Geometry",    
   "pex/core/Spline",
-  "pex/core/Rect"
+  "pex/core/Rect",
+  "pex/core/MathUtil"
   ],
   function(
       Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
       Ray, Vbo, Mesh, Program, Material, Texture, Texture2D, TextureCube, 
-      Fbo, Geometry, Spline, Rect
+      Fbo, Geometry, Spline, Rect, MathUtil
     ) {
     return {
       Context : Context,
@@ -50,6 +51,7 @@ define( [
       Fbo : Fbo,
       Geometry : Geometry,
       Spline : Spline,
-      Rect : Rect
+      Rect : Rect,
+      MathUtil : MathUtil
     };
 });
