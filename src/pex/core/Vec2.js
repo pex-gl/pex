@@ -1,35 +1,16 @@
 //2d XY vector.
 //
 //Usefull for representing 2d points.
-define([], function() {
-  function Vec2(x, y) {
-    this.x = x;
-    this.y = y;
+define(["plask"], function(plask) {
+  plask.Vec2.prototype.distance = function(v) {
+    var x = this.x, y = this.y;
+    return Math.sqrt((x - v.x)*(x - v.x) + (y - v.y)*(y - v.y));
   }
 
-  // Add a Vec2, this = this + b.
-  Vec2.prototype.add = function(b) {
-    this.x = this.x + b.x;
-    this.y = this.y + b.y;
-    return this;
+  plask.Vec2.prototype.distanceSquared = function(v) {
+    var x = this.x, y = this.y;
+    return ((x - v.x)*(x - v.x) + (y - v.y)*(y - v.y));
   }
 
-  Vec2.prototype.added = function(b) {
-    return new Vec2(this.x + b.x,
-                    this.y + b.y);
-  };
-
-  // Multiply by a scalar.
-  Vec2.prototype.scale = function(s) {
-    this.x *= s;
-    this.y *= s;
-
-    return this;
-  };
-
-  Vec2.prototype.scaled = function(s) {
-    return new Vec2(this.x * s, this.y * s);
-  };
-
-  return Vec2;
+  return plask.Vec2;
 });
