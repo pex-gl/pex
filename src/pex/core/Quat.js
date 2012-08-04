@@ -19,6 +19,11 @@ define(["pex/core/Mat4"], function(Mat4) {
     return this;
   };
 
+  Quat.prototype.setQuat = function(q) {
+    this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w;
+    return this;
+  };
+
   Quat.prototype.reset = function(){
     return this.set(0, 0, 0, 1);
   };
