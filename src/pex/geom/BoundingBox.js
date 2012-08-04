@@ -32,5 +32,9 @@ define(["pex/core/Vec3"], function(Vec3) {
     return this.max.subbed(this.min);
   }
 
+  BoundingBox.prototype.getRadius = function() {
+    return this.getSize().scaled(0.5).length();
+  }
+
   return BoundingBox;
 });
