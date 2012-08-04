@@ -266,5 +266,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     })
   }
 
+  GUI.ScreenImage = ScreenImage;
+
   return GUI;
 });
