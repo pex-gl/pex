@@ -50,8 +50,9 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
 
   function GUI(window, x, y) {
     this.gl = Context.currentContext.gl;
-    this.x = (x == undefined) ? 0 : x;
-    this.y = (y == undefined) ? 0 : y;
+    this.window = window;
+    x = (x == undefined) ? 0 : x;
+    y = (y == undefined) ? 0 : y;
 
     if (plask.SkCanvas) {
       this.renderer = new SkiaRenderer(window.width, window.height);
@@ -60,7 +61,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
       this.renderer = new HTMLCanvasRenderer(window.width, window.height);
     }
 
-    this.screenImage = new ScreenImage(window.width, window.height, this.x, this.y, window.width, window.height, this.renderer.getTexture());
+    this.screenBounds = new Rect(x, y, window.width, window.height);
+    this.screenImage = new ScreenImage(window.width, window.height, x, y, window.width, window.height, this.renderer.getTexture());
 
     this.items = [];
 
@@ -222,7 +224,19 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     );
     this.items.push(ctrl);
     return ctrl;
+  }
 
+  GUI.prototype.addTexture2D = function(title, texture) {
+    var ctrl = new GUIControl(
+      {
+        type: "texture2D",
+        title: title,
+        texture: texture,
+        activeArea: new Rect(0, 0, 0, 0)
+      }
+    );
+    this.items.push(ctrl);
+    return ctrl;
   }
 
   GUI.prototype.dispose = function() {
@@ -235,6 +249,24 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
 
     this.renderer.draw(this.items);
     this.screenImage.draw();
+    this.drawTextures();
+  }
+
+  GUI.prototype.drawTextures = function() {
+    for(var i=0; i<this.items.length; i++) {
+      var item = this.items[i];
+      if (item.type == "texture2D") {
+        if (item.texture.bind) item.texture.bind();
+        else {
+          this.gl.bindTexture(item.texture.target, item.texture.handle);
+        }
+        this.screenImage.setBounds(item.activeArea);
+        this.screenImage.setTexture(null);
+        this.screenImage.draw();
+      }
+    }
+    this.screenImage.setBounds(this.screenBounds);
+    this.screenImage.setTexture(this.renderer.getTexture());
   }
 
   GUI.prototype.serialize = function() {
