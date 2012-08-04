@@ -7,10 +7,13 @@ define(["pex/util/Log"], function(Log) {
     frameNumber: 0,
     fpsFrames: 0,
     fpsTime: 0,
-    fps: 0
+    fps: 0,
+    paused: false
   }
 
   Time.update = function(delta) {
+    if (Time.paused) return;
+
     if (Time.prev == 0) {
       Time.prev = (new Date()).getTime();
     }
@@ -46,6 +49,13 @@ define(["pex/util/Log"], function(Log) {
     return seconds;
   }
 
+  Time.pause = function() {
+    Time.paused = true;
+  }
+
+  Time.togglePause = function() {
+    Time.paused = !Time.paused;
+  }
 
   return Time;
 });
