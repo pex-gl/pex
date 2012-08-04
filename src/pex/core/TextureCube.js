@@ -28,7 +28,6 @@ define(["pex/core/Texture", "pex/core/Context", "pex/sys/IO"], function(Texture,
   //*Note: In Plask the texture is ready immediately, in the web browser it's
   //first black until the file is loaded and texture can be populated with the image data.*
   TextureCube.load = function(src) {
-
     var gl = Context.currentContext.gl;
 
     var texture = new TextureCube();
@@ -42,18 +41,18 @@ define(["pex/core/Texture", "pex/core/Context", "pex/sys/IO"], function(Texture,
       gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'negz'
     ];
 
+    gl.bindTexture(texture.target, texture.handle);
+    gl.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(texture.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
     for (var i=0; i<cubeMapTargets.length; i += 2) {
       IO.loadImageData(gl, texture, cubeMapTargets[i], src.replace("####", cubeMapTargets[i+1]), function(image) {
         texture.width = image.width;
         texture.height = image.height;
       });
     }
-
-    gl.bindTexture(texture.target, texture.handle);
-    gl.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(texture.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
     return texture;
   }
