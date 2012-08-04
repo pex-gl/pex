@@ -1,10 +1,15 @@
-define(["pex/core/Context", "pex/core/Program", "pex/core/Vbo"], function(Context, Program, Vbo) {
+define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"], function(Vec2, Context, Program, Vbo) {
   var vert = ""
     + "attribute vec2 position;"
     + "attribute vec2 texCoord;"
+    + "uniform vec2 windowSize;"
+    + "uniform vec2 pixelPosition;"
+    + "uniform vec2 pixelSize;"
     + "varying vec2 vTexCoord;"
     + "void main() {"
-    +  "gl_Position = vec4(position, 0.0, 1.0);"
+    +  "float x = -1.0 + 2.0 * (pixelPosition.x + pixelSize.x * position.x)/windowSize.x;"
+    +  "float y = 1.0 - 2.0 * (pixelPosition.y + pixelSize.y * position.y)/windowSize.y;"
+    +  "gl_Position = vec4(x, y, 0.0, 1.0);"
     +  "vTexCoord = texCoord;"
     + "}";
 
@@ -20,19 +25,22 @@ define(["pex/core/Context", "pex/core/Program", "pex/core/Vbo"], function(Contex
     this.program = new Program(vert, frag);
     this.vbo = new Vbo(gl.TRIANGLES);
     this.tex = tex;
+    this.windowSize = new Vec2(screenWidth, screenHeight);
+    this.position = new Vec2(x, y);
+    this.size = new Vec2(w, h);
 
     var vertices = [
-      -1 + 2*x/screenWidth    ,  1 - 2*(y+h)/screenHeight,
-      -1 + 2*x/screenWidth    ,  1 - 2*y/screenHeight,
-      -1 + 2*(x+w)/screenWidth,  1 - 2*y/screenHeight,
-      -1 + 2*(x+w)/screenWidth,  1 - 2*(y+h)/screenHeight
+       0, 0,
+       0, 1,
+       1, 1,
+       1, 0
     ];
 
     var texCoords = [
-       0,  0,
        0,  1,
-       1,  1,
-       1,  0
+       0,  0,
+       1,  0,
+       1,  1
     ];
 
     var indices = [
@@ -45,6 +53,17 @@ define(["pex/core/Context", "pex/core/Program", "pex/core/Vbo"], function(Contex
     this.vbo.setIndices(indices);
   }
 
+  ScreenImage.prototype.setBounds = function(bounds) {
+    this.position.x = bounds.x;
+    this.position.y = bounds.y;
+    this.size.x = bounds.width;
+    this.size.y = bounds.height;
+  }
+
+  ScreenImage.prototype.setTexture = function(texture) {
+    this.tex = texture;
+  }
+
   ScreenImage.prototype.draw = function(program) {
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
@@ -52,6 +71,9 @@ define(["pex/core/Context", "pex/core/Program", "pex/core/Vbo"], function(Contex
     if (this.tex) gl.bindTexture(gl.TEXTURE_2D, this.tex);
     program = program ? program : this.program;
     program.use();
+    program.uniforms.windowSize(this.windowSize);
+    program.uniforms.pixelPosition(this.position);
+    program.uniforms.pixelSize(this.size);
     gl.disable(gl.DEPTH_TEST);
     this.vbo.draw(program);
     gl.disable(gl.BLEND);
