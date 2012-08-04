@@ -68,7 +68,6 @@ define([
         n.normalize();
         face.normal = n;
 
-
         this.normals[face.a].add(n);
         this.normals[face.b].add(n);
         this.normals[face.c].add(n);
