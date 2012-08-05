@@ -11,18 +11,17 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   HTMLCanvasRenderer.prototype.draw = function(items) {
     var ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    var dy;
-    var dx;
-    var w = 160;
-
-    dy = 10;
-
     ctx.font = "10px Monaco";
 
+    var dy = 10;
+    var dx = 10;
+    var w = 160;
     for(var i=0; i<items.length; i++) {
       var e = items[i];
-      var dx = 10;
+      if (e.px && e.px) {
+        dx = e.px;
+        dy = e.py;
+      }
       var eh = 20;
 
       if (e.type == "slider") eh = 34;
@@ -58,17 +57,26 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
 
         ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
         ctx.fillRect(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
-
         e.activeArea.set(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
 
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5 + eh - 5, dy + 12);
       }
-      else if (e.type == "radiolist"){
-        //console.error("radio list hasn't been implemented yet");
+      else if (e.type == "radiolist") {
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(e.title, dx + 5, dy + 13);
+        for(var j=0; j<e.items.length; j++) {
+          var item = e.items[j];
+          var on = (e.contextObject[e.attributeName] == item.value);
+          ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+          ctx.fillRect(dx + 3, eh + j*eh + dy + 3, eh - 5 - 3, eh - 5 - 3);
+          ctx.fillStyle = "rgba(255, 255, 255, 1)";
+          ctx.fillText(item.name, dx + 5 + eh - 5, eh + j*eh + dy + 13);
+        }
+        e.activeArea.set(dx + 3, eh + dy + 3, eh - 5, e.items.length * eh - 5);
+        eh = eh + e.items.length * eh;
       }
       else if (e.type == "texture2D") {
-        //canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5, dy + 15);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
@@ -77,14 +85,6 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5, dy + 13);
       }
-
-      //      else if (e.type == "toggle") {
-      //        var on = e.contextObject[e.attributeName];
-      //        var toggleColor = on ? this.controlHighlightPaint : this.controlBgPaint;
-      //        canvas.drawRect(toggleColor, dx + 3, dy + 3, dx + eh - 5, dy + eh - 5);
-      //        e.activeArea.set(dx + 3, dy + 3, dx + eh - 5, eh - 5);
-      //        canvas.drawText(this.fontPaint, items[i].title, dx + 5 + eh - 5, dy + 13);
-      //      }
 
       dy += eh;
     }
