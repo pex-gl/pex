@@ -1,4 +1,6 @@
-var Pex = require("../../src/pex/pex-plask");
+var Pex;
+
+if (!Pex) Pex = require("../../src/pex/pex-plask");
 
 Pex.run([
   "pex/core/Core",
@@ -50,7 +52,7 @@ Pex.run([
         this.gui.addLabel("'L' - load settings");
         this.gui.addLabel("");
         this.gui.addLabel("CUBE");
-        this.gui.addParam("Color", this, "color");
+        //this.gui.addParam("Color", this, "color");
         this.gui.addParam("Rotate", this, "rotate");
         this.gui.addParam("Rotate speed", this, "speed", {min:0, max:5});
         this.gui.addLabel("CAMERA");
@@ -63,7 +65,7 @@ Pex.run([
           { name:"Diffuse", value:4 }
         ], function(idx) { console.log("Material changed", idx); }).setPosition(200, 90);
 
-        //this.gui.load("client.gui.settings.txt");
+        this.gui.load("client.gui.settings.txt");
 
         var self = this;
         this.on('keyDown', function(e) {
