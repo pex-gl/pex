@@ -24,11 +24,12 @@ define( [
   "pex/core/Rect",
   "pex/core/Line2D",
   "pex/core/Triangle2D",
+  "pex/core/RenderTarget"
   ],
   function(
       Context, Vec2, Vec3, Vec4, Mat4, Quat, Edge, Face3, Face4, Color,
       Ray, Vbo, Mesh, Program, Material, Texture, Texture2D, TextureCube,
-      Fbo, Geometry, Spline, Rect, Line2D, Triangle2D
+      Fbo, Geometry, Spline, Rect, Line2D, Triangle2D, RenderTarget
     ) {
     return {
       Context : Context,
@@ -54,6 +55,7 @@ define( [
       Spline : Spline,
       Rect : Rect,
       Line2D : Line2D,
-      Triangle2D : Triangle2D
+      Triangle2D : Triangle2D,
+      RenderTarget : RenderTarget
     };
 });
