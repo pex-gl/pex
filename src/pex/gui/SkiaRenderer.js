@@ -1,7 +1,8 @@
-define(["plask", "pex/core/Context"], function(plask, Context) {
+define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Context, Texture2D) {
   function SkiaRenderer(width, height) {
     this.gl = Context.currentContext.gl;
-    this.tex = this.gl.createTexture();
+    this.tex = Texture2D.create(0, 0);
+    this.tex = Texture2D.genNoiseRGBA(width, height);
     this.canvas = new plask.SkCanvas.create(width, height);
 
     this.fontPaint = new plask.SkPaint();
@@ -105,14 +106,11 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
   SkiaRenderer.prototype.updateTexture = function() {
     var gl = this.gl;
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    this.tex.bind();
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
     gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
 

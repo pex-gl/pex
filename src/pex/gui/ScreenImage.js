@@ -68,7 +68,7 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    if (this.tex) gl.bindTexture(gl.TEXTURE_2D, this.tex);
+    if (this.tex) this.tex.bind();
     program = program ? program : this.program;
     program.use();
     program.uniforms.windowSize(this.windowSize);

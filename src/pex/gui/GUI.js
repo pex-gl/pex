@@ -51,8 +51,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
   function GUI(window, x, y) {
     this.gl = Context.currentContext.gl;
     this.window = window;
-    x = (x == undefined) ? 0 : x;
-    y = (y == undefined) ? 0 : y;
+    this.x = (x == undefined) ? 0 : x;
+    this.y = (y == undefined) ? 0 : y;
 
     if (plask.SkCanvas) {
       this.renderer = new SkiaRenderer(window.width, window.height);
@@ -60,9 +60,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
     else {
       this.renderer = new HTMLCanvasRenderer(window.width, window.height);
     }
-
-    this.screenBounds = new Rect(x, y, window.width, window.height);
-    this.screenImage = new ScreenImage(window.width, window.height, x, y, window.width, window.height, this.renderer.getTexture());
+    this.screenBounds = new Rect(this.x, this.y, window.width, window.height);
+    this.screenImage = new ScreenImage(window.width, window.height, this.x, this.y, window.width, window.height, this.renderer.getTexture());
 
     this.items = [];
 
@@ -86,7 +85,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
 
   GUI.prototype.onMouseDown = function(e) {
     this.activeControl = null;
-    var mousePos = { x : e.x - this.x, y : e.y - this.y }
+    var mousePos = { x : e.x - this.x, y : e.y - this.y };
     for(var i=0; i<this.items.length; i++) {
       if (this.items[i].activeArea.contains(mousePos)) {
         this.activeControl = this.items[i];
@@ -246,7 +245,6 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
   var frame = 0;
   GUI.prototype.draw = function() {
     Time.update();
-
     this.renderer.draw(this.items);
     this.screenImage.draw();
     this.drawTextures();
