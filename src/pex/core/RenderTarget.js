@@ -22,7 +22,7 @@ define(["pex/core/Context", "pex/core/Texture2D"], function(Context, Texture2D) 
       this.depthBuffer = depthBuffer;
     }
 
-    var texture = Texture2D.create(width, height);
+    var texture = Texture2D.create(width, height, options);
     texture.bind();
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + this.colorAttachements.length, texture.target, texture.handle, 0);
     this.colorAttachements.push(texture);
