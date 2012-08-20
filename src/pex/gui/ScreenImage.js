@@ -8,7 +8,7 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     + "varying vec2 vTexCoord;"
     + "void main() {"
     +  "float x = -1.0 + 2.0 * (pixelPosition.x + pixelSize.x * position.x)/windowSize.x;"
-    +  "float y = 1.0 - 2.0 * (pixelPosition.y + pixelSize.y * position.y)/windowSize.y;"
+    +  "float y = -1.0 + 2.0 * (pixelPosition.y + pixelSize.y * position.y)/windowSize.y;"
     +  "gl_Position = vec4(x, y, 0.0, 1.0);"
     +  "vTexCoord = texCoord;"
     + "}";
@@ -37,10 +37,10 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     ];
 
     var texCoords = [
-       0,  1,
        0,  0,
-       1,  0,
-       1,  1
+       0,  1,
+       1,  1,
+       1,  0
     ];
 
     var indices = [
