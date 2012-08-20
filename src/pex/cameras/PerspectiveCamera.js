@@ -170,9 +170,9 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], func
     var s = modelScale ? modelScale : new Vec3(1, 1, 1);
 
     var modelWorldMatrix = new Mat4();
-    modelWorldMatrix.scale(s.x, s.y, s.z);
     modelWorldMatrix.rotate(r.w, r.x, r.y, r.z);
     modelWorldMatrix.translate(t.x, t.y, t.z);
+    modelWorldMatrix.scale(s.x, s.y, s.z);
 
     var modelViewMatrix = this.viewMatrix.dup();
 
