@@ -31,11 +31,13 @@ define(["pex/core/Context"], function(Context) {
     var numTextures = 0;
     for(var name in this.uniforms) {
       if (this.program.uniforms[name]) {
-        if (this.program.uniforms[name].type == this.gl.SAMPLER_2D 
+        if (this.program.uniforms[name].type == this.gl.SAMPLER_2D
         ||  this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
-          this.gl.activeTexture(this.gl.TEXTURE0 + numTextures++);
+          this.gl.activeTexture(this.gl.TEXTURE0 + numTextures);
           this.gl.bindTexture(this.uniforms[name].target,  this.uniforms[name].handle);
-          this.program.uniforms[name](numTextures-1);
+          this.program.uniforms[name]( numTextures );
+
+          numTextures++;
         }
         else {
           this.program.uniforms[name]( this.uniforms[name] );
