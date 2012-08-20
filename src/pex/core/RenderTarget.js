@@ -13,8 +13,12 @@ define(["pex/core/Context", "pex/core/Texture2D"], function(Context, Texture2D) 
       var depthBuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
       gl.getError(); //reset error
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, this.width, this.height);
-      if (gl.getError() != gl.NO_ERROR) {
+
+      if (gl.DEPTH_COMPONENT24) {
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, this.width, this.height);
+      }
+
+      if (gl.getError() || !gl.DEPTH_COMPONENT24) {
         //24 bit depth buffer might be not available, trying with 16
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, this.width, this.height);
       }
