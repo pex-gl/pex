@@ -183,9 +183,28 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
         };
         break;
       case gl.FLOAT_MAT4:
-        setterFun = function(mat4){
-          gl.uniformMatrix4fv(location, false, mat4.toFloat32Array());
-        };
+        setterFun = (function() {
+          var mv = new Float32Array(16);
+          return function(mat4){
+            mv[0] = mat4.a11;
+            mv[1] = mat4.a21;
+            mv[2] = mat4.a31;
+            mv[3] = mat4.a41;
+            mv[4] = mat4.a12;
+            mv[5] = mat4.a22;
+            mv[6] = mat4.a32;
+            mv[7] = mat4.a42;
+            mv[8] = mat4.a13;
+            mv[9] = mat4.a23;
+            mv[10] = mat4.a33;
+            mv[11] = mat4.a43;
+            mv[12] = mat4.a14;
+            mv[13] = mat4.a24;
+            mv[14] = mat4.a34;
+            mv[15] = mat4.a44;
+            gl.uniformMatrix4fv(location, false, mv);
+          };
+        })();
         break;
       default:
         setterFun = function(value){
