@@ -4,6 +4,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     this.tex = Texture2D.create(0, 0);
     this.tex = Texture2D.genNoiseRGBA(width, height);
     this.canvas = new plask.SkCanvas.create(width, height);
+    this.dirty = true;
 
     this.fontPaint = new plask.SkPaint();
     this.fontPaint.setStyle(plask.SkPaint.kFillStyle);
@@ -42,6 +43,12 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     var w = 160;
     for(var i=0; i<items.length; i++) {
       var e = items[i];
+
+      if (e.dirty) {
+        this.dirty = true;
+        e.dirty = false;
+      }
+
       if (e.px && e.px) {
         dx = e.px;
         dy = e.py;
@@ -105,12 +112,15 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   SkiaRenderer.prototype.updateTexture = function() {
-    var gl = this.gl;
-    this.tex.bind();
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    if (this.dirty) {
+      var gl = this.gl;
+      this.tex.bind();
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      this.dirty = false;
+    }
   }
 
 

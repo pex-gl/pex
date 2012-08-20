@@ -94,6 +94,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
       if (this.items[i].activeArea.contains(mousePos)) {
         this.activeControl = this.items[i];
         this.activeControl.active = true;
+        this.activeControl.dirty = true;
         if (this.activeControl.type == "button") {
           this.activeControl.contextObject[this.activeControl.methodName]();
         }
@@ -130,6 +131,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         if (this.activeControl.onchange) {
           this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
         }
+        this.activeControl.dirty = true;
       }
       e.handled = true;
     }
