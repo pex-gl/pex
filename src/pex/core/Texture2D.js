@@ -152,7 +152,7 @@ define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, C
   //
   //*Note: In Plask the texture is ready immediately, in the web browser it's
   //first black until the file is loaded and texture can be populated with the image data.*
-  Texture2D.load = function(src) {
+  Texture2D.load = function(src, callback) {
     var gl = Context.currentContext.gl;
 
     var texture = new Texture2D();
@@ -176,6 +176,8 @@ define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, C
       gl.bindTexture(texture.target, null);
       texture.width = image.width;
       texture.height = image.height;
+
+      if (callback) callback(texture);
     });
 
     return texture;
