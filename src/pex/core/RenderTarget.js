@@ -34,6 +34,7 @@ define(["pex/core/Context", "pex/core/Texture2D"], function(Context, Texture2D) 
   //Binds the frame buffer to the current WebGL context.
   //All subsequent render calls will be drawing to this buffer.
   RenderTarget.prototype.bind = function(){
+  RenderTarget.prototype.bind = function() {
     var gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
   }
