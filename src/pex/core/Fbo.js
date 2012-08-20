@@ -103,7 +103,6 @@ define(["pex/core/Context"], function(Context) {
             gl.texParameteri(target, gl.TEXTURE_WRAP_S, wrap_s);
             gl.texParameteri(target, gl.TEXTURE_WRAP_T, wrap_t);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, attach, target, tex_handle, 0);
-
             this.tex_attachments.push({ handle: tex_handle,
                                         target: target,
                                         unit:   gl.TEXTURE0,
