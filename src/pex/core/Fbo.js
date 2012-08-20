@@ -60,7 +60,7 @@ define(["pex/core/Context"], function(Context) {
     if (!formats) {
       formats = [
         { target: gl.TEXTURE_2D, format: gl.RGBA, filter_mag: gl.LINEAR, filter_min: gl.LINEAR },
-        { target: gl.RENDERBUFFER, attach: gl.DEPTH_ATTACHMENT, formati: gl.DEPTH_COMPONENT24 }
+        { target: gl.RENDERBUFFER, attach: gl.DEPTH_ATTACHMENT, formati: gl.DEPTH_COMPONENT16 }
       ]
     }
     
@@ -83,13 +83,12 @@ define(["pex/core/Context"], function(Context) {
             gl.bindRenderbuffer(gl.RENDERBUFFER, rb_handle);
             gl.renderbufferStorage(target, formati, this.width, this.height);
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attach, target, rb_handle);
-
             this.render_attachments.push({ handle: rb_handle });
         }
         /* Texture Attachment */
         else {
             var format     = fmt.format     || gl.RGBA
-            ,   type       = fmt.type       || gl.FLOAT
+            ,   type       = fmt.type       || gl.UNSIGNED_BYTE
             ,   filter_min = fmt.filter_min || gl.NEAREST
             ,   filter_mag = fmt.filter_mag || gl.NEAREST
             ,   wrap_s     = fmt.wrap_s     || gl.CLAMP_TO_EDGE
