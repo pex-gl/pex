@@ -7,7 +7,7 @@ define(["pex/core/Mat4"], function(Mat4) {
   //`x, y, z` - axis vector *{ Number }*
   //`w` - rotation (in radians) *{ Number }*
   function Quat(x, y, z, w) {
-      this.x = x; this.y = y; this.z = z; this.w = w;
+    this.x = x; this.y = y; this.z = z; this.w = w;
   }
 
   Quat.identity = function(){
