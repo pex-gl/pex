@@ -17,8 +17,79 @@
 define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
 
   //### NodeIO
-  //IO functions when used in plask
+  //IO functions when used in node-wegl
   var NodeIO = (function() {
+
+    function IO() {}
+
+    var WebGL = require("node-webgl");
+
+    Image = IO.Image = WebGL.Image;
+
+    //### getWorkingDirectory()
+    //Returns base path used for expanding relative path names.
+    //In Plask it defaults to the same directory as the main script.
+    IO.getWorkingDirectory = function() {
+      return require.pexWorkingDirectory;
+    }
+
+    //### loadTextFile ( file, callback )
+    //Load UTF-8 encoded text data from a file.
+    //
+    //`file` - path to the file *{ String }*
+    //`callback` - function to be called upon successful load taking data as parameter *{ function(String) }*
+    IO.loadTextFile = function(file, callback) {
+      var fullPath = path.resolve(IO.getWorkingDirectory(), file);
+      var data = fs.readFileSync(fullPath, 'utf8');
+      if (callback) {
+        callback(data);
+      }
+    }
+
+    //### saveTextFile ( file, data )
+    //Load UTF-8 encoded text data from a file.
+    //
+    //`file` - path to the file *{ String }*
+    //`data` - UTF-8 endcoded text data *{ String }*
+    IO.saveTextFile = function(file, data) {
+      fs.writeFileSync(file, data);
+    }
+
+    //### loadImageData ( gl, texture, target, file, callback )
+    //Loads binary data and uploads in to texture memory.
+    //
+    //`gl` - GL context *{ GL }*
+    //`texture` - texture object to which upload the pixels *{ Texture2D }*
+    //`target` - GL texture target *{ Number/Int }* e.g. *TEXTURE_2D*
+    //`file` - path to the file *{ String }*
+    //`callback` - function to be called upon successful load taking Plask SkCanvas as a parameter *{ function(SkCanvas) }*
+    IO.loadImageData = function(gl, texture, target, file, callback) {
+      var fullPath = path.resolve(IO.getWorkingDirectory(), file);
+      Log.message("IO.loadImageData " + fullPath);
+
+      var image = new Image();
+      image.onload = function() {
+        texture.flipped = true;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(texture.target, texture.handle);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(
+          target, 0, gl.RGBA, gl.RGBA,
+          gl.UNSIGNED_BYTE, image
+        );
+        if (callback) {
+          callback(image);
+        }
+      }
+      image.src = fullPath;
+    }
+
+    return IO;
+  });
+
+  //### PlaskIO
+  //IO functions when used in plask
+  var PlaskIO = (function() {
     function IO() {}
 
     //### getWorkingDirectory()
@@ -61,6 +132,7 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = path.resolve(IO.getWorkingDirectory(), file);
       Log.message("IO.loadImageData " + fullPath);
+      texture.flipped = true;
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
       var canvas = plask.SkCanvas.createFromImage(fullPath);
@@ -71,7 +143,7 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     }
 
     return IO;
-  })();
+  });
 
   //### WebIO
   //IO functions when used in the browser
@@ -131,6 +203,7 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     IO.loadImageData = function(gl, texture, target, url, callback) {
       var image = new Image();
       image.onload = function() {
+        texture.flipped = true;
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(texture.target, texture.handle);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -146,12 +219,15 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
     }
 
     return IO;
-  })();
+  });
 
-  if (require.nodeRequire) {
-    return NodeIO;
+  if (plask.SkCanvas) {
+    return PlaskIO();
+  }
+  else if (require.nodeRequire) {
+    return NodeIO();
   }
   else {
-    return WebIO;
+    return WebIO();
   }
 });
