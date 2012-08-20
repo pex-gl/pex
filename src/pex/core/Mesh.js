@@ -92,6 +92,7 @@ define([
   //*Note: Camera projection and view matrices will be passed over to shader uniforms.
   //Model View and Normal matrices will be computed and passed as well.*
   Mesh.prototype.draw = function(camera) {
+
     if (this.geometry && this.geometry.dirty) {
       this.geometry.dirty = false;
       this.buildVbosFromGeometry();
@@ -105,6 +106,7 @@ define([
     }
 
     this.material.use();
+
     for(var i=0; i<this.vbos.length; i++) {
       this.vbos[i].draw(this.material.program);
     }
