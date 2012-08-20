@@ -44,6 +44,8 @@ define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, C
 
     texture.width = w;
     texture.height = h;
+    texture.target = gl.TEXTURE_2D;
+    texture.flipped = false;
 
     return texture;
   }
