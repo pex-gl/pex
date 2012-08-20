@@ -5,10 +5,11 @@ define([
   "pex/util/Time",
   "pex/gui/SkiaRenderer",
   "pex/gui/HTMLCanvasRenderer",
+  "pex/gui/NodeCanvasRenderer",
   "pex/core/Rect",
   "pex/sys/IO"
 ],
-function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO) {
+function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, NodeCanvasRenderer, Rect, IO) {
   function GUIControl(o) {
     for(var i in o) {
       this[i] = o[i];
@@ -56,6 +57,9 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
 
     if (plask.SkCanvas) {
       this.renderer = new SkiaRenderer(window.width, window.height);
+    }
+    else if (IO.Image) {
+      this.renderer = new NodeCanvasRenderer(window.width, window.height);
     }
     else {
       this.renderer = new HTMLCanvasRenderer(window.width, window.height);
@@ -246,7 +250,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
   GUI.prototype.draw = function() {
     Time.update();
     this.renderer.draw(this.items);
-    this.screenImage.draw();
+    if (!IO.Image) this.screenImage.draw();
     this.drawTextures();
   }
 
