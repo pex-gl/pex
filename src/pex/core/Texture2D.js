@@ -7,6 +7,17 @@
 //## Reference
 define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, Context, IO) {
 
+  //OpenGL Texture2D Coordinate System
+
+  //      t
+  //  0,1 ^                 1,1
+  //      |
+  //      |
+  //      |
+  //      |
+  //      +------------------> s
+  //  0,0                   1,0
+  //
   //### Texture2D ( )
   //Does nothing, use *load()* or one of *gen\*()* methods instead.
   function Texture2D() {
