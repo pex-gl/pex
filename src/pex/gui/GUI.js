@@ -258,7 +258,14 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Re
         else {
           this.gl.bindTexture(item.texture.target, item.texture.handle);
         }
-        this.screenImage.setBounds(item.activeArea);
+        var bounds;
+        if (item.texture.flipped) {
+          bounds  = new Rect(item.activeArea.x, this.window.height - item.activeArea.y, item.activeArea.width, -item.activeArea.height);
+        }
+        else {
+          bounds = new Rect(item.activeArea.x, this.window.height - item.activeArea.y - item.activeArea.height, item.activeArea.width, item.activeArea.height);
+        }
+        this.screenImage.setBounds(bounds);
         this.screenImage.setTexture(null);
         this.screenImage.draw();
       }
