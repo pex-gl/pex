@@ -15,8 +15,8 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
     this.window = window;
     this.radius = Math.min(window.width/2, window.height/2) * 2;
     this.center = new Vec2(window.width/2, window.height/2);
-    this.orientation = Quat.identity();
     this.currRot = Quat.identity();
+    this.currRot.rotate(Math.PI, 0, 1, 0);
     this.clickRot = Quat.identity();
     this.dragRot = Quat.identity();
     this.clickPos = new Vec3();
