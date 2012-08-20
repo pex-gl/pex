@@ -27,15 +27,15 @@ define(["pex/core/Texture","pex/core/Context","pex/sys/IO"], function(Texture, C
 
   Texture2D.prototype = new Texture();
 
-  Texture2D.create = function(w, h) {
+  Texture2D.create = function(w, h, options) {
+    options = options || {};
     var gl = Context.currentContext.gl;
 
     var texture = new Texture2D();
     texture.bind();
 
-    gl.texImage2D(
-      gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null
-    );
+    if (options.bpp == 32) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, null);
+    else gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
