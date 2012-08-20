@@ -82,7 +82,7 @@ define(["pex/core/Mat4"], function(Mat4) {
     return this;
   }
 
-  Quat.prototype.rotate = function(theta, x, y, z){
+  Quat.prototype.rotate = function(x, y, z, theta){
     var len = Math.sqrt(x*x + y*y + z*z)
 
     if(len > kEpsilon){
