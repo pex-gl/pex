@@ -125,11 +125,12 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   //### load ( )
   //Load the GLSL shader source from a file.
   //`url` - url of the file *{ String }*
-  Program.load = function(url) {
+  Program.load = function(url, callback) {
     var program = new Program();
     IO.loadTextFile(url, function(source) {
       program.addSources(source);
       program.link();
+      if (callback) callback();
     });
     return program;
   }
