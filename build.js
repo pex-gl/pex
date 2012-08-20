@@ -1,3 +1,7 @@
+//http://blog.tojicode.com/2012/04/webgl-texture-utils-and-building.html
+//http://requirejs.org/docs/node.html#nodeModules
+//https://github.com/jrburke/amdefine
+
 var requirejs = require('requirejs');
 var fs = require('fs');
 var util = require('util');
@@ -20,6 +24,21 @@ var configWebGL = {
 };
 
 var configPlask = {
+  baseUrl : "src",
+  name : "pex/Pex",
+  out : "build/plask/pex-core.js",
+  exclude:[ "plask", "fs", "path", "sys", "events" ],
+  packages:[
+    { name:"plask",location:"../src/pex/node", main:"plask" },
+    { name:"fs", location:"../src/pex/node", main:"fs" },
+    { name:"path", location:"../src/pex/node", main:"path" },
+    { name:"sys", location: "../src/pex/node", main: "sys" },
+    { name:"events", location: "../src/pex/node", main: "events" }
+  ],
+  optimize : "none"
+};
+
+var configNode = {
   baseUrl : "src",
   name : "pex/Pex",
   out : "build/plask/pex-core.js",
@@ -64,3 +83,12 @@ requirejs.optimize(configWebGL, function (buildResponse) {
 requirejs.optimize(configPlask, function (buildResponse) {
   copyFile("src/pex/pex-plask.js", "build/plask/pex-plask.js", "Plask core done", buildInjection);
 });
+
+requirejs.optimize(configNode, function (buildResponse) {
+  copyFile("src/pex/pex-node.js", "build/node/pex-node.js", "Node core done", buildInjection);
+});
+
+
+//requirejs.optimize(configAlmond, function (buildResponse) {
+//  console.log("Almond done");
+//});
