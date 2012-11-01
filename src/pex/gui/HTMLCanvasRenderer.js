@@ -6,6 +6,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
+    this.dirty = true;
   }
 
   HTMLCanvasRenderer.prototype.draw = function(items) {
