@@ -128,6 +128,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
   Program.load = function(url, callback) {
     var program = new Program();
     IO.loadTextFile(url, function(source) {
+      console.log("Program.Compiling " + url);
       program.addSources(source);
       program.link();
       if (callback) callback();
