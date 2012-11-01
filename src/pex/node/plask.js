@@ -820,7 +820,7 @@ define([], function() {
 
     var gl = null;
     try {
-        gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.stencil});
+        gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil});
     }
     catch(err){
         console.error(err);
