@@ -18,6 +18,13 @@ define(["pex/core/Vec4"], function(Vec4) {
     this.a = (a !== undefined) ? a : 1;
   }
 
+   Color.prototype.set = function(r, g, b, a) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+  }
+
   //### toVec4 ( )
   //Returns vector representation of the color where RGBA is mapped to XYZW *{ Vec4 }*
   Color.prototype.toVec4 = function() {
