@@ -50,7 +50,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
 
     if (vertSrc) this.addVertexSource(vertSrc);
     if (fragSrc) this.addFragmentSource(fragSrc);
-  }
+  };
 
   //### addVertexSource ( vertScr )
   //Adds vertex shader source code and compiles it.
@@ -62,7 +62,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
     gl.compileShader(vert);
     if (gl.getShaderParameter(vert, gl.COMPILE_STATUS) !== true)
         throw gl.getShaderInfoLog(vert);
-  }
+  };
 
   //### addSources ( vertScr, fragScr )
   //Adds fragment shader source code and compiles it.
@@ -74,7 +74,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
     gl.compileShader(frag);
     if (gl.getShaderParameter(frag, gl.COMPILE_STATUS) !== true)
         throw gl.getShaderInfoLog(frag);
-  }
+  };
 
   //### link ( )
   //Links previousily added and compiled sources to the program.
