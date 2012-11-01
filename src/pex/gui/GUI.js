@@ -46,6 +46,9 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
     if (this.type == "slider") {
       return this.contextObject[this.attributeName];
     }
+    else if (this.type == "toggle") {
+      return this.contextObject[this.attributeName];
+    }
     else return 0;
   }
 
