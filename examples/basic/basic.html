@@ -24,11 +24,13 @@
         },
         init: function() {
           var gl = Core.Context.currentContext.gl;
+
           gl.clearColor(0, 0, 0, 1);
           gl.enable(gl.DEPTH_TEST);
 
           this.camera = new PerspectiveCamera(60, this.width/this.height);
-          this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial());
+          this.arcball = new Arcball(this, this.camera);
+          this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.TestMaterial());
           this.mesh.material.uniforms.color = new Core.Vec4(1.0, 0.0, 0.0, 1.0);
 
           this.framerate(30);
