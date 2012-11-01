@@ -33,6 +33,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
       if (e.type == "slider") eh = 34;
       if (e.type == "button") eh = 24;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 24;
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.56)";
       ctx.fillRect(dx, dy, w, eh - 2);
@@ -71,16 +72,16 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
       else if (e.type == "radiolist") {
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(e.title, dx + 5, dy + 13);
+        var itemHeight = 24;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);
           ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
-          ctx.fillRect(dx + 3, eh + j*eh + dy + 3, eh - 5 - 3, eh - 5 - 3);
+          ctx.fillRect(dx + 3, 18 + j*itemHeight + dy + 3, itemHeight - 5 - 3, itemHeight - 5 - 3);
           ctx.fillStyle = "rgba(255, 255, 255, 1)";
-          ctx.fillText(item.name, dx + 5 + eh - 5, eh + j*eh + dy + 13);
+          ctx.fillText(item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
         }
-        e.activeArea.set(dx + 3, eh + dy + 3, eh - 5, e.items.length * eh - 5);
-        eh = eh + e.items.length * eh;
+        e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
       }
       else if (e.type == "texture2D") {
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
