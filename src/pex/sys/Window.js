@@ -24,7 +24,7 @@
 //     });
 
 //## Reference
-define(["plask", "pex/core/Context"], function(plask, Context) {
+define(["plask", "pex/core/Context", "pex/util/Time"], function(plask, Context, Time) {
 
   //### Window ( )
   //Empty constructor.  
@@ -63,6 +63,7 @@ define(["plask", "pex/core/Context"], function(plask, Context) {
 
     obj.__draw = obj.draw;
     obj.draw = function() {
+      Time.update();
       Context.currentContext = context;
       if (obj.__draw) {
         obj.__draw();
