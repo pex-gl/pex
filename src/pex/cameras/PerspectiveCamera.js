@@ -207,42 +207,26 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], func
     return new Ray(wOrigin, wDirection);
   }
 
+  //### getScreenPos ( point, screenWidth, screenHeight )
+  //Gets 2d window position of a 3d point
+  //
+  //`point` - 3d point in world coordinates *{ Vec3 }*  
+  //`windowWidth` - width of the window *{ Number }*  
+  //`windowHeight` - height of the window *{ Number }*  
+  //Returns the point in window coordinates *{ Vec2 }*
+  PerspectiveCamera.prototype.getScreenPos = function(point, windowWidth, windowHeight) {
+    point = new Vec4(point.x, point.y, point.z, 1.0);
+
+    var projected = this.projectionMatrix.mulVec4(this.viewMatrix.mulVec4(point));
+    var result = new Vec2(projected.x, projected.y);
+    result.x /= projected.z;
+    result.y /= projected.z;
+    result.x = result.x*0.5 + 0.5;
+    result.y = result.y*0.5 + 0.5;
+    result.x *= windowWidth;
+    result.y *= windowHeight;
+    return result;
+  }
+
   return PerspectiveCamera;
 });
-
-/*
-returns array of near and far frustrum corners in view coordinates
-starting from near top left and going forward in clock wise order
-Pex.PerspectiveCamera.prototype.getFrustumCorners = function() {
-  var hnear = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.near;
-  var wnear = hnear * this.aspectRatio;
-  var hfar = 2 * Math.tan(this.fov/180*Math.PI / 2) * this.far;
-  var wfar = hfar * this.aspectRatio;
-
-  var corners = [];
-  corners.push(new PreGL.Vec3(-wnear/2, hnear/2, -this.near)); //0, Near Top Left
-  corners.push(new PreGL.Vec3( wnear/2, hnear/2, -this.near)); //1, Near Top Right
-  corners.push(new PreGL.Vec3( wnear/2,-hnear/2, -this.near)); //2, Near Bottom Right
-  corners.push(new PreGL.Vec3(-wnear/2,-hnear/2, -this.near)); //3, Near Bottom Left
-  corners.push(new PreGL.Vec3(-wfar/2, hfar/2, -this.far));    //4, Far Top Left
-  corners.push(new PreGL.Vec3( wfar/2, hfar/2, -this.far));    //5, Far Top Right
-  corners.push(new PreGL.Vec3( wfar/2,-hfar/2, -this.far));    //6, Far Bottom Right
-  corners.push(new PreGL.Vec3(-wfar/2,-hfar/2, -this.far));    //7, Far Bottom Left
-
-  return corners;
-}
-
-Pex.PerspectiveCamera.prototype.getScreenPos = function(point, screenWidth, screenHeight) {
-  point = new PreGL.Vec4(point.x, point.y, point.z, 1.0);
-
-  var projected = this.projectionMatrix.multVec4(this.viewMatrix.multVec4(point));
-  var result = new PreGL.Vec3(projected.x, projected.y, projected.z);
-  result.x /= result.z;
-  result.y /= -result.z;
-  result.x = (result.x * 0.38) + 0.5;
-  result.y = (result.y * 0.38) + 0.5;
-  result.x *= screenWidth;
-  result.y *= screenHeight;
-  return result;
-}
-*/
