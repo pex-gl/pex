@@ -42,10 +42,11 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
     + "uniform vec4 diffuseColor;"
     + "uniform vec3 lightPos;"
     + "varying vec3 vNormal;"
+    + "uniform float wrap;"
     + "void main() {"
     +  "vec3 N = normalize(vNormal);"
     +  "vec3 L = normalize(lightPos);"
-    +  "float NdotL = max(0.0, dot(N, L));"
+    +  "float NdotL = max(0.0, (dot(N, L) + wrap)/(1 + wrap));"
     +  "gl_FragColor = ambientColor + diffuseColor * NdotL;"
     + "}";
 
@@ -59,7 +60,8 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
       var defaults = {
         ambientColor : new Core.Vec4(0.2, 0.2, 0.2, 1),
         diffuseColor : new Core.Vec4(1, 1, 1, 1),
-        lightPos : new Core.Vec3(10, 10, 10)
+        lightPos : new Core.Vec3(10, 10, 10),
+        wrap : 0
       }
 
       this.uniforms = ObjUtils.mergeObjects(defaults, uniforms);
