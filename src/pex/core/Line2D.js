@@ -6,6 +6,7 @@ define([], function() {
   }
 
   //http://stackoverflow.com/questions/3461453/determine-which-side-of-a-line-a-point-lies
+  //AB cross (AP), or determinant of 2x2 matrix
   Line2D.prototype.isPointOnTheLeftSide = function(p){
     return ((this.b.x - this.a.x)*(p.y - this.a.y) - (this.b.y - this.a.y)*(p.x - this.a.x)) <= 0;
   }
