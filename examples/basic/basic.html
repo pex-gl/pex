@@ -25,6 +25,7 @@
         init: function() {
           var gl = Core.Context.currentContext.gl;
           gl.clearColor(0, 0, 0, 1);
+          gl.enable(gl.DEPTH_TEST);
 
           this.camera = new PerspectiveCamera(60, this.width/this.height);
           this.mesh = new Core.Mesh(new Geom.Cube(), new Materials.SolidColorMaterial());
