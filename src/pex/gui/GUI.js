@@ -166,7 +166,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange
+          onchange : onchange,
+          dirty : true
         }
       );
       this.items.push(ctrl);
@@ -181,7 +182,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange
+          onchange : onchange,
+          dirty : true
         }
       );
       this.items.push(ctrl);
@@ -196,7 +198,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange
+          onchange : onchange,
+          dirty : true
         }
       );
       this.items.push(ctrl);
@@ -211,7 +214,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         title: title,
         contextObject: contextObject,
         methodName: methodName,
-        activeArea: new Rect(0, 0, 0, 0)
+        activeArea: new Rect(0, 0, 0, 0),
+        dirty : true
       }
     );
     this.items.push(ctrl);
@@ -227,7 +231,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         attributeName: attributeName,
         activeArea: new Rect(0, 0, 0, 0),
         items: items,
-        onchange : onchange
+        onchange : onchange,
+        dirty : true
       }
     );
     this.items.push(ctrl);
@@ -240,7 +245,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         type: "texture2D",
         title: title,
         texture: texture,
-        activeArea: new Rect(0, 0, 0, 0)
+        activeArea: new Rect(0, 0, 0, 0),
+        dirty : true
       }
     );
     this.items.push(ctrl);
