@@ -9,9 +9,10 @@ define([
   "pex/geom/Plane",
   "pex/geom/hem/HEM",
   "pex/geom/BoundingBox",
-  "pex/geom/OBJLoader"
+  "pex/geom/OBJLoader",
+  "pex/geom/Octree"
   ],
-  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft, Plane, HEM, BoundingBox, OBJLoader) {
+  function(Cube, SimpleCube, Sphere, LineBuilder, Path, Loft, Plane, HEM, BoundingBox, OBJLoader, Octree) {
     return {
       Cube : Cube,
       SimpleCube : SimpleCube,
@@ -22,6 +23,7 @@ define([
       Plane : Plane,
       HEM : HEM,
       BoundingBox : BoundingBox,
-      OBJLoader : OBJLoader
+      OBJLoader : OBJLoader,
+      Octree : Octree
     };
 });
