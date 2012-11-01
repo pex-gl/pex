@@ -151,7 +151,7 @@ define(["pex/core/Mat4"], function(Mat4) {
   }
 
   Quat.fromRotationAxis = function(a, x, y, z) {
-    return Quat.identity().rotate(a, x, y, z);
+    return Quat.identity().rotate(x, y, z, a);
   }
 
   return Quat;
