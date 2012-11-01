@@ -1,5 +1,6 @@
-//Based on "A User Interface for Specifying Three-Dimensional Orientation Using a Mouse" by Ken Shoemake
-//http://www.talisman.org/~erlkonig/misc/shoemake92-arcball.pdf
+//Mouse drag camera controller simulating dragging and rotating a virutal sphere.
+//
+//Based on ["A User Interface for Specifying Three-Dimensional Orientation Using a Mouse"](http://www.talisman.org/~erlkonig/misc/shoemake92-arcball.pdf) by Ken Shoemake
 
 //## Example Use
 //     var camera = new PerspecitveCamera();
@@ -7,6 +8,11 @@
 
 //## Reference
 define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex/core/Mat4"], function(Vec2, Vec3, Vec4, Quat, Mat4) {
+  //### Arcball (window, camera, distance)
+  //
+  //`window` - parent window that will handle mouse *{ Window }*  
+  //`camera` - camera that we want to control *{ PerspectiveCamera }*  
+  //`distance` - distance from center of the scene {0,0,0} *{ Number }*  = 2
   function Arcball(window, camera, distance) {
     this.distance = distance || 2;
     this.minDistance = distance/2 || 0.3;
@@ -45,10 +51,10 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
   }
 
   //### screenToSphere ( x, y )
-  //Maps mouse position to a point on a virtual sphere.
-  //Utility function used by down() and drag().
+  //Maps mouse position to a point on a virtual sphere.  
+  //Utility function used by down() and drag().  
   //
-  //`x` - x position of the mouse *{ Number }*
+  //`x` - x position of the mouse *{ Number }*  
   //`y` - y position of the mouse *{ Number }*
   Arcball.prototype.mouseToSphere = function(x, y) {
     var v = new Vec3(0, 0, 0);
@@ -70,7 +76,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
   //This function should be called then the mouse button is down
   //i.e. when the user is starting dragging.
   //
-  //`x` - x position of the mouse *{ Number }*
+  //`x` - x position of the mouse *{ Number }*  
   //`y` - y position of the mouse *{ Number }*
   Arcball.prototype.down = function(x, y) {
     this.clickPos = this.mouseToSphere(x, y);
@@ -81,7 +87,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
   //### drag ( x, y )
   //This function should be called then the mouse is dragged.
   //
-  //`x` - x position of the mouse *{ Number }*
+  //`x` - x position of the mouse *{ Number }*  
   //`y` - y position of the mouse *{ Number }*
   Arcball.prototype.drag = function(x, y) {
     this.dragPos = this.mouseToSphere(x, y);
