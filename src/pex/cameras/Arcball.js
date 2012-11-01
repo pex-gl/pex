@@ -22,6 +22,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
     this.clickPos = new Vec3();
     this.dragPos = new Vec3();
     this.rotAxis = new Vec3();
+    this.rotateCameraNotObject = true;
 
     this.updateCamera();
 
@@ -94,26 +95,27 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
   //### updateCamera ( )
   //Updates camera matrices. Called automaticaly.
   Arcball.prototype.updateCamera = function() {
-    //rotating object
-    //var arcballRotation = this.currRot.toMat4();
-    //var rotationMatrix = new Mat4();
-    //rotationMatrix.reset();
-    //rotationMatrix.translate(0, 0, -this.distance);
-    //rotationMatrix.mul(arcballRotation);
-    //this.camera.viewMatrix.reset();
-    //this.camera.viewMatrix.translate(0, 0, -this.distance);
-    //this.camera.viewMatrix.mul(arcballRotation);
+    //Based on [apply-and-arcball-rotation-to-a-camera](http://forum.libcinder.org/topic/apply-and-arcball-rotation-to-a-camera) on Cinder Forum.
+    if (this.rotateCameraNotObject) {
+      var q = this.currRot.dup();
+      q.w *= -1;
 
-    //vs rotating the camera
-    //based on http://forum.libcinder.org/topic/apply-and-arcball-rotation-to-a-camera
-    var q = this.currRot.dup();
-    q.w *= -1;
-
-    var target = new Vec3(0, 0, 0);
-    var offset = q.mulVec3(new Vec3(0, 0, this.distance));
-    var eye = target.subbed(offset);
-    var up = q.mulVec3(new Vec3(0, 1, 0));
-    this.camera.lookAt(target, eye, up);
+      var target = new Vec3(0, 0, 0);
+      var offset = q.mulVec3(new Vec3(0, 0, this.distance));
+      var eye = target.subbed(offset);
+      var up = q.mulVec3(new Vec3(0, 1, 0));
+      this.camera.lookAt(target, eye, up);
+    }
+    else {
+      var arcballRotation = this.currRot.toMat4();
+      var rotationMatrix = new Mat4();
+      rotationMatrix.reset();
+      rotationMatrix.translate(this.tran, 0, -this.distance);
+      rotationMatrix.mul(arcballRotation);
+      this.camera.viewMatrix.reset();
+      this.camera.viewMatrix.translate(0, 0, -this.distance);
+      this.camera.viewMatrix.mul(arcballRotation);
+    }
   }
 
   return Arcball;
