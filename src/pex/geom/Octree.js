@@ -15,8 +15,9 @@ define([], function() {
     return this.root.has(p);
   }
 
-  Octree.prototype.findNearestPoint = function(p) {
-    return this.root.findNearestPoint(p);
+  Octree.prototype.findNearestPoint = function(p, options) {
+    options = options || {};
+    return this.root.findNearestPoint(p, options);
   }
 
   Octree.Cell = function(x, y, z, w, h, d, level) {
@@ -104,31 +105,29 @@ define([], function() {
     }
   }
 
-  Octree.Cell.prototype.findNearestPoint = function(p) {
+  Octree.Cell.prototype.findNearestPoint = function(p, options) {
+    var nearest = null;
     if (this.children.length > 0) {
       for(var i=0; i<this.children.length; i++) {
         var child = this.children[i];
         if (child.points.length > 0 && child.contains(p)) {
-          return child.findNearestPoint(p);
+          nearest = child.findNearestPoint(p, options);
+          if (nearest) break;
         }
       }
-      if (this.points.length > 0) {
-        var minDistSq = 99999;
-        var minPoint = null;
-        for(var i=0; i<this.points.length; i++) {
-          var distSq = this.points[i].distanceSquared(p);
-          if (distSq < minDistSq) {
-            minDistSq = distSq;
-            minPoint = this.points[i];
-          }
+    }
+    if (!nearest && this.points.length > 0) {
+      var minDistSq = 99999;
+      for(var i=0; i<this.points.length; i++) {
+        var distSq = this.points[i].distanceSquared(p);
+        if (distSq < minDistSq) {
+          if (distSq < 0.0001 && options.notSelf) continue;
+          minDistSq = distSq;
+          nearest = this.points[i];
         }
-        return minPoint;
       }
     }
-    else if (this.points.length > 0) {
-      return this.points[0];
-    }
-    else return null;
+    return nearest;
   }
 
   return Octree;
