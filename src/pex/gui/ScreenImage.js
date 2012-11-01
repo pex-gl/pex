@@ -44,9 +44,9 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     ];
 
     var indices = [
-      0, 1, 2,
-      2, 3, 0
-    ]
+      0, 2, 1,
+      0, 3, 2
+    ];
 
     this.vbo.addAttrib("position", vertices, 2);
     this.vbo.addAttrib("texCoord", texCoords, 2);
