@@ -53,6 +53,11 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     this.vbo.setIndices(indices);
   }
 
+  ScreenImage.prototype.setPosition = function(position) {
+    this.position.x = position.x;
+    this.position.y = position.y;
+  }
+
   ScreenImage.prototype.setBounds = function(bounds) {
     this.position.x = bounds.x;
     this.position.y = bounds.y;
