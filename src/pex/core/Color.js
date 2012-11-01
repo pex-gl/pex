@@ -37,6 +37,10 @@ define(["pex/core/Vec4"], function(Vec4) {
     return [this.r, this.g, this.b, this.a];
   }
 
+  Color.prototype.dup = function() {
+    return new Color(this.r, this.g, this.b, this.a);
+  }
+
   Color.fromVec4 = function(v) {
     var n = v.normalized();
     return new Color(n.x*0.5 + 0.5, n.y*0.5 + 0.5, n.z*0.5 + 0.5, 1.0);
