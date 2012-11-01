@@ -1,4 +1,4 @@
-//Module wrapper for camera related classes.
+//Module wrapper for behaviors (controllers) classes.
 define([
   "pex/behaviors/Orbiter"
   ], function(Orbiter) {
