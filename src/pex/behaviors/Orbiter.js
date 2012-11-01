@@ -18,7 +18,7 @@ define(["pex/core/Vec3"], function(Vec3) {
   //`center` - center of interest *{ Vec3 }*  
   //`distance` - distance from the center *{ Number }*  
   //`target` - object to which apply the new position *{ Object }*  
-  //`position` - target position property name *{ String }*  
+  //`position` - target position property or setter name *{ String }*
   function Orbiter(center, distance, bindTarget, bindProperty) {
     this.center = center;
     this.distance = distance;
