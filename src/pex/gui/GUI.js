@@ -149,7 +149,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
 
   GUI.prototype.addLabel = function(title) {
     var ctrl = new GUIControl(
-      { type: "label", title: title, activeArea: new Rect(0, 0, 0, 0) }
+      { type: "label", title: title, activeArea: new Rect(0, 0, 0, 0), setTitle: function(title) { this.title = title; this.dirty = true; } }
     );
     this.items.push(ctrl);
     return ctrl;
