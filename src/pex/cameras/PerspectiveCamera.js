@@ -1,5 +1,10 @@
 //Makes your things look more 3d.
 
+//OpenGL coordinate system is right handed:  
+//+X is right  
+//+Y is up  
+//+Z is out of screen
+
 //## Example use
 //     var camera = new PerspectiveCamera(60, this.width/this.height);
 //     camera.setPosition(new Vec3(0, 0, 3));
@@ -8,16 +13,16 @@
 //     mesh.draw(camera);
 
 //## Reference
-define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], function(Vec3, Vec4, Mat4, Ray) {
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], function(Vec2, Vec3, Vec4, Mat4, Ray) {
 
   //### PerspectiveCamera ( fov, aspectRatio, near, far, position, target, up )
-  //`fov` - field of view *{ Number }* = 60
-  //`aspectRatio` - window/viewport aspect ratio *{ Number }* = 4/3
-  //`near` - near clipping plane *{ Number }* = 0.1
-  //`far` - far clipping plane *{ Number }* = 100
-  //`position` - camera position *{ Vec3 }* = (0, 0, 5)
-  //`target` - the point camera is looking at *{ Vec3 }* = (0, 0, 0)
-  //`up` - up vector - camera orientation *{ Vec3 }* = (0, 1, 0)
+  //`fov` - field of view *{ Number }* = 60  
+  //`aspectRatio` - window/viewport aspect ratio *{ Number }* = 4/3  
+  //`near` - near clipping plane *{ Number }* = 0.1  
+  //`far` - far clipping plane *{ Number }* = 100  
+  //`position` - camera position *{ Vec3 }* = (0, 0, 5)  
+  //`target` - the point camera is looking at *{ Vec3 }* = (0, 0, 0)  
+  //`up` - up vector - camera orientation *{ Vec3 }* = (0, 1, 0)  
   function PerspectiveCamera(fov, aspectRatio, near, far, position, target, up) {
 
     this.fov = fov || 60;
@@ -93,7 +98,7 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], func
     return this.near;
   }
 
-  //### setFar ( far )
+  //### gar ( far )
   //`far` - far clipping plane *{ Number }*
   PerspectiveCamera.prototype.setFar = function(far) {
     this.far = far;
@@ -161,9 +166,9 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], func
   //### calcModelViewMatrix ( modelTranslation, modelRotation, modelScale )
   //Utility function for calculating model view matrix
   //
-  //`modelTranslation` - model position *{ Vec3 }* = {0, 0, 0}
-  //`modelRotation` - model rotation (x, y, z, angle) *{ Vec4 }* = {0, 1, 0, 0}
-  //`modelScale` - model scale *{ Vec3 }* = {1, 1, 1}
+  //`modelTranslation` - model position *{ Vec3 }* = {0, 0, 0}  
+  //`modelRotation` - model rotation (x, y, z, angle) *{ Vec4 }* = {0, 1, 0, 0}  
+  //`modelScale` - model scale *{ Vec3 }* = {1, 1, 1}  
   PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
     var t = modelTranslation ? modelTranslation : new Vec3(0, 0, 0);
     var r = modelRotation ? modelRotation : new Vec4(0, 1, 0, 0);
@@ -180,12 +185,14 @@ define(["pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], func
     return modelViewMatrix;
   }
 
+  //### getWorldRay (x, y, windowWidth, windowHeight)
   //Gets ray in world coordinates for a x,y screen position
   //
-  //`x` - x position *{ Number }*
-  //`y` - y position *{ Number }*
-  //`windowWidth` - width of the window *{ Number }*
-  //`windowHeight` - height of the window *{ Number }*
+  //`x` - x position *{ Number }*  
+  //`y` - y position *{ Number }*  
+  //`windowWidth` - width of the window *{ Number }*  
+  //`windowHeight` - height of the window *{ Number }*  
+  //Returns the ray in world coordinates *{ Vec3 }*
   PerspectiveCamera.prototype.getWorldRay = function(x, y, windowWidth, windowHeight) {
     var x = (x - windowWidth/2) / (windowWidth/2);
     var y = -(y - windowHeight/2) / (windowHeight/2);
