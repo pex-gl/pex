@@ -76,8 +76,6 @@ Pex.run([
         })
       },
       draw: function() {
-        Time.update();
-
         var gl = Core.Context.currentContext.gl;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
