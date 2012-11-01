@@ -226,8 +226,8 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex
 
     var projected = this.projectionMatrix.mulVec4(this.viewMatrix.mulVec4(point));
     var result = new Vec2(projected.x, projected.y);
-    result.x /= projected.z;
-    result.y /= projected.z;
+    result.x /= projected.w;
+    result.y /= projected.w;
     result.x = result.x*0.5 + 0.5;
     result.y = result.y*0.5 + 0.5;
     result.x *= windowWidth;
