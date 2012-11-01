@@ -26,6 +26,7 @@ define(["pex/core/Vec3"], function(Vec3) {
     this.bindProperty = bindProperty;
     this.rotation = 0;
     this.speed = 1;
+    this.altitudeVariation = 0;
   }
 
   //### update ( delta )
@@ -35,7 +36,7 @@ define(["pex/core/Vec3"], function(Vec3) {
   Orbiter.prototype.update = function(delta) {
     this.rotation += delta * this.speed;
 
-    var p = new Vec3(Math.cos(this.rotation), 0.5*Math.cos(this.rotation), Math.sin(this.rotation));
+    var p = new Vec3(Math.cos(this.rotation), this.altitudeVariation*Math.cos(this.rotation), Math.sin(this.rotation));
     p.scale(this.distance).add(this.center);
 
     if (typeof(this.bindTarget[this.bindProperty]) == "function") {
