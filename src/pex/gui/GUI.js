@@ -44,7 +44,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
 
   GUIControl.prototype.getValue = function() {
     if (this.type == "slider") {
-      return Math.floor(this.contextObject[this.attributeName]*100)/100;
+      return this.contextObject[this.attributeName];
     }
     else return 0;
   }
