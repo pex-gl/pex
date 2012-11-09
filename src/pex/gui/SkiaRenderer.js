@@ -33,6 +33,9 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   SkiaRenderer.prototype.draw = function(items) {
+    if (!this.dirty) return;
+    else this.dirty = false;
+
     var canvas = this.canvas;
 
     canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode); //transparent
@@ -112,15 +115,12 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   SkiaRenderer.prototype.updateTexture = function() {
-    if (this.dirty) {
-      var gl = this.gl;
-      this.tex.bind();
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
-      gl.generateMipmap(gl.TEXTURE_2D);
-      gl.bindTexture(gl.TEXTURE_2D, null);
-      this.dirty = false;
-    }
+    var gl = this.gl;
+    this.tex.bind();
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
 

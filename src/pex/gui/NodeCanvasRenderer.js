@@ -9,6 +9,9 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   NodeCanvasRenderer.prototype.draw = function(items) {
+    if (!this.dirty) return;
+    else this.dirty = false;
+
     var ctx = this.ctx;
     //ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     //ctx.font = "10px Monaco";

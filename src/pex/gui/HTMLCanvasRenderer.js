@@ -10,6 +10,9 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   HTMLCanvasRenderer.prototype.draw = function(items) {
+    if (!this.dirty) return;
+    else this.dirty = false;
+
     var ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     ctx.font = "10px Monaco";
@@ -105,17 +108,15 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
   }
 
   HTMLCanvasRenderer.prototype.updateTexture = function() {
-    if (this.dirty) {
-      var gl = this.gl;
-      this.tex.bind();
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.canvas);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.bindTexture(gl.TEXTURE_2D, null);
-    }
+    var gl = this.gl;
+    this.tex.bind();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.canvas);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
 
