@@ -3,7 +3,6 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     this.gl = Context.currentContext.gl;
     this.tex = Texture2D.create(0, 0);
     this.canvas = new plask.SkCanvas.create(width, height);
-    this.dirty = true;
 
     this.fontPaint = new plask.SkPaint();
     this.fontPaint.setStyle(plask.SkPaint.kFillStyle);
@@ -32,9 +31,21 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     this.controlHighlightPaint.setColor(255, 255, 0, 255);
   }
 
+  SkiaRenderer.prototype.isAnyItemDirty = function(items) {
+    var dirty = false;
+    items.forEach(function(item) {
+      if (item.dirty) {
+        item.dirty = false;
+        dirty = true;
+      }
+    });
+    return dirty;
+  };
+
   SkiaRenderer.prototype.draw = function(items) {
-    if (!this.dirty) return;
-    else this.dirty = false;
+    if (!this.isAnyItemDirty(items)) {
+      return;
+    }
 
     var canvas = this.canvas;
 
@@ -45,11 +56,6 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     var w = 160;
     for(var i=0; i<items.length; i++) {
       var e = items[i];
-
-      if (e.dirty) {
-        this.dirty = true;
-        e.dirty = false;
-      }
 
       if (e.px && e.px) {
         dx = e.px;

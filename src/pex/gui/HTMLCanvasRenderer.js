@@ -9,9 +9,21 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     this.dirty = true;
   }
 
+  HTMLCanvasRenderer.prototype.isAnyItemDirty = function(items) {
+    var dirty = false;
+    items.forEach(function(item) {
+      if (item.dirty) {
+        item.dirty = false;
+        dirty = true;
+      }
+    });
+    return dirty;
+  };
+
   HTMLCanvasRenderer.prototype.draw = function(items) {
-    if (!this.dirty) return;
-    else this.dirty = false;
+    if (!this.isAnyItemDirty(items)) {
+      return;
+    }
 
     var ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -22,11 +34,6 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
     var w = 160;
     for(var i=0; i<items.length; i++) {
       var e = items[i];
-
-      if (e.dirty) {
-        this.dirty = true;
-        e.dirty = false;
-      }
 
       if (e.px && e.px) {
         dx = e.px;
