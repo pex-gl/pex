@@ -771,6 +771,7 @@ define([], function() {
         shift: e.shiftKey,
         control: e.ctrlKey
       });
+      e.preventDefault();
       return false;
     });
   }
