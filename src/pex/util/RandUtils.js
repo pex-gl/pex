@@ -48,6 +48,14 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/lib/seedrandom"], function(Vec2, 
     return Math.floor(min + Math.random() * (max - min));
   }
 
+  RandUtils.randomFloat = function(min, max) {
+    if (max === undefined) {
+      max = min;
+      min = 0;
+    }
+    return min + Math.random() * (max - min);
+  }
+
   RandUtils.seed = function(seed) {
     Math.seedrandom(seed);
   }
