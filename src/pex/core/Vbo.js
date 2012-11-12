@@ -49,7 +49,7 @@ define([
 
     var attrib = {};
     attrib.name = name;
-    attrib.data = data;
+    attrib.data = dataArr;
     attrib.size = size;
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
