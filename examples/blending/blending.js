@@ -37,8 +37,6 @@ Pex.run([
       draw: function() {
         var gl = Core.Context.currentContext.gl;
 
-        Util.Time.update();
-
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.BLEND);
         gl.disable(gl.DEPTH_TEST);

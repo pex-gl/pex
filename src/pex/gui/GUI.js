@@ -259,7 +259,6 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
 
   var frame = 0;
   GUI.prototype.draw = function() {
-    Time.update();
     this.renderer.draw(this.items);
     if (!IO.Image) this.screenImage.draw();
     this.drawTextures();
