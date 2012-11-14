@@ -143,6 +143,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
   GUI.prototype.onMouseUp = function(e) {
     if (this.activeControl) {
       this.activeControl.active = false;
+      this.activeControl.dirty = true;
       this.activeControl = null;
     }
   }
