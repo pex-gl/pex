@@ -20,7 +20,7 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     +   "gl_FragColor = texture2D(tex0, vTexCoord);"
     + "}";
 
-  function ScreenImage(screenWidth, screenHeight, x, y, w, h, tex) {
+  function ScreenImage(screenWidth, screenHeight, x, y, w, h, tex, blending) {
     var gl = Context.currentContext.gl;
     this.program = new Program(vert, frag);
     this.vbo = new Vbo(gl.TRIANGLES);
@@ -28,6 +28,7 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     this.windowSize = new Vec2(screenWidth, screenHeight);
     this.position = new Vec2(x, y);
     this.size = new Vec2(w, h);
+    this.blending = (blending !== undefined) ? blending : true;
 
     var vertices = [
        0, 0,
@@ -69,10 +70,12 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     this.tex = texture;
   }
 
-  ScreenImage.prototype.draw = function(program) {
+  ScreenImage.prototype.draw = function(program, dontBlend) {
     var gl = Context.currentContext.gl;
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    if (this.blending) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    }
     if (this.tex) this.tex.bind();
     program = program ? program : this.program;
     program.use();
@@ -81,7 +84,9 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     program.uniforms.pixelSize(this.size);
     gl.disable(gl.DEPTH_TEST);
     this.vbo.draw(program);
-    gl.disable(gl.BLEND);
+    if (this.blending) {
+      gl.disable(gl.BLEND);
+    }
     gl.enable(gl.DEPTH_TEST);
   }
 
