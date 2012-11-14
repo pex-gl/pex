@@ -78,7 +78,7 @@ define([
     }
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, this.gl.STATIC_DRAW);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, this.usage);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
   }
 
