@@ -47,6 +47,8 @@ define(["pex/core/Vec4"], function(Vec4) {
   }
 
   //### Predefinied Colors
+  Color.Transparent = new Color(0, 0, 0, 0);
+  Color.None = new Color(0, 0, 0, 0);
   Color.Black = new Color(0, 0, 0, 1);
   Color.White = new Color(1, 1, 1, 1);
   Color.Grey = new Color(0.5, 0.5, 0.5, 1);
