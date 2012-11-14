@@ -185,49 +185,61 @@ define([
   }
 
   Geometry.merge = function(a, b) {
+    var geom = new Geometry();
+
     var vertexOffset = a.vertices.length;
-    var faceOffset = a.faces.length;
-    var normalsOffset = a.normals.length;
-
+    
     var vertices = [];
-    var faces = [];
-    var normals = [];
-
     for(var i=0; i<a.vertices.length; i++) {
       vertices.push(a.vertices[i].added(a.position));
-      normals.push(a.normals[i].dup());
     }
 
     for(var i=0; i<b.vertices.length; i++) {
       vertices.push(b.vertices[i].added(b.position));
-      normals.push(b.normals[i].dup());
     }
 
-    for(var i=0; i<a.faces.length; i++) {
-      var face = a.faces[i];
-      if (face instanceof Face3) {
-        faces.push(new Face3(face.a, face.b, face.c));
-      }
-      else if (face instanceof Face4) {
-        faces.push(new Face4(face.a, face.b, face.c, face.d));
-      }
-    }
-
-    for(var i=0; i<b.faces.length; i++) {
-      var face = b.faces[i];
-      if (face instanceof Face3) {
-        faces.push(new Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset));
-      }
-      else if (face instanceof Face4) {
-        faces.push(new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset));
-      }
-    }
-
-
-    var geom = new Geometry();
     geom.vertices = vertices;
-    geom.faces = faces;
-    geom.normals = normals;
+
+    if (a.faces && b.faces) {
+      var faceOffset = a.faces.length;
+      var faces = [];
+
+      for(var i=0; i<a.faces.length; i++) {
+        var face = a.faces[i];
+        if (face instanceof Face3) {
+          faces.push(new Face3(face.a, face.b, face.c));
+        }
+        else if (face instanceof Face4) {
+          faces.push(new Face4(face.a, face.b, face.c, face.d));
+        }
+      }
+
+      for(var i=0; i<b.faces.length; i++) {
+        var face = b.faces[i];
+        if (face instanceof Face3) {
+          faces.push(new Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset));
+        }
+        else if (face instanceof Face4) {
+          faces.push(new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset));
+        }
+      }
+
+      geom.faces = faces;
+    }
+
+    if (a.normals && b.normals) {
+      var normalsOffset = a.normals.length;
+      var normals = [];
+       for(var i=0; i<a.normals.length; i++) {
+        normals.push(a.normals[i].dup());
+      }
+
+      for(var i=0; i<b.normals.length; i++) {
+        normals.push(b.normals[i].dup());
+      }
+
+      geom.normals = normals;
+    }
 
     return geom;
   }
