@@ -2,6 +2,10 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/lib/seedrandom"], function(Vec2, 
   function RandUtils() {
   }
 
+  RandUtils.randomElement = function(list) {
+    return list[RandUtils.randomInt(0, list.length)];
+  };
+
   //random unit vector on a sphere
   RandUtils.randomVec3 = function() {
     var v = new Vec3(
