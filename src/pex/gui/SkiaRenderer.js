@@ -66,7 +66,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
       if (e.type == "slider") eh = 34;
       if (e.type == "button") eh = 24;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 24;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
 
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
 
@@ -93,7 +93,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
       else if (e.type == "radiolist") {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         var itemColor = this.controlBgPaint;
-        var itemHeight = 24;
+        var itemHeight = 20;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);
@@ -101,7 +101,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
           canvas.drawRect(itemColor, dx + 3, 18 + j*itemHeight + dy + 3, dx + itemHeight - 5, itemHeight + j*itemHeight + dy + 18 - 5);
           canvas.drawText(this.fontPaint, item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
         }
-        e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * 24 - 5);
+        e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
       }
       else if (e.type == "texture2D") {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
