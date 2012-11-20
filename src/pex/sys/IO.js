@@ -136,7 +136,7 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
       var canvas = plask.SkCanvas.createFromImage(fullPath);
-      gl.texImage2DSkCanvasNoFlip(target, 0, canvas);
+      gl.texImage2DSkCanvas(target, 0, canvas);
       if (callback) {
         callback(canvas);
       }
@@ -206,7 +206,7 @@ define(["plask", "fs", "path", "pex/util/Log"], function(plask, fs, path, Log) {
         texture.flipped = true;
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(texture.target, texture.handle);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.texImage2D(
           target, 0, gl.RGBA, gl.RGBA,
           gl.UNSIGNED_BYTE, image
