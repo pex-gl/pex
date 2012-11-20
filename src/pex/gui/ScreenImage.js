@@ -30,18 +30,22 @@ define(["pex/core/Vec2", "pex/core/Context", "pex/core/Program", "pex/core/Vbo"]
     this.size = new Vec2(w, h);
     this.blending = (blending !== undefined) ? blending : true;
 
+    // 0----1
+    // | \  |
+    // |  \ |
+    // 3----2
     var vertices = [
-       0, 0,
-       0, 1,
-       1, 1,
-       1, 0
+       0,  1,
+       1,  1,
+       1,  0,
+       0,  0
     ];
 
     var texCoords = [
-       0,  0,
-       0,  1,
-       1,  1,
-       1,  0
+       0, 1,
+       1, 1,
+       1, 0,
+       0, 0
     ];
 
     var indices = [
