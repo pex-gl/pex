@@ -102,6 +102,7 @@ define([
       this.material.uniforms.projectionMatrix = camera.getProjectionMatrix();
       this.material.uniforms.viewMatrix = camera.getViewMatrix();
       this.material.uniforms.modelViewMatrix = camera.calcModelViewMatrix(this.position, this.rotation, this.scale);
+      this.material.uniforms.modelWorldMatrix = camera.calcModelWorldMatrix(this.position, this.rotation, this.scale);
       this.material.uniforms.normalMatrix = this.material.uniforms.modelViewMatrix.dup().invert().transpose();
     }
 

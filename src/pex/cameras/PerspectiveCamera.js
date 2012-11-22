@@ -13,7 +13,7 @@
 //     mesh.draw(camera);
 
 //## Reference
-define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex/core/Ray"], function(Vec2, Vec3, Vec4, Mat4, Ray) {
+define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex/core/Mat4", "pex/core/Ray"], function(Vec2, Vec3, Vec4, Quat, Mat4, Ray) {
 
   //### PerspectiveCamera ( fov, aspectRatio, near, far, position, target, up )
   //`fov` - field of view *{ Number }* = 60  
@@ -169,18 +169,33 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Mat4", "pex
   //`modelTranslation` - model position *{ Vec3 }* = {0, 0, 0}  
   //`modelRotation` - model rotation (x, y, z, angle) *{ Vec4 }* = {0, 1, 0, 0}  
   //`modelScale` - model scale *{ Vec3 }* = {1, 1, 1}  
-  PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
+  PerspectiveCamera.prototype.calcModelWorldMatrix = function(modelTranslation, modelRotation, modelScale) {
     var t = modelTranslation ? modelTranslation : new Vec3(0, 0, 0);
     var r = modelRotation ? modelRotation : new Vec4(0, 1, 0, 0);
     var s = modelScale ? modelScale : new Vec3(1, 1, 1);
 
     var modelWorldMatrix = new Mat4();
     modelWorldMatrix.translate(t.x, t.y, t.z);
-    modelWorldMatrix.rotate(r.w, r.x, r.y, r.z);
+    if (modelRotation instanceof Quat) {
+      modelWorldMatrix.mul(modelRotation.toMat4());
+    }
+    else {
+      modelWorldMatrix.rotate(r.w, r.x, r.y, r.z);
+    }
     modelWorldMatrix.scale(s.x, s.y, s.z);
 
-    var modelViewMatrix = this.viewMatrix.dup();
+   return modelWorldMatrix;
+  }
 
+  //### calcModelViewMatrix ( modelTranslation, modelRotation, modelScale )
+  //Utility function for calculating model view matrix
+  //
+  //`modelTranslation` - model position *{ Vec3 }* = {0, 0, 0}  
+  //`modelRotation` - model rotation (x, y, z, angle) *{ Vec4 }* = {0, 1, 0, 0}  
+  //`modelScale` - model scale *{ Vec3 }* = {1, 1, 1}  
+  PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
+    var modelViewMatrix = this.viewMatrix.dup();
+    var modelWorldMatrix = this.calcModelWorldMatrix(modelTranslation, modelRotation, modelScale);
     modelViewMatrix.mul(modelWorldMatrix);
     return modelViewMatrix;
   }
