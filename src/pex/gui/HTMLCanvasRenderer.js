@@ -59,7 +59,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
 
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillText(items[i].title + " : " + e.getValue(), dx + 5, dy + 13);
+        ctx.fillText(items[i].title + " : " + e.getStrValue(), dx + 5, dy + 13);
       }
       else if (e.type == "button"){
         ctx.fillStyle = e.active ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";

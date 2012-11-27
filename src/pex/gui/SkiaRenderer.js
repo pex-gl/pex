@@ -1,4 +1,4 @@
-define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Context, Texture2D) {
+  define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Context, Texture2D) {
   function SkiaRenderer(width, height) {
     this.gl = Context.currentContext.gl;
     this.tex = Texture2D.create(0, 0);
@@ -74,7 +74,7 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
         canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getValue(), dx + 3, dy + 13);
+        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
       }
       else if (e.type == "button") {
         var btnColor = e.active ? this.controlHighlightPaint : this.controlBgPaint;

@@ -52,6 +52,23 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
     else return 0;
   }
 
+  GUIControl.prototype.getStrValue = function() {
+    if (this.type == "slider") {
+      var str = "" + this.contextObject[this.attributeName];
+      var dotPos = str.indexOf(".") + 1;
+      while(str.charAt(dotPos) == "0") {
+        dotPos++;
+      }
+      return str.substr(0, dotPos+2);
+    }
+    else if (this.type == "toggle") {
+      return this.contextObject[this.attributeName];
+    }
+    else return "";
+  }
+
+  
+
   function GUI(window, x, y) {
     this.gl = Context.currentContext.gl;
     this.window = window;
