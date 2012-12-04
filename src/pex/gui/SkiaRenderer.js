@@ -29,6 +29,10 @@
     this.controlHighlightPaint = new plask.SkPaint();
     this.controlHighlightPaint.setStyle(plask.SkPaint.kFillStyle);
     this.controlHighlightPaint.setColor(255, 255, 0, 255);
+
+    this.controlFeaturePaint = new plask.SkPaint();
+    this.controlFeaturePaint.setStyle(plask.SkPaint.kFillStyle);
+    this.controlFeaturePaint.setColor(255, 255, 255, 255);
   }
 
   SkiaRenderer.prototype.isAnyItemDirty = function(items) {
@@ -81,6 +85,11 @@
         var btnFont = e.active ? this.fontHighlightPaint : this.fontPaint;
         canvas.drawRect(btnColor, dx + 3, dy + 3, dx + w - 3, dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 3, w - 3 - 3, eh - 5);
+        if (e.options.color) {
+          var c = e.options.color;
+          this.controlFeaturePaint.setColor(255 * c.x, 255 * c.y, 255 * c.z, 255);
+          canvas.drawRect(this.controlFeaturePaint,  dx + w - 8, dy + 3, dx + w - 3, dy + eh - 5);
+        }
         canvas.drawText(btnFont, items[i].title, dx + 5, dy + 15);
       }
       else if (e.type == "toggle") {

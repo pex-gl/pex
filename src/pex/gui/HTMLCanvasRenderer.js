@@ -69,6 +69,11 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
 
         ctx.fillStyle = e.active ? "rgba(100, 100, 100, 1)" : "rgba(255, 255, 255, 1)";
         ctx.fillText(items[i].title, dx + 5, dy + 15);
+         if (e.options.color) {
+          var c = e.options.color;
+          ctx.fillStyle = "rgba("+(c.x * 255)+", "+(c.y * 255)+", "+(c.z * 255)+", 1)";
+          ctx.fillRect(dx + w - 8, dy + 3, 5, eh - 5 - 3);
+        }
       }
       else if (e.type == "toggle"){
         var on = e.contextObject[e.attributeName];

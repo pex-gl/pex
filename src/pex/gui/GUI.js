@@ -225,7 +225,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
     }
   }
 
-  GUI.prototype.addButton = function(title, contextObject, methodName) {
+  GUI.prototype.addButton = function(title, contextObject, methodName, options) {
     var ctrl = new GUIControl(
       {
         type: "button",
@@ -233,7 +233,8 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         contextObject: contextObject,
         methodName: methodName,
         activeArea: new Rect(0, 0, 0, 0),
-        dirty : true
+        dirty : true,
+        options : options
       }
     );
     this.items.push(ctrl);
