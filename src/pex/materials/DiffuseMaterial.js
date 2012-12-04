@@ -46,7 +46,7 @@ define(["pex/core/Core", "pex/util/ObjUtils"], function(Core, ObjUtils) {
     + "void main() {"
     +  "vec3 N = normalize(vNormal);"
     +  "vec3 L = normalize(lightPos);"
-    +  "float NdotL = max(0.0, (dot(N, L) + wrap)/(1 + wrap));"
+    +  "float NdotL = max(0.0, (dot(N, L) + wrap)/(1.0 + wrap));"
     +  "gl_FragColor = ambientColor + diffuseColor * NdotL;"
     + "}";
 
