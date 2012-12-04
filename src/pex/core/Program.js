@@ -60,8 +60,10 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vert, kVertexShaderPrefix + vertSrc);
     gl.compileShader(vert);
-    if (gl.getShaderParameter(vert, gl.COMPILE_STATUS) !== true)
-        throw gl.getShaderInfoLog(vert);
+    if (gl.getShaderParameter(vert, gl.COMPILE_STATUS) !== true) {
+      console.log(vertSrc);
+      throw gl.getShaderInfoLog(vert);
+    }
   };
 
   //### addSources ( vertScr, fragScr )
@@ -72,8 +74,10 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc);
     gl.compileShader(frag);
-    if (gl.getShaderParameter(frag, gl.COMPILE_STATUS) !== true)
-        throw gl.getShaderInfoLog(frag);
+    if (gl.getShaderParameter(frag, gl.COMPILE_STATUS) !== true) {
+      console.log(fragSrc);
+      throw gl.getShaderInfoLog(frag);
+    }
   };
 
   //### link ( )
