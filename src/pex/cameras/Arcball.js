@@ -28,6 +28,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
     this.dragPos = new Vec3();
     this.rotAxis = new Vec3();
     this.rotateCameraNotObject = true;
+    this.allowZooming = true;
 
     this.updateCamera();
 
@@ -44,6 +45,7 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
 
     window.on('scrollWheel', function(e) {
       if (e.handled) return;
+      if (!self.allowZooming) return;
       self.distance = Math.min(self.maxDistance, Math.max(self.distance + e.dy/100*(self.maxDistance-self.minDistance), self.minDistance));
       self.updateCamera();
     });
@@ -121,6 +123,10 @@ define(["pex/core/Vec2", "pex/core/Vec3", "pex/core/Vec4", "pex/core/Quat", "pex
       this.camera.viewMatrix.translate(0, 0, -this.distance);
       this.camera.viewMatrix.mul(arcballRotation);
     }
+  }
+
+  Arcball.prototype.disableZoom = function() {
+    this.allowZooming = false;
   }
 
   return Arcball;
