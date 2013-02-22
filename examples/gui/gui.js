@@ -52,7 +52,7 @@ Pex.run([
         this.gui.addLabel("'L' - load settings");
         this.gui.addLabel("");
         this.gui.addLabel("CUBE");
-        //this.gui.addParam("Color", this, "color");
+        this.gui.addParam("Color", this, "color", {min:0, max:255});
         this.gui.addParam("Rotate", this, "rotate");
         this.gui.addParam("Rotate speed", this, "speed", {min:0, max:5});
         this.gui.addLabel("CAMERA");
@@ -63,7 +63,7 @@ Pex.run([
           { name:"Texture", value:2 },
           { name:"Normal", value:3 },
           { name:"Diffuse", value:4 }
-        ], function(idx) { console.log("Material changed", idx); }).setPosition(200, 90);
+        ], function(idx) { console.log("Material changed", idx); }).setPosition(180, 10);
 
         this.gui.load("client.gui.settings.txt");
 
@@ -77,6 +77,7 @@ Pex.run([
       },
       draw: function() {
         var gl = Core.Context.currentContext.gl;
+        gl.clearColor(this.color[0] / 255, this.color[1] / 255, this.color[2] / 255, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         this.camera.setPosition(new Core.Vec3(0, this.distance * 1, this.distance * 2));
