@@ -113,6 +113,30 @@ define([
     }
   }
 
+  Mesh.prototype.drawInstances = function(camera, instances) {
+
+    if (this.geometry && this.geometry.dirty) {
+      this.geometry.dirty = false;
+      this.buildVbosFromGeometry();
+    }
+
+    if (camera) {
+      instances.forEach(function(instance) {
+        instance.uniforms.projectionMatrix = camera.getProjectionMatrix();
+        instance.uniforms.viewMatrix = camera.getViewMatrix();
+        instance.uniforms.modelViewMatrix = camera.calcModelViewMatrix(instance.position, instance.rotation, instance.scale);
+        instance.uniforms.modelWorldMatrix = camera.calcModelWorldMatrix(instance.position, instance.rotation, instance.scale);
+        instance.uniforms.normalMatrix = instance.uniforms.modelViewMatrix.dup().invert().transpose();
+      });
+    }
+
+    this.material.use();
+
+    for(var i=0; i<this.vbos.length; i++) {
+      this.vbos[i].drawInstances(this.material.program, instances);
+    }
+  }
+
   Mesh.prototype.setMaterial = function(material) {
     this.material = material;
     for(var i=0; i<this.vbos.length; i++) {

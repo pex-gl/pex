@@ -140,6 +140,79 @@ define([
     }
   }
 
+  Vbo.prototype.drawInstances = function(program, instances) {
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      /*
+      TODO:this should go another way
+      instad of searching for mesh atribs in shader
+      look for required attribs by shader inside mesh
+      */
+      if (attrib.location === undefined || attrib.location == -1) {
+        attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
+      }
+      if (attrib.location >= 0) {
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
+        this.gl.vertexAttribPointer(attrib.location, attrib.size, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(attrib.location);
+      }
+    }
+
+    if (this.indices) {
+      this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
+      for(var i=0; i<instances.length; i++) {
+        var instance = instances[i];
+        var numTextures = 0;
+        for(var name in instance.uniforms) {
+          if (program.uniforms[name]) {
+            if (program.uniforms[name].type == this.gl.SAMPLER_2D
+            ||  program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
+              this.gl.activeTexture(this.gl.TEXTURE0 + numTextures);
+              this.gl.bindTexture(this.uniforms[name].target,  instance.uniforms[name].handle);
+              program.uniforms[name]( numTextures );
+
+              numTextures++;
+            }
+            else {
+              program.uniforms[name]( instance.uniforms[name] );
+            }
+          }
+        }
+        this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
+      }
+    }
+    else if (this.attributes["position"]){
+      var num = this.attributes["position"].data.length/3;
+      for(var i=0; i<instances.length; i++) {
+        var instance = instances[i];
+        var numTextures = 0;
+        for(var name in instance.uniforms) {
+          if (program.uniforms[name]) {
+            if (program.uniforms[name].type == this.gl.SAMPLER_2D
+            ||  program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
+              this.gl.activeTexture(this.gl.TEXTURE0 + numTextures);
+              this.gl.bindTexture(this.uniforms[name].target,  instance.uniforms[name].handle);
+              program.uniforms[name]( numTextures );
+
+              numTextures++;
+            }
+            else {
+              program.uniforms[name]( instance.uniforms[name] );
+            }
+          }
+        }
+        this.gl.drawArrays(this.primitiveType, 0, num);
+      }
+    }
+
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      if (attrib.location >= 0) {
+        this.gl.disableVertexAttribArray(attrib.location);
+      }
+    }
+  }
+
   Vbo.prototype.resetAttribLocations = function() {
     for(var name in this.attributes) {
       var attrib = this.attributes[name];
