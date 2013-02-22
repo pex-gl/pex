@@ -790,7 +790,10 @@ define([], function() {
       timeout = setTimeout(function() {
         fireEvent("keyDown", {
           str: "",
-          keyCode: e.keyCode
+          keyCode: e.keyCode,
+          option: e.altKey,
+          shift: e.shiftKey,
+          control: e.ctrlKey
         }, 1);
       })
     })
@@ -801,7 +804,10 @@ define([], function() {
       }
       fireEvent("keyDown", {
         str: String.fromCharCode(e.charCode),
-        keyCode: e.keyCode
+        keyCode: e.keyCode,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
       });
     })
   }
