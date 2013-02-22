@@ -1,5 +1,5 @@
 //Module wrapper for the whole Pex library.
-define("pex/Pex", [
+define([
     "pex/behaviors/Behaviors",
     "pex/cameras/Cameras",
     "pex/core/Core",
@@ -7,7 +7,7 @@ define("pex/Pex", [
     "pex/gui/GUI",
     "pex/materials/Materials",
     "pex/sys/Sys",
-    "pex/util/Util",
+    "pex/util/Util"
   ],
   function(Behaviors, Cameras, Core, Geom, GUI, Materials, Sys, Util) {
     var Pex = {
