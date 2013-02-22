@@ -68,6 +68,7 @@
       var eh = 20;
 
       if (e.type == "slider") eh = 34;
+      if (e.type == "multislider") eh = 18 + e.getValue().length * 20;
       if (e.type == "button") eh = 24;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
       if (e.type == "radiolist") eh = 18 + e.items.length * 20;
@@ -75,10 +76,20 @@
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
 
       if (e.type == "slider") {
+        var value = e.getValue();
+        console.log(value);
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
         canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
         canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
+      }
+      else if (e.type == "multislider") {
+        for(var j=0; j<e.getValue().length; j++) {
+          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20, dx + w - 3, dy + 18 + (j+1)*20 - 6);
+          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20 - 6);
+        }
+        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
       }
       else if (e.type == "button") {
         var btnColor = e.active ? this.controlHighlightPaint : this.controlBgPaint;

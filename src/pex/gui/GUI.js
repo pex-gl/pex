@@ -21,29 +21,48 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
     this.py = y;
   }
 
-  GUIControl.prototype.getNormalizedValue = function() {
+  GUIControl.prototype.getNormalizedValue = function(idx) {
     if (!this.contextObject) return "";
 
     var val = this.contextObject[this.attributeName];
+
     var options = this.options;
     if (options && options.min !== undefined && options.max !== undefined) {
-      val = (val - options.min) / (options.max - options.min);
+      if (this.type == "multislider") {
+        val = (val[idx] - options.min) / (options.max - options.min);
+      }
+      else {
+        val = (val - options.min) / (options.max - options.min);
+      }
     }
     return val;
   }
 
-  GUIControl.prototype.setNormalizedValue = function(val) {
+  GUIControl.prototype.setNormalizedValue = function(val, idx) {
     if (!this.contextObject) return;
 
     var options = this.options;
     if (options && options.min !== undefined && options.max !== undefined) {
-      val = options.min + val * (options.max - options.min);
+      if (this.type == "multislider") {
+        var a = this.contextObject[this.attributeName];
+        if (idx >= a.length) {
+          return;
+        }
+        a[idx] = options.min + val * (options.max - options.min);
+        val = a;
+      }
+      else {
+        val = options.min + val * (options.max - options.min);
+      }
     }
     this.contextObject[this.attributeName] = val;
   }
 
   GUIControl.prototype.getValue = function() {
     if (this.type == "slider") {
+      return this.contextObject[this.attributeName];
+    }
+    if (this.type == "multislider") {
       return this.contextObject[this.attributeName];
     }
     else if (this.type == "toggle") {
@@ -66,8 +85,6 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
     }
     else return "";
   }
-
-  
 
   function GUI(window, x, y) {
     this.gl = Context.currentContext.gl;
@@ -153,6 +170,16 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
         }
         this.activeControl.dirty = true;
       }
+      else if (this.activeControl.type == "multislider") {
+        var val = (e.x - aa.x) / aa.width;
+        val = Math.max(0, Math.min(val, 1));
+        var idx = Math.floor(this.activeControl.getValue().length * (e.y - aa.y) / aa.height);
+        this.activeControl.setNormalizedValue(val, idx);
+        if (this.activeControl.onchange) {
+          this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+        }
+        this.activeControl.dirty = true;
+      }
       e.handled = true;
     }
   }
@@ -175,7 +202,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
 
   GUI.prototype.addParam = function(title, contextObject, attributeName, options, onchange) {
     options = options || {};
-    if (attributeName == "[]") {
+    if (contextObject[attributeName] instanceof Array) {
       var ctrl = new GUIControl(
         {
           type: "multislider",
@@ -278,6 +305,7 @@ function(plask, Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, No
 
   var frame = 0;
   GUI.prototype.draw = function() {
+    if (this.items.length == 0) return;
     this.renderer.draw(this.items);
     if (!IO.Image) this.screenImage.draw();
     this.drawTextures();
