@@ -53,6 +53,21 @@ var configNode = {
   optimize : "none"
 };
 
+var configAlmond = {
+  baseUrl : "src",
+  name : "../tools/almond",
+  out : "build/almond/pex-core.js",
+  include : "pex/Pex",
+  packages:[
+    { name:"plask",location:"../src/pex/node", main:"plask" },
+    { name:"fs", location:"../src/pex/node", main:"fs" },
+    { name:"path", location:"../src/pex/node", main:"path" },
+    { name:"sys", location: "../src/pex/node", main: "sys" },
+    { name:"events", location: "../src/pex/node", main: "events" }
+  ],
+  optimize : "none"
+};
+
 var filesToCopy = 0;
 
 function copyFile(src, target, msg, prependText) {
@@ -86,6 +101,10 @@ requirejs.optimize(configPlask, function (buildResponse) {
 
 requirejs.optimize(configNode, function (buildResponse) {
   copyFile("src/pex/pex-node.js", "build/node/pex-node.js", "Node core done", buildInjection);
+});
+
+requirejs.optimize(configAlmond, function (buildResponse) {
+  copyFile("src/pex/pex-webgl.js", "build/almond/pex-node.js", "Almond core done", buildInjection);
 });
 
 
