@@ -8,7 +8,7 @@ define(["pex/util/Log"], function(Log) {
     fpsFrames: 0,
     fpsTime: 0,
     fps: 0,
-    fpsFrequency: 3,
+    fpsFrequency: 1,
     paused: false
   }
 
@@ -29,7 +29,7 @@ define(["pex/util/Log"], function(Log) {
       Time.fps = Time.fpsFrames / Time.fpsTime;
       Time.fpsTime = 0;
       Time.fpsFrames = 0;
-      Log.message("FPS: " + Time.fps);
+      if (Time.frameNumber % 30) Log.message("FPS: " + Time.fps);
     }
     return Time.seconds;
   }
