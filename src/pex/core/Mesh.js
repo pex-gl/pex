@@ -122,12 +122,13 @@ define([
 
     if (camera) {
       instances.forEach(function(instance) {
+        if (!instance.uniforms) instance.uniforms = {};
         instance.uniforms.projectionMatrix = camera.getProjectionMatrix();
         instance.uniforms.viewMatrix = camera.getViewMatrix();
-        instance.uniforms.modelViewMatrix = camera.calcModelViewMatrix(instance.position, instance.rotation, instance.scale);
-        instance.uniforms.modelWorldMatrix = camera.calcModelWorldMatrix(instance.position, instance.rotation, instance.scale);
+        instance.uniforms.modelViewMatrix = camera.calcModelViewMatrix(instance.position || this.position,   instance.rotation || this.rotation, instance.scale || this.scale);
+        instance.uniforms.modelWorldMatrix = camera.calcModelWorldMatrix(instance.position || this.position, instance.rotation || this.rotation, instance.scale || this.scale);
         instance.uniforms.normalMatrix = instance.uniforms.modelViewMatrix.dup().invert().transpose();
-      });
+      }.bind(this));
     }
 
     this.material.use();
