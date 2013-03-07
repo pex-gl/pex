@@ -160,7 +160,9 @@ define(['pex/sys/Platform'], function(Platform) {
     canvas.height = obj.height = obj.settings.height || 600;
     canvas.style.backgroundColor = "#000000";
 
-    document.body.appendChild(canvas);
+    window.onload = function() {
+      document.body.appendChild(canvas);
+    }
 
     registerEvents(canvas);
 
