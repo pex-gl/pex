@@ -146,7 +146,7 @@ define(['pex/sys/Platform'], function(Platform) {
   }
 
   function simpleWindow(obj) {
-    var canvas = obj.canvas || document.createElement('canvas');
+    var canvas = obj.settings.canvas || document.createElement('canvas');
 
     if (obj.settings.fullscreen) {
       document.body.style.margin = "0";
