@@ -1,4 +1,5 @@
-define(['pex/sys/Node', 'pex/utils/Time'], function(Node, Time) {
+define(['pex/sys/Platform', 'pex/sys/Node', 'pex/utils/Time', 'pex/sys/BrowserWindow'],
+  function(Platform, Node, Time, BrowserWindow) {
   var plask;
 
   function Window() {
@@ -30,7 +31,8 @@ define(['pex/sys/Node', 'pex/utils/Time'], function(Node, Time) {
       }
     }
 
-    return Node.plask.simpleWindow(obj);
+    if (Platform.isPlask) return Node.plask.simpleWindow(obj);
+    else if (Platform.isBrowser) return BrowserWindow.simpleWindow(obj);
   }
 
   return Window;
