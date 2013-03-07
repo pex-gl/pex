@@ -17,4 +17,5 @@ PexGlobalConfig = {
     var module = require(name);
     PexGlobalConfig.definedModules.push({ name: name, module: module });
   };
+  define.amd = almondDefine.amd;
 })();

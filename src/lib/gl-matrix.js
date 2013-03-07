@@ -32,20 +32,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
   "use strict";
 
   var shim = {};
-  if (typeof(exports) === 'undefined') {
-    if(typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-      shim.exports = {};
-      define(function() {
-        return shim.exports;
-      });
-    } else {
-      // gl-matrix lives in a browser, define its namespaces in global
-      shim.exports = window;
-    }    
+  if(typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+    shim.exports = {};
+    define(function() {
+      return shim.exports;
+    });
   }
-  else {
+  else if (typeof(exports) == 'object') {
     // gl-matrix lives in commonjs, define its namespaces in exports
     shim.exports = exports;
+  }
+  else {
+    // gl-matrix lives in a browser, define its namespaces in global
+    shim.exports = window;
   }
 
   (function(exports) {
