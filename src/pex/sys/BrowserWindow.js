@@ -160,8 +160,15 @@ define(['pex/sys/Platform'], function(Platform) {
     canvas.height = obj.height = obj.settings.height || 600;
     canvas.style.backgroundColor = "#000000";
 
-    window.onload = function() {
-      document.body.appendChild(canvas);
+    if (!canvas.parentNode) {
+      if (document.body) {
+        document.body.appendChild(canvas);
+      }
+      else {
+        window.addEventListener('load', function() {
+          document.body.appendChild(canvas);
+        }, false);
+      }
     }
 
     registerEvents(canvas);
