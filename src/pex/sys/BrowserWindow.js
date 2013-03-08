@@ -171,7 +171,7 @@ define(['pex/sys/Platform'], function(Platform) {
       }
     }
 
-    registerEvents(canvas);
+    if (!Platform.isEjecta) registerEvents(canvas);
 
     if (obj.stencil === undefined) obj.stencil = false;
 
