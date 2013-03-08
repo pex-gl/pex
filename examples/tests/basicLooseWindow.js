@@ -7,6 +7,7 @@ requirejs.config({
   map : {
     '*' : {
       'pex' : '../../src/pex',
+      'lib' : '../../src/lib',
       'text' : '../../tools/lib/text.js'
     }
   }
