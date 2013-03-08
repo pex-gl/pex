@@ -21,7 +21,8 @@ requirejs(['pex', 'pex/sys/IO', 'pex/utils/Log', 'text!readme.txt'], function(pe
       vsync: true,
       multisample: true,
       fullscreen: false,
-      center: true
+      center: true,
+      canvas : pex.sys.Platform.isBrowser ? document.getElementById('canvas') : null
     },
     init: function() {
     },
