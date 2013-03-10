@@ -3,7 +3,7 @@ define(['pex/geom'], function(geom) {
   var Vec3 = geom.Vec4;
   var Mat4 = geom.Mat4;
 
-  function PerspectiveCamera(fov, aspectRatio, near, far, position, target, up) {
+  function Camera(fov, aspectRatio, near, far, position, target, up) {
 
     this.fov = fov || 60;
     this.aspectRatio = aspectRatio || 4/3;
@@ -18,34 +18,34 @@ define(['pex/geom'], function(geom) {
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.setPosition = function(position) {
+  Camera.prototype.setPosition = function(position) {
     this.position = position;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getPosition = function() {
+  Camera.prototype.getPosition = function() {
     return this.position;
   }
 
-  PerspectiveCamera.prototype.setTarget = function(target) {
+  Camera.prototype.setTarget = function(target) {
     this.target = target;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getTarget = function() {
+  Camera.prototype.getTarget = function() {
     return this.target;
   }
 
-  PerspectiveCamera.prototype.setUp = function(up) {
+  Camera.prototype.setUp = function(up) {
     this.up = up;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getUp = function() {
+  Camera.prototype.getUp = function() {
     return this.up;
   }
 
-  PerspectiveCamera.prototype.lookAt = function(target, eyePosition, up) {
+  Camera.prototype.lookAt = function(target, eyePosition, up) {
     if (target) this.target = target;
     if (eyePosition) this.position = eyePosition;
     if (up) this.up = up;
@@ -53,57 +53,57 @@ define(['pex/geom'], function(geom) {
   }
 
 
-  PerspectiveCamera.prototype.setNear = function(near) {
+  Camera.prototype.setNear = function(near) {
     this.near = near;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getNear = function() {
+  Camera.prototype.getNear = function() {
     return this.near;
   }
 
-  PerspectiveCamera.prototype.setFar = function(far) {
+  Camera.prototype.setFar = function(far) {
     this.far = far;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getFar = function() {
+  Camera.prototype.getFar = function() {
     return this.far;
   }
 
-  PerspectiveCamera.prototype.setFov = function(fov) {
+  Camera.prototype.setFov = function(fov) {
     this.fov = fov;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getFov = function() {
+  Camera.prototype.getFov = function() {
     return this.fov;
   }
 
-  PerspectiveCamera.prototype.setAspectRatio = function(ratio) {
+  Camera.prototype.setAspectRatio = function(ratio) {
     this.aspectRatio = ratio;
     this.updateMatrices();
   }
 
-  PerspectiveCamera.prototype.getAspectRatio = function() {
+  Camera.prototype.getAspectRatio = function() {
     return this.aspectRatio;
   }
 
-  PerspectiveCamera.prototype.getViewMatrix = function() {
+  Camera.prototype.getViewMatrix = function() {
     return this.viewMatrix;
   }
 
-  PerspectiveCamera.prototype.getProjectionMatrix = function() {
+  Camera.prototype.getProjectionMatrix = function() {
     return this.projectionMatrix;
   }
 
-  PerspectiveCamera.prototype.updateMatrices = function() {
+  Camera.prototype.updateMatrices = function() {
     Mat4.perspective(this.projectionMatrix, this.fov / 180 * Math.PI, this.aspectRatio, this.near, this.far);
     Mat4.lookAt(this.viewMatrix, this.position, this.target, this.up);
   }
 
   /*
-  PerspectiveCamera.prototype.calcModelWorldMatrix = function(modelTranslation, modelRotation, modelScale) {
+  Camera.prototype.calcModelWorldMatrix = function(modelTranslation, modelRotation, modelScale) {
     var t = modelTranslation ? modelTranslation : new Vec3(0, 0, 0);
     var r = modelRotation ? modelRotation : new Vec4(0, 1, 0, 0);
     var s = modelScale ? modelScale : new Vec3(1, 1, 1);
@@ -121,14 +121,14 @@ define(['pex/geom'], function(geom) {
    return modelWorldMatrix;
   }
 
-  PerspectiveCamera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
+  Camera.prototype.calcModelViewMatrix = function(modelTranslation, modelRotation, modelScale) {
     var modelViewMatrix = this.viewMatrix.dup();
     var modelWorldMatrix = this.calcModelWorldMatrix(modelTranslation, modelRotation, modelScale);
     modelViewMatrix.mul(modelWorldMatrix);
     return modelViewMatrix;
   }
 
-  PerspectiveCamera.prototype.getWorldRay = function(x, y, windowWidth, windowHeight) {
+  Camera.prototype.getWorldRay = function(x, y, windowWidth, windowHeight) {
     var x = (x - windowWidth/2) / (windowWidth/2);
     var y = -(y - windowHeight/2) / (windowHeight/2);
 
@@ -149,7 +149,7 @@ define(['pex/geom'], function(geom) {
     return new Ray(wOrigin, wDirection);
   }
 
-  PerspectiveCamera.prototype.getScreenPos = function(point, windowWidth, windowHeight) {
+  Camera.prototype.getScreenPos = function(point, windowWidth, windowHeight) {
     point = new Vec4(point.x, point.y, point.z, 1.0);
 
     var projected = this.projectionMatrix.mulVec4(this.viewMatrix.mulVec4(point));
@@ -164,5 +164,5 @@ define(['pex/geom'], function(geom) {
   }
   */
 
-  return PerspectiveCamera;
+  return Camera;
 });
