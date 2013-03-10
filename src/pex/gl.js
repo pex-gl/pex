@@ -1,7 +1,7 @@
 //Module wrapper for gl classes.
 define(
   [
-    "pex/gl/Context"
+    'pex/gl/Context'
   ],
   function(Context) {
     return {
