@@ -1,4 +1,4 @@
-define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context, IO, GLUtils) {
+define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
   var kShaderPrefix         = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
   var kVertexShaderPrefix   = kShaderPrefix + "#define VERT\n";
   var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";
@@ -132,7 +132,7 @@ define(["pex/core/Context", "pex/sys/IO", "pex/util/GLUtils"], function(Context,
         };
         break;
       case gl.FLOAT_MAT4:
-        setterFun = (function(mv) {
+        setterFun = function(mv) {
           gl.uniformMatrix4fv(location, false, mv);
         };
         break;
