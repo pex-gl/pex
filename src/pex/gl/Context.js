@@ -3,7 +3,7 @@ define([], function() {
     this.gl = gl;
   }
 
-  Context.currentContext = null;
+  Context.currentContext = new Context(null);
 
   return Context;
 });
