@@ -1,6 +1,6 @@
 define(
   [
-    "lib/gl-matrix"
+    'lib/gl-matrix'
   ],
   function(glmatrix) {
     return {
