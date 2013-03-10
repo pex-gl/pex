@@ -98,14 +98,8 @@ define(['pex/geom'], function(geom) {
   }
 
   PerspectiveCamera.prototype.updateMatrices = function() {
-    this.projectionMatrix.reset();
-    this.projectionMatrix.perspective(this.fov, this.aspectRatio, this.near, this.far);
-    this.viewMatrix.reset();
-    this.viewMatrix.lookAt(
-      this.position.x, this.position.y, this.position.z,
-      this.target.x, this.target.y, this.target.z,
-      this.up.x, this.up.y, this.up.z
-    );
+    Mat4.perspective(this.projectionMatrix, this.fov / 180 * Math.PI, this.aspectRatio, this.near, this.far);
+    Mat4.lookAt(this.viewMatrix, this.position, this.target, this.up);
   }
 
   /*
