@@ -16,7 +16,7 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face4', 'pex/geom/Geometry']
       var vertShift = vertices.length;
       for(var j=0; j<=nv; ++j) {
         for(var i=0; i<=nu; ++i) {
-          var vert = new Vec3();
+          var vert = Vec3.create();
           vert[u] = (-su/2 + i*su/nu) * flipu;
           vert[v] = (-sv/2 + j*sv/nv) * flipv;
           vert[w] = pw;
