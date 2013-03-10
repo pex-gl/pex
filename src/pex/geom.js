@@ -1,20 +1,26 @@
 define(
   [
-    'lib/gl-matrix',
+    'pex/geom/Vec2',
+    'pex/geom/Vec3',
+    'pex/geom/Vec4',
+    'pex/geom/Mat3',
+    'pex/geom/Mat4',
+    'pex/geom/Quat',
     'pex/geom/Geometry',
     'pex/geom/gen'
   ],
-  function(glmatrix, Geometry, gen) {
+  function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen) {
     return {
-      Vec2 : glmatrix.vec2,
-      Vec3 : glmatrix.vec4,
-      Vec4 : glmatrix.vec4,
-      Mat2 : glmatrix.mat2,
-      Mat3 : glmatrix.mat3,
-      Mat4 : glmatrix.mat4,
-      Quat : glmatrix.quat,
+      Vec2 : Vec2,
+      Vec3 : Vec4,
+      Vec4 : Vec4,
+      Mat3 : Mat3,
+      Mat4 : Mat4,
+      Quat : Quat,
       Geometry : Geometry,
       gen : gen
     };
   }
 );
+
+
