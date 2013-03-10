@@ -1,6 +1,6 @@
 define(["pex/gl/Context"], function(Context) {
 
-  function Material(program, uniforms ) {
+  function Material(program, uniforms) {
     this.gl = Context.currentContext.gl;
     this.program = program;
     this.uniforms = uniforms || {};
