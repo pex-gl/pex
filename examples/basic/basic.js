@@ -13,7 +13,7 @@ pex.sys.Window.create({
   init: function() {
   },
   draw: function() {
-    var gl = this.gl;
+    var gl = pex.gl.Context.currentContext.gl;
     gl.clearColor(1, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
