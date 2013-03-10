@@ -3,13 +3,13 @@ define(
   [
     "pex/utils/Log",
     "pex/utils/Time",
-    "pex/utils/Object"
+    "pex/utils/ObjectUtils"
   ],
-  function(Log, Time, Object) {
+  function(Log, Time, ObjectUtils) {
     return {
       Log : Log,
       Time : Time,
-      Object : Object
+      ObjectUtils : ObjectUtils
     };
   }
 );

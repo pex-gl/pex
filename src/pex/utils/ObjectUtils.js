@@ -1,8 +1,8 @@
 define([], function() {
-  function Object() {
+  function ObjectUtils() {
   }
 
-  Object.mergeObjects = function(a, b) {
+  ObjectUtils.mergeObjects = function(a, b) {
     var result = { };
     if (a) {
       for(var prop in a) {
@@ -17,5 +17,5 @@ define([], function() {
     return result;
   }
 
-  return Object;
+  return ObjectUtils;
 });
