@@ -5,13 +5,15 @@ define(
     'pex/utils',
     'pex/sys',
     'pex/gl',
+    'pex/materials',
   ],
-  function(geom, utils, sys, gl) {
+  function(geom, utils, sys, gl, materials) {
     return {
       geom : geom,
       utils : utils,
       sys : sys,
       gl : gl,
+      materials : materials,
       require : sys.Require //shortcut
     };
   }

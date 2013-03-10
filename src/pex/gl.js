@@ -2,16 +2,12 @@
 define(
   [
     'pex/gl/Context',
-    'pex/gl/Program',
-    'pex/gl/Material',
-    'pex/gl/materials'
+    'pex/gl/Program'
   ],
-  function(Context, Program, Material, materials) {
+  function(Context, Program) {
     return {
       Context : Context,
-      Program : Program,
-      Material : Material,
-      materials : materials
+      Program : Program
     };
   }
 );

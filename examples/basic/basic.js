@@ -11,6 +11,7 @@ pex.sys.Window.create({
     center: true
   },
   init: function() {
+    this.material = new pex.materials.SolidColorMaterial();
   },
   draw: function() {
     var gl = pex.gl.Context.currentContext.gl;
