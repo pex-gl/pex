@@ -5,7 +5,7 @@ define(
     'pex/gl/Program',
     'pex/gl/Material'
   ],
-  function(Context) {
+  function(Context, Program, Material) {
     return {
       Context : Context,
       Program : Program,
