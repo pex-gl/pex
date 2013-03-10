@@ -22,7 +22,7 @@ define(['pex/materials/Material', "pex/gl", "pex/geom", "pex/utils/ObjectUtils"]
     var program = new gl.Program(solidColorVert, solidColorFrag);
 
     var defaults = {
-     color : geom.Vec4.create(1, 1, 1, 1),
+     color : geom.Vec4.fromValues(1, 1, 1, 1),
      pointSize : 1
     }
 
