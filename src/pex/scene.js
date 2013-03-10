@@ -1,8 +1,10 @@
 define(
   [
+    'pex/scene/PerspectiveCamera'
   ],
-  function() {
+  function(PerspectiveCamera) {
     return {
+      PerspectiveCamera : PerspectiveCamera
     };
   }
 );
