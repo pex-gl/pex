@@ -1,11 +1,11 @@
 define([
-  'pex/gl/Context',
   'pex/materials/Material',
+  'pex/gl/Context',
   'pex/gl/Program',
+  'pex/geom/Vec4',
   'pex/utils/ObjectUtils',
   'text!pex/materials/Textured.glsl'
-  ],
-  function(Context, Material, Program, ObjectUtils, TexturedGLSL) {
+  ], function(Material, Context, Program, Vec4, ObjectUtils, TexturedGLSL) {
 
   function Textured(uniforms) {
     this.gl = Context.currentContext.gl;

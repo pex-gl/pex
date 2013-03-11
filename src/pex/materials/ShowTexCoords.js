@@ -1,34 +1,18 @@
-define(['pex/materials/Material', 'pex/gl', 'pex/geom', 'pex/utils/ObjectUtils'], function(Material, gl, geom, ObjectUtils) {
-
-  var vert = ''
-    //+ 'precision highp float;';
-    //+ 'precision highp int;';
-    + 'uniform mat4 projectionMatrix;'
-    + 'uniform mat4 modelViewMatrix;'
-    + 'uniform float pointSize;'
-    + 'attribute vec3 position;'
-    + 'attribute vec2 texCoord;'
-    + 'varying vec4 vColor;'
-    + 'void main() {'
-    +  'gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);'
-    +  'gl_PointSize = pointSize;'
-    +  'vColor = vec4(texCoord, 1.0, 1.0);'
-    + '}';
-
-  var frag = ''
-    + 'varying vec4 vColor;'
-    + 'void main() {'
-    +  'gl_FragColor = vColor;'
-    + '}';
-
+define([
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/utils/ObjectUtils',
+  'text!pex/materials/ShowTexCoords.glsl'
+  ], function(Material, Context, Program, ObjectUtils, ShowTexCoordGLSL) {
 
   function ShowTexCoords(uniforms) {
-    this.gl = gl.Context.currentContext.gl;
-    var program = new gl.Program(vert, frag);
+    this.gl = Context.currentContext.gl;
+    var program = new Program(ShowTexCoordGLSL);
 
     var defaults = {
-     pointSize : 1
-    }
+      pointSize : 1
+    };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
 
