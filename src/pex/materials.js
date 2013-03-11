@@ -2,12 +2,16 @@
 define(
   [
     "pex/materials/SolidColor",
-    "pex/materials/ShowNormals"
+    "pex/materials/ShowNormals",
+    "pex/materials/Textured",
+    "pex/materials/ShowTexCoords"
   ],
-  function(SolidColor, ShowNormals) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords) {
     return {
       SolidColor : SolidColor,
-      ShowNormals : ShowNormals
+      ShowNormals : ShowNormals,
+      Textured : Textured,
+      ShowTexCoords : ShowTexCoords
     };
   }
 );
