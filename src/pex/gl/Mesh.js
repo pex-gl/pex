@@ -11,9 +11,9 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.attributes = {};
     this.usage = this.gl.STATIC_DRAW;
 
-    this.addAttrib("position", geometry.vertices, 3);
-    this.addAttrib("normal", geometry.normals, 3);
-    this.addAttrib("texCoord", geometry.texCoords, 2);
+    this.addAttrib('position', geometry.vertices, 3);
+    this.addAttrib('normal', geometry.normals, 3);
+    this.addAttrib('texCoord', geometry.texCoords, 2);
 
     this.position = Vec3.fromValues(0, 0, 0);
     this.rotation = Quat.create();
@@ -134,8 +134,8 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
       this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
     }
-    else if (this.attributes["position"]){
-      var num = this.attributes["position"].data.length/3;
+    else if (this.attributes['position']){
+      var num = this.attributes['position'].data.length/3;
       this.gl.drawArrays(this.primitiveType, 0, num);
     }
 

@@ -1,7 +1,7 @@
-define(["pex/gl/Context"], function(Context) {
+define(['pex/gl/Context'], function(Context) {
   function Texture(target) {
     if (target) {
-      console.log("Texture+");
+      console.log('Texture+');
       this.init(target);
     }
   }

@@ -1,4 +1,4 @@
-define(["pex/geom/Vec2", "pex/geom/Vec3", "pex/geom/Vec4", "pex/geom/Quat", "pex/geom/Mat4"], 
+define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pex/geom/Quat', 'pex/geom/Mat4'], 
   function(Vec2, Vec3, Vec4, Quat, Mat4) {
   function Arcball(window, camera, distance) {
     this.distance = distance || 2;

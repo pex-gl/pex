@@ -1,9 +1,9 @@
 //Module wrapper for utility classes.
 define(
   [
-    "pex/utils/Log",
-    "pex/utils/Time",
-    "pex/utils/ObjectUtils"
+    'pex/utils/Log',
+    'pex/utils/Time',
+    'pex/utils/ObjectUtils'
   ],
   function(Log, Time, ObjectUtils) {
     return {

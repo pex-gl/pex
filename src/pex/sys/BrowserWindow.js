@@ -38,7 +38,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
   function makeMouseDownHandler(canvas) {
     canvas.addEventListener('mousedown', function(e) {
-      fireEvent("leftMouseDown", {
+      fireEvent('leftMouseDown', {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
@@ -50,7 +50,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
   function makeMouseUpHandler(canvas) {
     canvas.addEventListener('mouseup', function(e) {
-      fireEvent("leftMouseUp", {
+      fireEvent('leftMouseUp', {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
@@ -76,7 +76,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       if (down) {
         var x = e.offsetX || e.clientX - e.target.offsetLeft;
         var y = e.offsetY || e.clientY - e.target.offsetTop;
-        fireEvent("mouseDragged", {
+        fireEvent('mouseDragged', {
           x: x,
           y: y,
           dx: x - px,
@@ -93,7 +93,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
   function makeMouseMovedHandler(canvas) {
     canvas.addEventListener('mousemove', function(e) {
-      fireEvent("mouseMoved", {
+      fireEvent('mouseMoved', {
         x: e.offsetX || e.clientX - e.target.offsetLeft,
         y: e.offsetY || e.clientY - e.target.offsetTop,
         option: e.altKey,
@@ -104,9 +104,9 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   }
 
   function makeScrollWheelHandler(canvas) {
-    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
+    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel'
     document.addEventListener(mousewheelevt, function(e) {
-      fireEvent("scrollWheel", {
+      fireEvent('scrollWheel', {
         x: e.offsetX || e.layerX,
         y: e.offsetY || e.layerY,
         dy: e.wheelDelta/10 || -e.detail/10,
@@ -126,7 +126,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         clientX : e.touches[0].clientX,
         clientY : e.touches[0].clientY
       };
-      fireEvent("leftMouseDown", {
+      fireEvent('leftMouseDown', {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
         option: false,
@@ -138,7 +138,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
   function makeTouchUpHandler(canvas) {
     canvas.addEventListener('touchend', function(e) {
-      fireEvent("leftMouseUp", {
+      fireEvent('leftMouseUp', {
         x: lastTouch ? lastTouch.clientX : 0,
         y: lastTouch ? lastTouch.clientY : 0,
         option: false,
@@ -155,7 +155,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         clientX : e.touches[0].clientX,
         clientY : e.touches[0].clientY
       };
-      fireEvent("mouseDragged", {
+      fireEvent('mouseDragged', {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
         option: false,
@@ -169,8 +169,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     var timeout = 0;
     window.addEventListener('keydown', function(e) {
       timeout = setTimeout(function() {
-        fireEvent("keyDown", {
-          str: "",
+        fireEvent('keyDown', {
+          str: '',
           keyCode: e.keyCode,
           option: e.altKey,
           shift: e.shiftKey,
@@ -183,7 +183,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         clearTimeout(timeout);
         timeout = 0;
       }
-      fireEvent("keyDown", {
+      fireEvent('keyDown', {
         str: String.fromCharCode(e.charCode),
         keyCode: e.keyCode,
         option: e.altKey,
@@ -204,9 +204,9 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     }
 
     if (obj.settings.fullscreen) {
-      document.body.style.margin = "0";
-      document.body.style.padding = "0";
-      document.body.style.overflow = "hidden";
+      document.body.style.margin = '0';
+      document.body.style.padding = '0';
+      document.body.style.overflow = 'hidden';
       obj.settings.width = window.innerWidth;
       obj.settings.height = window.innerHeight;
     }
@@ -218,7 +218,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
     canvas.width = obj.width = obj.settings.width || 800;
     canvas.height = obj.height = obj.settings.height || 600;
-    canvas.style.backgroundColor = "#000000";
+    canvas.style.backgroundColor = '#000000';
 
     if (!canvas.parentNode) {
       if (document.body) {

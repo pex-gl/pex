@@ -1,7 +1,7 @@
-define(["pex/gl/Texture","pex/gl/Context","pex/sys/IO"], function(Texture, Context, IO) {
+define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Context, IO) {
 
   function Texture2D() {
-    console.log("Texture2D+");
+    console.log('Texture2D+');
     this.init(Context.currentContext.gl.TEXTURE_2D);
   }
 

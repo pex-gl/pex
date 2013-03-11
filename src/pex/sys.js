@@ -1,11 +1,11 @@
 //Module wrapper for sys classes.
 define(
   [
-    "pex/sys/IO",
-    "pex/sys/Node",
-    "pex/sys/Require",
-    "pex/sys/Platform",
-    "pex/sys/Window"
+    'pex/sys/IO',
+    'pex/sys/Node',
+    'pex/sys/Require',
+    'pex/sys/Platform',
+    'pex/sys/Window'
   ],
   function(IO, Node, Require, Platform, Window) {
     return {

@@ -1,4 +1,4 @@
-define(["pex/sys/Platform"], function(Platform) {
+define(['pex/sys/Platform'], function(Platform) {
   var requireFunc;
   var defineFunc;
 

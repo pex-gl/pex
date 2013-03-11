@@ -1,7 +1,7 @@
-define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
-  var kShaderPrefix         = "#ifdef GL_ES\nprecision highp float;\n#endif\n";
-  var kVertexShaderPrefix   = kShaderPrefix + "#define VERT\n";
-  var kFragmentShaderPrefix = kShaderPrefix + "#define FRAG\n";
+define(['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) {
+  var kShaderPrefix         = '#ifdef GL_ES\nprecision highp float;\n#endif\n';
+  var kVertexShaderPrefix   = kShaderPrefix + '#define VERT\n';
+  var kFragmentShaderPrefix = kShaderPrefix + '#define FRAG\n';
 
   function Program(vertSrc, fragSrc) {
     this.gl = Context.currentContext.gl;
@@ -88,7 +88,7 @@ define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
   Program.load = function(url, callback) {
     var program = new Program();
     IO.loadTextFile(url, function(source) {
-      console.log("Program.Compiling " + url);
+      console.log('Program.Compiling ' + url);
       program.addSources(source);
       program.link();
       if (callback) callback();
@@ -144,7 +144,7 @@ define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
       return setterFun;
     }
     return function(){
-      throw "Unknown uniform type: " + type;
+      throw 'Unknown uniform type: ' + type;
     };
   }
 

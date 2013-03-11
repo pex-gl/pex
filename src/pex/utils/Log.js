@@ -10,7 +10,7 @@ define([], function() {
 
   Log.error = function(msg) {
     if (console !== undefined) {
-      console.log("ERROR: " + msg);
+      console.log('ERROR: ' + msg);
     }
   }
 
