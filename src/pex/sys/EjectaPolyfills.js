@@ -23,11 +23,17 @@ define(['pex/sys/Platform'], function(Platform) {
         });
       }
     }
+    else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
+      document.addEventListener(name, callback, useCapture);
+    }
   }
 
   HTMLElement.prototype.removeEventListener = HTMLElement.prototype.removeEventListener || function(name, callback, useCapture) {
     if (name == 'load') {
       this.onload = null;
+    }
+    else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
+      document.removeEventListener(name, callback);
     }
   }
 
