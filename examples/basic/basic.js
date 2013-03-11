@@ -12,11 +12,8 @@ pex.sys.Window.create({
   },
   init: function() {
     this.camera = new pex.scene.Camera(60, this.width/this.height);
-    new pex.scene.Arcball(this, this.camera, 2);
-    var cube = new pex.geom.gen.Cube();
-    cube.rotation = pex.geom.Quat.create();
-    var solidMaterial = new pex.materials.ShowNormals();
-    this.mesh = new pex.gl.Mesh(cube, solidMaterial);
+    this.arcball = new pex.scene.Arcball(this, this.camera, 2);
+    this.mesh = new pex.gl.Mesh(new pex.geom.gen.Cube(), new pex.materials.ShowNormals());
     this.framerate(60);
   },
   dates:[],
@@ -26,7 +23,7 @@ pex.sys.Window.create({
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    pex.geom.Quat.setAxisAngle(this.mesh.rotation, this.camera.up, pex.utils.Time.seconds);
+    //pex.geom.Quat.setAxisAngle(this.mesh.rotation, this.camera.up, pex.utils.Time.seconds);
 
     this.mesh.draw(this.camera);
 
