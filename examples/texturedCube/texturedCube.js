@@ -18,11 +18,27 @@ pex.sys.Window.create({
     var texture = pex.gl.Texture2D.load('assets/plask.png', function(texture) {
       var material = new pex.materials.Textured({texture : texture});
       this.mesh = new pex.gl.Mesh(cube, material);
+      this.mesh.scale[0] = 0.25;
+      this.mesh.scale[1] = 0.25;
+      this.mesh.scale[2] = 0.25;
     }.bind(this));
 
     this.framerate(60);
+
+    for(var i=0; i<100; i++) {
+      var rot = pex.geom.Quat.create();
+      pex.geom.Quat.setAxisAngle(rot, pex.geom.Vec3.fromValues(0, 1, 0), Math.random() * Math.PI);
+      this.instances.push({
+        position: pex.geom.Vec3.fromValues(
+          Math.random()*2 - 1,
+          Math.random()*2 - 1,
+          Math.random()*2 - 1
+        ),
+        rotation: rot
+      });
+    }
   },
-  dates:[],
+  instances: [],
   draw: function() {
     var gl = pex.gl.Context.currentContext.gl;
     gl.clearColor(0, 0, 0, 1);
@@ -31,7 +47,11 @@ pex.sys.Window.create({
 
     //pex.geom.Quat.setAxisAngle(this.mesh.rotation, this.camera.up, pex.utils.Time.seconds);
 
-    if (this.mesh) this.mesh.draw(this.camera);
+    if (this.mesh) this.instances.forEach(function(instance) {
+      this.mesh.position = instance.position;
+      this.mesh.rotation = instance.rotation;
+      this.mesh.draw(this.camera);
+    }.bind(this));
 
     //var mem = process.memoryUsage();
     //console.log(Math.floor(mem.rss/10000)/100, Math.floor(mem.heapTotal/10000)/100, Math.floor(mem.heapUsed/10000)/100);
