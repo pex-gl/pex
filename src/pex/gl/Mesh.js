@@ -68,16 +68,14 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     elementSize = elementSize || 3
     usage = usage || this.usage;
 
-    var dataBuf = data;
-
     var attrib = {};
     attrib.name = name;
-    attrib.data = dataArr;
+    attrib.data = data;
     attrib.elementSize = elementSize;
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, dataBuf, usage);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, usage);
 
     this.attributes[attrib.name] = attrib;
   }
