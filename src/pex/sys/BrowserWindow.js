@@ -163,6 +163,11 @@ define(['pex/sys/Platform'], function(Platform) {
       obj.settings.height = window.innerHeight;
     }
 
+    if (Platform.isEjecta && (window.devicePixelRatio == 2)) {
+      obj.settings.width *= 2;
+      obj.settings.height *= 2;
+    }
+
     canvas.width = obj.width = obj.settings.width || 800;
     canvas.height = obj.height = obj.settings.height || 600;
     canvas.style.backgroundColor = "#000000";
