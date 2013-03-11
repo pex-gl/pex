@@ -1,20 +1,18 @@
 define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Context, IO) {
 
   function Texture2D() {
-    console.log('Texture2D+');
-    this.init(Context.currentContext.gl.TEXTURE_2D);
+    this.gl = Context.currentContext.gl;
+    Texture.call(this, this.gl.TEXTURE_2D);
   }
 
   Texture2D.prototype = Object.create(Texture.prototype);
 
   Texture2D.create = function(w, h, options) {
     options = options || {};
-    var gl = Context.currentContext.gl;
-
-    Texture.call(this, gl.TEXTURE_2D);
-
     var texture = new Texture2D();
     texture.bind();
+
+    var gl = texture.gl;
 
     var isWebGL = gl.getExtension ? true : false;
     var internalFloatFormat = isWebGL ? gl.RGBA : 0x8814 /*RGBA32F_ARB*/;
