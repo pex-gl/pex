@@ -3,13 +3,15 @@ define(
   [
     'pex/gl/Context',
     'pex/gl/Program',
-    'pex/gl/Mesh'
+    'pex/gl/Mesh',
+    'pex/gl/Texture2D'
   ],
-  function(Context, Program, Mesh) {
+  function(Context, Program, Mesh, Texture2D) {
     return {
       Context : Context,
       Program : Program,
-      Mesh : Mesh
+      Mesh : Mesh,
+      Texture2D : Texture2D
     };
   }
 );
