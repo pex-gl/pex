@@ -30,6 +30,9 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     makeMouseDraggedHandler(canvas);
     makeMouseMovedHandler(canvas);
     makeScrollWheelHandler(canvas);
+    makeTouchDownHandler(canvas);
+    makeTouchUpHandler(canvas);
+    makeTouchMoveHandler(canvas);
     makeKeyDownHandler(canvas);
   }
 
@@ -116,6 +119,51 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     });
   }
 
+  var lastTouch = null;
+  function makeTouchDownHandler(canvas) {
+    canvas.addEventListener('touchstart', function(e) {
+      lastTouch = {
+        clientX : e.touches[0].clientX,
+        clientY : e.touches[0].clientY
+      };
+      fireEvent("leftMouseDown", {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        option: false,
+        shift: false,
+        control: false
+      });
+    })
+  }
+
+  function makeTouchUpHandler(canvas) {
+    canvas.addEventListener('touchend', function(e) {
+      fireEvent("leftMouseUp", {
+        x: lastTouch ? lastTouch.clientX : 0,
+        y: lastTouch ? lastTouch.clientY : 0,
+        option: false,
+        shift: false,
+        control: false
+      });
+      lastTouch = null;
+    })
+  }
+
+   function makeTouchMoveHandler(canvas) {
+    canvas.addEventListener('touchmove', function(e) {
+      lastTouch = {
+        clientX : e.touches[0].clientX,
+        clientY : e.touches[0].clientY
+      };
+      fireEvent("mouseDragged", {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        option: false,
+        shift: false,
+        control: false
+      });
+    })
+  }
 
   function makeKeyDownHandler(canvas) {
     var timeout = 0;
