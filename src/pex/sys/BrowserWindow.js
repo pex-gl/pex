@@ -183,7 +183,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       }
     }
 
-    if (!Platform.isEjecta) registerEvents(canvas);
+    registerEvents(canvas);
 
     if (obj.stencil === undefined) obj.stencil = false;
 
