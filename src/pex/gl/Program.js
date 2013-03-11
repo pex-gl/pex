@@ -27,7 +27,7 @@ define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vert, kVertexShaderPrefix + vertSrc);
     gl.compileShader(vert);
-    if (gl.getShaderParameter(vert, gl.COMPILE_STATUS) !== true) {
+    if (!gl.getShaderParameter(vert, gl.COMPILE_STATUS)) {
       console.log(vertSrc);
       throw gl.getShaderInfoLog(vert);
     }
@@ -38,7 +38,7 @@ define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc);
     gl.compileShader(frag);
-    if (gl.getShaderParameter(frag, gl.COMPILE_STATUS) !== true) {
+    if (!gl.getShaderParameter(frag, gl.COMPILE_STATUS)) {
       console.log(fragSrc);
       throw gl.getShaderInfoLog(frag);
     }
@@ -52,8 +52,9 @@ define(["pex/gl/Context", "pex/sys/IO"], function(Context, IO) {
     gl.attachShader(handle, this.fragShader);
     gl.linkProgram(handle);
 
-    if (gl.getProgramParameter(handle, gl.LINK_STATUS) !== true)
-        throw gl.getProgramInfoLog(handle);
+    if (!gl.getProgramParameter(handle, gl.LINK_STATUS)) {
+      throw gl.getProgramInfoLog(handle);
+    }
 
     var numUniforms = gl.getProgramParameter(handle, gl.ACTIVE_UNIFORMS);
 
