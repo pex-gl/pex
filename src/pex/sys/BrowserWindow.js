@@ -189,11 +189,11 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
     var gl = null;
     try {
-        gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil});
+      gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil});
     }
     catch(err){
-        console.error(err);
-        return;
+      console.error(err);
+      return;
     }
 
     obj.framerate = function(fps) {
