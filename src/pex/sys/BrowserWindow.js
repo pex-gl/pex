@@ -1,4 +1,4 @@
-define(['pex/sys/Platform'], function(Platform) {
+define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, EjectaPolyfills) {
   var requestAnimFrameFps = 60;
 
   if (Platform.isBrowser) {
