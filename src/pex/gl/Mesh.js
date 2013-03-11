@@ -11,9 +11,9 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.attributes = {};
     this.usage = this.gl.STATIC_DRAW;
 
-    this.addAttrib('position', geometry.vertices, 3);
-    this.addAttrib('normal', geometry.normals, 3);
-    this.addAttrib('texCoord', geometry.texCoords, 2);
+    this.addAttrib('position', geometry.positionAttrib.buf, 3);
+    this.addAttrib('normal', geometry.normalAttrib.buf, 3);
+    this.addAttrib('texCoord', geometry.texCoordAttrib.buf, 2);
 
     this.position = Vec3.fromValues(0, 0, 0);
     this.rotation = Quat.create();
@@ -68,14 +68,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     elementSize = elementSize || 3
     usage = usage || this.usage;
 
-    var dataArr = [];
-    if (elementSize == 3) data.forEach(function(v) {
-      dataArr.push(v[0], v[1], v[2]);
-    });
-    if (elementSize == 2) data.forEach(function(v) {
-      dataArr.push(v[0], v[1]);
-    })
-    var dataBuf = new Float32Array(dataArr);
+    var dataBuf = data;
 
     var attrib = {};
     attrib.name = name;
