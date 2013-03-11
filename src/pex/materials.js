@@ -1,11 +1,13 @@
 //Module wrapper for materials classes.
 define(
   [
-    "pex/materials/SolidColorMaterial"
+    "pex/materials/SolidColor",
+    "pex/materials/ShowNormals"
   ],
-  function(SolidColorMaterial) {
+  function(SolidColor, ShowNormals) {
     return {
-      SolidColorMaterial : SolidColorMaterial
+      SolidColor : SolidColor,
+      ShowNormals : ShowNormals
     };
   }
 );
