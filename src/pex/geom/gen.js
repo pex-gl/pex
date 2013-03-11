@@ -1,10 +1,12 @@
 define(
   [
-    'pex/geom/gen/Cube'
+    'pex/geom/gen/Cube',
+    'pex/geom/gen/Sphere'
   ],
-  function(Cube) {
+  function(Cube, Sphere) {
     return {
-      Cube : Cube
+      Cube : Cube,
+      Sphere : Sphere
     };
   }
 );
