@@ -16,9 +16,9 @@ define(['pex/utils/Log'], function(Log) {
     if (Time.paused) return;
 
     if (Time.prev == 0) {
-      Time.prev = (new Date()).getTime();
+      Time.prev = Date.now();
     }
-    Time.now = (new Date()).getTime();
+    Time.now = Date.now();
     Time.delta = (delta !== undefined) ? delta : (Time.now - Time.prev)/1000;
     Time.prev = Time.now;
     Time.seconds += Time.delta;
