@@ -28,11 +28,10 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face4', 'pex/geom/Geometry']
 
     Geometry.call(this, attribs);
 
-    var faces = this.faces;
-
     var positions = this.attribs.position.data;
     var normals = this.attribs.normal.data;
     var texCoords = this.attribs.texCoord.data;
+    var faces = this.faces;
 
     function makePlane(u, v, w, su, sv, nu, nv, pw, flipu, flipv) {
       var vertShift = vertexIndex;
