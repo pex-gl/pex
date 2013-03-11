@@ -31,7 +31,7 @@ define(['pex/materials/Material', 'pex/gl', 'pex/geom', 'pex/utils/ObjectUtils']
     Material.call(this, program, uniforms);
   }
 
-  SolidColor.prototype = new Material();
+  SolidColor.prototype = Object.create(Material.prototype);
 
   return SolidColor;
 });

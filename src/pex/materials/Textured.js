@@ -29,7 +29,7 @@ define(['pex/gl/Context', 'pex/materials/Material', 'pex/gl/Program', 'pex/utils
       Material.call(this, program, uniforms);
   }
 
-  Textured.prototype = new Material();
+  Textured.prototype = Object.create(Material.prototype);
 
   return Textured;
 });

@@ -1,6 +1,7 @@
-define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec2Array', 'pex/geom/Vec3Array', 'pex/geom/Face4', 'pex/geom/Geometry'], 
+define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec2Array', 'pex/geom/Vec3Array', 'pex/geom/Face4', 'pex/geom/Geometry'],
   function(Vec2, Vec3, Vec2Array, Vec3Array, Face4, Geometry) {
   function Cube(sx, sy, sz, nx, ny, nz) {
+    Geometry.call(this);
     sx = sx || 1;
     sy = sy || sx || 1;
     sz = sz || sx || 1;
@@ -64,7 +65,7 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec2Array', 'pex/geom/Vec3Ar
   }
 
 
-  Cube.prototype = new Geometry();
+  Cube.prototype = Object.create(Geometry.prototype);
 
   return Cube;
 });

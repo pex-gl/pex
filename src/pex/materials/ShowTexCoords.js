@@ -35,7 +35,7 @@ define(['pex/materials/Material', 'pex/gl', 'pex/geom', 'pex/utils/ObjectUtils']
     Material.call(this, program, uniforms);
   }
 
-  ShowTexCoords.prototype = new Material();
+  ShowTexCoords.prototype = Object.create(Material.prototype);
 
   return ShowTexCoords;
 });

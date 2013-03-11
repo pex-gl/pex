@@ -36,7 +36,7 @@ define(['pex/materials/Material', 'pex/gl', 'pex/geom', 'pex/utils/ObjectUtils']
     Material.call(this, program, uniforms);
   }
 
-  ShowNormals.prototype = new Material();
+  ShowNormals.prototype = Object.create(Material.prototype);
 
   return ShowNormals;
 });

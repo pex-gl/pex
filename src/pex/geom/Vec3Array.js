@@ -4,6 +4,8 @@ define([], function() {
   var ELEMENT_BYTES = 4;
 
   function Vec3Array(n) {
+    Array.call(this, n);
+
     this.bufStorage = new ArrayBuffer(NUM_ELEMENTS * n * ELEMENT_BYTES);
     this.buf = new Float32Array(this.bufStorage, 0, NUM_ELEMENTS * n);
     for(var i=0; i<n; i++) {
@@ -11,7 +13,7 @@ define([], function() {
     }
   }
 
-  Vec3Array.prototype = new Array();
+  Vec3Array.prototype = Object.create(Array.prototype);
 
   return Vec3Array;
 });
