@@ -24,7 +24,7 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec2Array', 'pex/geom/Vec3Ar
         type : 'Vec2',
         length : numVertices
       }
-    });
+    };
 
     Geometry.call(this, attribs);
 
