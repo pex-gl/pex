@@ -1,6 +1,7 @@
 define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
   var PlaskIO = (function() {
     function IO() {}
+
     IO.loadTextFile = function(file, callback) {
       //var fullPath = path.resolve(IO.getWorkingDirectory(), file);
       var data = Node.fs.readFileSync(file, 'utf8');
@@ -8,11 +9,30 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
         callback(data);
       }
     }
+
+    IO.getWorkingDirectory = function() {
+      return '';
+    }
+
+    IO.loadImageData = function(gl, texture, target, file, callback) {
+      var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
+      Log.message("IO.loadImageData " + fullPath);
+      texture.flipped = true;
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(texture.target, texture.handle);
+      var canvas = Node.plask.SkCanvas.createFromImage(fullPath);
+      gl.texImage2DSkCanvas(target, 0, canvas);
+      if (callback) {
+        callback(canvas);
+      }
+    }
+
     return IO;
   });
 
   var WebIO = (function() {
     function IO() {}
+
     IO.loadTextFile = function(url, callback) {
       var request = new XMLHttpRequest();
       request.open('GET', url, true);
@@ -30,6 +50,25 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
       };
       request.send(null);
     }
+
+    IO.loadImageData = function(gl, texture, target, url, callback) {
+      var image = new Image();
+      image.onload = function() {
+        texture.flipped = true;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(texture.target, texture.handle);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(
+          target, 0, gl.RGBA, gl.RGBA,
+          gl.UNSIGNED_BYTE, image
+        );
+        if (callback) {
+          callback(image);
+        }
+      }
+      image.src = url;
+    }
+
     return IO;
   });
 
