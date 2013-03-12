@@ -3,7 +3,8 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
     var gl = this.gl = Context.currentContext.gl;
     this.width = width;
     this.height = height;
-    this.oldBinding = null;
+    this.oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+
 
     this.handle = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
@@ -34,7 +35,8 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + this.colorAttachements.length, texture.target, texture.handle, 0);
     this.colorAttachements.push(texture);
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.oldBinding);
+    this.oldBinding = null;
   }
 
   RenderTarget.prototype.bind = function() {
@@ -59,6 +61,7 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
   RenderTarget.prototype.unbind = function(){
     var gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.oldBinding);
+    this.oldBinding = null;
   }
 
   RenderTarget.prototype.getColorAttachement = function(index) {
