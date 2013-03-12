@@ -11,6 +11,7 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
     this.colorAttachements = [];
 
     if (options && options.depth) {
+      var oldRenderBufferBinding = gl.getParameter(gl.RENDERBUFFER_BINDING);
       var depthBuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
       gl.getError(); //reset error
@@ -25,6 +26,7 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
       }
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
       this.depthBuffer = depthBuffer;
+      gl.bindRenderbuffer(gl.RENDERBUFFER_BINDING, oldRenderBufferBinding);
     }
 
     var texture = Texture2D.create(width, height, options);
