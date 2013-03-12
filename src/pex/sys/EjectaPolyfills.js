@@ -3,17 +3,18 @@ define(['pex/sys/Platform'], function(Platform) {
     return {};
   }
 
-  HTMLElement.prototype.setAttribute = HTMLElement.prototype.setAttribute || function(name, value) {
+  HTMLElement.prototype.setAttribute = function(name, value) {
     if (!this.attributes) this.attributes = {};
     this.attributes[name] = value;
   }
 
-  HTMLElement.prototype.getAttribute = HTMLElement.prototype.getAttribute || function(name, value) {
+  HTMLElement.prototype.getAttribute = function(name, value) {
     if (!this.attributes) return null;
     return this.attributes[name];
   }
 
-  HTMLElement.prototype.addEventListener = HTMLElement.prototype.addEventListener || function(name, callback, useCapture) {
+  HTMLElement.prototype.addEventListener = function(name, callback, useCapture) {
+    console.log('HTMLElement.prototype.addEventListener', name);
     if (name == 'load') {
       this.onload = function(e) {
         callback({
@@ -28,7 +29,7 @@ define(['pex/sys/Platform'], function(Platform) {
     }
   }
 
-  HTMLElement.prototype.removeEventListener = HTMLElement.prototype.removeEventListener || function(name, callback, useCapture) {
+  HTMLElement.prototype.removeEventListener = function(name, callback, useCapture) {
     if (name == 'load') {
       this.onload = null;
     }
