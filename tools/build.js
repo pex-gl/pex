@@ -3,10 +3,10 @@ var requirejs = require('requirejs');
 var config = {
   baseUrl : '../src',
   name : '../tools/lib/almond',
-  include : ['../tools/include/inject.js', '../tools/lib/text', 'pex', '../tools/include/export'],
-  paths : {
-    'text' : '../tools/lib/text'
-  },
+  include : ['../tools/include/inject.js', 'pex', '../tools/include/export'],
+  //paths : {
+  //  'text' : 'lib/text'
+  //},
   out : '../build/pex.js',
   insertRequire: ['pex'],
   optimize : 'none',

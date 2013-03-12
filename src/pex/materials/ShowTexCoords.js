@@ -3,7 +3,7 @@ define([
   'pex/gl/Context',
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
-  'text!pex/materials/ShowTexCoords.glsl'
+  'lib/text!pex/materials/ShowTexCoords.glsl'
   ], function(Material, Context, Program, ObjectUtils, ShowTexCoordGLSL) {
 
   function ShowTexCoords(uniforms) {

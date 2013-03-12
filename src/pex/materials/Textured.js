@@ -4,7 +4,7 @@ define([
   'pex/gl/Program',
   'pex/geom/Vec4',
   'pex/utils/ObjectUtils',
-  'text!pex/materials/Textured.glsl'
+  'lib/text!pex/materials/Textured.glsl'
   ], function(Material, Context, Program, Vec4, ObjectUtils, TexturedGLSL) {
 
   function Textured(uniforms) {

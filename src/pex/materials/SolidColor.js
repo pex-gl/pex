@@ -4,7 +4,7 @@ define([
   'pex/gl/Program',
   'pex/geom/Vec4',
   'pex/utils/ObjectUtils',
-  'text!pex/materials/SolidColor.glsl'
+  'lib/text!pex/materials/SolidColor.glsl'
   ], function(Material, Context, Program, Vec4, ObjectUtils, SolidColorGLSL) {
 
   function SolidColor(uniforms) {

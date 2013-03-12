@@ -3,7 +3,7 @@ define([
   'pex/gl/Context',
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
-  'text!pex/materials/ShowNormals.glsl'
+  'lib/text!pex/materials/ShowNormals.glsl'
   ], function(Material, Context, Program, ObjectUtils, ShowNormalGLSL) {
 
   function ShowNormals(uniforms) {
