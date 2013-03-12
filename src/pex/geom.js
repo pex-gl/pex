@@ -17,7 +17,7 @@ define(
   function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen, Face3, Face4, Vec2Array, Vec3Array, Vec4Array) {
     return {
       Vec2 : Vec2,
-      Vec3 : Vec4,
+      Vec3 : Vec3,
       Vec4 : Vec4,
       Mat3 : Mat3,
       Mat4 : Mat4,
