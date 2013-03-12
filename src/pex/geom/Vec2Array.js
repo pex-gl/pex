@@ -4,7 +4,8 @@ define([], function() {
   var ELEMENT_BYTES = 4;
 
   function Vec2Array(n) {
-    Array.call(this, n);
+    Array.call(this);
+    this.length = n;
 
     this.bufStorage = new ArrayBuffer(NUM_ELEMENTS * n * ELEMENT_BYTES);
     this.buf = new Float32Array(this.bufStorage, 0, NUM_ELEMENTS * n);
