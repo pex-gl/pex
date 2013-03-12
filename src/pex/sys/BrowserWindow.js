@@ -196,19 +196,26 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   function simpleWindow(obj) {
     var canvas = obj.settings.canvas;
 
-    if (!canvas && Platform.isEjecta) {
+    obj.settings.width = obj.settings.width || 800;
+    obj.settings.height = obj.settings.height || 600;
+
+    if (obj.settings.fullscreen) {
+       document.body.style.margin = '0';
+       document.body.style.padding = '0';
+       document.body.style.overflow = 'hidden';
+       obj.settings.width = window.innerWidth;
+       obj.settings.height = window.innerHeight;
+    }
+
+    if ((!canvas || !document.getElementById) && Platform.isEjecta) {
       canvas = document.getElementById('canvas');
+      obj.settings.width = canvas.width;
+      obj.settings.height = canvas.height;
     }
     else {
       canvas = document.createElement('canvas');
-    }
-
-    if (obj.settings.fullscreen) {
-      document.body.style.margin = '0';
-      document.body.style.padding = '0';
-      document.body.style.overflow = 'hidden';
-      obj.settings.width = window.innerWidth;
-      obj.settings.height = window.innerHeight;
+      canvas.width = obj.settings.width;
+      canvas.height = obj.settings.height;
     }
 
     if (Platform.isEjecta && (window.devicePixelRatio == 2)) {
@@ -216,8 +223,9 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       obj.settings.height *= 2;
     }
 
-    canvas.width = obj.width = obj.settings.width || 800;
-    canvas.height = obj.height = obj.settings.height || 600;
+    obj.width = obj.settings.width;
+    obj.height = obj.settings.height;
+
     canvas.style.backgroundColor = '#000000';
 
     if (!canvas.parentNode) {
