@@ -14,8 +14,11 @@ define(['pex/gl/Context'], function(Context) {
         if (this.program.uniforms[name].type == this.gl.SAMPLER_2D
         ||  this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
           this.gl.activeTexture(this.gl.TEXTURE0 + numTextures);
-          this.gl.bindTexture(this.uniforms[name].target,  this.uniforms[name].handle);
-          this.program.uniforms[name]( numTextures );
+
+          if (this.uniforms[name].width > 0 && this.uniforms[name].height > 0) {
+            this.gl.bindTexture(this.uniforms[name].target, this.uniforms[name].handle);
+            this.program.uniforms[name]( numTextures );
+          }
 
           numTextures++;
         }
