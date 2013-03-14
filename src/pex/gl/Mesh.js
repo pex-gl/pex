@@ -12,8 +12,8 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.usage = this.gl.STATIC_DRAW;
 
     this.addAttrib('position', geometry.attribs.position.data.buf, 3);
-    this.addAttrib('normal', geometry.attribs.normal.data.buf, 3);
-    this.addAttrib('texCoord', geometry.attribs.texCoord.data.buf, 2);
+    if (geometry.attribs.normal) this.addAttrib('normal', geometry.attribs.normal.data.buf, 3);
+    if (geometry.attribs.texCoord) this.addAttrib('texCoord', geometry.attribs.texCoord.data.buf, 2);
 
     this.position = Vec3.fromValues(0, 0, 0);
     this.rotation = Quat.create();
