@@ -1,5 +1,5 @@
 var pex = pex || require('../../build/pex.js');
 
-pex.require(['Test'], function(Test) {
-  console.log(Test.msg);
+pex.require(['Test', 'submodule/Submodule'], function(Test, Submodule) {
+  console.log(Test.msg, Submodule.hello);
 });
