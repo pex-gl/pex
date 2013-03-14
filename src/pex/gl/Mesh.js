@@ -75,6 +75,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     attrib.elementSize = elementSize;
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
+    attrib.usage = usage;
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, usage);
 
@@ -115,6 +116,10 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       }
       if (attrib.location >= 0) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
+         if (this.geometry.attribs[name].isDirty) {
+          this.gl.bufferData(this.gl.ARRAY_BUFFER, this.geometry.attribs[name].data.buf, attrib.usage);
+          this.geometry.attribs[name].isDirty = false;
+        }
         this.gl.vertexAttribPointer(attrib.location, attrib.elementSize, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(attrib.location);
       }
