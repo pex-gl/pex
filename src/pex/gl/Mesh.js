@@ -59,9 +59,10 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       }
     });
     this.indices.data = new Uint16Array(data);
+    var oldArrayBinding = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
     this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.data, this.usage);
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, oldArrayBinding);
   }
 
   Mesh.prototype.addAttrib = function(name, data, elementSize, usage) {
