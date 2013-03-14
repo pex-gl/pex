@@ -36,11 +36,11 @@ define(['pex/utils/Log'], function(Log) {
 
   var startOfMeasuredTime = 0;
   Time.startMeasuringTime = function() {
-    startOfMeasuredTime = (new Date()).getTime();
+    startOfMeasuredTime = Date.now();
   }
 
   Time.stopMeasuringTime = function(msg) {
-    var now = (new Date()).getTime();
+    var now = Date.now();
 
     var seconds = (now - startOfMeasuredTime)/1000;
 
