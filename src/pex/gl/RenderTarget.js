@@ -27,7 +27,7 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
       }
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
       this.depthBuffer = depthBuffer;
-      gl.bindRenderbuffer(gl.RENDERBUFFER_BINDING, oldRenderBufferBinding);
+      gl.bindRenderbuffer(gl.RENDERBUFFER, oldRenderBufferBinding);
     }
 
     var texture = Texture2D.create(width, height, options);
