@@ -5,7 +5,6 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
     this.height = height;
     this.oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
-
     this.handle = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
 
