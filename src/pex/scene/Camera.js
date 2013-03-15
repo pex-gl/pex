@@ -1,6 +1,7 @@
 define(['pex/geom'], function(geom) {
   var Vec2 = geom.Vec2;
-  var Vec3 = geom.Vec4;
+  var Vec3 = geom.Vec3;
+  var Vec4 = geom.Vec4;
   var Mat4 = geom.Mat4;
 
   function Camera(fov, aspectRatio, near, far, position, target, up) {
@@ -100,6 +101,24 @@ define(['pex/geom'], function(geom) {
   Camera.prototype.updateMatrices = function() {
     Mat4.perspective(this.projectionMatrix, this.fov / 180 * Math.PI, this.aspectRatio, this.near, this.far);
     Mat4.lookAt(this.viewMatrix, this.position, this.target, this.up);
+  }
+
+  var tmpPoint = Vec4.create();
+  var projected = Vec4.create();
+
+  Camera.prototype.getScreenPos = function(out, point, windowWidth, windowHeight) {
+    Vec4.set(tmpPoint, point[0], point[1], point[2], 1.0);
+
+    Vec4.transformMat4(projected, tmpPoint, this.viewMatrix);
+    Vec4.transformMat4(projected, projected, this.projectionMatrix);
+    Vec2.set(out, projected[0], projected[1]);
+
+    out[0] /= projected[3];
+    out[1] /= projected[3];
+    out[0] = out[0] * 0.5 + 0.5;
+    out[1] = out[1] * 0.5 + 0.5;
+    out[0] *= windowWidth;
+    out[1] *= windowHeight;
   }
 
   return Camera;
