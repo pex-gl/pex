@@ -1,13 +1,13 @@
 define(['pex/gl/Context', 'pex/geom/Vec3', 'pex/geom/Quat', 'pex/geom/Mat4', 'pex/geom/Face3', 'pex/geom/Face4'],
 function(Context, Vec3, Quat, Mat4, Face3, Face4) {
-  function Mesh(geometry, material) {
+  function Mesh(geometry, material, options) {
     this.gl = Context.currentContext.gl;
     this.geometry = geometry;
     this.material = material;
+    options = options || {};
 
     this.gl = Context.currentContext.gl;
-    //this.primitiveType = (primitiveType !== undefined) ? primitiveType : this.gl.TRIANGLES;
-    this.primitiveType = this.gl.TRIANGLES;
+    this.primitiveType = (options.primitiveType !== undefined) ? options.primitiveType : this.gl.TRIANGLES;
     this.attributes = {};
     this.usage = this.gl.STATIC_DRAW;
 
