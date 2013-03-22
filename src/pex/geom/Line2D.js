@@ -9,16 +9,27 @@
     return ((this.b[0] - this.a[0])*(p[1] - this.a[1]) - (this.b[1] - this.a[1])*(p[0] - this.a[0])) <= 0;
   };
 
-  Line2D.prototype.projectPoint = function(p) {
-    //var ab = this.b.subbed(this.a).normalize();
-    //var ap = p.subbed(this.a);
-    //var pOnLine = this.a.added(ab.scale(ab.dot(ap)));
-    //return pOnLine;
+  Line2D.prototype.projectPoint = function(out, p) {
+    var a = this.a;
+    var b = this.b;
+
+    var ab = Vec2.create();
+    var ap = Vec2.create();
+    Vec2.sub(ab, b, a);
+    Vec2.normalize(ab, ab);
+    Vec2.sub(ap, p, a);
+
+    //point on line = a + ab * dot(ab, ap)
+
+    var d = Vec2.dot(ab, ap);
+    Vec2.scale(out, ab, d);
+    Vec2.add(out, out, a);
   };
 
   Line2D.prototype.distanceToPoint = function(p) {
-    //var pOnLine = this.projectPoint(p);
-    //return pOnLine.distance(p);
+    var pOnLine = Vec2.create();
+    this.projectPoint(pOnLine, p);
+    return Vec2.distance(p, pOnLine);
   };
 
   Line2D.prototype.intersect = function(line) {
