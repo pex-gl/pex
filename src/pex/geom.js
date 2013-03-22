@@ -15,10 +15,11 @@ define(
     'pex/geom/Vec4Array',
     'pex/geom/Line2D',
     'pex/geom/Rect',
-    'pex/geom/Triangle2D'
+    'pex/geom/Triangle2D',
+    'pex/geom/Polygon2D',
   ],
   function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen,
-    Face3, Face4, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D) {
+    Face3, Face4, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D, Polygon2D) {
     return {
       Vec2 : Vec2,
       Vec3 : Vec3,
@@ -35,7 +36,8 @@ define(
       Vec4Array : Vec4Array,
       Line2D : Line2D,
       Rect : Rect,
-      Triangle2D : Triangle2D
+      Triangle2D : Triangle2D,
+      Polygon2D : Polygon2D
     };
   }
 );
