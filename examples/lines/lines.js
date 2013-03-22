@@ -11,6 +11,7 @@ pex.sys.Window.create({
   },
   point: Vec2.fromValues(0, 0),
   line: new Line2D(Vec2.fromValues(20, 50), Vec2.fromValues(700, 400)),
+  line2: new Line2D(Vec2.fromValues(120, 150), Vec2.fromValues(800, 500)),
   init: function() {
     this.on('mouseMoved', function(e) {
       this.point[0] = e.x;
@@ -31,6 +32,7 @@ pex.sys.Window.create({
     paint.setColor(255, 0, 0, 255);
     paint.setStroke();
     canvas.drawLine(paint, this.line.a[0], this.line.a[1], this.line.b[0], this.line.b[1]);
+    canvas.drawLine(paint, this.line2.a[0], this.line2.a[1], this.line2.b[0], this.line2.b[1]);
 
     var hit = Vec2.create();
     this.line.projectPoint(hit, this.point);
@@ -40,5 +42,14 @@ pex.sys.Window.create({
     paint.setColor(255, 0, 0, 255);
     paint.setFill();
     canvas.drawCircle(paint, hit[0], hit[1], 5, 5);
+
+    var perpendicularLine = new Line2D(hit, this.point);
+    var intersection = Vec2.create();
+    perpendicularLine.intersect(intersection, this.line2);
+    canvas.drawCircle(paint, intersection[0], intersection[1], 5, 5);
+
+    paint.setStroke();
+    paint.setColor(255, 255, 0, 255);
+    canvas.drawLine(paint, intersection[0], intersection[1], this.point[0], this.point[1]);
   }
 });
