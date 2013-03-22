@@ -3,7 +3,8 @@ define(['lib/seedrandom.js'], function(seedrandom) {
   }
 
   MathUtils.seed = function(s) {
-    Math.randomseed(s);
+    Math.seedrandom(s);
+  }
   }
 
   return MathUtils;
