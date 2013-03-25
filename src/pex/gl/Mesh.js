@@ -65,19 +65,19 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, oldArrayBinding);
   }
 
-  Mesh.prototype.addAttrib = function(name, data, elementSize, usage) {
+  Mesh.prototype.addAttrib = function(name, dataBuf, elementSize, usage) {
     elementSize = elementSize || 3
     usage = usage || this.usage;
 
     var attrib = {};
     attrib.name = name;
-    attrib.data = data;
+    attrib.dataBuf = dataBuf;
     attrib.elementSize = elementSize;
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
     attrib.usage = usage;
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, usage);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.dataBuf, usage);
 
     this.attributes[attrib.name] = attrib;
   }
@@ -117,7 +117,8 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       if (attrib.location >= 0) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
          if (this.geometry.attribs[name].isDirty) {
-          this.gl.bufferData(this.gl.ARRAY_BUFFER, this.geometry.attribs[name].data.buf, attrib.usage);
+          attrib.dataBuf = this.geometry.attribs[name].data.buf;
+          this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.dataBuf, attrib.usage);
           this.geometry.attribs[name].isDirty = false;
         }
         this.gl.vertexAttribPointer(attrib.location, attrib.elementSize, this.gl.FLOAT, false, 0, 0);
@@ -132,7 +133,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
     }
     else if (this.attributes['position']){
-      var num = this.attributes['position'].data.length/3;
+      var num = this.attributes['position'].dataBuf.length/3;
       this.gl.drawArrays(this.primitiveType, 0, num);
     }
 
