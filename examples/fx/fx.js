@@ -31,8 +31,11 @@ pex.sys.Window.create({
     gl.clearColor(0.2, 0.2, 0.2, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
-    //fx().render({width:this.width, height:this.height, drawFunc: this.drawScene.bind(this)}).blit();
-    fx().render({ drawFunc: this.drawScene.bind(this), depth:true}).blit();
+    fx()
+      .render({ drawFunc: this.drawScene.bind(this), depth:true })
+      .downsample2()
+      .downsample4().downsample4()
+      .blit({ width:this.width, height:this.height });
   }
 });
 
