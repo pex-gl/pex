@@ -1,5 +1,12 @@
-define(['pex/gl/Context', 'pex/fx/FXResourceMgr', 'pex/gl/ScreenImage', 'pex/gl/RenderTarget'],
-  function(Context, FXResourceMgr, ScreenImage, RenderTarget) {
+define([
+  'pex/gl/Context',
+  'pex/fx/FXResourceMgr',
+  'pex/gl/ScreenImage',
+  'pex/gl/RenderTarget',
+  'pex/gl/Program',
+  'pex/gl/Texture2D'
+  ],
+  function(Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D) {
   function FXGraph(stack, resourceMgr, fullscreenQuad) {
     this.gl = Context.currentContext.gl;
     this.stack = stack || [];
@@ -37,7 +44,7 @@ define(['pex/gl/Context', 'pex/fx/FXResourceMgr', 'pex/gl/ScreenImage', 'pex/gl/
     var resProps = {code: code};
     var res = this.resourceMgr.getResource('Program', resProps);
     if (!res) {
-      var program = new gl.Program(code);
+      var program = new Program(code);
       res = this.resourceMgr.addResource('Program', program, resProps);
     }
     res.used = true;
@@ -48,7 +55,7 @@ define(['pex/gl/Context', 'pex/fx/FXResourceMgr', 'pex/gl/ScreenImage', 'pex/gl/
     var resProps = {path: path};
     var res = this.resourceMgr.getResource('Image', resProps);
     if (!res) {
-      var image = gl.Texture2D.load(path);
+      var image = Texture2D.load(path);
       res = this.resourceMgr.addResource('Image', image, resProps);
     }
     res.used = false; //can be shared so no need for locking
