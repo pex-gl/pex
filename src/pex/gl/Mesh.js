@@ -14,6 +14,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.addAttrib('position', geometry.attribs.position.data.buf, geometry.attribs.position.elementSize);
     if (geometry.attribs.normal) this.addAttrib('normal', geometry.attribs.normal.data.buf, geometry.attribs.normal.elementSize);
     if (geometry.attribs.texCoord) this.addAttrib('texCoord', geometry.attribs.texCoord.data.buf, geometry.attribs.texCoord.elementSize);
+    if (geometry.attribs.color) this.addAttrib('color', geometry.attribs.color.data.buf, geometry.attribs.color.elementSize);
 
     this.position = Vec3.fromValues(0, 0, 0);
     this.rotation = Quat.create();
