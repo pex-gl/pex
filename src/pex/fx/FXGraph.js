@@ -63,7 +63,7 @@ define(['pex/gl/Context', 'pex/fx/FXResourceMgr', 'pex/gl/ScreenImage', 'pex/gl/
     if (source) {
       return { width: source.width, height: source.height };
     }
-    return { width : this.outputSize.width, height : this.outputSize.width };
+    return { width : this.outputSize.width, height : this.outputSize.height };
   }
 
   FXGraph.prototype.getSource = function() {
