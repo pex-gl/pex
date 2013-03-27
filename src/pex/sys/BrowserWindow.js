@@ -228,47 +228,51 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
     canvas.style.backgroundColor = '#000000';
 
+    function go() {
+      if (obj.stencil === undefined) obj.stencil = false;
+
+      var gl = null;
+      try {
+        gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+      }
+      catch(err){
+        console.error(err.message);
+        return;
+      }
+
+      obj.framerate = function(fps) {
+        requestAnimFrameFps = fps;
+      }
+
+      obj.on = function(eventType, handler) {
+        eventListeners.push({eventType:eventType, handler:handler});
+      }
+
+      registerEvents(canvas);
+
+      obj.gl = gl;
+      obj.init();
+
+      function drawloop() {
+        obj.draw();
+        requestAnimFrame(drawloop);
+      }
+
+      requestAnimFrame(drawloop);
+    }
+
     if (!canvas.parentNode) {
       if (document.body) {
         document.body.appendChild(canvas);
+        go();
       }
       else {
         window.addEventListener('load', function() {
           document.body.appendChild(canvas);
+          go();
         }, false);
       }
     }
-
-    registerEvents(canvas);
-
-    if (obj.stencil === undefined) obj.stencil = false;
-
-    var gl = null;
-    try {
-      gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil});
-    }
-    catch(err){
-      console.error(err);
-      return;
-    }
-
-    obj.framerate = function(fps) {
-      requestAnimFrameFps = fps;
-    }
-
-    obj.on = function(eventType, handler) {
-      eventListeners.push({eventType:eventType, handler:handler});
-    }
-
-    obj.gl = gl;
-    obj.init();
-
-    function drawloop() {
-      obj.draw();
-      requestAnimFrame(drawloop);
-    }
-
-    requestAnimFrame(drawloop);
   }
 
   var BrowserWindow = {
