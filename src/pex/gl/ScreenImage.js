@@ -23,6 +23,13 @@ define([
       alpha : 1.0
     };
 
+    var uniforms = {
+      windowSize : Vec2.fromValues(1, 1),
+      pixelPosition : Vec2.fromValues(0, 0),
+      pixelSize : Vec2.fromValues(1, 1),
+      alpha : 1.0
+    };
+
     if (image) uniforms.image = image;
 
     var material = new Material(program, uniforms);
@@ -39,10 +46,10 @@ define([
     });
 
     geometry.attribs.position.data.buf.set([
-       0,  1,
+      -1,  1,
        1,  1,
-       1,  0,
-       0,  0
+       1, -1,
+      -1, -1
     ]);
 
     geometry.attribs.texCoord.data.buf.set([
@@ -70,8 +77,12 @@ define([
   this.mesh.material.uniforms.pixelPosition = position;
   }
 
-   ScreenImage.prototype.setSize = function(position) {
-    throw "Unimplemented";
+  ScreenImage.prototype.setSize = function(size) {
+    this.mesh.material.uniforms.pixelSize = size;
+  }
+
+  ScreenImage.prototype.setWindowSize = function(size) {
+    this.mesh.material.uniforms.windowSize = size;
   }
 
   ScreenImage.prototype.setBounds = function(bounds) {
@@ -83,8 +94,29 @@ define([
     this.mesh.material.uniforms.image = image;
   }
 
-  ScreenImage.prototype.draw = function(program, dontBlend) {
+  ScreenImage.prototype.draw = function(image, program) {
+    var oldImage = this.mesh.material.uniforms.image;
+    if (image) {
+      oldImage = this.mesh.material.uniforms.image;
+      this.mesh.material.uniforms.image = image;
+    }
+    else if ('image' in this.mesh.material.uniforms) {
+      delete this.mesh.material.uniforms.image;
+    }
+
+    var oldProgram = null;
+    if (program) {
+      oldProgram = this.mesh.getProgram();
+      this.mesh.setProgram(program);
+    }
     this.mesh.draw();
+
+    if (oldProgram) {
+      this.mesh.setProgram(oldProgram);
+    }
+    if (oldImage) {
+      this.mesh.material.uniforms.image = oldImage;
+    }
   }
 
   return ScreenImage;
