@@ -1,7 +1,6 @@
 define(['pex/gl/Context'], function(Context) {
   function Texture(target) {
     if (target) {
-      console.log('Texture+');
       this.init(target);
     }
   }
