@@ -5,15 +5,17 @@ define(
     'pex/gl/Program',
     'pex/gl/Mesh',
     'pex/gl/Texture2D',
-    'pex/gl/RenderTarget'
+    'pex/gl/RenderTarget',
+    'pex/gl/ScreenImage'
   ],
-  function(Context, Program, Mesh, Texture2D, RenderTarget) {
+  function(Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage) {
     return {
       Context : Context,
       Program : Program,
       Mesh : Mesh,
       Texture2D : Texture2D,
-      RenderTarget : RenderTarget
+      RenderTarget : RenderTarget,
+      ScreenImage : ScreenImage
     };
   }
 );
