@@ -146,5 +146,30 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     }
   }
 
+  Mesh.prototype.resetAttribLocations = function() {
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      attrib.location = -1;
+    }
+  }
+
+  Mesh.prototype.getMaterial = function() {
+    return this.material;
+  }
+
+  Mesh.prototype.setMaterial = function(material) {
+    this.material = material;
+    this.resetAttribLocations();
+  }
+
+  Mesh.prototype.getProgram = function() {
+    return this.material.program;
+  }
+
+  Mesh.prototype.setProgram = function(program) {
+    this.material.program = program;
+    this.resetAttribLocations();
+  }
+
   return Mesh;
 });
