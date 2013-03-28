@@ -4,15 +4,18 @@ define([
   'pex/gl/ScreenImage',
   'pex/gl/RenderTarget',
   'pex/gl/Program',
-  'pex/gl/Texture2D'
+  'pex/gl/Texture2D',
+  'pex/geom/Vec2'
   ],
-  function(Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D) {
+  function(Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D, Vec2) {
   function FXGraph(stack, resourceMgr, fullscreenQuad) {
     this.gl = Context.currentContext.gl;
     this.stack = stack || [];
     this.resourceMgr = resourceMgr || new FXResourceMgr();
     this.fullscreenQuad = fullscreenQuad || new ScreenImage();
     this.defaultBPP = 8;
+
+    this.reset();
   }
 
   FXGraph.prototype.reset = function() {
@@ -101,27 +104,17 @@ define([
     return this.fullscreenQuad;
   }
 
-  FXGraph.prototype.drawFullScreenQuad = function(width, height, program) {
-    this.drawFullScreenQuadAt(0, 0, width, height, program);
+  FXGraph.prototype.drawFullScreenQuad = function(width, height, image, program) {
+    this.drawFullScreenQuadAt(0, 0, width, height, image, program);
   }
 
-  FXGraph.prototype.drawFullScreenQuadAt = function(x, y, width, height, program) {
+  FXGraph.prototype.drawFullScreenQuadAt = function(x, y, width, height, image, program) {
     var gl = this.gl;
     gl.disable(gl.DEPTH_TEST);
 
-    var oldViewport = this.gl.getParameter(this.gl.VIEWPORT);
+    var oldViewport = gl.getParameter(gl.VIEWPORT);
     gl.viewport(x, y, width, height);
-
-    var oldProgram;
-    if (program) {
-      oldProgram = this.fullscreenQuad.program;
-      this.fullscreenQuad.program = program;
-      program.use();
-    }
-    this.fullscreenQuad.draw();
-    if (oldProgram) {
-      this.fullscreenQuad.program = oldProgram;
-    }
+    this.fullscreenQuad.draw(image, program);
     gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
   }
 
