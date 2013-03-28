@@ -14,7 +14,7 @@ define(['pex/gl/Context'], function(Context) {
   }
 
   //### bind ( unit )
-  //Binds the texture to the current GL context.  
+  //Binds the texture to the current GL context.
   //`unit` - texture unit in which to place the texture *{ Number/Int }* = 0
   Texture.prototype.bind = function(unit) {
     unit = unit ? unit : 0;
