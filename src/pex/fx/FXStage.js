@@ -83,7 +83,19 @@ define([
   }
 
   FXStage.prototype.getSourceTexture = function(source) {
-    if (this.source) {
+    if (source) {
+      if (source.source) {
+        if (source.source.getColorAttachement) {
+          return source.source.getColorAttachement(0);
+        }
+        else return source.source;
+      }
+      else if (source.getColorAttachement) {
+        return source.getColorAttachement(0);
+      }
+      else return source;
+    }
+    else if (this.source) {
       if (this.source.getColorAttachement) {
         return this.source.getColorAttachement(0);
       }
