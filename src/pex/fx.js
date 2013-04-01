@@ -10,9 +10,11 @@ define(
     'pex/fx/Blur7',
     'pex/fx/Add',
     'pex/fx/Threshold',
-    'pex/fx/Image'
+    'pex/fx/Image',
+    'pex/fx/Mult',
+    'pex/fx/SSAO'
   ],
-  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image) {
+  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO) {
     var globalFx;
     return function() {
       if (!globalFx) {
