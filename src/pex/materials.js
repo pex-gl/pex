@@ -6,16 +6,18 @@ define(
     'pex/materials/Textured',
     'pex/materials/ShowTexCoords',
     'pex/materials/ShowDepth',
-    'pex/materials/ShowColors'
+    'pex/materials/ShowColors',
+    'pex/materials/PackDepth'
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
       Textured : Textured,
       ShowTexCoords : ShowTexCoords,
       ShowDepth : ShowDepth,
-      ShowColors : ShowColors
+      ShowColors : ShowColors,
+      PackDepth : PackDepth
     };
   }
 );
