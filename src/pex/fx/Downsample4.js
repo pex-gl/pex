@@ -1,5 +1,5 @@
-define(['pex/fx/FXGraph', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], function(FXGraph, Downsample4GLSL, Vec2) {
-  FXGraph.prototype.downsample4 = function(options) {
+define(['pex/fx/FXStage', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], function(FXStage, Downsample4GLSL, Vec2) {
+  FXStage.prototype.downsample4 = function(options) {
     options = options || {};
 
     var outputSize = this.getOutputSize(options.width, options.height, true);
@@ -7,7 +7,6 @@ define(['pex/fx/FXGraph', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], 
     outputSize.height /= 4;
 
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
-    rt.name = 'downsample4';
     var source = this.getSourceTexture();
 
     var program = this.getShader(Downsample4GLSL);
@@ -17,9 +16,6 @@ define(['pex/fx/FXGraph', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], 
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
     rt.unbind();
 
-    this.stack.push(rt);
-
-    return this;
-
+    return this.asFXStage(rt, 'downsample4');
   }
 })

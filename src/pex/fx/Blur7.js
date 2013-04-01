@@ -1,6 +1,6 @@
-define(['pex/fx/FXGraph', 'lib/text!pex/fx/Blur7H.glsl', 'lib/text!pex/fx/Blur7V.glsl', 'pex/geom/Vec2'],
-function(FXGraph, Blur7HGLSL, Blur7VGLSL, Vec2) {
-  FXGraph.prototype.blur7 = function(options) {
+define(['pex/fx/FXStage', 'lib/text!pex/fx/Blur7H.glsl', 'lib/text!pex/fx/Blur7V.glsl', 'pex/geom/Vec2'],
+function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
+  FXStage.prototype.blur7 = function(options) {
     options = options || {};
 
     var outputSize = this.getOutputSize(options.width, options.height);
@@ -24,10 +24,6 @@ function(FXGraph, Blur7HGLSL, Blur7VGLSL, Vec2) {
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
 
-    rtv.name = 'blur7';
-    this.stack.push(rtv);
-
-    return this;
-
+    return this.asFXStage(rtv, 'blur7');
   }
 })

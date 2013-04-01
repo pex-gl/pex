@@ -1,6 +1,6 @@
-define(['pex/fx/FXGraph', 'lib/text!pex/fx/Blur3H.glsl', 'lib/text!pex/fx/Blur3V.glsl', 'pex/geom/Vec2'],
-function(FXGraph, Blur3HGLSL, Blur3VGLSL, Vec2) {
-  FXGraph.prototype.blur3 = function(options) {
+define(['pex/fx/FXStage', 'lib/text!pex/fx/Blur3H.glsl', 'lib/text!pex/fx/Blur3V.glsl', 'pex/geom/Vec2'],
+function(FXStage, Blur3HGLSL, Blur3VGLSL, Vec2) {
+  FXStage.prototype.blur3 = function(options) {
     options = options || {};
 
     var outputSize = this.getOutputSize(options.width, options.height);
@@ -23,10 +23,6 @@ function(FXGraph, Blur3HGLSL, Blur3VGLSL, Vec2) {
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
 
-    rtv.name = 'blur3';
-    this.stack.push(rtv);
-
-    return this;
-
+    return this.asFXStage(rtv, 'blur3');
   }
 })

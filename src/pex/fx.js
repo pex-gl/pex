@@ -1,6 +1,6 @@
 define(
   [
-    'pex/fx/FXGraph',
+    'pex/fx/FXStage',
     'pex/fx/Render',
     'pex/fx/Blit',
     'pex/fx/Downsample2',
@@ -9,18 +9,13 @@ define(
     'pex/fx/Blur5',
     'pex/fx/Blur7'
   ],
-  function(FXGraph, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7) {
+  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7) {
     var globalFx;
-    return function(reset) {
-      if (typeof reset === undefined) reset = true;
-
+    return function() {
       if (!globalFx) {
-        globalFx = new FXGraph();
+        globalFx = new FXStage();
       }
-      else if (reset) {
-        console.log('resetting');
-        globalFx.reset();
-      }
+      globalFx.reset();
       return globalFx;
     }
   }

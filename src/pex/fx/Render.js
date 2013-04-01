@@ -1,5 +1,5 @@
-define(['pex/fx/FXGraph'], function(FXGraph) {
-  FXGraph.prototype.render = function(options) {
+define(['pex/fx/FXStage'], function(FXStage) {
+  FXStage.prototype.render = function(options) {
     var gl = this.gl;
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
@@ -13,8 +13,6 @@ define(['pex/fx/FXGraph'], function(FXGraph) {
     rt.unbind();
     gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
 
-    rt.name = 'render';
-    this.stack.push(rt);
-    return this;
+    return this.asFXStage(rt, 'render');
   }
 })

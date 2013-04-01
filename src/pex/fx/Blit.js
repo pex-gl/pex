@@ -1,5 +1,5 @@
-define(['pex/fx/FXGraph', 'pex/gl/ScreenImage', 'pex/geom/Vec2'], function(FXGraph, ScreenImage, Vec2) {
-  FXGraph.prototype.blit = function(options) {
+define(['pex/fx/FXStage', 'pex/gl/ScreenImage', 'pex/geom/Vec2'], function(FXStage, ScreenImage, Vec2) {
+  FXStage.prototype.blit = function(options) {
     options = options || {};
 
     var outputSize = this.getOutputSize(options.width, options.height);
