@@ -6,7 +6,8 @@ define(['lib/seedrandom.js', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedran
     Math.seedrandom(s);
   }
 
-  MathUtils.randomVec3 = function() {
+  MathUtils.randomVec3 = function(r) {
+    r = r || 0.5;
     var x = Math.random() - 0.5;
     var y = Math.random() - 0.5;
     var z = Math.random() - 0.5;
@@ -17,7 +18,7 @@ define(['lib/seedrandom.js', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedran
       y /= len;
       z /= len;
     }
-    return Vec3.fromValues(x, y, z);
+    return Vec3.fromValues(x * r, y * r, z * r);
   }
 
   MathUtils.randomVec3InBoundingBox = function(bbox) {
