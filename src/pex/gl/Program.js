@@ -85,13 +85,28 @@ define(['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) {
     this.gl.deleteProgram(this.handle);
   };
 
-  Program.load = function(url, callback) {
+  Program.load = function(url, callback, options) {
     var program = new Program();
     IO.loadTextFile(url, function(source) {
       console.log('Program.Compiling ' + url);
       program.addSources(source);
       program.link();
       if (callback) callback();
+
+      if (options && options.autoreload) {
+        IO.watch(url, function(source) {
+          try {
+            program.gl.detachShader(program.handle, program.vertShader);
+            program.gl.detachShader(program.handle, program.fragShader);
+            program.addSources(source);
+            program.link();
+          }
+          catch(e) {
+            console.log('Progra.load : failed to reload ' + url);
+            console.log(e);
+          }
+        })
+      }
     });
     return program;
   }
