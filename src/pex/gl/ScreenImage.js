@@ -93,9 +93,6 @@ define([
       oldImage = this.mesh.material.uniforms.image;
       this.mesh.material.uniforms.image = image;
     }
-    else if ('image' in this.mesh.material.uniforms) {
-      delete this.mesh.material.uniforms.image;
-    }
 
     var oldProgram = null;
     if (program) {
