@@ -27,6 +27,17 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
       }
     }
 
+    IO.watch = function(file, callback) {
+      Node.fs.watch(file, {}, function(event, fileName) {
+        if (event == 'change') {
+          var data = Node.fs.readFileSync(file, 'utf8');
+          if (callback) {
+            callback(data);
+          }
+        }
+      });
+    }
+
     return IO;
   });
 
@@ -67,6 +78,10 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
         }
       }
       image.src = url;
+    }
+
+    IO.watch = function() {
+      console.log("Warning: WebIO.watch is not implemented!");
     }
 
     return IO;
