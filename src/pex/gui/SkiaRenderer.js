@@ -52,8 +52,6 @@
       return;
     }
 
-    console.log('SkiaRenderer.draw');
-
     var canvas = this.canvas;
 
     canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode); //transparent
@@ -80,7 +78,6 @@
 
       if (e.type == "slider") {
         var value = e.getValue();
-        console.log(value);
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
         canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
@@ -146,11 +143,10 @@
   SkiaRenderer.prototype.updateTexture = function() {
     var gl = this.gl;
     this.tex.bind();
-    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
-    //gl.generateMipmap(gl.TEXTURE_2D);
-    //gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
 
