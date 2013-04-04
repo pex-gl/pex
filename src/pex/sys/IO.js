@@ -16,7 +16,7 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
-      Log.message("IO.loadImageData " + fullPath);
+      Log.message('IO.loadImageData ' + fullPath);
       texture.flipped = true;
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
@@ -85,7 +85,9 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
     }
 
     IO.watch = function() {
-      console.log("Warning: WebIO.watch is not implemented!");
+      console.log('Warning: WebIO.watch is not implemented!');
+    }
+
     IO.save = function() {
       console.log('Warning: WebIO.save is not implemented!');
     }
