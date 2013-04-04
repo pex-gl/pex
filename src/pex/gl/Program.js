@@ -25,7 +25,7 @@ define(['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) {
   Program.prototype.addVertexSource = function(vertSrc) {
     var gl = this.gl;
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vert, kVertexShaderPrefix + vertSrc);
+    gl.shaderSource(vert, kVertexShaderPrefix + vertSrc + '\n');
     gl.compileShader(vert);
     if (!gl.getShaderParameter(vert, gl.COMPILE_STATUS)) {
       console.log(vertSrc);
@@ -36,7 +36,7 @@ define(['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) {
   Program.prototype.addFragmentSource = function(fragSrc) {
     var gl = this.gl;
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc);
+    gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc + '\n');
     gl.compileShader(frag);
     if (!gl.getShaderParameter(frag, gl.COMPILE_STATUS)) {
       console.log(fragSrc);
