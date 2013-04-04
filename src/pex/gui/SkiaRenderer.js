@@ -2,7 +2,7 @@
   var plask = Node.plask
   function SkiaRenderer(width, height) {
     this.gl = Context.currentContext.gl;
-    this.tex = Texture2D.create(0, 0);
+    this.tex = Texture2D.create(width, height);
     this.canvas = new plask.SkCanvas.create(width, height);
 
     this.fontPaint = new plask.SkPaint();
