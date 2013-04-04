@@ -32,5 +32,13 @@ define(['lib/seedrandom.js', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedran
     return Vec2.fromValues(rect.x + Math.random() * rect.width, rect.y + Math.random() * rect.height);
   }
 
+  MathUtils.mix = function(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  MathUtils.map = function(value, oldMin, oldMax, newMin, newMax) {
+    return newMin + (value - oldMin)/(oldMax - oldMin) * (newMax - newMin);
+  }
+
   return MathUtils;
 });
