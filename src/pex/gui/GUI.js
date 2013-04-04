@@ -313,7 +313,11 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
     }
     this.renderer.draw(this.items);
     //if (!IO.Image)
+    var gl = Context.currentContext.gl;
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     this.screenImage.draw(this.renderer.getTexture());
+    gl.disable(gl.BLEND);
     //this.drawTextures();
   }
 
