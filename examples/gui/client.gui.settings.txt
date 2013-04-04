@@ -1,0 +1,1 @@
+{"GUI Test":0,"S - save settings":0,"L - load settings":0,"":0,"CUBE":0,"Color":null,"Rotate":true,"Rotate speed":0.24675324675324678,"CAMERA":0,"Distance":0.116502637987013,"MATERIAL":1}
