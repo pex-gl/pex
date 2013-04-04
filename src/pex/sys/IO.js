@@ -38,6 +38,10 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
       });
     }
 
+    IO.saveTextFile = function(file, data) {
+      Node.fs.writeFileSync(file, data);
+    }
+
     return IO;
   });
 
@@ -82,6 +86,8 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
 
     IO.watch = function() {
       console.log("Warning: WebIO.watch is not implemented!");
+    IO.save = function() {
+      console.log('Warning: WebIO.save is not implemented!');
     }
 
     return IO;
