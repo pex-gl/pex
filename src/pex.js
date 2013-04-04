@@ -7,9 +7,10 @@ define(
     'pex/gl',
     'pex/materials',
     'pex/scene',
-    'pex/fx'
+    'pex/fx',
+    'pex/gui'
   ],
-  function(geom, utils, sys, gl, materials, scene, fx) {
+  function(geom, utils, sys, gl, materials, scene, fx, gui) {
     return {
       geom : geom,
       utils : utils,
@@ -18,7 +19,8 @@ define(
       materials : materials,
       scene : scene,
       fx : fx,
-      require : sys.Require //shortcut
+      require : sys.Require, //shortcut,
+      gui : gui
     };
   }
 )
