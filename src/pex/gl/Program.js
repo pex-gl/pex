@@ -94,7 +94,7 @@ define(['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) {
       if (callback) callback();
 
       if (options && options.autoreload) {
-        IO.watch(url, function(source) {
+        IO.watchTextFile(url, function(source) {
           try {
             program.gl.detachShader(program.handle, program.vertShader);
             program.gl.detachShader(program.handle, program.fragShader);
