@@ -16,22 +16,23 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pex/geom/Quat', 'pex
     this.dragPos = Vec3.create();
     this.rotAxis = Vec3.create();
     this.allowZooming = true;
+    this.enabled = true;
 
     this.updateCamera();
 
     var self = this;
     window.on('leftMouseDown', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       self.down(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('mouseDragged', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       self.drag(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('scrollWheel', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       if (!self.allowZooming) return;
       self.distance = Math.min(self.maxDistance, Math.max(self.distance + e.dy/100*(self.maxDistance-self.minDistance), self.minDistance));
       self.updateCamera();
