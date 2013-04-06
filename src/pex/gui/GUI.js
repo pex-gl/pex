@@ -264,7 +264,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
         methodName: methodName,
         activeArea: new Rect(0, 0, 0, 0),
         dirty : true,
-        options : options
+        options : options || {}
       }
     );
     this.items.push(ctrl);
