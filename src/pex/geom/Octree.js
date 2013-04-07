@@ -48,7 +48,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     else {
       for(var i=0; i<this.points.length; i++) {
         var o = this.points[i];
-        if (p.x == o.x && p.y == o.y && p.z == o.z) {
+        if (p[0] == o[0] && p[1] == o[1] && p[2] == o[2]) {
           return o;
         }
       }
@@ -79,27 +79,32 @@ define(['pex/geom/Vec3'], function(Vec3) {
   }
 
   Octree.Cell.prototype.contains = function(p) {
-    return p.x >= this.x && p.y >= this.y && p.z >= this.z && p.x <= this.x + this.w && p.y <= this.y + this.h && p.z <= this.z + this.d;
+    return p[0] >= this.position[0]
+        && p[1] >= this.position[1]
+        && p[2] >= this.position[2]
+        && p[0] <= this.position[0] + this.size[0]
+        && p[1] <= this.position[1] + this.size[1]
+        && p[2] <= this.position[2] + this.size[2];
   }
 
   // 1 2 3 4
   // 5 6 7 8
   Octree.Cell.prototype.split = function() {
-    var x = this.x;
-    var y = this.y;
-    var z = this.z;
-    var w2 = this.w/2;
-    var h2 = this.h/2;
-    var d2 = this.d/2;
+    var x = this.position[0];
+    var y = this.position[1];
+    var z = this.position[2];
+    var w2 = this.size[0]/2;
+    var h2 = this.size[1]/2;
+    var d2 = this.size[2]/2;
 
-    this.children.push(new Octree.Cell(x, y, z, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x + w2, y, z, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x, y, z + d2, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x + w2, y, z + d2, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x, y + h2, z, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x + w2, y + h2, z, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x, y + h2, z + d2, w2, h2, d2, this.level + 1));
-    this.children.push(new Octree.Cell(x + w2, y + h2, z + d2, w2, h2, d2, this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x, y, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x + w2, y, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x + w2, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x, y + h2, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x + w2, y + h2, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(Vec3.fromValues(x + w2, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
 
     for(var i=0; i<this.points.length; i++) {
       this.addToChildren(this.points[i]);
@@ -120,7 +125,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     if (!nearest && this.points.length > 0) {
       var minDistSq = 99999;
       for(var i=0; i<this.points.length; i++) {
-        var distSq = this.points[i].distanceSquared(p);
+        var distSq = Vec3.distanceSquared(this.points[i], p);
         if (distSq < minDistSq) {
           if (distSq < 0.0001 && options.notSelf) continue;
           minDistSq = distSq;
