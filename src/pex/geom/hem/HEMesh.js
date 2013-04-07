@@ -22,9 +22,9 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     var dup = 0;
     for(var i=0; i<this.vertices.length; i++) {
       var v = this.vertices[i];
-      var duplicate = octree.has(v);
+      var duplicate = octree.has(v.position);
       if (!duplicate) {
-          octree.add(v);
+        octree.add(v.position);
       }
       else {
         this.vertices.splice(i, 1);
