@@ -4,14 +4,13 @@ define(['pex/geom/Vec3'], function(Vec3) {
     this.max = max;
   }
 
-  /*
   BoundingBox.fromPositionSize = function(pos, size) {
     return new BoundingBox(
       Vec3.fromValues(pos[0] - size[0]/2, pos[1] - size[1]/2, pos[2] - size[2]/2),
       Vec3.fromValues(pos[0] + size[0]/2, pos[1] + size[1]/2, pos[2] + size[2]/2)
     );
   }
-*/
+
   BoundingBox.fromPoints = function(points) {
     var bbox = new BoundingBox(Vec3.clone(points[0], Vec3.clone(points[0])));
     points.forEach(bbox.addPoint.bind(bbox));
@@ -48,7 +47,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
     if (this.isEmpty()) {
       Vec3.set(out, 0, 0, 0);
-      return;
+      return out;
     }
 
     Vec3.set(out,
