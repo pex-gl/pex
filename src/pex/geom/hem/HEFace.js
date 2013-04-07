@@ -25,17 +25,20 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
   //calculates the centroid of the face
   HEFace.prototype.getCenter = function() {
+    if (!this.center) {
+      this.center = Vec3.create();
+    }
+    Vec3.set(this.center, 0, 0, 0);
     var vertexCount = 0;
-    var center = new Vec3(0, 0, 0);
     var edge = this.edge;
     do {
-      center.add(edge.vert);
+      Vec3.add(this.center, this.center, edge.vert.position);
       vertexCount++;
       edge = edge.next;
     } while (edge != this.edge);
 
-    center.scale(1/vertexCount);
-    return center;
+    Vec3.scale(this.center, this.center, 1/vertexCount);
+    return this.center;
   }
 
   HEFace.prototype.getAllVertices = function() {
