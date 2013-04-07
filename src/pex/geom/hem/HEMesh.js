@@ -17,9 +17,8 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   }
 
   HEMesh.prototype.fixDuplicatedVertices = function() {
-    var bbox = new BoundingBox(this.vertices);
-    var bboxSize = bbox.getSize();
-    var octree = new Octree(bbox.min.x, bbox.min.y, bbox.min.z, bboxSize.x, bboxSize.y, bboxSize.z);
+    var bbox = BoundingBox.fromPoints(this.vertices.map(function(v) { return v.position; }));
+    var octree = Octree.fromBoundingBox(bbox);
     var dup = 0;
     for(var i=0; i<this.vertices.length; i++) {
       var v = this.vertices[i];
@@ -135,7 +134,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   };
 
   HEMesh.prototype.splitVertex = function(vertex, newVertexPos, startEdge, endEdge) {
-    var newVertex = new HEVertex(newVertexPos.x, newVertexPos.y, newVertexPos.z);
+    var newVertex = new HEVertex(newVertexPos[0], newVertexPos[1], newVertexPos[2]);
     this.vertices.push(newVertex);
     if (startEdge != null && startEdge == endEdge) {
       //edge
@@ -241,10 +240,13 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   HEMesh.prototype.splitEdge = function(edge, ratio) {
     ratio = ratio || 0.5;
 
-    var newVertPos = edge.next.vert.dup();
-    newVertPos.sub(edge.vert);
-    newVertPos.scale(ratio);
-    newVertPos.add(edge.vert);
+    //newVertPos = v + ratio * (nv - v)
+    //newVertPos = add3(v, scale3(ratio, sub3(nv, v)))
+    //newVertPos = nv.clone().sub(v).scale(ratio).add(v);
+    var newVertPos = Vec3.clone(edge.next.vert.position);
+    Vec3.sub(newVertPos, newVertPos, edge.vert.position);
+    Vec3.scale(newVertPos, newVertPos, ratio);
+    Vec3.add(newVertPos, newVertPos, edge.vert.position);
 
     this.splitVertex(edge.vert, newVertPos, edge, edge);
   };
