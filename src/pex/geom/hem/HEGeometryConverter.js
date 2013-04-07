@@ -84,14 +84,21 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
   };
 
   HEMesh.prototype.toFlatGeometry = function() {
+    var numVerties = 0;
+    this.faces.forEach(function(f) {
+      var faceVertexCount = f.getAllVertices().length;
+      if (faceVertexCount == 3) numVerties += 3;
+      if (faceVertexCount == 4) numVerties += 6;
+    })
+    console.log('numVerties', numVerties);
     var geometry = new Geometry({
       position : {
         type: 'Vec3',
-        length : 100
+        length : numVerties
       },
       normal : {
         type: 'Vec3',
-        length : 100
+        length : numVerties
       }
     });
 
