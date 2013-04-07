@@ -11,7 +11,6 @@ define([
   'pex/geom/Edge'
 ],
 function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge)  {
-  /*
   function HEGeometryConverter() {
   }
 
@@ -26,8 +25,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       this.vertices.push(new HEVertex(v.x, v.y, v.z));
     }
 
-    var indices = ["a
-     "b", "c", "d", "e", "f", "g", "h", "i", "j"];",
+    var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     var newEdges = [null, null, null, null, null];
     var numEdges = 3;
     if (geom.faces && geom.faces.length > 0) {
@@ -265,7 +263,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
   //  });
   //  return lineBuilder;
   //};
-  
+
   return HEGeometryConverter;
-  */
 });
