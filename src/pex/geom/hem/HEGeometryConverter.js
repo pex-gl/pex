@@ -84,108 +84,48 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
   };
 
   HEMesh.prototype.toFlatGeometry = function() {
-    var geometry = new Geometry();
-    geometry.vertices = [];
-    geometry.normals = [];
-    geometry.texCoords = [];
+    var geometry = new Geometry({
+      position : {
+        type: 'Vec3',
+        length : 100
+      },
+      normal : {
+        type: 'Vec3',
+        length : 100
+      }
+    });
 
-    var hasColors = this.faces.filter(function(f) { return f.color !== null; }).length > 0;
-    if (hasColors) {
-      geometry.colors = [];
-    }
+    var positions = geometry.attribs.position.data;
+    var normals = geometry.attribs.normal.data;
 
-    var idx = 0;
+    var vertexIndex = 0;
     for(var i in this.faces) {
       var face = this.faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        geometry.vertices.push(faceVertices[0].dup());
-        geometry.vertices.push(faceVertices[1].dup());
-        geometry.vertices.push(faceVertices[2].dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.texCoords.push(new Vec3(1, 0, 0));
-        geometry.texCoords.push(new Vec3(0, 1, 0));
-        geometry.texCoords.push(new Vec3(0, 0, 1));
-        if (hasColors) {
-          if (face.color) {
-            geometry.colors.push(face.color);
-            geometry.colors.push(face.color);
-            geometry.colors.push(face.color);
-          }
-          else {
-            geometry.colors.push(Color.White);
-            geometry.colors.push(Color.White);
-            geometry.colors.push(Color.White);
-          }
-        }
+        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
+        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+2], faceVertices[2].position);
+        Vec3.copy(normals[vertexIndex+0], faceNormal);
+        Vec3.copy(normals[vertexIndex+1], faceNormal);
+        Vec3.copy(normals[vertexIndex+2], faceNormal);
+        vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
-        geometry.vertices.push(faceVertices[0].dup());
-        geometry.vertices.push(faceVertices[1].dup());
-        geometry.vertices.push(faceVertices[3].dup());
-        geometry.vertices.push(faceVertices[3].dup());
-        geometry.vertices.push(faceVertices[1].dup());
-        geometry.vertices.push(faceVertices[2].dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.normals.push(faceNormal.dup());
-        geometry.texCoords.push(new Vec3(0, 0, 0));
-        geometry.texCoords.push(new Vec3(0, 0, 0));
-        geometry.texCoords.push(new Vec3(0, 0, 0));
-        geometry.texCoords.push(new Vec3(0, 0, 0));
-      }
-      else {
-        console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-        //throw("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-      }
-    }
-    return geometry;
-  };
-
-  HEMesh.prototype.toSmoothGeometry = function() {
-    var geometry = new Geometry();
-    geometry.vertices = [];
-    geometry.normals = [];
-    geometry.tangents = [];
-
-    var idx = 0;
-    for(var i in this.faces) {
-      var face = this.faces[i];
-      var faceVertices = face.getAllVertices();
-      var faceNormal = face.getNormal();
-      if (faceVertices.length == 3) {
-        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
-        geometry.normals.push(faceVertices[0].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[2].getNormal());
-      }
-      else if (faceVertices.length == 4) {
-        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
-        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
-        geometry.tangents.push(faceVertices[0].tangent);
-        geometry.tangents.push(faceVertices[1].tangent);
-        geometry.tangents.push(faceVertices[3].tangent);
-        geometry.tangents.push(faceVertices[3].tangent);
-        geometry.tangents.push(faceVertices[1].tangent);
-        geometry.tangents.push(faceVertices[2].tangent);
-        geometry.normals.push(faceVertices[0].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[3].getNormal());
-        geometry.normals.push(faceVertices[3].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[2].getNormal());
+        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
+        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+2], faceVertices[3].position);
+        Vec3.copy(positions[vertexIndex+3], faceVertices[3].position);
+        Vec3.copy(positions[vertexIndex+4], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+5], faceVertices[2].position);
+        Vec3.copy(normals[vertexIndex+0], faceNormal);
+        Vec3.copy(normals[vertexIndex+1], faceNormal);
+        Vec3.copy(normals[vertexIndex+2], faceNormal);
+        Vec3.copy(normals[vertexIndex+3], faceNormal);
+        Vec3.copy(normals[vertexIndex+4], faceNormal);
+        Vec3.copy(normals[vertexIndex+5], faceNormal);
+        vertexIndex += 6;
       }
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
