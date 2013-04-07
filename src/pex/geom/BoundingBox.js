@@ -19,7 +19,6 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
   BoundingBox.prototype.isEmpty = function() {
     if (!this.min || !this.max) return true;
-    if (this.min[0] == this.max[0] && this.min[1] == this.max[1] && this.min[2] == this.max[2]) return true;
     else return false;
   }
 
