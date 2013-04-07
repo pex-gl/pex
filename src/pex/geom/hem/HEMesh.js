@@ -24,14 +24,16 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       var v = this.vertices[i];
       var duplicate = octree.has(v.position);
       if (!duplicate) {
+        v.position.vertex = v;
         octree.add(v.position);
       }
       else {
         this.vertices.splice(i, 1);
         i--;
+        var duplicateVertex = duplicate.vertex;
         for(var j=0; j<this.edges.length; j++) {
           if (this.edges[j].vert == v) {
-            this.edges[j].vert = duplicate;
+            this.edges[j].vert = duplicateVertex;
           }
         }
       }
