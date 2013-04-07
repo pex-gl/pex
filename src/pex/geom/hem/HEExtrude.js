@@ -11,6 +11,7 @@ define([
   }
 
   HEMesh.prototype.extrude = function(height) {
+    height = height || 0.1;
     var numFaces = this.faces.length;
 
     var self = this;
