@@ -4,14 +4,16 @@ define(
     'pex/utils/Log',
     'pex/utils/Time',
     'pex/utils/ObjectUtils',
-    'pex/utils/MathUtils'
+    'pex/utils/MathUtils',
+    'pex/utils/ArrayUtils'
   ],
-  function(Log, Time, ObjectUtils, MathUtils) {
+  function(Log, Time, ObjectUtils, MathUtils, ArrayUtils) {
     return {
       Log : Log,
       Time : Time,
       ObjectUtils : ObjectUtils,
-      MathUtils : MathUtils
+      MathUtils : MathUtils,
+      ArrayUtils : ArrayUtils
     };
   }
 );
