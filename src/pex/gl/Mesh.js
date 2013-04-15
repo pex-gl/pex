@@ -66,12 +66,6 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
         }
       });
     }
-    else {
-      var positions = geometry.attribs.position.data;
-      for(var i=0; i<positions.length; i++) {
-        data.push(i);
-      }
-    }
     this.indices.data = new Uint16Array(data);
     var oldArrayBinding = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
@@ -147,7 +141,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
       this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
     }
-    else if (this.attributes['position']){
+    else if (this.attributes['position']) {
       var num = this.attributes['position'].dataBuf.length/3;
       this.gl.drawArrays(this.primitiveType, 0, num);
     }
