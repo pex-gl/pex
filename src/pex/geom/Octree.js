@@ -49,9 +49,11 @@ define(['pex/geom/Vec3'], function(Vec3) {
       return null;
     }
     else {
+      var minDistSqrt = this.tree.accuracy * this.tree.accuracy;
       for(var i=0; i<this.points.length; i++) {
         var o = this.points[i];
-        if (p[0] == o[0] && p[1] == o[1] && p[2] == o[2]) {
+        var distSq = Vec3.squaredDistance(p, o);
+        if (distSq <= minDistSqrt) {
           return o;
         }
       }
@@ -82,12 +84,12 @@ define(['pex/geom/Vec3'], function(Vec3) {
   }
 
   Octree.Cell.prototype.contains = function(p) {
-    return p[0] >= this.position[0]
-        && p[1] >= this.position[1]
-        && p[2] >= this.position[2]
-        && p[0] <= this.position[0] + this.size[0]
-        && p[1] <= this.position[1] + this.size[1]
-        && p[2] <= this.position[2] + this.size[2];
+    return p[0] >= this.position[0] - this.tree.accuracy
+        && p[1] >= this.position[1] - this.tree.accuracy
+        && p[2] >= this.position[2] - this.tree.accuracy
+        && p[0] <= this.position[0] + this.size[0] + this.tree.accuracy
+        && p[1] <= this.position[1] + this.size[1] + this.tree.accuracy
+        && p[2] <= this.position[2] + this.size[2] + this.tree.accuracy;
   }
 
   // 1 2 3 4
@@ -126,11 +128,11 @@ define(['pex/geom/Vec3'], function(Vec3) {
       }
     }
     if (!nearest && this.points.length > 0) {
-      var minDistSq = 99999;
+      var minDistSq = this.tree.maxDistance * this.tree.maxDistance;
       for(var i=0; i<this.points.length; i++) {
-        var distSq = Vec3.distanceSquared(this.points[i], p);
-        if (distSq < minDistSq) {
-          if (distSq < 0.0001 && options.notSelf) continue;
+        var distSq = Vec3.squaredDistance(this.points[i], p);
+        if (distSq <= minDistSq) {
+          if (distSq == 0 && options.notSelf) continue;
           minDistSq = distSq;
           nearest = this.points[i];
         }
