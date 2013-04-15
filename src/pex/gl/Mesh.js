@@ -22,6 +22,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.modelWorldMatrix = Mat4.create();
     this.modelViewMatrix = Mat4.create();
     this.rotationMatrix = Mat4.create();
+    this.normalMatrix = Mat4.create();
 
     this.updateIndices(geometry);
   }
@@ -36,6 +37,10 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
 
     Mat4.copy(this.modelViewMatrix, camera.getViewMatrix());
     Mat4.mul(this.modelViewMatrix, this.modelViewMatrix, this.modelWorldMatrix);
+
+    Mat4.copy(this.normalMatrix, this.modelViewMatrix);
+    Mat4.invert(this.normalMatrix, this.normalMatrix);
+    Mat4.transpose(this.normalMatrix, this.normalMatrix);
   }
 
   Mesh.prototype.updateIndices = function(geometry) {
@@ -44,21 +49,29 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       this.indices.buffer = this.gl.createBuffer();
     }
     var data = [];
-    geometry.faces.forEach(function(face) {
-      if (face instanceof Face4) {
-        data.push(face.a);
-        data.push(face.b);
-        data.push(face.d);
-        data.push(face.d);
-        data.push(face.b);
-        data.push(face.c);
+    if (geometry.faces.length > 0) {
+      geometry.faces.forEach(function(face) {
+        if (face instanceof Face4) {
+          data.push(face.a);
+          data.push(face.b);
+          data.push(face.d);
+          data.push(face.d);
+          data.push(face.b);
+          data.push(face.c);
+        }
+        if (face instanceof Face3) {
+          data.push(face.a);
+          data.push(face.b);
+          data.push(face.c);
+        }
+      });
+    }
+    else {
+      var positions = geometry.attribs.position.data;
+      for(var i=0; i<positions.length; i++) {
+        data.push(i);
       }
-      if (face instanceof Face3) {
-        data.push(face.a);
-        data.push(face.b);
-        data.push(face.c);
-      }
-    });
+    }
     this.indices.data = new Uint16Array(data);
     var oldArrayBinding = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
@@ -91,15 +104,18 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       if (programUniforms.projectionMatrix) {
         materialUniforms.projectionMatrix = camera.getProjectionMatrix();
       }
-      //if (programUniforms.viewMatrix)
-      //  materialUniforms.viewMatrix = camera.getViewMatrix();
       if (programUniforms.modelViewMatrix) {
         materialUniforms.modelViewMatrix = this.modelViewMatrix;
       }
-      //if (programUniforms.modelWorldMatrix)
-      //  materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
-      //if (programUniforms.normalMatrix)
-      //  materialUniforms.normalMatrix = this.material.uniforms.modelViewMatrix.dup().invert().transpose();
+      if (programUniforms.viewMatrix) {
+        materialUniforms.viewMatrix = camera.getViewMatrix();
+      }
+      if (programUniforms.modelWorldMatrix) {
+        materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
+      }
+      if (programUniforms.normalMatrix) {
+        materialUniforms.normalMatrix = this.normalMatrix;
+      }
     }
 
     this.material.use();
