@@ -62,22 +62,30 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   }
 
   HEMesh.prototype.fixDuplicatedEdges = function() {
-    console.log('fixDuplicatedEdges', this.edges.length);
-
     var uniques = [];
     for(var i=0; i<this.edges.length; i++) {
       var edge = this.edges[i];
       var hash = this.edgeHash(edge);
-      if (uniques.indexOf(hash) !== -1) {
-        this.edges.splice(i, 1);
-        i--;
-      }
-      else {
+      var duplicateIndex = uniques.indexOf(hash);
+      var duplicate = (duplicateIndex !== -1);
+      if (!duplicate) {
         uniques.push(hash);
       }
+      else {
+        var duplicateEdge = this.edges[duplicateIndex];
+        this.edges.splice(i, 1);
+        i--;
+        this.vertices.forEach(function(v) {
+          if (v.edge == edge) v.edge = duplicateEdge;
+        });
+        this.faces.forEach(function(f) {
+          if (f.edge == edge) {
+            f.edge = duplicateEdge;
+            f.edge.face = f;
+          }
+        });
+      }
     }
-
-    console.log('fixDuplicatedEdges end', this.edges.length);
   }
 
   HEMesh.prototype.fixVertexEdges = function() {
