@@ -24,5 +24,10 @@ define([], function() {
     return newList;
   }
 
+  ArrayUtils.first = function(list, n) {
+    n = n || 1;
+    return list.slice(0, n);
+  }
+
   return ArrayUtils;
 });
