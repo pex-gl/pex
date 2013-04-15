@@ -15,8 +15,13 @@ define([
     var numFaces = this.faces.length;
 
     var self = this;
-    //this.getSelectedFaces().forEach(function(face, i) {
-    this.faces.forEach(function(face, i) {
+    var faces = this.faces;
+    var selectedFaces = this.getSelectedFaces();
+    if (selectedFaces.length > 0) {
+      faces = selectedFaces;
+    }
+
+    faces.forEach(function(face, i) {
       var normal = face.getNormal();
       var edge = face.edge;
       var lastEdge = edge.findPrev();
@@ -48,6 +53,7 @@ define([
         //this might change when we add new face
         var tmp = newEdges[i].next;
         var newFace = self.splitFace(newEdges[i].next, prevCornerEdge);
+        newFace.selected = face.selected;
         prevCornerEdge = tmp;
       }
     });
