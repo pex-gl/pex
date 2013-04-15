@@ -41,6 +41,32 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     return this;
   }
 
+  HEMesh.prototype.edgeHash = function(e) {
+    var i = this.vertices.indexOf(e.vert);
+    var j = this.vertices.indexOf(e.next.vert);
+    var hash = i + "_" + j;
+    return hash;
+  }
+
+  HEMesh.prototype.fixDuplicatedEdges = function() {
+    console.log('fixDuplicatedEdges', this.edges.length);
+
+    var uniques = [];
+    for(var i=0; i<this.edges.length; i++) {
+      var edge = this.edges[i];
+      var hash = this.edgeHash(edge);
+      if (uniques.indexOf(hash) !== -1) {
+        this.edges.splice(i, 1);
+        i--;
+      }
+      else {
+        uniques.push(hash);
+      }
+    }
+
+    console.log('fixDuplicatedEdges end', this.edges.length);
+  }
+
   HEMesh.prototype.fixVertexEdges = function() {
     for(var i in this.edges) {
       var edge = this.edges[i];

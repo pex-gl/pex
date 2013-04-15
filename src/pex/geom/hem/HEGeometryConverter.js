@@ -77,6 +77,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     }
 
     this.fixDuplicatedVertices();
+    this.fixDuplicatedEdges();
     this.fixVertexEdges();
     this.fixEdgePairs();
     this.check();
