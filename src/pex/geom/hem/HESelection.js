@@ -77,6 +77,11 @@ define(['pex/geom/hem/HEMesh', 'pex/utils/ArrayUtils'], function(HEMesh, ArrayUt
     return this;
   };
 
+  HEMesh.prototype.selectFace = function(face) {
+    face.selected = true;
+    return this;
+  }
+
   HEMesh.prototype.expandVerticesSelectionToFaces = function() {
     this.vertices.filter(selected).forEach(function(vertex) {
       vertex.forEachFace(function(face) {
