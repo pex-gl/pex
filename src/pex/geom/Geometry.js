@@ -20,5 +20,22 @@ define(['pex/geom/Vec2Array', 'pex/geom/Vec3Array', 'pex/geom/Vec4Array'], funct
     }
   }
 
+  Geometry.prototype.assureSize = function(numVertices) {
+    for(var attribName in this.attribs) {
+      var attrib = this.attribs[attribName];
+      if (attrib.length < numVertices) {
+        var newSize = Math.floor(numVertices * 2);
+        var newAttribData;
+        if (attrib.type == 'Vec2') { newAttribData = new Vec3Array(newSize); }
+        if (attrib.type == 'Vec3') { newAttribData = new Vec3Array(newSize); }
+        if (attrib.type == 'Vec4') { newAttribData = new Vec3Array(newSize); }
+        newAttribData.buf.set(attrib.data.buf);
+        attrib.length = newSize;
+        attrib.data = newAttribData;
+        attrib.isDirty = true;
+      }
+    }
+  }
+
   return Geometry;
 });
