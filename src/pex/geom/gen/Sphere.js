@@ -59,17 +59,21 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face3', 'pex/geom/Geometry']
         if (segment == nsegments) continue;
         if (side == nsides) continue;
 
-        faces.push(new Face3(
-          (segment  )*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side + 1
-        ));
+        if (segment < nsegments - 1) {
+          faces.push(new Face3(
+            (segment  )*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side + 1
+          ));
+        }
 
-        faces.push(new Face3(
-          (segment  )*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side + 1,
-          (segment  )*(nsides+1) + side + 1
-        ));
+        if (segment > 0) {
+          faces.push(new Face3(
+            (segment  )*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side + 1,
+            (segment  )*(nsides+1) + side + 1
+          ));
+        }
       }
     }
 
