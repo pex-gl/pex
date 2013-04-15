@@ -95,7 +95,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     faces.forEach(function(f) {
       var faceVertexCount = f.getAllVertices().length;
       if (faceVertexCount == 3) numVerties += 3;
-      if (faceVertexCount == 4) numVerties += 6;
+      else if (faceVertexCount == 4) numVerties += 6;
     })
     var geometry = new Geometry({
       position : {
