@@ -84,14 +84,20 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return this;
   };
 
-  HEMesh.prototype.toFlatGeometry = function() {
+  HEMesh.prototype.toFlatGeometry = function(selectedOnly) {
+    selectedOnly = (typeof(selectedOnly) === 'undefined') ? false : selectedOnly;
     var numVerties = 0;
-    this.faces.forEach(function(f) {
+    var faces = this.faces;
+    if (selectedOnly) {
+      faces = this.getSelectedFaces();
+    }
+
+    faces.forEach(function(f) {
       var faceVertexCount = f.getAllVertices().length;
       if (faceVertexCount == 3) numVerties += 3;
       if (faceVertexCount == 4) numVerties += 6;
     })
-    console.log('toFlatGeometry f:', this.faces.length, 'v:', numVerties);
+    console.log('toFlatGeometry f:', faces.length, 'v:', numVerties);
     var geometry = new Geometry({
       position : {
         type: 'Vec3',
@@ -107,8 +113,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     var normals = geometry.attribs.normal.data;
 
     var vertexIndex = 0;
-    for(var i in this.faces) {
-      var face = this.faces[i];
+    for(var i in faces) {
+      var face = faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
