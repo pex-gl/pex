@@ -10,7 +10,7 @@ define([
   function Extrude() {
   }
 
-  HEMesh.prototype.extrude = function(height) {
+  HEMesh.prototype.extrude = function(height, direction) {
     height = height || 0.1;
     var numFaces = this.faces.length;
 
@@ -22,7 +22,7 @@ define([
     }
 
     faces.forEach(function(face, i) {
-      var normal = face.getNormal();
+      var normal = direction || face.getNormal();
       var edge = face.edge;
       var lastEdge = edge.findPrev();
       var edgeToSplit = edge;
