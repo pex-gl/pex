@@ -22,7 +22,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     var positions = geom.attribs.position.data;
 
-
     for(var i=0; i<positions.length; i++) {
       var pos = positions[i];
       this.vertices.push(new HEVertex(pos[0], pos[1], pos[2]));
