@@ -144,6 +144,10 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       else if (this.faces[i] != this.faces[i].edge.face) {
         console.log("Edge doesn't point to it's face at ", i);
       }
+
+      if (this.edges.indexOf(this.faces[i].edge) === -1) {
+        console.log("Invalid face edge at ", i);
+      }
     }
 
     for(var i in this.edges) {
