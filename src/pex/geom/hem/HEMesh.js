@@ -41,6 +41,19 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     return this;
   }
 
+  HEMesh.prototype.faceHash = function(f) {
+    var vertices = f.getAllVertices();
+    var indices = vertices.map(function(v) {
+      return this.vertices.indexOf(v);
+    }.bind(this));
+    indices = indices.sort();
+    var hash = indices.join('_');
+    if (indices[0] == indices[1] || indices[1] == indices[2]) {
+      console.log(hash);
+    }
+    return hash;
+  }
+
   HEMesh.prototype.edgeHash = function(e) {
     var i = this.vertices.indexOf(e.vert);
     var j = this.vertices.indexOf(e.next.vert);
