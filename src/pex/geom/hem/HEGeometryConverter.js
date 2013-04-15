@@ -84,9 +84,9 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return this;
   };
 
-  HEMesh.prototype.toFlatGeometry = function(selectedOnly) {
+  HEMesh.prototype.toFlatGeometry = function(geometry, selectedOnly) {
     selectedOnly = (typeof(selectedOnly) === 'undefined') ? false : selectedOnly;
-    var numVerties = 0;
+    var numVertices = 0;
     var faces = this.faces;
     if (selectedOnly) {
       faces = this.getSelectedFaces();
@@ -94,22 +94,31 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     faces.forEach(function(f) {
       var faceVertexCount = f.getAllVertices().length;
-      if (faceVertexCount == 3) numVerties += 3;
-      else if (faceVertexCount == 4) numVerties += 6;
-    })
-    var geometry = new Geometry({
-      position : {
-        type: 'Vec3',
-        length : numVerties
-      },
-      normal : {
-        type: 'Vec3',
-        length : numVerties
-      }
+      if (faceVertexCount == 3) numVertices += 3;
+      else if (faceVertexCount == 4) numVertices += 6;
     });
+
+    if (geometry) {
+      geometry.assureSize(numVertices);
+    }
+    else {
+      geometry = new Geometry({
+        position : {
+          type: 'Vec3',
+          length : numVertices
+        },
+        normal : {
+          type: 'Vec3',
+          length : numVertices
+        }
+      });
+    }
 
     var positions = geometry.attribs.position.data;
     var normals = geometry.attribs.normal.data;
+
+    geometry.attribs.position.isDirty = true;
+    geometry.attribs.normal.isDirty = true;
 
     var vertexIndex = 0;
     for(var i in faces) {
