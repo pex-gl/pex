@@ -53,7 +53,6 @@ define([
         //this might change when we add new face
         var tmp = newEdges[i].next;
         var newFace = self.splitFace(newEdges[i].next, prevCornerEdge);
-        newFace.selected = face.selected;
         prevCornerEdge = tmp;
       }
     });
