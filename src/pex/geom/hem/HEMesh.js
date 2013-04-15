@@ -68,6 +68,9 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   }
 
   HEMesh.prototype.fixVertexEdges = function() {
+    this.vertices.forEach(function(v) {
+      v.edge = null;
+    });
     for(var i in this.edges) {
       var edge = this.edges[i];
       edge.vert.edge = edge;
