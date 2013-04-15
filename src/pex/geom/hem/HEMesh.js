@@ -142,7 +142,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         console.log("Missing faces edge at ", i);
       }
       else if (this.faces[i] != this.faces[i].edge.face) {
-        console.log("Edge doesn't point to it's face at ", i, this.faces[i].edge.vert.dup());
+        console.log("Edge doesn't point to it's face at ", i);
       }
     }
 
