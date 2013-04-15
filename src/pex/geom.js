@@ -20,7 +20,7 @@ define(
     'pex/geom/Polygon2D',
     'pex/geom/hem',
     'pex/geom/BoundingBox',
-    'pex/geom/Octree',
+    'pex/geom/Octree'
   ],
   function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen,
     Face3, Face4, FacePolygon, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D, Polygon2D, hem, 
