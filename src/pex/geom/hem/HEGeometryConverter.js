@@ -8,9 +8,10 @@ define([
   'pex/geom/hem/HEVertex',
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
-  'pex/geom/Edge'
+  'pex/geom/Edge',
+  'pex/geom/gen/LineBuilder'
 ],
-function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge)  {
+function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder)  {
   function HEGeometryConverter() {
   }
 
@@ -140,6 +141,25 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       }
     }
     return geometry;
+  };
+
+  HEMesh.prototype.toEdgesGeometry = function(offset) {
+    offset = (offset !== undefined) ? offset : 0.1;
+    var lineBuilder = new LineBuilder();
+
+    var a = Vec3.create();
+    var b = Vec3.create();
+    this.edges.forEach(function(e) {
+      var center = e.face.getCenter();
+      Vec3.sub(a, center, e.vert.position);
+      Vec3.sub(b, center, e.next.vert.position);
+      Vec3.scale(a, a, offset);
+      Vec3.scale(b, b, offset);
+      Vec3.add(a, a, e.vert.position);
+      Vec3.add(b, b, e.next.vert.position);
+      lineBuilder.addLine(a, b);
+    });
+    return lineBuilder;
   };
 
   return HEGeometryConverter;
