@@ -97,7 +97,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       if (faceVertexCount == 3) numVerties += 3;
       if (faceVertexCount == 4) numVerties += 6;
     })
-    console.log('toFlatGeometry f:', faces.length, 'v:', numVerties);
     var geometry = new Geometry({
       position : {
         type: 'Vec3',
