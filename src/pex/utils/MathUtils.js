@@ -6,6 +6,21 @@ define(['lib/seedrandom.js', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedran
     Math.seedrandom(s);
   }
 
+  MathUtils.randomFloat = function(min, max) {
+    if (typeof(max) == 'undefined') {
+      min = 1;
+    }
+    if (typeof(max) == 'undefined') {
+      max = min;
+      min = 0;
+    }
+    return min + (max - min) * Math.random();
+  }
+
+  MathUtils.randomInt = function(min, max) {
+    return Math.floor(MathUtils.randomInt(min, max));
+  }
+
   MathUtils.randomVec3 = function(r) {
     r = r || 0.5;
     var x = Math.random() - 0.5;
