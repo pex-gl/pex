@@ -4388,6 +4388,23 @@ define('pex/geom/Geometry',['pex/geom/Vec2Array', 'pex/geom/Vec3Array', 'pex/geo
     }
   }
 
+  Geometry.prototype.assureSize = function(numVertices) {
+    for(var attribName in this.attribs) {
+      var attrib = this.attribs[attribName];
+      if (attrib.length < numVertices) {
+        var newSize = Math.floor(numVertices * 2);
+        var newAttribData;
+        if (attrib.type == 'Vec2') { newAttribData = new Vec3Array(newSize); }
+        if (attrib.type == 'Vec3') { newAttribData = new Vec3Array(newSize); }
+        if (attrib.type == 'Vec4') { newAttribData = new Vec3Array(newSize); }
+        newAttribData.buf.set(attrib.data.buf);
+        attrib.length = newSize;
+        attrib.data = newAttribData;
+        attrib.isDirty = true;
+      }
+    }
+  }
+
   return Geometry;
 });
 define('pex/geom/Face4',[], function() {
@@ -4546,17 +4563,21 @@ define('pex/geom/gen/Sphere',['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face3'
         if (segment == nsegments) continue;
         if (side == nsides) continue;
 
-        faces.push(new Face3(
-          (segment  )*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side + 1
-        ));
+        if (segment < nsegments - 1) {
+          faces.push(new Face3(
+            (segment  )*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side + 1
+          ));
+        }
 
-        faces.push(new Face3(
-          (segment  )*(nsides+1) + side,
-          (segment+1)*(nsides+1) + side + 1,
-          (segment  )*(nsides+1) + side + 1
-        ));
+        if (segment > 0) {
+          faces.push(new Face3(
+            (segment  )*(nsides+1) + side,
+            (segment+1)*(nsides+1) + side + 1,
+            (segment  )*(nsides+1) + side + 1
+          ));
+        }
       }
     }
 
@@ -4567,19 +4588,141 @@ define('pex/geom/gen/Sphere',['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face3'
 
   return Sphere;
 });
+define('pex/geom/gen/LineBuilder',[
+  'pex/geom/Geometry',
+  'pex/geom/Vec3',
+  'pex/geom/Vec3Array',
+  'pex/geom/Vec3',
+  'pex/geom/Vec3Array'],
+  function(Geometry, Vec3, Vec3Array, Vec4, Vec4Array) {
+  function LineBuilder() {
+    this.numVertices = 0;
+    var initialLength = 8;
+    Geometry.call(this, {
+      position : {
+        type : 'Vec3',
+        length : initialLength
+      },
+      color : {
+        type : 'Vec3',
+        length : initialLength
+      }
+    })
+  }
+
+  LineBuilder.prototype = Object.create(Geometry);
+
+  LineBuilder.prototype.addLine = function(a, b, colorA, colorB) {
+    this.assureSize(this.numVertices + 2);
+    colorA = colorA || [1, 1, 1, 1];
+    colorB = colorB || colorA;
+
+    var positions = this.attribs.position.data;
+    var colors = this.attribs.color.data;
+
+    Vec3.copy(positions[this.numVertices + 0], a);
+    Vec3.copy(positions[this.numVertices + 1], b);
+
+    Vec3.copy(colors[this.numVertices + 0], colorA);
+    Vec3.copy(colors[this.numVertices + 1], colorB);
+
+    this.numVertices += 2;
+  }
+
+  LineBuilder.prototype.addCross = function(pos, size, color) {
+    this.assureSize(this.numVertices + 6);
+
+    size = size || 0.1;
+    var halfSize = size / 2;
+
+    color = color || [1, 1, 1, 1];
+
+    var positions = this.attribs.position.data;
+    var colors = this.attribs.color.data;
+
+    Vec3.set(positions[this.numVertices + 0], pos[0] - halfSize, pos[1], pos[2]);
+    Vec3.set(positions[this.numVertices + 1], pos[0] + halfSize, pos[1], pos[2]);
+    Vec3.set(positions[this.numVertices + 2], pos[0], pos[1] - halfSize, pos[2]);
+    Vec3.set(positions[this.numVertices + 3], pos[0], pos[1] + halfSize, pos[2]);
+    Vec3.set(positions[this.numVertices + 4], pos[0], pos[1], pos[2] - halfSize);
+    Vec3.set(positions[this.numVertices + 5], pos[0], pos[1], pos[2] + halfSize);
+
+    Vec4.set(colors[this.numVertices + 0], color[0], color[1], color[2], color[3]);
+    Vec4.set(colors[this.numVertices + 1], color[0], color[1], color[2], color[3]);
+    Vec4.set(colors[this.numVertices + 2], color[0], color[1], color[2], color[3]);
+    Vec4.set(colors[this.numVertices + 3], color[0], color[1], color[2], color[3]);
+    Vec4.set(colors[this.numVertices + 4], color[0], color[1], color[2], color[3]);
+    Vec4.set(colors[this.numVertices + 5], color[0], color[1], color[2], color[3]);
+
+    this.numVertices += 6;
+  }
+
+  LineBuilder.prototype.assureSize = function(neededSize) {
+    var currPositions = this.attribs.position.data;
+    var currColors = this.attribs.color.data;
+
+    if (neededSize < currPositions.length - 1) {
+      return;
+    }
+    else {
+      var newSize = 2 * currPositions.length;
+      var newPositions = new Vec3Array(newSize);
+      newPositions.buf.set(currPositions.buf);
+      this.attribs.position.data = newPositions;
+
+      var newColors = new Vec4Array(newSize);
+      newColors.buf.set(currColors.buf);
+      this.attribs.color.data = newColors;
+
+      console.log('LineBuilder.assureSize: Resizing to ' + newSize);
+    }
+
+  }
+
+  LineBuilder.prototype.start = function() {
+    this.numVertices = 0;
+  }
+
+  LineBuilder.prototype.end = function() {
+    var n = this.attribs.position.data.length;
+
+    for(var i=this.numVertices; i<n; i++) {
+      Vec3.set(this.attribs.position.data[i], 0, 0, 0);
+      Vec4.set(this.attribs.color.data[i], 0, 0, 0);
+    }
+    this.attribs.position.isDirty = true;
+    this.attribs.color.isDirty = true;
+    this.numVertices = 0;
+  }
+
+  return LineBuilder;
+});
 define('pex/geom/gen',
   [
     'pex/geom/gen/Cube',
-    'pex/geom/gen/Sphere'
+    'pex/geom/gen/Sphere',
+    'pex/geom/gen/LineBuilder'
   ],
-  function(Cube, Sphere) {
+  function(Cube, Sphere, LineBuilder) {
     return {
       Cube : Cube,
-      Sphere : Sphere
+      Sphere : Sphere,
+      LineBuilder : LineBuilder
     };
   }
 );
 
+define('pex/geom/FacePolygon',[], function() {
+  function FacePolygon(vertexIndexList) {
+    this.numVertices = vertexIndexList.length;
+    var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    for(var i=0; i<vertexIndexList.length; i++) {
+      this[indices[i]] = vertexIndexList[i];
+    }
+  }
+
+  return FacePolygon;
+});
   define('pex/geom/Line2D',['pex/geom/Vec2'], function(Vec2) {
 
   function Line2D(a, b) {
@@ -4591,50 +4734,1499 @@ define('pex/geom/gen',
     return ((this.b[0] - this.a[0])*(p[1] - this.a[1]) - (this.b[1] - this.a[1])*(p[0] - this.a[0])) <= 0;
   };
 
-  Line2D.prototype.projectPoint = function(p) {
-    //var ab = this.b.subbed(this.a).normalize();
-    //var ap = p.subbed(this.a);
-    //var pOnLine = this.a.added(ab.scale(ab.dot(ap)));
-    //return pOnLine;
+  Line2D.prototype.projectPoint = function(out, p) {
+    var a = this.a;
+    var b = this.b;
+
+    var ab = Vec2.create();
+    var ap = Vec2.create();
+    Vec2.sub(ab, b, a);
+    Vec2.normalize(ab, ab);
+    Vec2.sub(ap, p, a);
+
+    //point on line = a + ab * dot(ab, ap)
+
+    var d = Vec2.dot(ab, ap);
+    Vec2.scale(out, ab, d);
+    Vec2.add(out, out, a);
   };
 
   Line2D.prototype.distanceToPoint = function(p) {
-    //var pOnLine = this.projectPoint(p);
-    //return pOnLine.distance(p);
+    var pOnLine = Vec2.create();
+    this.projectPoint(pOnLine, p);
+    return Vec2.distance(p, pOnLine);
   };
 
-  Line2D.prototype.intersect = function(line) {
-    //var sqrEpsilon = 0.000001;
-    //var P0 = this.a;
-    //var D0 = this.b.subbed(this.a);
-    //var P1 = line.a;
-    //var D1 = line.b.subbed(line.a);
-//
-    //var E = P1.subbed(P0);
-//
-    //var kross = D0.x * D1.y - D0.y * D1.x;
-    //var sqrKross = kross * kross;
-    //var sqrLen0 = D0.x * D0.x + D0.y * D0.y;
-    //var sqrLen1 = D1.x * D1.x + D1.y * D1.y;
-    //if (sqrKross > sqrEpsilon * sqrLen0 * sqrLen1) {
-    //  // lines are not parallel
-    //  var s = (E.x * D1.y - E.y *D1.x) / kross;
-    //  return P0.added(D0.scaled(s));
-    //}
-    //// lines are parallel
-    //var sqrLenE = E.x * E.x + E.y * E.y;
-    //kross = E.x * D0.y - E.y * D0.x;
-    //sqrKross = kross * kross;
-    //if (sqrKross > sqrEpsilon * sqrLen0 * sqrLenE) {
-    //    // lines are different
-    //    return null;
-    //}
-    //return null;
+  Line2D.prototype.intersect = function(out, line) {
+    var sqrEpsilon = 0.000001;
+    var P0 = this.a;
+    var D0 = Vec2.create();
+    Vec2.sub(D0, this.b, this.a);
+    var P1 = line.a;
+    var D1 = Vec2.create();
+    Vec2.sub(D1, line.b, line.a);
+
+    var E = Vec2.create();
+    Vec2.sub(E, P1, P0);
+
+    var kross = D0[0] * D1[1] - D0[1] * D1[0];
+    var sqrKross = kross * kross;
+    var sqrLen0 = D0[0] * D0[0] + D0[1] * D0[1];
+    var sqrLen1 = D1[0] * D1[0] + D1[1] * D1[1];
+    if (sqrKross > sqrEpsilon * sqrLen0 * sqrLen1) {
+      // lines are not parallel
+      var s = (E[0] * D1[1] - E[1] *D1[0]) / kross;
+      var scaled = Vec2.create();
+      Vec2.scale(scaled, D0, s);
+      Vec2.copy(out, P0);
+      Vec2.add(out, out, scaled);
+      return true;
+    }
+    // lines are parallel
+    var sqrLenE = E[0] * E[0] + E[1] * E[1];
+    kross = E[0] * D0[1] - E[1] * D0[0];
+    sqrKross = kross * kross;
+    if (sqrKross > sqrEpsilon * sqrLen0 * sqrLenE) {
+        // lines are different
+        return false;
+    }
+    return false;
   }
 
   return Line2D;
 
 });
+define('pex/geom/Rect',[], function() {
+  function Rect(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+
+  Rect.prototype.set = function(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+
+  Rect.prototype.contains = function(point) {
+    return (point[0] >= this.x && point[0] <= this.x + this.width && point[1] >= this.y && point[1] <= this.y + this.height);
+  }
+
+  return Rect;
+});
+define('pex/geom/Triangle2D',['pex/geom/Line2D'], function(Line2D) {
+  function sign(a, b, c) {
+    return (a[0] - c[0]) * (b[1] - c[1]) - (b[0] - c[0]) * (a[1] - c[1]);
+  }
+
+  function Triangle2D(a, b, c) {
+    this.a = a;
+    this.b = b;
+    this.c = c;
+  }
+
+  //http://stackoverflow.com/a/2049593
+  //doesn't properly handle points on the edge of the triangle
+  Triangle2D.prototype.contains = function(p) {
+    var signAB = sign(this.a, this.b, p) < 0;
+    var signBC = sign(this.b, this.c, p) < 0;
+    var signCA = sign(this.c, this.a, p) < 0;
+
+    return (signAB == signBC) && (signBC == signCA);
+  }
+
+  return Triangle2D;
+});
+
+
+
+define('pex/geom/Polygon2D',['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2D, Vec2) {
+
+  //Based on http://www.mathopenref.com/coordpolygonarea.html
+  //and http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+  //`vertices` - should be counter-clockwise
+  function signedPolygon2DArea(vertices) {
+    var sum = 0;
+    var n = vertices.length;
+
+    for(var i=0; i<n; i++) {
+      var v = vertices[i];
+      var nv = vertices[(i+1) % n];
+      sum += v[0] * nv[0] - v[0] * nv[0];
+    }
+
+    return sum * 0.5;
+  }
+
+  function Polygon2D(vertices) {
+    this.vertices = vertices || [];
+    this.center = Vec2.create();
+  }
+
+  Polygon2D.prototype.getArea = function() {
+    return Math.abs(signedPolygon2DArea(this.vertices));
+  }
+
+  Polygon2D.prototype.isClockwise = function() {
+    return signedPolygon2DArea(this.vertices) > 0;
+  }
+
+  Polygon2D.prototype.flipVertexOrder = function() {
+    this.vertices.reverse();
+  }
+
+  Polygon2D.prototype.getCenter = function() {
+    this.center[0] = 0;
+    this.center[0] = 0;
+    for(var i=0; i<this.vertices.length; i++) {
+      this.center[0] += this.vertices[i][0];
+      this.center[0] += this.vertices[i][0];
+    }
+
+    this.center[0] /= this.vertices.length;
+    this.center[0] /= this.vertices.length;
+
+    return this.center;
+  }
+
+  Polygon2D.prototype.clip = function(clippingPolygon2D) {
+    var clippedVertices = [];
+    var vertices = this.vertices;
+
+    var numClippingEdges = clippingPolygon2D.vertices.length;
+
+    for(var i=0; i<numClippingEdges; i++) {
+      var clippingEdge = new Line2D(clippingPolygon2D.vertices[i], clippingPolygon2D.vertices[(i+1)%numClippingEdges]);
+      for(var j=0; j<vertices.length; j++) {
+        var start = vertices[(j - 1 + vertices.length) % vertices.length];
+        var end = vertices[j];
+        var isStartInside = clippingEdge.isPointOnTheLeftSide(start);
+        var isEndInside = clippingEdge.isPointOnTheLeftSide(end);
+        //console.log(start, end);
+        if (isStartInside && isEndInside) {
+          clippedVertices.push(end);
+          prevStart = end;
+        }
+        else if (isStartInside && !isEndInside) {
+          var intersection = Vec2.create();
+          clippingEdge.intersect(intersection, new Line2D(start, end));
+          clippedVertices.push( intersection );
+        }
+        else if (!isStartInside && !isEndInside) {
+          //do nothing
+          prevStart = null;
+        }
+        else if (!isStartInside && isEndInside) {
+          var intersection = Vec2.create();
+          clippingEdge.intersect(intersection, new Line2D(start, end));
+          clippedVertices.push( intersection );
+          clippedVertices.push( end );
+        }
+      }
+      vertices = clippedVertices;
+      clippedVertices = [];
+    }
+
+    return new Polygon2D(vertices);
+  }
+
+  return Polygon2D;
+});
+define('pex/geom/hem/HEEdge',[], function() {
+  function HEEdge(vert, pair, face, next) {
+    this.vert = vert;
+    this.pair = pair;
+    this.face = face;
+    this.next = next;
+    this.selected = 0;
+  }
+
+  HEEdge.prototype.findPrev = function() {
+    var edge = this;
+    while(edge.next != this) {
+      edge = edge.next;
+    }
+    return edge;
+  }
+  return HEEdge;
+});
+
+define('pex/geom/hem/HEVertex',['pex/geom/Vec3'], function(Vec3) {
+  function HEVertex(x, y, z, edge) {
+    this.position = Vec3.fromValues(x, y, z);
+    this.edge = edge;
+    this.selected = 0;
+  }
+
+  HEVertex.prototype.getNormal = function() {
+    var faces = [];
+
+    var edge = this.edge;
+    do {
+      faces.push(edge.face);
+      edge = edge.pair.next;
+    } while (edge != this.edge);
+
+    var n = Vec3.fromValues(0, 0, 0);
+    for(var i in faces) {
+      Vec3.add(n, n, faces[i].getNormal());
+    }
+    Vec3.normalize(n, n);
+
+    return n;
+  }
+
+  HEVertex.prototype.forEachFace = function(callback) {
+    var faceEdge = this.edge;
+    var face = faceEdge.face;
+    do {
+      callback(face);
+      faceEdge = faceEdge.pair.next;
+      face = faceEdge.face;
+    } while(faceEdge != this.edge);
+  }
+
+  HEVertex.prototype.forEachEdge = function(callback) {
+    var faceEdge = this.edge;
+    do {
+      callback(faceEdge);
+      faceEdge = faceEdge.pair.next;
+    } while(faceEdge != this.edge);
+  }
+
+  HEVertex.prototype.clearCaches = function() {
+    this.edgesCache = null;
+  }
+
+  var edgeVec3 = Vec3.create();
+  HEVertex.prototype.forEachEdgeWithin = function(r, callback) {
+    if (this.edgesCache) {
+      this.edgesCache.forEach(callback);
+      return;
+    }
+
+    var edges = [this.edge];
+    var visited = 0;
+    var r2 = r * r;
+
+    while(visited < edges.length) {
+      var startEdge = edges[visited++];
+      var faceEdge = startEdge;
+      do {
+        Vec3.sub(edgeVec3, this.position, faceEdge.next.vert.position);
+        var dist = Vec3.lengthSquared(edgeVec3);
+        if ((edges.indexOf(faceEdge.next) == -1) && (dist < r2)) {
+          edges.push(faceEdge.next);
+        }
+        faceEdge = faceEdge.pair.next;
+      } while(faceEdge != startEdge);
+    }
+
+    edges.shift(); //remove self
+
+    edges.forEach(callback); //iterate with external function
+
+    this.edgesCache = edges;
+  }
+
+
+  HEVertex.prototype.getNeighbors = function(radius) {
+    var neighbors = [];
+    this.forEachEdge(function(edge) {
+      neighbors.push(edge.next.vert);
+    })
+    return neighbors;
+  }
+
+  return HEVertex;
+});
+
+define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
+  function HEFace(edge) {
+    this.edge = edge;
+    this.selected = 0;
+    this.normal = null;
+  }
+
+  HEFace.prototype.getNormal = function() {
+    if (!this.normal) {
+      this.normal = Vec3.create();
+    }
+    var a = this.edge.vert.position;
+    var b = this.edge.next.vert.position;
+    var c = this.edge.next.next.vert.position;
+    var ab = HEFace.prototype.getNormal.ab = HEFace.prototype.getNormal.ab || Vec3.create();
+    var ac = HEFace.prototype.getNormal.ac = HEFace.prototype.getNormal.ac || Vec3.create();
+
+    Vec3.sub(ab, b, a);
+    Vec3.sub(ac, c, a);
+    Vec3.cross(this.normal, ab, ac);
+    Vec3.normalize(this.normal, this.normal);
+
+    return this.normal;
+  }
+
+  //calculates the centroid of the face
+  HEFace.prototype.getCenter = function() {
+    if (!this.center) {
+      this.center = Vec3.create();
+    }
+    Vec3.set(this.center, 0, 0, 0);
+    var vertexCount = 0;
+    var edge = this.edge;
+    do {
+      Vec3.add(this.center, this.center, edge.vert.position);
+      vertexCount++;
+      edge = edge.next;
+    } while (edge != this.edge);
+
+    Vec3.scale(this.center, this.center, 1/vertexCount);
+    return this.center;
+  }
+
+  HEFace.prototype.getAllVertices = function() {
+    var vertices = [];
+    var edge = this.edge;
+    do {
+      vertices.push(edge.vert);
+      edge = edge.next;
+    } while (edge != this.edge);
+    return vertices;
+  }
+
+  HEFace.prototype.edgePairLoop = function(callback) {
+    var edge = this.edge;
+    do {
+      callback(edge, edge.next);
+      edge = edge.next;
+    } while(edge != this.edge);
+
+  }
+
+  return HEFace;
+});
+
+define('pex/geom/BoundingBox',['pex/geom/Vec3'], function(Vec3) {
+  function BoundingBox(min, max) {
+    this.min = min;
+    this.max = max;
+  }
+
+  BoundingBox.fromPositionSize = function(pos, size) {
+    return new BoundingBox(
+      Vec3.fromValues(pos[0] - size[0]/2, pos[1] - size[1]/2, pos[2] - size[2]/2),
+      Vec3.fromValues(pos[0] + size[0]/2, pos[1] + size[1]/2, pos[2] + size[2]/2)
+    );
+  }
+
+  BoundingBox.fromPoints = function(points) {
+    var bbox = new BoundingBox(Vec3.clone(points[0], Vec3.clone(points[0])));
+    points.forEach(bbox.addPoint.bind(bbox));
+    return bbox;
+  }
+
+  BoundingBox.prototype.isEmpty = function() {
+    if (!this.min || !this.max) return true;
+    else return false;
+  }
+
+  BoundingBox.prototype.addPoint = function(p) {
+    if (this.isEmpty()) {
+      this.min = Vec3.clone(p);
+      this.max = Vec3.clone(p);
+    }
+
+    if (p[0] < this.min[0]) this.min[0] = p[0];
+    if (p[1] < this.min[1]) this.min[1] = p[1];
+    if (p[2] < this.min[2]) this.min[2] = p[2];
+    if (p[0] > this.max[0]) this.max[0] = p[0];
+    if (p[1] > this.max[1]) this.max[1] = p[1];
+    if (p[2] > this.max[2]) this.max[2] = p[2];
+  }
+
+  BoundingBox.prototype.getSize = function(out) {
+    if (!out) {
+      if (!this.size) {
+        this.size = Vec3.create();
+      }
+      out = this.size;
+    }
+
+    if (this.isEmpty()) {
+      Vec3.set(out, 0, 0, 0);
+      return out;
+    }
+
+    Vec3.set(out,
+     (this.max[0] - this.min[0]),
+     (this.max[1] - this.min[1]),
+     (this.max[2] - this.min[2])
+    );
+    return out;
+  }
+
+  BoundingBox.prototype.getCenter = function(out) {
+    if (!out) {
+      if (!this.center) {
+        this.center = Vec3.create();
+      }
+      out = this.center;
+    }
+
+    Vec3.set(out,
+     (this.min[0] + this.max[0])/2,
+     (this.min[1] + this.max[1])/2,
+     (this.min[2] + this.max[2])/2
+    );
+    return out;
+  }
+
+  return BoundingBox;
+});
+define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
+  //position is bottom left corner of the cell
+  function Octree(position, size, accuracy) {
+    this.maxDistance = Math.max(size[0], Math.max(size[1], size[2]));
+    this.accuracy = (typeof(accuracy) !== 'undefined') ? accuracy : this.maxDistance / 1000;
+    this.root = new Octree.Cell(this, position, size, 0);
+  }
+
+  Octree.fromBoundingBox = function(bbox) {
+    return new Octree(Vec3.clone(bbox.min), Vec3.clone(bbox.getSize()));
+  }
+
+  Octree.MaxLevel = 8;
+
+  //p = {x, y, z}
+  Octree.prototype.add = function(p) {
+    this.root.add(p);
+  }
+
+  //check if the point was already added to the octreee
+  Octree.prototype.has = function(p) {
+    return this.root.has(p);
+  }
+
+  Octree.prototype.findNearestPoint = function(p, options) {
+    options = options || {};
+    return this.root.findNearestPoint(p, options);
+  }
+
+  Octree.Cell = function(tree, position, size, level) {
+    this.tree = tree;
+    this.position = position;
+    this.size = size;
+    this.level = level;
+    this.points = [];
+    this.children = [];
+  }
+
+  Octree.Cell.prototype.has = function(p) {
+    if (!this.contains(p)) return null;
+
+    if (this.children.length > 0) {
+      for(var i=0; i<this.children.length; i++) {
+        var duplicate = this.children[i].has(p);
+        if (duplicate) {
+          return duplicate;
+        }
+      }
+      return null;
+    }
+    else {
+      var minDistSqrt = this.tree.accuracy * this.tree.accuracy;
+      for(var i=0; i<this.points.length; i++) {
+        var o = this.points[i];
+        var distSq = Vec3.squaredDistance(p, o);
+        if (distSq <= minDistSqrt) {
+          return o;
+        }
+      }
+      return null;
+    }
+  }
+
+  Octree.Cell.prototype.add = function(p) {
+    this.points.push(p);
+
+    if (this.children.length > 0) {
+      this.addToChildren(p);
+    }
+    else {
+      if (this.points.length > 1 && this.level < Octree.MaxLevel) {
+        this.split();
+      }
+    }
+  }
+
+  Octree.Cell.prototype.addToChildren = function(p) {
+    for(var i=0; i<this.children.length; i++) {
+      if (this.children[i].contains(p)) {
+        this.children[i].add(p);
+        break;
+      }
+    }
+  }
+
+  Octree.Cell.prototype.contains = function(p) {
+    return p[0] >= this.position[0] - this.tree.accuracy
+        && p[1] >= this.position[1] - this.tree.accuracy
+        && p[2] >= this.position[2] - this.tree.accuracy
+        && p[0] <= this.position[0] + this.size[0] + this.tree.accuracy
+        && p[1] <= this.position[1] + this.size[1] + this.tree.accuracy
+        && p[2] <= this.position[2] + this.size[2] + this.tree.accuracy;
+  }
+
+  // 1 2 3 4
+  // 5 6 7 8
+  Octree.Cell.prototype.split = function() {
+    var x = this.position[0];
+    var y = this.position[1];
+    var z = this.position[2];
+    var w2 = this.size[0]/2;
+    var h2 = this.size[1]/2;
+    var d2 = this.size[2]/2;
+
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+
+    for(var i=0; i<this.points.length; i++) {
+      this.addToChildren(this.points[i]);
+    }
+  }
+
+  Octree.Cell.prototype.findNearestPoint = function(p, options) {
+    var nearest = null;
+    if (this.children.length > 0) {
+      for(var i=0; i<this.children.length; i++) {
+        var child = this.children[i];
+        if (child.points.length > 0 && child.contains(p)) {
+          nearest = child.findNearestPoint(p, options);
+          if (nearest) break;
+        }
+      }
+    }
+    if (!nearest && this.points.length > 0) {
+      var minDistSq = this.tree.maxDistance * this.tree.maxDistance;
+      for(var i=0; i<this.points.length; i++) {
+        var distSq = Vec3.squaredDistance(this.points[i], p);
+        if (distSq <= minDistSq) {
+          if (distSq == 0 && options.notSelf) continue;
+          minDistSq = distSq;
+          nearest = this.points[i];
+        }
+      }
+    }
+    return nearest;
+  }
+
+  return Octree;
+});
+//Half-Edge mesh data structure
+//Based on http://www.flipcode.com/archives/The_Half-Edge_Data_Structure.shtml
+//and http://fgiesen.wordpress.com/2012/03/24/half-edge-based-mesh-representations-practice/
+define('pex/geom/hem/HEMesh',[
+  'pex/geom/Vec3',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEFace',
+  'pex/geom/BoundingBox',
+  'pex/geom/Octree'
+],
+function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
+  function HEMesh() {
+    this.vertices = new Array();
+    this.faces = new Array();
+    this.edges = new Array();
+  }
+
+  HEMesh.prototype.fixDuplicatedVertices = function() {
+    var bbox = BoundingBox.fromPoints(this.vertices.map(function(v) { return v.position; }));
+    var octree = Octree.fromBoundingBox(bbox);
+    var dup = 0;
+    for(var i=0; i<this.vertices.length; i++) {
+      var v = this.vertices[i];
+      var duplicate = octree.has(v.position);
+      if (!duplicate) {
+        v.position.vertex = v;
+        octree.add(v.position);
+      }
+      else {
+        this.vertices.splice(i, 1);
+        i--;
+        var duplicateVertex = duplicate.vertex;
+        for(var j=0; j<this.edges.length; j++) {
+          if (this.edges[j].vert == v) {
+            this.edges[j].vert = duplicateVertex;
+          }
+        }
+      }
+    }
+    return this;
+  }
+
+  HEMesh.prototype.faceHash = function(f) {
+    var vertices = f.getAllVertices();
+    var indices = vertices.map(function(v) {
+      return this.vertices.indexOf(v);
+    }.bind(this));
+    indices = indices.sort();
+    var hash = indices.join('_');
+    if (indices[0] == indices[1] || indices[1] == indices[2]) {
+      console.log(hash);
+    }
+    return hash;
+  }
+
+  HEMesh.prototype.edgeHash = function(e) {
+    var i = this.vertices.indexOf(e.vert);
+    var j = this.vertices.indexOf(e.next.vert);
+    var hash = i + "_" + j;
+    return hash;
+  }
+
+  HEMesh.prototype.fixDuplicatedEdges = function() {
+    var uniques = [];
+    for(var i=0; i<this.edges.length; i++) {
+      var edge = this.edges[i];
+      var hash = this.edgeHash(edge);
+      var duplicateIndex = uniques.indexOf(hash);
+      var duplicate = (duplicateIndex !== -1);
+      if (!duplicate) {
+        uniques.push(hash);
+      }
+      else {
+        var duplicateEdge = this.edges[duplicateIndex];
+        this.edges.splice(i, 1);
+        i--;
+        this.vertices.forEach(function(v) {
+          if (v.edge == edge) v.edge = duplicateEdge;
+        });
+        this.faces.forEach(function(f) {
+          if (f.edge == edge) {
+            f.edge = duplicateEdge;
+            f.edge.face = f;
+          }
+        });
+      }
+    }
+  }
+
+  HEMesh.prototype.fixVertexEdges = function() {
+    this.vertices.forEach(function(v) {
+      v.edge = null;
+    });
+    for(var i in this.edges) {
+      var edge = this.edges[i];
+      edge.vert.edge = edge;
+    }
+    return this;
+  }
+
+  var pairs = 0;
+  HEMesh.prototype.fixEdgePairs = function() {
+    for(var i=0; i<this.edges.length; i++) {
+      this.edges[i].pair = null;
+    }
+    var numPairs = 0;
+    var hash = {};
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertices[i].index = i;
+    }
+    for(var i=0; i<this.edges.length; i++) {
+      var edge = this.edges[i];
+      var edgeHash = edge.vert.index + "," + edge.next.vert.index;
+      var pairEdgeHash = edge.next.vert.index + "," + edge.vert.index;
+      hash[edgeHash] = edge;
+      if (hash[pairEdgeHash]) {
+        edge.pair = hash[pairEdgeHash];
+        edge.pair.pair = edge;
+      }
+    }
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertices[i].index = -1;
+    }
+    return this;
+  }
+
+  // HEMesh.prototype.getEdgeBetween = function(a, b) {
+  //       for(var i in this.edges) {
+  //         var edge = this.edges[i];
+  //         if (edge.vert == a && edge.next.vert == b) {
+  //           return edge;
+  //         }
+  //       }
+  //       return null;
+  //   }
+
+  HEMesh.prototype.check = function() {
+    for(var i in this.vertices) {
+      if (this.vertices[i].edge == null) {
+        console.log("Missing vertex edge at ", i);
+      }
+      else if (this.vertices[i] != this.vertices[i].edge.vert) {
+        console.log("Edge doesn't point to it's vertex at ", i);
+      }
+    }
+
+    for(var i in this.faces) {
+      if (this.faces[i].edge == null) {
+        console.log("Missing faces edge at ", i);
+      }
+      else if (this.faces[i] != this.faces[i].edge.face) {
+        console.log("Edge doesn't point to it's face at ", i);
+      }
+
+      if (this.edges.indexOf(this.faces[i].edge) === -1) {
+        console.log("Invalid face edge at ", i);
+      }
+    }
+
+    for(var i in this.edges) {
+      var edge = this.edges[i];
+      var e = edge;
+      var watchDog = 0;
+
+      if (edge.pair == null) {
+        console.log("Edge doesn't have it's pair", i);
+      }
+      else if (edge.pair.pair != edge) {
+        console.log("Edge pair doesn't match", i, this.edges.indexOf(edge), this.edges.indexOf(edge.pair), this.edges.indexOf(edge.pair.pair));
+      }
+
+      do {
+        if (++watchDog > 100) {
+          console.log("Edge watchDog break at", i, " . Wrong edge loop pointers?");
+          break;
+        }
+        if (watchDog > 6) {
+          console.log("Warning! Face with " + watchDog + " vertices");
+        }
+        if (e.next == null) {
+          console.log("Missing edge next at ", i, ". Open loop.");
+          break;
+        }
+        e = e.next;
+      } while(e != edge)
+    }
+
+    return this;
+  };
+
+  HEMesh.prototype.splitVertex = function(vertex, newVertexPos, startEdge, endEdge) {
+    var newVertex = new HEVertex(newVertexPos[0], newVertexPos[1], newVertexPos[2]);
+    this.vertices.push(newVertex);
+    if (startEdge != null && startEdge == endEdge) {
+      //edge
+      var e = startEdge;
+      var e2 = new HEEdge();
+      e2.vert = newVertex;
+      e2.next = e.next;
+      e.next = e2;
+      e2.face = e.face;
+      this.edges.push(e2);
+      newVertex.edge = e2;
+
+      //opposite edge
+      var o = startEdge.pair;
+      var o2 = new HEEdge();
+      o2.vert = newVertex;
+      o2.next = o.next;
+      o.next = o2;
+      o2.face = o.face;
+      this.edges.push(o2);
+
+      o2.pair = e;
+      e.pair = o2;
+
+      e2.pair = o;
+      o.pair = e2;
+
+      return e2;
+    }
+    else if (startEdge == null && endEdge == null) {
+      var newEdge1 = new HEEdge();
+      var newEdge2 = new HEEdge();
+
+      var edge = vertex.edge;
+      var prevEdge = edge.findPrev();
+
+      newEdge1.vert = vertex;
+      newEdge2.vert = newVertex;
+      newEdge1.face = edge.face;
+      newEdge2.face = edge.face;
+
+      newEdge1.next = newEdge2;
+      newEdge2.next = edge;
+
+      newEdge1.pair = newEdge2;
+      newEdge2.pair = newEdge1;
+
+      vertex.edge = newEdge1;
+      prevEdge.next = newEdge1;
+
+      newVertex.edge = newEdge2;
+
+      this.edges.push(newEdge1);
+      this.edges.push(newEdge2);
+
+      return newEdge1;
+    }
+  };
+
+  HEMesh.prototype.splitFace = function(vert1Edge, vert2Edge) {
+    var vert1EdgeNext = vert1Edge.next;
+    var vert2EdgeNext = vert2Edge.next;
+    var vert1EdgePrev = vert1Edge.findPrev();
+    var vert2EdgePrev = vert2Edge.findPrev();
+    var oldFace = vert1Edge.face;
+
+    var splitEdge1 = new HEEdge();
+    var splitEdge2 = new HEEdge();
+    this.edges.push(splitEdge1);
+    this.edges.push(splitEdge2);
+
+    splitEdge1.pair = splitEdge2;
+    splitEdge2.pair = splitEdge1;
+
+    splitEdge1.vert = vert2Edge.vert;
+    splitEdge2.vert = vert1Edge.vert;
+
+    splitEdge1.next = vert1Edge;
+    vert2EdgePrev.next = splitEdge1;
+
+    splitEdge2.next = vert2Edge;
+    vert1EdgePrev.next = splitEdge2;
+
+    splitEdge1.face = vert1Edge.face;
+
+    var newFace = new HEFace(splitEdge2);
+    this.faces.push(newFace);
+
+    var tmpEdge = splitEdge2;
+    do {
+      tmpEdge.face = newFace;
+      tmpEdge = tmpEdge.next;
+    } while(tmpEdge != splitEdge2);
+
+    //just ot make sure we don't point to one of the splitten vertices
+    oldFace.edge = vert1Edge;
+
+    if (oldFace.color) newFace.color = oldFace.color;
+
+    return newFace;
+  };
+
+  HEMesh.prototype.splitEdge = function(edge, ratio) {
+    ratio = ratio || 0.5;
+
+    //newVertPos = v + ratio * (nv - v)
+    //newVertPos = add3(v, scale3(ratio, sub3(nv, v)))
+    //newVertPos = nv.clone().sub(v).scale(ratio).add(v);
+    var newVertPos = Vec3.clone(edge.next.vert.position);
+    Vec3.sub(newVertPos, newVertPos, edge.vert.position);
+    Vec3.scale(newVertPos, newVertPos, ratio);
+    Vec3.add(newVertPos, newVertPos, edge.vert.position);
+
+    this.splitVertex(edge.vert, newVertPos, edge, edge);
+  };
+
+  HEMesh.prototype.splitFaceAtPoint = function(face, newPoint) {
+    var vert = face.edge.vert;
+    var edge = face.edge;
+    vert.edge = edge; //to make sure we split the right face
+    var newEdge = this.splitVertex(vert, newPoint); //new edges will be added before 'edge'
+    var from = newEdge.next;
+    var to = from.next.next; //next corner afther the old first
+    //split the face from the new vertex to the next corner
+    //and move one corner further
+    var i = 0;
+    do {
+      this.splitFace(from, to);
+      from = to.findPrev();
+      to = from.next.next;
+    } while (to != newEdge);
+
+    return newEdge.next;
+  };
+
+  return HEMesh;
+});
+
+define('pex/utils/ArrayUtils',[], function() {
+  function ArrayUtils() {
+  }
+
+  ArrayUtils.range = function(start, end) {
+    var result = [];
+    for(var i=start; i<end; i++) {
+      result.push(i);
+    }
+    return result;
+  }
+
+  ArrayUtils.shuffled = function(list) {
+    var newList = ArrayUtils.range(0, list.length);
+    for(var i=0; i<newList.length; i++) {
+      var j = Math.floor(Math.random() * newList.length);
+      var tmp = newList[i];
+      newList[i] = newList[j];
+      newList[j] = tmp;
+    }
+    for(var i=0; i<newList.length; i++) {
+      newList[i] = list[newList[i]];
+    }
+    return newList;
+  }
+
+  ArrayUtils.first = function(list, n) {
+    n = n || 1;
+    return list.slice(0, n);
+  }
+
+  return ArrayUtils;
+});
+
+define('pex/geom/hem/HESelection',['pex/geom/hem/HEMesh', 'pex/utils/ArrayUtils'], function(HEMesh, ArrayUtils) {
+
+  function selected(o) { return o.selected; }
+
+  function HESelection() {
+  }
+
+  HEMesh.prototype.clearVerticesSelection = function() {
+    for(var i=0; i<this.vertices.length; i++) {
+      this.vertices[i].selected = false;
+    }
+    return this;
+  };
+
+  HEMesh.prototype.clearEdgeSelection = function() {
+    for(var i=0; i<this.edges.length; i++) {
+      this.edges[i].selected = false;
+    }
+    return this;
+  };
+
+  HEMesh.prototype.clearFaceSelection = function() {
+    for(var i=0; i<this.faces.length; i++) {
+      this.faces[i].selected = false;
+    }
+    return this;
+  };
+
+  HEMesh.prototype.clearSelection = function() {
+    this.clearVerticesSelection();
+    this.clearEdgeSelection();
+    this.clearFaceSelection();
+    return this;
+  };
+
+  //repeat until number is satified or there is no vertices left...
+  HEMesh.prototype.selectRandomVertices = function(count) {
+    count = (count === undefined) ? this.vertices.length/2 : count;
+    count = Math.min(count, this.vertices.length);
+    if (count <= 1) count = Math.floor(count * this.vertices.length);
+
+    var vertices = this.vertices;
+    this.clearSelection();
+
+    function selectVertex(i) { vertices[i].selected = true; }
+
+    var indexList = ArrayUtils.range(0, this.vertices.length);
+    indexList = ArrayUtils.shuffled(indexList);
+    indexList = ArrayUtils.first(indexList, count);
+    indexList.forEach(selectVertex);
+
+    return this;
+  };
+
+  //repeat until number is satified or there is no vertices left...
+  HEMesh.prototype.selectRandomFaces = function(count) {
+    count = (count === undefined) ? this.faces.length/2 : count;
+    count = Math.min(count, this.faces.length);
+    if (count < 1) count = Math.floor(count * this.faces.length);
+
+    var faces = this.faces;
+    this.clearSelection();
+
+    function selectFace(i) { faces[i].selected = true; }
+
+    var indexList = ArrayUtils.range(0, this.faces.length);
+    indexList = ArrayUtils.shuffled(indexList);
+    indexList = ArrayUtils.first(indexList, count);
+    indexList.forEach(selectFace);
+
+    return this;
+  };
+
+  HEMesh.prototype.selectAllFaces = function() {
+    function selectFace(f) { f.selected = true; }
+    this.faces.forEach(selectFace);
+    return this;
+  };
+
+  HEMesh.prototype.selectFace = function(face) {
+    face.selected = true;
+    return this;
+  }
+
+  HEMesh.prototype.expandVerticesSelectionToFaces = function() {
+    this.vertices.filter(selected).forEach(function(vertex) {
+      vertex.forEachFace(function(face) {
+        face.selected = true;
+      });
+    });
+    return this;
+  };
+
+  HEMesh.prototype.expandFaceSelection = function() {
+    var neighborsToSelect = [];
+    this.getSelectedFaces().forEach(function(face) {
+      face.getNeighborFaces().forEach(function(neighborFace) {
+        if (neighborsToSelect.indexOf(neighborFace) == -1) neighborsToSelect.push(neighborFace);
+      });
+    });
+    function selectFace(face) { face.selected = true; }
+    neighborsToSelect.forEach(selectFace);
+    return this;
+  };
+
+  HEMesh.prototype.getSelectedVertices = function() {
+    return this.vertices.filter(selected);
+  };
+
+  HEMesh.prototype.getSelectedFaces = function() {
+    return this.faces.filter(selected);
+  };
+
+  HEMesh.prototype.hasSelection = function() {
+    var selectedVertexCount = this.vertices.filter(selected).length;
+    var selectedEdgesCount = this.edges.filter(selected).length;
+    var selectedFacesCount = this.faces.filter(selected).length;
+
+    return selectedVertexCount + selectedEdgesCount + selectedFacesCount > 0;
+  };
+
+  return HESelection;
+});
+
+define('pex/geom/hem/HEMarking',['pex/geom/hem/HEMesh'], function(HEMesh) {
+  function HEMarking() {
+  }
+
+  function removeMark(o) { o.marked = false; }
+
+  HEMesh.prototype.clearMarking = function() {
+    this.vertices.forEach(removeMark);
+    this.edges.forEach(removeMark);
+    this.faces.forEach(removeMark);
+    return this;
+  };
+
+  return HEMarking;
+});
+define('pex/geom/Edge',[], function() {
+  function Edge(a, b) {
+    this.a = a;
+    this.b = b;
+  }
+
+  return Edge;
+});
+define('pex/geom/hem/HEGeometryConverter',[
+  'pex/geom/Vec3',
+  'pex/geom/Face3',
+  'pex/geom/Face4',
+  'pex/geom/FacePolygon',
+  'pex/geom/Geometry',
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Edge',
+  'pex/geom/gen/LineBuilder'
+],
+function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder)  {
+  function HEGeometryConverter() {
+  }
+
+  HEMesh.prototype.fromGeometry = function(geom) {
+    this.vertices.length = 0;
+    this.faces.length = 0;
+    this.edges.length = 0;
+
+    var positions = geom.attribs.position.data;
+
+    for(var i=0; i<positions.length; i++) {
+      var pos = positions[i];
+      this.vertices.push(new HEVertex(pos[0], pos[1], pos[2]));
+    }
+
+    var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    var newEdges = [null, null, null, null, null];
+    var numEdges = 3;
+    if (geom.faces && geom.faces.length > 0) {
+      for(var i=0; i<geom.faces.length; i++) {
+        var f = geom.faces[i];
+        var newFace = new HEFace();
+        this.faces.push(newFace);
+
+        if (f instanceof Face4) {
+          numEdges = 4;
+        }
+        if (f instanceof FacePolygon) {
+          numEdges = f.numVertices;
+        }
+
+        for(var j=0; j<numEdges; j++) {
+          newEdges[j] = new HEEdge();
+          this.edges.push(newEdges[j]);
+          var vertexIndex = f[indices[j]];
+          newEdges[j].vert = this.vertices[vertexIndex];
+          newEdges[j].face = newFace;
+        }
+        for(var k=0; k<numEdges; k++) {
+          newEdges[k].next = newEdges[(k+1) % numEdges];
+        }
+
+        newFace.edge = newEdges[0];
+      }
+    }
+    else {
+      for(var i=0; i<geom.vertices.length; i+=3) {
+        var newFace = new HEFace();
+        this.faces.push(newFace);
+        var numEdges = 3;
+        for(var j=0; j<numEdges; j++) {
+          newEdges[j] = new HEEdge();
+          this.edges.push(newEdges[j]);
+          var vertexIndex = i + j;
+          newEdges[j].vert = this.vertices[vertexIndex];
+          newEdges[j].face = newFace;
+        }
+        for(var k=0; k<numEdges; k++) {
+          newEdges[k].next = newEdges[(k+1) % numEdges];
+        }
+        newFace.edge = newEdges[0];
+      }
+    }
+
+    this.fixDuplicatedVertices();
+    this.fixDuplicatedEdges();
+    this.fixVertexEdges();
+    this.fixEdgePairs();
+    this.check();
+    return this;
+  };
+
+  HEMesh.prototype.toFlatGeometry = function(geometry, selectedOnly) {
+    selectedOnly = (typeof(selectedOnly) === 'undefined') ? false : selectedOnly;
+    var numVertices = 0;
+    var faces = this.faces;
+    if (selectedOnly) {
+      faces = this.getSelectedFaces();
+    }
+
+    faces.forEach(function(f) {
+      var faceVertexCount = f.getAllVertices().length;
+      if (faceVertexCount == 3) numVertices += 3;
+      else if (faceVertexCount == 4) numVertices += 6;
+    });
+
+    if (geometry) {
+      geometry.assureSize(numVertices);
+    }
+    else {
+      geometry = new Geometry({
+        position : {
+          type: 'Vec3',
+          length : numVertices
+        },
+        normal : {
+          type: 'Vec3',
+          length : numVertices
+        }
+      });
+    }
+
+    var positions = geometry.attribs.position.data;
+    var normals = geometry.attribs.normal.data;
+
+    geometry.attribs.position.isDirty = true;
+    geometry.attribs.normal.isDirty = true;
+
+    var vertexIndex = 0;
+    for(var i in faces) {
+      var face = faces[i];
+      var faceVertices = face.getAllVertices();
+      var faceNormal = face.getNormal();
+      if (faceVertices.length == 3) {
+        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
+        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+2], faceVertices[2].position);
+        Vec3.copy(normals[vertexIndex+0], faceNormal/*faceVertices[0].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+1], faceNormal/*faceVertices[1].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+2], faceNormal/*faceVertices[2].getNormal()*/);
+        vertexIndex += 3;
+      }
+      else if (faceVertices.length == 4) {
+        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
+        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+2], faceVertices[3].position);
+        Vec3.copy(positions[vertexIndex+3], faceVertices[3].position);
+        Vec3.copy(positions[vertexIndex+4], faceVertices[1].position);
+        Vec3.copy(positions[vertexIndex+5], faceVertices[2].position);
+        Vec3.copy(normals[vertexIndex+0], faceNormal/*faceVertices[0].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+1], faceNormal/*faceVertices[1].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+2], faceNormal/*faceVertices[3].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+3], faceNormal/*faceVertices[3].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+4], faceNormal/*faceVertices[1].getNormal()*/);
+        Vec3.copy(normals[vertexIndex+5], faceNormal/*faceVertices[2].getNormal()*/);
+        vertexIndex += 6;
+      }
+      else {
+        console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+        //throw("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+      }
+    }
+    return geometry;
+  };
+
+  HEMesh.prototype.toEdgesGeometry = function(offset) {
+    offset = (offset !== undefined) ? offset : 0.1;
+    var lineBuilder = new LineBuilder();
+
+    var a = Vec3.create();
+    var b = Vec3.create();
+    this.edges.forEach(function(e) {
+      var center = e.face.getCenter();
+      Vec3.sub(a, center, e.vert.position);
+      Vec3.sub(b, center, e.next.vert.position);
+      Vec3.scale(a, a, offset);
+      Vec3.scale(b, b, offset);
+      Vec3.add(a, a, e.vert.position);
+      Vec3.add(b, b, e.next.vert.position);
+      lineBuilder.addLine(a, b);
+    });
+    return lineBuilder;
+  };
+
+  return HEGeometryConverter;
+});
+
+define('pex/geom/hem/HEExtrude',[
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Vec3'
+  ],
+  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
+
+  function Extrude() {
+  }
+
+  HEMesh.prototype.extrude = function(height, direction) {
+    height = height || 0.1;
+    var numFaces = this.faces.length;
+
+    var self = this;
+    var faces = this.faces;
+    var selectedFaces = this.getSelectedFaces();
+    if (selectedFaces.length > 0) {
+      faces = selectedFaces;
+    }
+
+    faces.forEach(function(face, i) {
+      var normal = direction || face.getNormal();
+      var edge = face.edge;
+      var lastEdge = edge.findPrev();
+      var edgeToSplit = edge;
+      var prevNewEdge = null;
+      var center = face.getCenter();
+      var newEdges = [];
+
+      //we split all the corners within the face effectively adding new internal vertices
+      do {
+        //var newVertexPos = edgeToSplit.vert.added(normal.scaled(height));
+        var newVertexPos = Vec3.clone(normal);
+        Vec3.scale(newVertexPos, newVertexPos, height);
+        Vec3.add(newVertexPos, newVertexPos, edgeToSplit.vert.position);
+
+        edgeToSplit.vert.edge = edgeToSplit; //TODO: fix that, making sure we split the right face
+        var newEdge = self.splitVertex(edgeToSplit.vert, newVertexPos);
+        newEdges.push(newEdge);
+        if (edgeToSplit == lastEdge) {
+          break;
+        }
+        edgeToSplit = edgeToSplit.next;
+      } while(edgeToSplit != edge);
+
+      //go through all new corners and cut out faces from them
+      var prevCornerEdge = newEdges[newEdges.length-1].next;
+      for(var i=0; i<newEdges.length; i++) {
+        //we remember what's the next edge pointing to a new corner as
+        //this might change when we add new face
+        var tmp = newEdges[i].next;
+        var newFace = self.splitFace(newEdges[i].next, prevCornerEdge);
+        prevCornerEdge = tmp;
+      }
+    });
+
+    return this;
+  }
+
+  return Extrude;
+});
+
+//Catmull-Clark subdivision for half-edge meshes
+//Based on http://en.wikipedia.org/wiki/Catmull–Clark_subdivision_surface
+//Modified to follow Doo-Sabin scheme for new vertices 1/n*F + 1/n*R + (n-2)/n*v
+//http://www.cse.ohio-state.edu/~tamaldey/course/784/note20.pdf
+define('pex/geom/hem/HECatmullClark',[
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Vec3'
+  ],
+  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
+
+  function CatmullClark() {
+  }
+
+  HEMesh.prototype.catmullClark = function() {
+    this.clearMarking();
+
+    //keep these numbers to iterate only over original faces/edges/vertices
+    var numFaces = this.faces.length;
+    var numEdges = this.edges.length;
+    var numVertices = this.vertices.length;
+    var i;
+
+    //For each face, add a face point - the centroid of all original
+    //points for the respective face
+    for(i=0; i<numFaces; i++) {
+      this.faces[i].facePoint = this.faces[i].getCenter();
+    }
+
+    //For each edge, add an edge point - the average of
+    //the two neighbouring face points and its two original endpoints.
+    for(i=0; i<numEdges; i++) {
+      var edge = this.edges[i];
+      if (edge.edgePoint != null) continue;
+      var edgePoint = Vec3.create();
+      Vec3.add(edgePoint, edgePoint, edge.vert.position);
+      Vec3.add(edgePoint, edgePoint, edge.next.vert.position);
+      Vec3.add(edgePoint, edgePoint, edge.face.facePoint);
+      Vec3.add(edgePoint, edgePoint, edge.pair.face.facePoint);
+      Vec3.scale(edgePoint, edgePoint, 1/4);
+
+      edge.edgePoint = edgePoint;
+      edge.pair.edgePoint = edge.edgePoint;
+    }
+
+    for(i=0; i<numVertices; i++) {
+      var vertex = this.vertices[i];
+      var faceEdge = vertex.edge;
+      var face = faceEdge.face;
+      var F = Vec3.create(); //average facePoint of neighbor faces
+      var R = Vec3.create(); //average edgePoint of neighbor edges
+      var n = 0; //num faces/edges
+      do {
+        Vec3.add(F, F, face.facePoint);
+        Vec3.add(R, R, faceEdge.edgePoint);
+        ++n
+        faceEdge = faceEdge.pair.next;
+        face = faceEdge.face;
+      } while(faceEdge != vertex.edge);
+      Vec3.scale(F, F, 1/n);
+      Vec3.scale(R, R, 1/n);
+
+      var newVert = Vec3.create();
+      Vec3.add(newVert, F, R);
+      var scaledVertex = Vec3.clone(vertex.position);
+      Vec3.scale(scaledVertex, scaledVertex, n - 2);
+      Vec3.add(newVert, newVert, scaledVertex);
+      Vec3.scale(newVert, newVert, 1/n);
+
+      //we can't simply duplicate vertex and make operations on it
+      //as dup() returns Vec3 not HEVertex
+      Vec3.copy(vertex.position, newVert);
+    }
+
+    var numEdges = this.edges.length;
+    for(i=0; i<numEdges; i++) {
+      var edge = this.edges[i];
+      if (edge.marked) continue;
+      edge.marked = true;
+      edge.pair.marked = true;
+      var edgePoint = edge.edgePoint;
+      delete edge.edgePoint;
+      delete edge.pair.edgePoint;
+      var newEdge = this.splitVertex(edge.vert, edgePoint, edge, edge);
+      edge.edgePointVertex = newEdge.next.vert;
+    }
+
+    //var selectedOnly = this.hasSelection();
+
+    var numFaces = this.faces.length;
+    for(i=0; i<numFaces; i++) {
+      var face = this.faces[i];
+
+      //if (selectedOnly && !face.selected) continue;
+
+      var vert = face.edge.next.vert;
+      var edge = face.edge.next;
+      vert.edge = edge; //to make sure we split the right face
+      var newEdge = this.splitVertex(vert, face.facePoint);
+
+      var nextEdge = newEdge.next.next.next.next;
+      do {
+        var newFace = this.splitFace(newEdge.next, nextEdge);
+        //if (selectedOnly && face.selected) newFace.selected = true;
+        nextEdge = nextEdge.next.next;
+      } while (nextEdge != newEdge && nextEdge.next != newEdge);
+
+      delete face.faceVertex;
+    }
+
+    this.clearMarking();
+
+    return this;
+  }
+
+  HEMesh.prototype.subdivide = HEMesh.prototype.catmullClark;
+
+  return CatmullClark;
+});
+
+define('pex/geom/hem',
+  [
+    'pex/geom/hem/HEMesh',
+    'pex/geom/hem/HESelection',
+    'pex/geom/hem/HEMarking',
+    'pex/geom/hem/HEGeometryConverter',
+    'pex/geom/hem/HEExtrude',
+    'pex/geom/hem/HECatmullClark',
+  ],
+  function(HEMesh, HESelection, HEMarking, HEGeometryConverter, HEExtrude, HECatmullClark) {
+    return function() {
+      return new HEMesh();
+    }
+  }
+);
+
 define('pex/geom',
   [
     'pex/geom/Vec2',
@@ -4647,12 +6239,21 @@ define('pex/geom',
     'pex/geom/gen',
     'pex/geom/Face3',
     'pex/geom/Face4',
+    'pex/geom/FacePolygon',
     'pex/geom/Vec2Array',
     'pex/geom/Vec3Array',
     'pex/geom/Vec4Array',
-    'pex/geom/Line2D'
+    'pex/geom/Line2D',
+    'pex/geom/Rect',
+    'pex/geom/Triangle2D',
+    'pex/geom/Polygon2D',
+    'pex/geom/hem',
+    'pex/geom/BoundingBox',
+    'pex/geom/Octree'
   ],
-  function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen, Face3, Face4, Vec2Array, Vec3Array, Vec4Array, Line2D) {
+  function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen,
+    Face3, Face4, FacePolygon, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D, Polygon2D, hem, 
+    BoundingBox, Octree) {
     return {
       Vec2 : Vec2,
       Vec3 : Vec3,
@@ -4664,10 +6265,17 @@ define('pex/geom',
       gen : gen,
       Face3 : Face3,
       Face4 : Face4,
+      FacePolygon : FacePolygon,
       Vec2Array : Vec2Array,
       Vec3Array : Vec3Array,
       Vec4Array : Vec4Array,
-      Line2D : Line2D
+      Line2D : Line2D,
+      Rect : Rect,
+      Triangle2D : Triangle2D,
+      Polygon2D : Polygon2D,
+      hem : hem,
+      BoundingBox : BoundingBox,
+      Octree : Octree
     };
   }
 );
@@ -4778,18 +6386,359 @@ define('pex/utils/ObjectUtils',[], function() {
   return ObjectUtils;
 });
 
+// seedrandom.js version 2.0.
+// Author: David Bau 4/2/2011
+//
+// Defines a method Math.seedrandom() that, when called, substitutes
+// an explicitly seeded RC4-based algorithm for Math.random().  Also
+// supports automatic seeding from local or network sources of entropy.
+//
+// Usage:
+//
+//   <script src=http://davidbau.com/encode/seedrandom-min.js></script>
+//
+//   Math.seedrandom('yipee'); Sets Math.random to a function that is
+//                             initialized using the given explicit seed.
+//
+//   Math.seedrandom();        Sets Math.random to a function that is
+//                             seeded using the current time, dom state,
+//                             and other accumulated local entropy.
+//                             The generated seed string is returned.
+//
+//   Math.seedrandom('yowza', true);
+//                             Seeds using the given explicit seed mixed
+//                             together with accumulated entropy.
+//
+//   <script src="http://bit.ly/srandom-512"></script>
+//                             Seeds using physical random bits downloaded
+//                             from random.org.
+//
+//   <script src="https://jsonlib.appspot.com/urandom?callback=Math.seedrandom">
+//   </script>                 Seeds using urandom bits from call.jsonlib.com,
+//                             which is faster than random.org.
+//
+// Examples:
+//
+//   Math.seedrandom("hello");            // Use "hello" as the seed.
+//   document.write(Math.random());       // Always 0.5463663768140734
+//   document.write(Math.random());       // Always 0.43973793770592234
+//   var rng1 = Math.random;              // Remember the current prng.
+//
+//   var autoseed = Math.seedrandom();    // New prng with an automatic seed.
+//   document.write(Math.random());       // Pretty much unpredictable.
+//
+//   Math.random = rng1;                  // Continue "hello" prng sequence.
+//   document.write(Math.random());       // Always 0.554769432473455
+//
+//   Math.seedrandom(autoseed);           // Restart at the previous seed.
+//   document.write(Math.random());       // Repeat the 'unpredictable' value.
+//
+// Notes:
+//
+// Each time seedrandom('arg') is called, entropy from the passed seed
+// is accumulated in a pool to help generate future seeds for the
+// zero-argument form of Math.seedrandom, so entropy can be injected over
+// time by calling seedrandom with explicit data repeatedly.
+//
+// On speed - This javascript implementation of Math.random() is about
+// 3-10x slower than the built-in Math.random() because it is not native
+// code, but this is typically fast enough anyway.  Seeding is more expensive,
+// especially if you use auto-seeding.  Some details (timings on Chrome 4):
+//
+// Our Math.random()            - avg less than 0.002 milliseconds per call
+// seedrandom('explicit')       - avg less than 0.5 milliseconds per call
+// seedrandom('explicit', true) - avg less than 2 milliseconds per call
+// seedrandom()                 - avg about 38 milliseconds per call
+//
+// LICENSE (BSD):
+//
+// Copyright 2010 David Bau, all rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//   1. Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//   2. Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//   3. Neither the name of this module nor the names of its contributors may
+//      be used to endorse or promote products derived from this software
+//      without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+/**
+ * All code is in an anonymous closure to keep the global namespace clean.
+ *
+ * @param {number=} overflow
+ * @param {number=} startdenom
+ */
+
+define('lib/seedrandom.js',[], function() { //added by Marcin Ignac
+
+(function (pool, math, width, chunks, significance, overflow, startdenom) {
+
+//
+// seedrandom()
+// This is the seedrandom function described above.
+//
+math['seedrandom'] = function seedrandom(seed, use_entropy) {
+  var key = [];
+  var arc4;
+
+  // Flatten the seed string or build one from local entropy if needed.
+  seed = mixkey(flatten(
+    use_entropy ? [seed, pool] :
+    arguments.length ? seed :
+    [new Date().getTime(), pool, window], 3), key);
+
+  // Use the seed to initialize an ARC4 generator.
+  arc4 = new ARC4(key);
+
+  // Mix the randomness into accumulated entropy.
+  mixkey(arc4.S, pool);
+
+  // Override Math.random
+
+  // This function returns a random double in [0, 1) that contains
+  // randomness in every bit of the mantissa of the IEEE 754 value.
+
+  math['random'] = function random() {  // Closure to return a random double:
+    var n = arc4.g(chunks);             // Start with a numerator n < 2 ^ 48
+    var d = startdenom;                 //   and denominator d = 2 ^ 48.
+    var x = 0;                          //   and no 'extra last byte'.
+    while (n < significance) {          // Fill up all significant digits by
+      n = (n + x) * width;              //   shifting numerator and
+      d *= width;                       //   denominator and generating a
+      x = arc4.g(1);                    //   new least-significant-byte.
+    }
+    while (n >= overflow) {             // To avoid rounding up, before adding
+      n /= 2;                           //   last byte, shift everything
+      d /= 2;                           //   right using integer math until
+      x >>>= 1;                         //   we have exactly the desired bits.
+    }
+    return (n + x) / d;                 // Form the number within [0, 1).
+  };
+
+  // Return the seed that was used
+  return seed;
+};
+
+//
+// ARC4
+//
+// An ARC4 implementation.  The constructor takes a key in the form of
+// an array of at most (width) integers that should be 0 <= x < (width).
+//
+// The g(count) method returns a pseudorandom integer that concatenates
+// the next (count) outputs from ARC4.  Its return value is a number x
+// that is in the range 0 <= x < (width ^ count).
+//
+/** @constructor */
+function ARC4(key) {
+  var t, u, me = this, keylen = key.length;
+  var i = 0, j = me.i = me.j = me.m = 0;
+  me.S = [];
+  me.c = [];
+
+  // The empty key [] is treated as [0].
+  if (!keylen) { key = [keylen++]; }
+
+  // Set up S using the standard key scheduling algorithm.
+  while (i < width) { me.S[i] = i++; }
+  for (i = 0; i < width; i++) {
+    t = me.S[i];
+    j = lowbits(j + t + key[i % keylen]);
+    u = me.S[j];
+    me.S[i] = u;
+    me.S[j] = t;
+  }
+
+  // The "g" method returns the next (count) outputs as one number.
+  me.g = function getnext(count) {
+    var s = me.S;
+    var i = lowbits(me.i + 1); var t = s[i];
+    var j = lowbits(me.j + t); var u = s[j];
+    s[i] = u;
+    s[j] = t;
+    var r = s[lowbits(t + u)];
+    while (--count) {
+      i = lowbits(i + 1); t = s[i];
+      j = lowbits(j + t); u = s[j];
+      s[i] = u;
+      s[j] = t;
+      r = r * width + s[lowbits(t + u)];
+    }
+    me.i = i;
+    me.j = j;
+    return r;
+  };
+  // For robust unpredictability discard an initial batch of values.
+  // See http://www.rsa.com/rsalabs/node.asp?id=2009
+  me.g(width);
+}
+
+//
+// flatten()
+// Converts an object tree to nested arrays of strings.
+//
+/** @param {Object=} result
+  * @param {string=} prop
+  * @param {string=} typ */
+function flatten(obj, depth, result, prop, typ) {
+  result = [];
+  typ = typeof(obj);
+  if (depth && typ == 'object') {
+    for (prop in obj) {
+      if (prop.indexOf('S') < 5) {    // Avoid FF3 bug (local/sessionStorage)
+        try { result.push(flatten(obj[prop], depth - 1)); } catch (e) {}
+      }
+    }
+  }
+  return (result.length ? result : obj + (typ != 'string' ? '\0' : ''));
+}
+
+//
+// mixkey()
+// Mixes a string seed into a key that is an array of integers, and
+// returns a shortened string seed that is equivalent to the result key.
+//
+/** @param {number=} smear
+  * @param {number=} j */
+function mixkey(seed, key, smear, j) {
+  seed += '';                         // Ensure the seed is a string
+  smear = 0;
+  for (j = 0; j < seed.length; j++) {
+    key[lowbits(j)] =
+      lowbits((smear ^= key[lowbits(j)] * 19) + seed.charCodeAt(j));
+  }
+  seed = '';
+  for (j in key) { seed += String.fromCharCode(key[j]); }
+  return seed;
+}
+
+//
+// lowbits()
+// A quick "n mod width" for width a power of 2.
+//
+function lowbits(n) { return n & (width - 1); }
+
+//
+// The following constants are related to IEEE 754 limits.
+//
+startdenom = math.pow(width, chunks);
+significance = math.pow(2, significance);
+overflow = significance * 2;
+
+//
+// When seedrandom.js is loaded, we immediately mix a few bits
+// from the built-in RNG into the entropy pool.  Because we do
+// not want to intefere with determinstic PRNG state later,
+// seedrandom will not call math.random on its own again after
+// initialization.
+//
+mixkey(math.random(), pool);
+
+// End anonymous scope, and pass initial values.
+})(
+  [],   // pool: entropy pool starts empty
+  Math, // math: package containing random, pow, and seedrandom
+  256,  // width: each RC4 output is 0 <= x < 256
+  6,    // chunks: at least six RC4 outputs for each double
+  52    // significance: there are 52 significant digits in a double
+);
+
+
+});
+
+define('pex/utils/MathUtils',['lib/seedrandom.js', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom, Vec2, Vec3) {
+  function MathUtils() {
+  }
+
+  MathUtils.seed = function(s) {
+    Math.seedrandom(s);
+  }
+
+  MathUtils.randomFloat = function(min, max) {
+    if (typeof(max) == 'undefined') {
+      min = 1;
+    }
+    if (typeof(max) == 'undefined') {
+      max = min;
+      min = 0;
+    }
+    return min + (max - min) * Math.random();
+  }
+
+  MathUtils.randomInt = function(min, max) {
+    return Math.floor(MathUtils.randomInt(min, max));
+  }
+
+  MathUtils.randomVec3 = function(r) {
+    r = r || 0.5;
+    var x = Math.random() - 0.5;
+    var y = Math.random() - 0.5;
+    var z = Math.random() - 0.5;
+    var len = x * x + y * y + z * z;
+    if (len > 0) {
+      len = Math.sqrt(len);
+      x /= len;
+      y /= len;
+      z /= len;
+    }
+    return Vec3.fromValues(x * r, y * r, z * r);
+  }
+
+  MathUtils.randomVec3InBoundingBox = function(bbox) {
+    var x = bbox.min[0] + Math.random() * (bbox.max[0] - bbox.min[0]);
+    var y = bbox.min[1] + Math.random() * (bbox.max[1] - bbox.min[1]);
+    var z = bbox.min[2] + Math.random() * (bbox.max[2] - bbox.min[2]);
+    return Vec3.fromValues(x, y, z);
+  }
+
+  MathUtils.randomVec2InRect = function(rect) {
+    return Vec2.fromValues(rect.x + Math.random() * rect.width, rect.y + Math.random() * rect.height);
+  }
+
+  MathUtils.mix = function(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  MathUtils.map = function(value, oldMin, oldMax, newMin, newMax) {
+    return newMin + (value - oldMin)/(oldMax - oldMin) * (newMax - newMin);
+  }
+
+  return MathUtils;
+});
 //Module wrapper for utility classes.
 define('pex/utils',
   [
     'pex/utils/Log',
     'pex/utils/Time',
-    'pex/utils/ObjectUtils'
+    'pex/utils/ObjectUtils',
+    'pex/utils/MathUtils',
+    'pex/utils/ArrayUtils'
   ],
-  function(Log, Time, ObjectUtils) {
+  function(Log, Time, ObjectUtils, MathUtils, ArrayUtils) {
     return {
       Log : Log,
       Time : Time,
-      ObjectUtils : ObjectUtils
+      ObjectUtils : ObjectUtils,
+      MathUtils : MathUtils,
+      ArrayUtils : ArrayUtils
     };
   }
 );
@@ -4831,7 +6780,7 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
-      Log.message("IO.loadImageData " + fullPath);
+      Log.message('IO.loadImageData ' + fullPath);
       texture.flipped = true;
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
@@ -4840,6 +6789,21 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
       if (callback) {
         callback(canvas);
       }
+    }
+
+    IO.watchTextFile = function(file, callback) {
+      Node.fs.watch(file, {}, function(event, fileName) {
+        if (event == 'change') {
+          var data = Node.fs.readFileSync(file, 'utf8');
+          if (callback) {
+            callback(data);
+          }
+        }
+      });
+    }
+
+    IO.saveTextFile = function(file, data) {
+      Node.fs.writeFileSync(file, data);
     }
 
     return IO;
@@ -4882,6 +6846,14 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
         }
       }
       image.src = url;
+    }
+
+    IO.watchTextFile = function() {
+      console.log('Warning: WebIO.watch is not implemented!');
+    }
+
+    IO.saveTextFile = function() {
+      console.log('Warning: WebIO.saveTextFile is not implemented!');
     }
 
     return IO;
@@ -5213,47 +7185,51 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
 
     canvas.style.backgroundColor = '#000000';
 
+    function go() {
+      if (obj.stencil === undefined) obj.stencil = false;
+
+      var gl = null;
+      try {
+        gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+      }
+      catch(err){
+        console.error(err.message);
+        return;
+      }
+
+      obj.framerate = function(fps) {
+        requestAnimFrameFps = fps;
+      }
+
+      obj.on = function(eventType, handler) {
+        eventListeners.push({eventType:eventType, handler:handler});
+      }
+
+      registerEvents(canvas);
+
+      obj.gl = gl;
+      obj.init();
+
+      function drawloop() {
+        obj.draw();
+        requestAnimFrame(drawloop);
+      }
+
+      requestAnimFrame(drawloop);
+    }
+
     if (!canvas.parentNode) {
       if (document.body) {
         document.body.appendChild(canvas);
+        go();
       }
       else {
         window.addEventListener('load', function() {
           document.body.appendChild(canvas);
+          go();
         }, false);
       }
     }
-
-    registerEvents(canvas);
-
-    if (obj.stencil === undefined) obj.stencil = false;
-
-    var gl = null;
-    try {
-      gl = canvas.getContext('experimental-webgl', {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil});
-    }
-    catch(err){
-      console.error(err);
-      return;
-    }
-
-    obj.framerate = function(fps) {
-      requestAnimFrameFps = fps;
-    }
-
-    obj.on = function(eventType, handler) {
-      eventListeners.push({eventType:eventType, handler:handler});
-    }
-
-    obj.gl = gl;
-    obj.init();
-
-    function drawloop() {
-      obj.draw();
-      requestAnimFrame(drawloop);
-    }
-
-    requestAnimFrame(drawloop);
   }
 
   var BrowserWindow = {
@@ -5356,10 +7332,10 @@ define('pex/gl/Program',['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) 
   Program.prototype.addVertexSource = function(vertSrc) {
     var gl = this.gl;
     var vert = this.vertShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vert, kVertexShaderPrefix + vertSrc);
+    gl.shaderSource(vert, kVertexShaderPrefix + vertSrc + '\n');
     gl.compileShader(vert);
     if (!gl.getShaderParameter(vert, gl.COMPILE_STATUS)) {
-      console.log(vertSrc);
+      //console.log(vertSrc);
       throw gl.getShaderInfoLog(vert);
     }
   };
@@ -5367,10 +7343,10 @@ define('pex/gl/Program',['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) 
   Program.prototype.addFragmentSource = function(fragSrc) {
     var gl = this.gl;
     var frag = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc);
+    gl.shaderSource(frag, kFragmentShaderPrefix + fragSrc + '\n');
     gl.compileShader(frag);
     if (!gl.getShaderParameter(frag, gl.COMPILE_STATUS)) {
-      console.log(fragSrc);
+      //console.log(fragSrc);
       throw gl.getShaderInfoLog(frag);
     }
   };
@@ -5416,13 +7392,28 @@ define('pex/gl/Program',['pex/gl/Context', 'pex/sys/IO'], function(Context, IO) 
     this.gl.deleteProgram(this.handle);
   };
 
-  Program.load = function(url, callback) {
+  Program.load = function(url, callback, options) {
     var program = new Program();
     IO.loadTextFile(url, function(source) {
       console.log('Program.Compiling ' + url);
       program.addSources(source);
       program.link();
       if (callback) callback();
+
+      if (options && options.autoreload) {
+        IO.watchTextFile(url, function(source) {
+          try {
+            program.gl.detachShader(program.handle, program.vertShader);
+            program.gl.detachShader(program.handle, program.fragShader);
+            program.addSources(source);
+            program.link();
+          }
+          catch(e) {
+            console.log('Progra.load : failed to reload ' + url);
+            console.log(e);
+          }
+        })
+      }
     });
     return program;
   }
@@ -5494,9 +7485,10 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.attributes = {};
     this.usage = this.gl.STATIC_DRAW;
 
-    this.addAttrib('position', geometry.attribs.position.data.buf, geometry.attribs.position.elementSize);
-    if (geometry.attribs.normal) this.addAttrib('normal', geometry.attribs.normal.data.buf, geometry.attribs.normal.elementSize);
-    if (geometry.attribs.texCoord) this.addAttrib('texCoord', geometry.attribs.texCoord.data.buf, geometry.attribs.texCoord.elementSize);
+    this.addAttrib('position', geometry.attribs.position.data, geometry.attribs.position.elementSize);
+    if (geometry.attribs.normal) this.addAttrib('normal', geometry.attribs.normal.data, geometry.attribs.normal.elementSize);
+    if (geometry.attribs.texCoord) this.addAttrib('texCoord', geometry.attribs.texCoord.data, geometry.attribs.texCoord.elementSize);
+    if (geometry.attribs.color) this.addAttrib('color', geometry.attribs.color.data, geometry.attribs.color.elementSize);
 
     this.position = Vec3.fromValues(0, 0, 0);
     this.rotation = Quat.create();
@@ -5504,6 +7496,7 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     this.modelWorldMatrix = Mat4.create();
     this.modelViewMatrix = Mat4.create();
     this.rotationMatrix = Mat4.create();
+    this.normalMatrix = Mat4.create();
 
     this.updateIndices(geometry);
   }
@@ -5518,6 +7511,10 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
 
     Mat4.copy(this.modelViewMatrix, camera.getViewMatrix());
     Mat4.mul(this.modelViewMatrix, this.modelViewMatrix, this.modelWorldMatrix);
+
+    Mat4.copy(this.normalMatrix, this.modelViewMatrix);
+    Mat4.invert(this.normalMatrix, this.normalMatrix);
+    Mat4.transpose(this.normalMatrix, this.normalMatrix);
   }
 
   Mesh.prototype.updateIndices = function(geometry) {
@@ -5526,21 +7523,23 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       this.indices.buffer = this.gl.createBuffer();
     }
     var data = [];
-    geometry.faces.forEach(function(face) {
-      if (face instanceof Face4) {
-        data.push(face.a);
-        data.push(face.b);
-        data.push(face.d);
-        data.push(face.d);
-        data.push(face.b);
-        data.push(face.c);
-      }
-      if (face instanceof Face3) {
-        data.push(face.a);
-        data.push(face.b);
-        data.push(face.c);
-      }
-    });
+    if (geometry.faces.length > 0) {
+      geometry.faces.forEach(function(face) {
+        if (face instanceof Face4) {
+          data.push(face.a);
+          data.push(face.b);
+          data.push(face.d);
+          data.push(face.d);
+          data.push(face.b);
+          data.push(face.c);
+        }
+        if (face instanceof Face3) {
+          data.push(face.a);
+          data.push(face.b);
+          data.push(face.c);
+        }
+      });
+    }
     this.indices.data = new Uint16Array(data);
     var oldArrayBinding = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
@@ -5555,12 +7554,13 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     var attrib = {};
     attrib.name = name;
     attrib.data = data;
+    attrib.dataBuf = data.buf;
     attrib.elementSize = elementSize;
     attrib.location = -1;
     attrib.buffer = this.gl.createBuffer();
     attrib.usage = usage;
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.data, usage);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.dataBuf, usage);
 
     this.attributes[attrib.name] = attrib;
   }
@@ -5573,15 +7573,18 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       if (programUniforms.projectionMatrix) {
         materialUniforms.projectionMatrix = camera.getProjectionMatrix();
       }
-      //if (programUniforms.viewMatrix)
-      //  materialUniforms.viewMatrix = camera.getViewMatrix();
       if (programUniforms.modelViewMatrix) {
         materialUniforms.modelViewMatrix = this.modelViewMatrix;
       }
-      //if (programUniforms.modelWorldMatrix)
-      //  materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
-      //if (programUniforms.normalMatrix)
-      //  materialUniforms.normalMatrix = this.material.uniforms.modelViewMatrix.dup().invert().transpose();
+      if (programUniforms.viewMatrix) {
+        materialUniforms.viewMatrix = camera.getViewMatrix();
+      }
+      if (programUniforms.modelWorldMatrix) {
+        materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
+      }
+      if (programUniforms.normalMatrix) {
+        materialUniforms.normalMatrix = this.normalMatrix;
+      }
     }
 
     this.material.use();
@@ -5600,7 +7603,21 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       if (attrib.location >= 0) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
          if (this.geometry.attribs[name].isDirty) {
-          this.gl.bufferData(this.gl.ARRAY_BUFFER, this.geometry.attribs[name].data.buf, attrib.usage);
+          attrib.dataBuf = this.geometry.attribs[name].data.buf;
+          if (this.geometry.attribs[name].type == 'Vec3') {
+            this.geometry.attribs[name].data.forEach(function(v, i) {
+              attrib.dataBuf[i*3 + 0] = v[0];
+              attrib.dataBuf[i*3 + 1] = v[1];
+              attrib.dataBuf[i*3 + 2] = v[2];
+            })
+          }
+          if (this.geometry.attribs[name].type == 'Vec2') {
+            this.geometry.attribs[name].data.forEach(function(v, i) {
+              attrib.dataBuf[i*2 + 0] = v[0];
+              attrib.dataBuf[i*2 + 1] = v[1];
+            })
+          }
+          this.gl.bufferData(this.gl.ARRAY_BUFFER, attrib.dataBuf, attrib.usage);
           this.geometry.attribs[name].isDirty = false;
         }
         this.gl.vertexAttribPointer(attrib.location, attrib.elementSize, this.gl.FLOAT, false, 0, 0);
@@ -5608,14 +7625,12 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
       }
     }
 
-    //return;
-
     if (this.indices && this.indices.data && this.indices.data.length > 0) {
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices.buffer);
       this.gl.drawElements(this.primitiveType, this.indices.data.length, this.gl.UNSIGNED_SHORT, 0);
     }
-    else if (this.attributes['position']){
-      var num = this.attributes['position'].data.length/3;
+    else if (this.attributes['position']) {
+      var num = this.attributes['position'].dataBuf.length/3;
       this.gl.drawArrays(this.primitiveType, 0, num);
     }
 
@@ -5627,12 +7642,36 @@ function(Context, Vec3, Quat, Mat4, Face3, Face4) {
     }
   }
 
+  Mesh.prototype.resetAttribLocations = function() {
+    for(var name in this.attributes) {
+      var attrib = this.attributes[name];
+      attrib.location = -1;
+    }
+  }
+
+  Mesh.prototype.getMaterial = function() {
+    return this.material;
+  }
+
+  Mesh.prototype.setMaterial = function(material) {
+    this.material = material;
+    this.resetAttribLocations();
+  }
+
+  Mesh.prototype.getProgram = function() {
+    return this.material.program;
+  }
+
+  Mesh.prototype.setProgram = function(program) {
+    this.material.program = program;
+    this.resetAttribLocations();
+  }
+
   return Mesh;
 });
 define('pex/gl/Texture',['pex/gl/Context'], function(Context) {
   function Texture(target) {
     if (target) {
-      console.log('Texture+');
       this.init(target);
     }
   }
@@ -5646,7 +7685,7 @@ define('pex/gl/Texture',['pex/gl/Context'], function(Context) {
   }
 
   //### bind ( unit )
-  //Binds the texture to the current GL context.  
+  //Binds the texture to the current GL context.
   //`unit` - texture unit in which to place the texture *{ Number/Int }* = 0
   Texture.prototype.bind = function(unit) {
     unit = unit ? unit : 0;
@@ -5879,25 +7918,6 @@ define('pex/gl/RenderTarget',['pex/gl/Context', 'pex/gl/Texture2D'], function(Co
 
   return RenderTarget;
 });
-//Module wrapper for gl classes.
-define('pex/gl',
-  [
-    'pex/gl/Context',
-    'pex/gl/Program',
-    'pex/gl/Mesh',
-    'pex/gl/Texture2D',
-    'pex/gl/RenderTarget'
-  ],
-  function(Context, Program, Mesh, Texture2D, RenderTarget) {
-    return {
-      Context : Context,
-      Program : Program,
-      Mesh : Mesh,
-      Texture2D : Texture2D,
-      RenderTarget : RenderTarget
-    };
-  }
-);
 define('pex/materials/Material',['pex/gl/Context'], function(Context) {
 
   function Material(program, uniforms) {
@@ -6214,6 +8234,142 @@ define('pex/materials/Material',['pex/gl/Context'], function(Context) {
         return text;
     });
 }());
+define('lib/text!pex/gl/ScreenImage.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nuniform vec2 screenSize;\nuniform vec2 pixelPosition;\nuniform vec2 pixelSize;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  float tx = position.x * 0.5 + 0.5;\n  float ty = position.y * 0.5 + 0.5;\n  float x = (pixelPosition.x + pixelSize.x * tx)/screenSize.x * 2.0 - 1.0;\n  float y = (pixelPosition.y + pixelSize.y * ty)/screenSize.y * 2.0 - 1.0;\n  gl_Position = vec4(x, y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D image;\nuniform float alpha;\n\nvoid main() {\n  gl_FragColor = texture2D(image, vTexCoord);\n  gl_FragColor.a *= alpha;\n}\n\n#endif';});
+
+define('pex/gl/ScreenImage',[
+  'pex/geom/Vec2', 'pex/gl/Context',
+  'pex/gl/Program', 'pex/materials/Material', 'pex/geom/Face3', 'pex/geom/Geometry', 'pex/gl/Mesh',
+  'lib/text!pex/gl/ScreenImage.glsl'],
+  function(Vec2, Context, Program, Material, Face3, Geometry, Mesh, ScreenImageGLSL) {
+  function ScreenImage(image, x, y, w, h, screenWidth, screenHeight) {
+    x = (x !== undefined) ? x : 0;
+    y = (y !== undefined) ? y : 0;
+    w = (w !== undefined) ? w : 1;
+    h = (h !== undefined) ? h : 1;
+
+    screenWidth = (screenWidth !== undefined) ? screenWidth : 1;
+    screenHeight = (screenHeight !== undefined) ? screenHeight : 1;
+
+    this.image = image;
+
+    var program = new Program(ScreenImageGLSL);
+
+    var uniforms = {
+      screenSize : Vec2.fromValues(screenWidth, screenHeight),
+      pixelPosition : Vec2.fromValues(x, y),
+      pixelSize : Vec2.fromValues(w, h),
+      alpha : 1.0
+    };
+
+    if (image) uniforms.image = image;
+
+    var material = new Material(program, uniforms);
+
+    var geometry = new Geometry({
+      position : {
+        type : 'Vec2',
+        length : 4
+      },
+      texCoord : {
+        type : 'Vec2',
+        length : 4
+      }
+    });
+
+    geometry.attribs.position.data.buf.set([
+      -1,  1,
+       1,  1,
+       1, -1,
+      -1, -1
+    ]);
+
+    geometry.attribs.texCoord.data.buf.set([
+       0, 1,
+       1, 1,
+       1, 0,
+       0, 0
+    ]);
+
+    // 0----1
+    // | \  |
+    // |  \ |
+    // 3----2
+    geometry.faces.push(new Face3(0, 2, 1));
+    geometry.faces.push(new Face3(0, 3, 2));
+
+    this.mesh = new Mesh(geometry, material);
+  }
+
+  ScreenImage.prototype.setAlpha = function(alpha) {
+    this.mesh.material.uniforms.alpha = alpha;
+  }
+
+  ScreenImage.prototype.setPosition = function(position) {
+  this.mesh.material.uniforms.pixelPosition = position;
+  }
+
+  ScreenImage.prototype.setSize = function(size) {
+    this.mesh.material.uniforms.pixelSize = size;
+  }
+
+  ScreenImage.prototype.setWindowSize = function(size) {
+    this.mesh.material.uniforms.windowSize = size;
+  }
+
+  ScreenImage.prototype.setBounds = function(bounds) {
+    throw "Unimplemented";
+  }
+
+  ScreenImage.prototype.setImage = function(image) {
+    this.image = image;
+    this.mesh.material.uniforms.image = image;
+  }
+
+  ScreenImage.prototype.draw = function(image, program) {
+    var oldImage = this.mesh.material.uniforms.image;
+    if (image) {
+      oldImage = this.mesh.material.uniforms.image;
+      this.mesh.material.uniforms.image = image;
+    }
+
+    var oldProgram = null;
+    if (program) {
+      oldProgram = this.mesh.getProgram();
+      this.mesh.setProgram(program);
+    }
+    this.mesh.draw();
+
+    if (oldProgram) {
+      this.mesh.setProgram(oldProgram);
+    }
+    if (oldImage) {
+      this.mesh.material.uniforms.image = oldImage;
+    }
+  }
+
+  return ScreenImage;
+});
+//Module wrapper for gl classes.
+define('pex/gl',
+  [
+    'pex/gl/Context',
+    'pex/gl/Program',
+    'pex/gl/Mesh',
+    'pex/gl/Texture2D',
+    'pex/gl/RenderTarget',
+    'pex/gl/ScreenImage'
+  ],
+  function(Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage) {
+    return {
+      Context : Context,
+      Program : Program,
+      Mesh : Mesh,
+      Texture2D : Texture2D,
+      RenderTarget : RenderTarget,
+      ScreenImage : ScreenImage
+    };
+  }
+);
 define('lib/text!pex/materials/SolidColor.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform vec4 color;\n\nvoid main() {\n  gl_FragColor = color;\n}\n\n#endif\n';});
 
 define('pex/materials/SolidColor',[
@@ -6320,20 +8476,144 @@ define('pex/materials/ShowTexCoords',[
 
   return ShowTexCoords;
 });
+define('lib/text!pex/materials/ShowDepth.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float near;\nuniform float far;\nuniform vec4 farColor;\nuniform vec4 nearColor;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec4 vColor;\nvoid main() {\n  vec4 pos = modelViewMatrix * vec4(position, 1.0);\n  gl_Position = projectionMatrix * pos;\n  float depth = clamp((-pos.z - near) / (far - near), 0, 1);\n  vColor = mix(nearColor, farColor, depth);\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
+
+define('pex/materials/ShowDepth',[
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/utils/ObjectUtils',
+  'pex/geom/Vec4',
+  'lib/text!pex/materials/ShowDepth.glsl'
+  ], function(Material, Context, Program, ObjectUtils, Vec4, ShowDepthGLSL) {
+
+  function ShowDepth(uniforms) {
+    this.gl = Context.currentContext.gl;
+    var program = new Program(ShowDepthGLSL);
+
+    var defaults = {
+      near: 0,
+      far: 10,
+      nearColor: Vec4.fromValues(0, 0, 0, 1),
+      farColor: Vec4.fromValues(1, 1, 1, 1)
+    };
+
+    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+
+    Material.call(this, program, uniforms);
+  }
+
+  ShowDepth.prototype = Object.create(Material.prototype);
+
+  return ShowDepth;
+});
+define('lib/text!pex/materials/ShowColors.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec4 color;\nvarying vec4 vColor;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vColor = color;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
+
+define('pex/materials/ShowColors',[
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/utils/ObjectUtils',
+  'lib/text!pex/materials/ShowColors.glsl'
+  ], function(Material, Context, Program, ObjectUtils, ShowColorsGLSL) {
+
+  function ShowColors(uniforms) {
+    this.gl = Context.currentContext.gl;
+    var program = new Program(ShowColorsGLSL);
+
+    var defaults = {
+      pointSize : 1
+    };
+
+    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+
+    Material.call(this, program, uniforms);
+  }
+
+  ShowColors.prototype = Object.create(Material.prototype);
+
+  return ShowColors;
+});
+define('lib/text!pex/materials/PackDepth.glsl',[],function () { return '#ifdef VERT\n\nattribute vec4 position;\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float near;\nuniform float far;\n\nvarying float depth;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * position;\n\n  //linear depth in camera space (0..far)\n  depth = (modelViewMatrix * position).z/far;\n}\n#endif\n\n#ifdef FRAG\n\nuniform float near;\nuniform float far;\n\nvarying float depth;\n\n//from http://spidergl.org/example.php?id=6\nvec4 packDepth(const in float depth) {\n  const vec4 bit_shift = vec4(256.0*256.0*256.0, 256.0*256.0, 256.0, 1.0);\n  const vec4 bit_mask  = vec4(0.0, 1.0/256.0, 1.0/256.0, 1.0/256.0);\n  vec4 res = fract(depth * bit_shift);\n  res -= res.xxyz * bit_mask;\n  return res;\n}\n\nvoid main() {\n  gl_FragColor = packDepth(-depth);\n  gl_FragColor.r = 1.0;\n}\n\n#endif';});
+
+define('pex/materials/PackDepth',[
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/materials/Material',
+  'pex/utils/ObjectUtils',
+  'lib/text!pex/materials/PackDepth.glsl'],
+  function(Context, Program, Material, ObjectUtils, PackDepthGLSL) {
+  function PackDepthMaterial(uniforms) {
+      this.gl = Context.currentContext.gl;
+      this.program = new Program(PackDepthGLSL);
+
+      var defaults = {
+        near: 0.1,
+        far: 100
+      };
+
+      this.uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+  }
+
+  PackDepthMaterial.prototype = new Material();
+
+  return PackDepthMaterial;
+});
+define('lib/text!pex/materials/Diffuse.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec3 vNormal;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vNormal = normal;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform vec4 ambientColor;\nuniform vec4 diffuseColor;\nuniform vec3 lightPos;\nuniform float wrap;\nvarying vec3 vNormal;\n\nvoid main() {\n  vec3 L = normalize(lightPos);\n  vec3 N = normalize(vNormal);\n  float NdotL = max(0.0, (dot(N, L) + wrap) / (1.0 + wrap));\n  gl_FragColor = ambientColor + NdotL * diffuseColor;\n}\n\n#endif\n';});
+
+define('pex/materials/Diffuse',[
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/utils/ObjectUtils',
+  'pex/geom/Vec3',
+  'pex/geom/Vec4',
+  'lib/text!pex/materials/Diffuse.glsl'
+  ], function(Material, Context, Program, ObjectUtils, Vec3, Vec4, DiffuseGLSL) {
+
+  function Diffuse(uniforms) {
+    this.gl = Context.currentContext.gl;
+    var program = new Program(DiffuseGLSL);
+
+    var defaults = {
+      wrap: 1,
+      pointSize : 1,
+      lightPos : Vec3.fromValues(10, 20, 30),
+      ambientColor : Vec4.fromValues(0, 0, 0, 1),
+      diffuseColor : Vec4.fromValues(1, 1, 1, 1)
+    };
+
+    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+
+    Material.call(this, program, uniforms);
+  }
+
+  Diffuse.prototype = Object.create(Material.prototype);
+
+  return Diffuse;
+});
 //Module wrapper for materials classes.
 define('pex/materials',
   [
     'pex/materials/SolidColor',
     'pex/materials/ShowNormals',
     'pex/materials/Textured',
-    'pex/materials/ShowTexCoords'
+    'pex/materials/ShowTexCoords',
+    'pex/materials/ShowDepth',
+    'pex/materials/ShowColors',
+    'pex/materials/PackDepth',
+    'pex/materials/Diffuse',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
       Textured : Textured,
-      ShowTexCoords : ShowTexCoords
+      ShowTexCoords : ShowTexCoords,
+      ShowDepth : ShowDepth,
+      ShowColors : ShowColors,
+      PackDepth : PackDepth,
+      Diffuse : Diffuse
     };
   }
 );
@@ -6474,29 +8754,30 @@ define('pex/scene/Arcball',['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', '
     this.radius = Math.min(window.width/2, window.height/2) * 2;
     this.center = Vec2.fromValues(window.width/2, window.height/2);
     this.currRot = Quat.create();
-    Quat.setAxisAngle(this.currRot, Vec3.fromValues(0, 1, 0), Math.PI);
+    Quat.setAxisAngle(this.currRot, Vec3.fromValues(0, 1, 0), Math.PI/4);
     this.clickRot = Quat.create();
     this.dragRot = Quat.create();
     this.clickPos = Vec3.create();
     this.dragPos = Vec3.create();
     this.rotAxis = Vec3.create();
     this.allowZooming = true;
+    this.enabled = true;
 
     this.updateCamera();
 
     var self = this;
     window.on('leftMouseDown', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       self.down(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('mouseDragged', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       self.drag(e.x, self.window.height - e.y); //we flip the y coord to make rotating camera work
     });
 
     window.on('scrollWheel', function(e) {
-      if (e.handled) return;
+      if (e.handled || !self.enabled) return;
       if (!self.allowZooming) return;
       self.distance = Math.min(self.maxDistance, Math.max(self.distance + e.dy/100*(self.maxDistance-self.minDistance), self.minDistance));
       self.updateCamera();
@@ -6518,6 +8799,7 @@ define('pex/scene/Arcball',['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', '
 
   Arcball.prototype.down = function(x, y) {
     this.clickPos = this.mouseToSphere(x, y);
+    console.log(this.clickPos[0], this.clickPos[1], this.clickPos[2])
     Quat.copy(this.clickRot, this.currRot);
     this.updateCamera();
   }
@@ -6526,6 +8808,7 @@ define('pex/scene/Arcball',['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', '
     this.dragPos = this.mouseToSphere(x, y);
     Vec3.cross(this.rotAxis, this.clickPos, this.dragPos);
     var theta = Vec3.dot(this.clickPos, this.dragPos);
+    console.log(theta)
     Quat.set(this.dragRot, this.rotAxis[0], this.rotAxis[1], this.rotAxis[2], theta);
     Quat.mul(this.currRot, this.dragRot, this.clickRot);
     this.updateCamera();
@@ -6565,6 +8848,1074 @@ define('pex/scene',
   }
 );
 
+define('pex/fx/FXResourceMgr',[], function() {
+
+  function FXResourceMgr() {
+    this.cache = [];
+  }
+
+  FXResourceMgr.prototype.getResource = function(type, properties) {
+    properties = properties || {};
+    for(var i=0; i<this.cache.length; i++) {
+      var res = this.cache[i];
+      if (res.type == type && !res.used) {
+        var areTheSame = true;
+        for(var propName in properties) {
+          if (properties[propName] != res.properties[propName]) {
+            areTheSame = false;
+          }
+        }
+        if (areTheSame) return res;
+      }
+    }
+    return null;
+  }
+
+  FXResourceMgr.prototype.addResource = function(type, obj, properties) {
+    var res = {
+      type : type,
+      obj : obj,
+      properties : properties
+    };
+    this.cache.push(res);
+    return res;
+  }
+
+  FXResourceMgr.prototype.markAllAsNotUsed = function() {
+    for(var i=0; i<this.cache.length; i++) {
+      this.cache[i].used = false;
+    }
+  }
+
+  return FXResourceMgr;
+});
+define('pex/fx/FXStage',[
+  'pex/gl/Context',
+  'pex/fx/FXResourceMgr',
+  'pex/gl/ScreenImage',
+  'pex/gl/RenderTarget',
+  'pex/gl/Program',
+  'pex/gl/Texture2D',
+  'pex/geom/Vec2'
+  ],
+  function(Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D, Vec2) {
+  var FXStageCount = 0;
+  function FXStage(source, resourceMgr, fullscreenQuad) {
+    this.id = FXStageCount++;
+    console.log("FXStage+ " + FXStageCount)
+    this.gl = Context.currentContext.gl;
+    this.source = source || null;
+    this.resourceMgr = resourceMgr || new FXResourceMgr();
+    this.fullscreenQuad = fullscreenQuad || new ScreenImage();
+    this.defaultBPP = 8;
+  }
+
+  FXStage.prototype.reset = function() {
+    this.resourceMgr.markAllAsNotUsed();
+  }
+
+  FXStage.prototype.getOutputSize = function(width, height, verbose) {
+    if (width && height) {
+      return { width: width, height: height };
+    }
+    else if (this.source) {
+      return { width: this.source.width, height: this.source.height };
+    }
+    else {
+      var viewport = this.gl.getParameter(this.gl.VIEWPORT);
+      return { width: viewport[2], height: viewport[3] };
+    }
+  }
+
+  FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
+    depth = depth || false;
+    bpp = bpp || this.defaultBPP;
+
+    var resProps = {w:w, h:h, depth:depth, bpp:bpp};
+    var res = this.resourceMgr.getResource('RenderTarget', resProps);
+    if (!res) {
+      var renderTarget = new RenderTarget(w, h, resProps);
+      res = this.resourceMgr.addResource('RenderTarget', renderTarget, resProps);
+    }
+    res.used = true;
+    return res.obj;
+  }
+
+  FXStage.prototype.getFXStage = function(name) {
+    var resProps = {};
+    var res = this.resourceMgr.getResource('FXStage', resProps);
+    if (!res) {
+      var fxState = new FXStage(null, this.resourceMgr, this.fullscreenQuad);
+      res = this.resourceMgr.addResource('FXStage', fxState, resProps);
+    }
+    res.used = true;
+    return res.obj;
+  }
+
+  FXStage.prototype.asFXStage = function(source, name) {
+    var stage = this.getFXStage(name);
+    stage.source = source;
+    stage.name = name + '_' + stage.id;
+    return stage;
+  }
+
+  FXStage.prototype.getShader = function(code) {
+    if (code.indexOf('.glsl') == code.length - 5) {
+      throw 'FXStage.getShader - loading files not supported yet.';
+    }
+    var resProps = {code: code};
+    var res = this.resourceMgr.getResource('Program', resProps);
+    if (!res) {
+      var program = new Program(code);
+      res = this.resourceMgr.addResource('Program', program, resProps);
+    }
+    res.used = true;
+    return res.obj;
+  }
+
+  FXStage.prototype.getSourceTexture = function(source) {
+    if (source) {
+      if (source.source) {
+        if (source.source.getColorAttachement) {
+          return source.source.getColorAttachement(0);
+        }
+        else return source.source;
+      }
+      else if (source.getColorAttachement) {
+        return source.getColorAttachement(0);
+      }
+      else return source;
+    }
+    else if (this.source) {
+      if (this.source.getColorAttachement) {
+        return this.source.getColorAttachement(0);
+      }
+      else return this.source;
+    }
+    else throw 'FXStage.getSourceTexture() No source texture!';
+  }
+
+  FXStage.prototype.drawFullScreenQuad = function(width, height, image, program) {
+    this.drawFullScreenQuadAt(0, 0, width, height, image, program);
+  }
+
+  FXStage.prototype.drawFullScreenQuadAt = function(x, y, width, height, image, program) {
+    var gl = this.gl;
+    gl.disable(gl.DEPTH_TEST);
+
+    var oldViewport = gl.getParameter(gl.VIEWPORT);
+    gl.viewport(x, y, width, height);
+    this.fullscreenQuad.draw(image, program);
+    gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+  }
+
+  FXStage.prototype.getImage = function(path) {
+    var resProps = {path: path};
+    var res = this.resourceMgr.getResource('Image', resProps);
+    if (!res) {
+      var image = Texture2D.load(path);
+      res = this.resourceMgr.addResource('Image', image, resProps);
+    }
+    res.used = false; //can be shared so no need for locking
+    return res.obj;
+  }
+
+  FXStage.prototype.getFullScreenQuad = function() {
+    return this.fullscreenQuad;
+  }
+
+
+  return FXStage;
+});
+define('pex/fx/Render',['pex/fx/FXStage'], function(FXStage) {
+  FXStage.prototype.render = function(options) {
+    var gl = this.gl;
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var oldViewport = gl.getParameter(gl.VIEWPORT);
+    gl.viewport(0, 0, outputSize.width, outputSize.height);
+
+    rt.bindAndClear();
+    if (options.drawFunc) {
+      options.drawFunc();
+    }
+    rt.unbind();
+    gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+
+    return this.asFXStage(rt, 'render');
+  }
+});
+define('pex/fx/Blit',['pex/fx/FXStage', 'pex/gl/ScreenImage', 'pex/geom/Vec2'], function(FXStage, ScreenImage, Vec2) {
+  FXStage.prototype.blit = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+
+    var x = options.x || 0;
+    var y = options.y || 0;
+
+    this.drawFullScreenQuadAt(x, y, outputSize.width, outputSize.height, this.getSourceTexture());
+
+    return this;
+  }
+});
+define('lib/text!pex/fx/Downsample2.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n  vec4 color = vec4(0.0);\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  0.0));\n  gl_FragColor = color / 4.0;\n}\n\n#endif';});
+
+define('pex/fx/Downsample2',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample2.glsl', 'pex/geom/Vec2'], function(FXStage, Downsample2GLSL, Vec2) {
+  FXStage.prototype.downsample2 = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    outputSize.width /= 2;
+    outputSize.height /= 2;
+
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var source = this.getSourceTexture();
+
+    var program = this.getShader(Downsample2GLSL);
+    program.use();
+    program.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rt.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
+    rt.unbind();
+
+    return this.asFXStage(rt, 'downsample2');
+  }
+});
+define('lib/text!pex/fx/Downsample4.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n  vec4 color = vec4(0.0);\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y *  1.0));\n  gl_FragColor = color / 16.0;\n}\n\n#endif';});
+
+define('pex/fx/Downsample4',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], function(FXStage, Downsample4GLSL, Vec2) {
+  FXStage.prototype.downsample4 = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height, true);
+    outputSize.width /= 4;
+    outputSize.height /= 4;
+
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var source = this.getSourceTexture();
+
+    var program = this.getShader(Downsample4GLSL);
+    program.use();
+    program.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rt.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
+    rt.unbind();
+
+    return this.asFXStage(rt, 'downsample4');
+  }
+});
+define('lib/text!pex/fx/Blur3H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 0.50 * texture2D(image, vTexCoord);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('lib/text!pex/fx/Blur3V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 0.50 * texture2D(image, vTexCoord);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('pex/fx/Blur3',['pex/fx/FXStage', 'lib/text!pex/fx/Blur3H.glsl', 'lib/text!pex/fx/Blur3V.glsl', 'pex/geom/Vec2'],
+function(FXStage, Blur3HGLSL, Blur3VGLSL, Vec2) {
+  FXStage.prototype.blur3 = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+
+    var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var source = this.getSourceTexture();
+
+    var programH = this.getShader(Blur3HGLSL);
+    programH.use();
+    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rth.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
+    rth.unbind();
+
+    var programV = this.getShader(Blur3VGLSL);
+    programV.use();
+    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rtv.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
+    rtv.unbind();
+
+    return this.asFXStage(rtv, 'blur3');
+  }
+});
+define('lib/text!pex/fx/Blur5H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x * -2.0, 0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 6.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  0.0, 0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  2.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('lib/text!pex/fx/Blur5V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -2.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 6.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  2.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('pex/fx/Blur5',['pex/fx/FXStage', 'lib/text!pex/fx/Blur5H.glsl', 'lib/text!pex/fx/Blur5V.glsl', 'pex/geom/Vec2'],
+function(FXStage, Blur5HGLSL, Blur5VGLSL, Vec2) {
+  FXStage.prototype.blur5 = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+
+    var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var source = this.getSourceTexture();
+
+    var programH = this.getShader(Blur5HGLSL);
+    programH.use();
+    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rth.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
+    rth.unbind();
+
+    var programV = this.getShader(Blur5VGLSL);
+    programV.use();
+    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rtv.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
+    rtv.unbind();
+
+    return this.asFXStage(rtv, 'blur5');
+  }
+});
+define('lib/text!pex/fx/Blur7H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -3.0, 0.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -2.0, 0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 20.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  0.0, 0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  2.0, 0.0));\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  3.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('lib/text!pex/fx/Blur7V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position.x, position.y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -3.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -2.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 20.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  2.0));\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  3.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
+
+define('pex/fx/Blur7',['pex/fx/FXStage', 'lib/text!pex/fx/Blur7H.glsl', 'lib/text!pex/fx/Blur7V.glsl', 'pex/geom/Vec2'],
+function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
+  FXStage.prototype.blur7 = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+
+    var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var source = this.getSourceTexture();
+
+    var programH = this.getShader(Blur7HGLSL);
+    programH.use();
+    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rth.bindAndClear();
+    source.bind();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
+    rth.unbind();
+
+    var programV = this.getShader(Blur7VGLSL);
+    programV.use();
+    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    rtv.bindAndClear();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
+    rtv.unbind();
+
+    return this.asFXStage(rtv, 'blur7');
+  }
+});
+define('lib/text!pex/fx/Add.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform sampler2D tex1;\nuniform float scale;\n\nvoid main() {\n  vec4 color = texture2D(tex0, vTexCoord).rgba;\n  vec4 color2 = texture2D(tex1, vTexCoord).rgba;\n\n  //color += scale * color2 * color2.a;\n\n  gl_FragColor = 1.0 - (1.0 - color) * (1.0 - color2 * scale);\n\n  //gl_FragColor.rgba = color + scale * color2;\n  //gl_FragColor.a = 1.0;\n}\n\n#endif';});
+
+define('pex/fx/Add',['pex/fx/FXStage', 'lib/text!pex/fx/Add.glsl'], function(FXStage, AddGLSL) {
+  FXStage.prototype.add = function(source2, options) {
+    options = options || {};
+    scale = (options.scale !== undefined) ? options.scale : 1;
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+
+    rt.bind();
+
+    this.getSourceTexture().bind(0);
+    this.getSourceTexture(source2).bind(1);
+
+    var program = this.getShader(AddGLSL);
+    program.use();
+    program.uniforms.tex0( 0 );
+    program.uniforms.tex1( 1 );
+    program.uniforms.scale( scale );
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
+
+    rt.unbind();
+
+    return this.asFXStage(rt, 'add');
+  }
+});
+define('lib/text!pex/fx/Threshold.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform float threshold;\n\nvoid main() {\n  vec3 color = texture2D(tex0, vTexCoord).rgb;\n  float luma = dot(color, vec3(0.299, 0.587, 0.114));\n\n  color = (luma > threshold) ? color : vec3(0.0);\n\n  gl_FragColor.rgb = color;\n  gl_FragColor.a = 1.0;\n}\n\n#endif';});
+
+define('pex/fx/Threshold',['pex/fx/FXStage', 'lib/text!pex/fx/Threshold.glsl'], function(FXStage, ThresholdGLSL) {
+  FXStage.prototype.threshold = function(options) {
+    options = options || {};
+    threshold = (options.threshold !== undefined) ? options.threshold : 0.5;
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    rt.bind();
+
+    this.getSourceTexture().bind();
+    var program = this.getShader(ThresholdGLSL);
+    program.use();
+    program.uniforms.threshold( threshold );
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
+    rt.unbind();
+
+    return this.asFXStage(rt, 'threshold');
+  }
+});
+define('pex/fx/Image',['pex/fx/FXStage'], function(FXStage) {
+  FXStage.prototype.image = function(path, options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+
+    rt.bind();
+
+    var image = this.getImage(path);
+
+    image.bind();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height);
+
+    rt.unbind();
+
+    return this.asFXStage(rt, 'image');
+  };
+});
+define('lib/text!pex/fx/Mult.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform sampler2D tex1;\n\nvoid main() {\n  vec4 color = texture2D(tex0, vTexCoord);\n  vec4 color2 = texture2D(tex1, vTexCoord);\n\n  gl_FragColor = color * color2;\n}\n\n#endif';});
+
+define('pex/fx/Mult',['pex/fx/FXStage', 'lib/text!pex/fx/Mult.glsl'], function(FXStage, MultGLSL) {
+  FXStage.prototype.mult = function(source2, options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+
+    rt.bind();
+
+    this.getSourceTexture().bind(0);
+    this.getSourceTexture(source2).bind(1);
+    var program = this.getShader(MultGLSL);
+    program.use();
+    program.uniforms.tex0( 0 );
+    program.uniforms.tex1( 1 );
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
+
+    rt.unbind();
+
+    return this.asFXStage(rt, 'mult');
+  }
+});
+define('lib/text!pex/fx/SSAO.glsl',[],function () { return '//based on http://blenderartists.org/forum/showthread.php?184102-nicer-and-faster-SSAO and http://www.pasteall.org/12299\n#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\n#define PI    3.14159265\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D depthTex;\nuniform vec2 textureSize;\nuniform float near;\nuniform float far;\n\nconst int samples = 5;\nconst int rings = 3;\n\n\nvec2 rand(vec2 coord)\n{\n  float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));\n  float noiseY = (fract(sin(dot(coord, vec2(12.9898,78.233) * 2.0)) * 43758.5453));\n  return vec2(noiseX,noiseY) * 0.004;\n}\n\nfloat unpackDepth(const in vec4 rgba_depth) {\n  const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);\n  float depth = dot(rgba_depth, bit_shift);\n  return depth;\n}\n\nfloat getDepth(vec2 coord) {\n  return unpackDepth(texture2D(depthTex, coord.xy));\n}\n\nfloat readDepth(vec2 coord) {\n  return (getDepth(coord) * far - near)/(far - near);\n}\n\nfloat compareDepths( in float depth1, in float depth2 )\n{\n  float aoCap = 1.0;\n  float aoMultiplier = 100.0;\n  float depthTolerance = 0.0001;\n  float aorange = 1.0;// units in space the AO effect extends to (this gets divided by the camera far range\n  float diff = sqrt(clamp(1.0-(depth1-depth2) / (aorange/(far-near)),0.0,1.0));\n  float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;\n  return ao;\n}\n\nvoid main() {\n  vec2 texCoord = vec2(gl_FragCoord.x / textureSize.x, gl_FragCoord.y / textureSize.y);\n  float depth = readDepth(texCoord);\n\n  //gl_FragColor = vec4(depth, depth ,depth, 1.0);\n  //return;\n\n  float d;\n\n  float aspect = textureSize.x / textureSize.y;\n  vec2 noise = rand(vTexCoord);\n\n  float w = (1.0 / textureSize.x)/clamp(depth,0.05,1.0)+(noise.x*(1.0-noise.x));\n  float h = (1.0 / textureSize.y)/clamp(depth,0.05,1.0)+(noise.y*(1.0-noise.y));\n\n  float pw;\n  float ph;\n\n  float ao;\n  float s;\n  float fade = 1.0;\n\n  for (int i = 0 ; i < rings; i += 1)\n  {\n    fade *= 0.5;\n    for (int j = 0 ; j < samples*rings; j += 1)\n    {\n      if (j >= samples*i) break;\n      float step = PI * 2.0 / (float(samples) * float(i));\n      pw = (cos(float(j)*step) * float(i) * 0.5);\n      ph = (sin(float(j)*step) * float(i) * 0.5) * aspect;\n      d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));\n      ao += compareDepths(depth,d) * fade;\n      s += 1.0 * fade;\n    }\n  }\n\n  ao /= s;\n  ao *= 1.5;\n  ao = 1.0 - ao;\n\n  if (depth > 0.99) ao += 0.5;\n\n  vec3 black = vec3(0.0, 0.0, 0.0);\n  vec3 treshold = vec3(0.2, 0.2, 0.2);\n\n  gl_FragColor = vec4(texCoord, 0.0, 1.0);\n  //gl_FragColor = vec4(getDepth(texCoord), 0.0, 0.0, 1.0);\n  gl_FragColor = vec4(ao, ao, ao, 1.0);\n}\n\n#endif';});
+
+define('pex/fx/SSAO',['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/Vec2'], function(FXStage, SSAOGLSL, Vec2) {
+  FXStage.prototype.ssao = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    var depthSource = this.getSourceTexture(options.depthSource);
+
+    var program = this.getShader(SSAOGLSL);
+    program.use();
+    program.uniforms.textureSize(Vec2.fromValues(depthSource.width, depthSource.height));
+    program.uniforms.depthTex(0);
+    program.uniforms.near(options.near || 0.1);
+    program.uniforms.far(options.far || 100);
+    rt.bind();
+    depthSource.bind();
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
+    rt.unbind();
+
+    return this.asFXStage(rt, 'ssao');
+  };
+});
+define('lib/text!pex/fx/FXAA.glsl',[],function () { return '#ifdef VERT\n\nfloat FXAA_SUBPIX_SHIFT = 1.0/4.0;\n\nuniform float rtWidth;\nuniform float rtHeight;\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec4 posPos;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n\n  vec2 rcpFrame = vec2(1.0/rtWidth, 1.0/rtHeight);\n  posPos.xy = texCoord.xy;\n  posPos.zw = texCoord.xy - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));\n}\n\n#endif\n\n#ifdef FRAG\n\n#define FXAA_REDUCE_MIN   (1.0/ 128.0)\n#define FXAA_REDUCE_MUL   (1.0 / 8.0)\n#define FXAA_SPAN_MAX     8.0\n\nuniform sampler2D tex0;\nvarying vec4 posPos;\nuniform float rtWidth;\nuniform float rtHeight;\n\n\nvec4 applyFXAA(vec2 fragCoord, sampler2D tex)\n{\n    vec4 color;\n    vec2 inverseVP = vec2(1.0 / rtWidth, 1.0 / rtHeight);\n    vec3 rgbNW = texture2D(tex, (fragCoord + vec2(-1.0, -1.0)) * inverseVP).xyz;\n    vec3 rgbNE = texture2D(tex, (fragCoord + vec2(1.0, -1.0)) * inverseVP).xyz;\n    vec3 rgbSW = texture2D(tex, (fragCoord + vec2(-1.0, 1.0)) * inverseVP).xyz;\n    vec3 rgbSE = texture2D(tex, (fragCoord + vec2(1.0, 1.0)) * inverseVP).xyz;\n    vec3 rgbM  = texture2D(tex, fragCoord  * inverseVP).xyz;\n    vec3 luma = vec3(0.299, 0.587, 0.114);\n    float lumaNW = dot(rgbNW, luma);\n    float lumaNE = dot(rgbNE, luma);\n    float lumaSW = dot(rgbSW, luma);\n    float lumaSE = dot(rgbSE, luma);\n    float lumaM  = dot(rgbM,  luma);\n    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n\n    //return texture2D(tex, fragCoord);\n    //return vec4(fragCoord, 0.0, 1.0);\n    //return vec4(rgbM, 1.0);\n\n    vec2 dir;\n    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));\n    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));\n\n    float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) *\n                          (0.25 * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);\n\n    float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n    dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),\n              max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n              dir * rcpDirMin)) * inverseVP;\n\n    vec3 rgbA = 0.5 * (\n        texture2D(tex, fragCoord * inverseVP + dir * (1.0 / 3.0 - 0.5)).xyz +\n        texture2D(tex, fragCoord * inverseVP + dir * (2.0 / 3.0 - 0.5)).xyz);\n    vec3 rgbB = rgbA * 0.5 + 0.25 * (\n        texture2D(tex, fragCoord * inverseVP + dir * -0.5).xyz +\n        texture2D(tex, fragCoord * inverseVP + dir * 0.5).xyz);\n\n    float lumaB = dot(rgbB, luma);\n    if ((lumaB < lumaMin) || (lumaB > lumaMax))\n        color = vec4(rgbA, 1.0);\n    else\n        color = vec4(rgbB, 1.0);\n    return color;\n}\n\nvoid main() {\n  gl_FragColor = applyFXAA(posPos.xy * vec2(rtWidth, rtHeight), tex0);\n}\n\n//#version 120\n/*\nuniform sampler2D tex0;\nvarying vec4 posPos;\nuniform float rtWidth;\nuniform float rtHeight;\nfloat FXAA_SPAN_MAX = 8.0;\nfloat FXAA_REDUCE_MUL = 1.0/8.0;\n\n#define FxaaInt2 ivec2\n#define FxaaFloat2 vec2\n#define FxaaTexLod0(t, p) texture2DLod(t, p, 0.0)\n#define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)\n\nvec3 FxaaPixelShader(\n  vec4 posPos, // Output of FxaaVertexShader interpolated across screen.\n  sampler2D tex, // Input texture.\n  vec2 rcpFrame) // Constant {1.0/frameWidth, 1.0/frameHeight}.\n{\n//---------------------------------------------------------\n    #define FXAA_REDUCE_MIN   (1.0/128.0)\n    //#define FXAA_REDUCE_MUL   (1.0/8.0)\n    //#define FXAA_SPAN_MAX     8.0\n//---------------------------------------------------------\n    vec3 rgbNW = FxaaTexLod0(tex, posPos.zw).xyz;\n    vec3 rgbNE = FxaaTexOff(tex, posPos.zw, FxaaInt2(1,0), rcpFrame.xy).xyz;\n    vec3 rgbSW = FxaaTexOff(tex, posPos.zw, FxaaInt2(0,1), rcpFrame.xy).xyz;\n    vec3 rgbSE = FxaaTexOff(tex, posPos.zw, FxaaInt2(1,1), rcpFrame.xy).xyz;\n    vec3 rgbM  = FxaaTexLod0(tex, posPos.xy).xyz;\n//---------------------------------------------------------\n    vec3 luma = vec3(0.299, 0.587, 0.114);\n    float lumaNW = dot(rgbNW, luma);\n    float lumaNE = dot(rgbNE, luma);\n    float lumaSW = dot(rgbSW, luma);\n    float lumaSE = dot(rgbSE, luma);\n    float lumaM  = dot(rgbM,  luma);\n/*---------------------------------------------------------\n    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n/*---------------------------------------------------------\n    vec2 dir;\n    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));\n    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));\n/*---------------------------------------------------------\n    float dirReduce = max(\n        (lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),\n        FXAA_REDUCE_MIN);\n    float rcpDirMin = 1.0/(min(abs(dir.x), abs(dir.y)) + dirReduce);\n    dir = min(FxaaFloat2( FXAA_SPAN_MAX,  FXAA_SPAN_MAX),\n          max(FxaaFloat2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n          dir * rcpDirMin)) * rcpFrame.xy;\n/*--------------------------------------------------------\n    vec3 rgbA = (1.0/2.0) * (\n        FxaaTexLod0(tex, posPos.xy + dir * (1.0/3.0 - 0.5)).xyz +\n        FxaaTexLod0(tex, posPos.xy + dir * (2.0/3.0 - 0.5)).xyz);\n    vec3 rgbB = rgbA * (1.0/2.0) + (1.0/4.0) * (\n        FxaaTexLod0(tex, posPos.xy + dir * (0.0/3.0 - 0.5)).xyz +\n        FxaaTexLod0(tex, posPos.xy + dir * (3.0/3.0 - 0.5)).xyz);\n    float lumaB = dot(rgbB, luma);\n    if((lumaB < lumaMin) || (lumaB > lumaMax)) return rgbA;\n    return rgbB; }\n\nvec4 PostFX(sampler2D tex, vec2 uv, float time)\n{\n  vec4 c = vec4(0.0);\n  vec2 rcpFrame = vec2(1.0/rt_w, 1.0/rt_h);\n  c.rgb = FxaaPixelShader(posPos, tex, rcpFrame);\n  //c.rgb = 1.0 - texture2D(tex, posPos.xy).rgb;\n  c.a = 1.0;\n  return c;\n}\n\nvoid main()\n{\n  vec2 uv = posPos.xy;\n  gl_FragColor = PostFX(tex0, uv, 0.0);\n}\n\n*/\n\n#endif';});
+
+define('pex/fx/FXAA',['pex/fx/FXStage', 'lib/text!pex/fx/FXAA.glsl'], function(FXStage, FXAAGLSL) {
+  FXStage.prototype.fxaa = function(options) {
+    options = options || {};
+
+    var outputSize = this.getOutputSize(options.width, options.height);
+    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+    rt.bind();
+
+    var source = this.getSourceTexture();
+    source.bind();
+    var program = this.getShader(FXAAGLSL);
+    program.use();
+    program.uniforms.rtWidth(source.width);
+    program.uniforms.rtHeight(source.height);
+    this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
+    rt.unbind();
+
+    return this.asFXStage(rt, 'fxaa');
+  }
+});
+define('pex/fx',
+  [
+    'pex/fx/FXStage',
+    'pex/fx/Render',
+    'pex/fx/Blit',
+    'pex/fx/Downsample2',
+    'pex/fx/Downsample4',
+    'pex/fx/Blur3',
+    'pex/fx/Blur5',
+    'pex/fx/Blur7',
+    'pex/fx/Add',
+    'pex/fx/Threshold',
+    'pex/fx/Image',
+    'pex/fx/Mult',
+    'pex/fx/SSAO',
+    'pex/fx/FXAA'
+  ],
+  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO, FXAO) {
+    var globalFx;
+    return function() {
+      if (!globalFx) {
+        globalFx = new FXStage();
+      }
+      globalFx.reset();
+      return globalFx;
+    }
+  }
+);
+
+  define('pex/gui/SkiaRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
+  var plask = Node.plask
+  function SkiaRenderer(width, height) {
+    this.gl = Context.currentContext.gl;
+    this.tex = Texture2D.create(width, height);
+    this.canvas = new plask.SkCanvas.create(width, height);
+
+    this.fontPaint = new plask.SkPaint();
+    this.fontPaint.setStyle(plask.SkPaint.kFillStyle);
+    this.fontPaint.setColor(255, 255, 255, 255);
+    this.fontPaint.setTextSize(10);
+    this.fontPaint.setFontFamily('Monaco');
+    this.fontPaint.setStrokeWidth(0);
+
+    this.fontHighlightPaint = new plask.SkPaint();
+    this.fontHighlightPaint.setStyle(plask.SkPaint.kFillStyle);
+    this.fontHighlightPaint.setColor(100, 100, 100, 255);
+    this.fontHighlightPaint.setTextSize(10);
+    this.fontHighlightPaint.setFontFamily('Monaco');
+    this.fontHighlightPaint.setStrokeWidth(0);
+
+    this.panelBgPaint = new plask.SkPaint();
+    this.panelBgPaint.setStyle(plask.SkPaint.kFillStyle);
+    this.panelBgPaint.setColor(0, 0, 0, 150);
+
+    this.controlBgPaint = new plask.SkPaint();
+    this.controlBgPaint.setStyle(plask.SkPaint.kFillStyle);
+    this.controlBgPaint.setColor(150, 150, 150, 255);
+
+    this.controlHighlightPaint = new plask.SkPaint();
+    this.controlHighlightPaint.setStyle(plask.SkPaint.kFillStyle);
+    this.controlHighlightPaint.setColor(255, 255, 0, 255);
+
+    this.controlFeaturePaint = new plask.SkPaint();
+    this.controlFeaturePaint.setStyle(plask.SkPaint.kFillStyle);
+    this.controlFeaturePaint.setColor(255, 255, 255, 255);
+  }
+
+  SkiaRenderer.prototype.isAnyItemDirty = function(items) {
+    var dirty = false;
+    items.forEach(function(item) {
+      if (item.dirty) {
+        item.dirty = false;
+        dirty = true;
+      }
+    });
+    return dirty;
+  };
+
+  SkiaRenderer.prototype.draw = function(items) {
+    if (!this.isAnyItemDirty(items)) {
+      return;
+    }
+
+    var canvas = this.canvas;
+
+    canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode); //transparent
+
+    var dy = 10;
+    var dx = 10;
+    var w = 160;
+    for(var i=0; i<items.length; i++) {
+      var e = items[i];
+
+      if (e.px && e.px) {
+        dx = e.px;
+        dy = e.py;
+      }
+      var eh = 20;
+
+      if (e.type == "slider") eh = 34;
+      if (e.type == "multislider") eh = 18 + e.getValue().length * 20;
+      if (e.type == "button") eh = 24;
+      if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+
+      canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
+
+      if (e.type == "slider") {
+        var value = e.getValue();
+        canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
+        canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
+      }
+      else if (e.type == "multislider") {
+        for(var j=0; j<e.getValue().length; j++) {
+          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20, dx + w - 3, dy + 18 + (j+1)*20 - 6);
+          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20 - 6);
+        }
+        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+      }
+      else if (e.type == "button") {
+        var btnColor = e.active ? this.controlHighlightPaint : this.controlBgPaint;
+        var btnFont = e.active ? this.fontHighlightPaint : this.fontPaint;
+        canvas.drawRect(btnColor, dx + 3, dy + 3, dx + w - 3, dy + eh - 5);
+        e.activeArea.set(dx + 3, dy + 3, w - 3 - 3, eh - 5);
+        if (e.options.color) {
+          var c = e.options.color;
+          this.controlFeaturePaint.setColor(255 * c.x, 255 * c.y, 255 * c.z, 255);
+          canvas.drawRect(this.controlFeaturePaint,  dx + w - 8, dy + 3, dx + w - 3, dy + eh - 5);
+        }
+        canvas.drawText(btnFont, items[i].title, dx + 5, dy + 15);
+      }
+      else if (e.type == "toggle") {
+        var on = e.contextObject[e.attributeName];
+        var toggleColor = on ? this.controlHighlightPaint : this.controlBgPaint;
+        canvas.drawRect(toggleColor, dx + 3, dy + 3, dx + eh - 5, dy + eh - 5);
+        e.activeArea.set(dx + 3, dy + 3, eh - 5, eh - 5);
+        canvas.drawText(this.fontPaint, items[i].title, dx + 5 + eh - 5, dy + 13);
+      }
+      else if (e.type == "radiolist") {
+        canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
+        var itemColor = this.controlBgPaint;
+        var itemHeight = 20;
+        for(var j=0; j<e.items.length; j++) {
+          var item = e.items[j];
+          var on = (e.contextObject[e.attributeName] == item.value);
+          var itemColor = on ? this.controlHighlightPaint : this.controlBgPaint;
+          canvas.drawRect(itemColor, dx + 3, 18 + j*itemHeight + dy + 3, dx + itemHeight - 5, itemHeight + j*itemHeight + dy + 18 - 5);
+          canvas.drawText(this.fontPaint, item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
+        }
+        e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
+      }
+      else if (e.type == "texture2D") {
+        canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+      }
+      else {
+        canvas.drawText(this.fontPaint, items[i].title, dx + 3, dy + 13);
+      }
+      dy += eh;
+    }
+
+    this.updateTexture();
+  }
+
+  SkiaRenderer.prototype.getTexture = function() {
+    return this.tex;
+  }
+
+  SkiaRenderer.prototype.updateTexture = function() {
+    var gl = this.gl;
+    this.tex.bind();
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+
+
+  return SkiaRenderer;
+});
+
+define('pex/gui/GUI',[
+  'pex/gl/Context',
+  'pex/gl/ScreenImage',
+  'pex/utils/Time',
+  'pex/gui/SkiaRenderer',
+  //'pex/gui/HTMLCanvasRenderer',
+  //'pex/gui/NodeCanvasRenderer',
+  'pex/geom/Rect',
+  'pex/sys/IO',
+  'pex/sys/Platform',
+  'pex/geom/Vec2'
+],
+function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
+  
+  function GUIControl(o) {
+    for(var i in o) {
+      this[i] = o[i];
+    }
+  }
+
+  GUIControl.prototype.setPosition = function(x, y) {
+    this.px = x;
+    this.py = y;
+  }
+
+  GUIControl.prototype.getNormalizedValue = function(idx) {
+    if (!this.contextObject) return 0;
+
+    var val = this.contextObject[this.attributeName];
+
+    var options = this.options;
+    if (options && options.min !== undefined && options.max !== undefined) {
+      if (this.type == 'multislider') {
+        val = (val[idx] - options.min) / (options.max - options.min);
+      }
+      else {
+        val = (val - options.min) / (options.max - options.min);
+      }
+    }
+    return val;
+  }
+
+  GUIControl.prototype.setNormalizedValue = function(val, idx) {
+    if (!this.contextObject) return;
+
+    var options = this.options;
+    if (options && options.min !== undefined && options.max !== undefined) {
+      if (this.type == 'multislider') {
+        var a = this.contextObject[this.attributeName];
+        if (idx >= a.length) {
+          return;
+        }
+        a[idx] = options.min + val * (options.max - options.min);
+        val = a;
+      }
+      else {
+        val = options.min + val * (options.max - options.min);
+      }
+    }
+    this.contextObject[this.attributeName] = val;
+  }
+
+  GUIControl.prototype.getValue = function() {
+    if (this.type == 'slider') {
+      return this.contextObject[this.attributeName];
+    }
+    if (this.type == 'multislider') {
+      return this.contextObject[this.attributeName];
+    }
+    else if (this.type == 'toggle') {
+      return this.contextObject[this.attributeName];
+    }
+    else return 0;
+  }
+
+  GUIControl.prototype.getStrValue = function() {
+    if (this.type == 'slider') {
+      var str = '' + this.contextObject[this.attributeName];
+      var dotPos = str.indexOf('.') + 1;
+      while(str.charAt(dotPos) == '0') {
+        dotPos++;
+      }
+      return str.substr(0, dotPos+2);
+    }
+    else if (this.type == 'toggle') {
+      return this.contextObject[this.attributeName];
+    }
+    else return '';
+  }
+
+  function GUI(window, x, y) {
+    this.gl = Context.currentContext.gl;
+    this.window = window;
+    this.x = (x == undefined) ? 0 : x;
+    this.y = (y == undefined) ? 0 : y;
+    this.mousePos = Vec2.create();
+
+    if (Platform.isPlask) {
+      this.renderer = new SkiaRenderer(window.width, window.height);
+    }
+    //else if (IO.Image) {
+      //this.renderer = new NodeCanvasRenderer(window.width, window.height);
+    //}
+    //else {
+      //this.renderer = new HTMLCanvasRenderer(window.width, window.height);
+    //}
+    this.screenBounds = new Rect(this.x, this.y, window.width, window.height);
+    this.screenImage = new ScreenImage(this.renderer.getTexture(), this.x, this.y, window.width, window.height, window.width, window.height);
+
+    this.items = [];
+
+    this.bindEventListeners(window);
+  }
+
+  GUI.prototype.bindEventListeners = function(window) {
+    var self = this;
+    window.on('leftMouseDown', function(e) {
+      self.onMouseDown(e);
+    });
+
+    window.on('mouseDragged', function(e) {
+      self.onMouseDrag(e);
+    });
+
+    window.on('leftMouseUp', function(e) {
+      self.onMouseUp(e);
+    });
+  }
+
+  GUI.prototype.onMouseDown = function(e) {
+    this.activeControl = null;
+    Vec2.set(this.mousePos, e.x - this.x, e.y - this.y);
+    for(var i=0; i<this.items.length; i++) {
+      if (this.items[i].activeArea.contains(this.mousePos)) {
+        this.activeControl = this.items[i];
+        this.activeControl.active = true;
+        this.activeControl.dirty = true;
+        if (this.activeControl.type == 'button') {
+          this.activeControl.contextObject[this.activeControl.methodName]();
+        }
+        else if (this.activeControl.type == 'toggle') {
+          this.activeControl.contextObject[this.activeControl.attributeName] = !this.activeControl.contextObject[this.activeControl.attributeName];
+          if (this.activeControl.onchange) {
+            this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+          }
+        }
+        else if (this.activeControl.type == 'radiolist') {
+          var hitY = this.mousePos[1] - this.activeControl.activeArea.y;
+          var hitItemIndex = Math.floor(this.activeControl.items.length * hitY/this.activeControl.activeArea.height);
+          if (hitItemIndex < 0) continue;
+          if (hitItemIndex >= this.activeControl.items.length) continue;
+          this.activeControl.contextObject[this.activeControl.attributeName] = this.activeControl.items[hitItemIndex].value;
+          if (this.activeControl.onchange) {
+            this.activeControl.onchange(this.activeControl.items[hitItemIndex].value);
+          }
+        }
+        e.handled = true;
+        this.onMouseDrag(e);
+        break;
+      }
+    }
+  }
+
+  GUI.prototype.onMouseDrag = function(e) {
+    if (this.activeControl) {
+      var aa = this.activeControl.activeArea;
+      if (this.activeControl.type == 'slider') {
+        var val = (e.x - aa.x) / aa.width;
+        val = Math.max(0, Math.min(val, 1));
+        this.activeControl.setNormalizedValue(val);
+        if (this.activeControl.onchange) {
+          this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+        }
+        this.activeControl.dirty = true;
+      }
+      else if (this.activeControl.type == 'multislider') {
+        var val = (e.x - aa.x) / aa.width;
+        val = Math.max(0, Math.min(val, 1));
+        var idx = Math.floor(this.activeControl.getValue().length * (e.y - aa.y) / aa.height);
+        this.activeControl.setNormalizedValue(val, idx);
+        if (this.activeControl.onchange) {
+          this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
+        }
+        this.activeControl.dirty = true;
+      }
+      e.handled = true;
+    }
+  }
+
+  GUI.prototype.onMouseUp = function(e) {
+    if (this.activeControl) {
+      this.activeControl.active = false;
+      this.activeControl.dirty = true;
+      this.activeControl = null;
+    }
+  }
+
+  GUI.prototype.addLabel = function(title) {
+    var ctrl = new GUIControl(
+      { type: 'label', title: title, dirty : true,activeArea: new Rect(0, 0, 0, 0), setTitle: function(title) { this.title = title; this.dirty = true; } }
+    );
+    this.items.push(ctrl);
+    return ctrl;
+  }
+
+  GUI.prototype.addParam = function(title, contextObject, attributeName, options, onchange) {
+    options = options || {};
+    if (contextObject[attributeName] instanceof Array) {
+      var ctrl = new GUIControl(
+        {
+          type: 'multislider',
+          title: title,
+          contextObject: contextObject,
+          attributeName: attributeName,
+          activeArea: new Rect(0, 0, 0, 0),
+          options: options,
+          onchange : onchange,
+          dirty : true
+        }
+      );
+      this.items.push(ctrl);
+      return ctrl;
+    }
+    else if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
+      var ctrl = new GUIControl(
+        {
+          type: 'toggle',
+          title: title,
+          contextObject: contextObject,
+          attributeName: attributeName,
+          activeArea: new Rect(0, 0, 0, 0),
+          options: options,
+          onchange : onchange,
+          dirty : true
+        }
+      );
+      this.items.push(ctrl);
+      return ctrl;
+    }
+    else {
+      var ctrl = new GUIControl(
+        {
+          type: 'slider',
+          title: title,
+          contextObject: contextObject,
+          attributeName: attributeName,
+          activeArea: new Rect(0, 0, 0, 0),
+          options: options,
+          onchange : onchange,
+          dirty : true
+        }
+      );
+      this.items.push(ctrl);
+      return ctrl;
+    }
+  }
+
+  GUI.prototype.addButton = function(title, contextObject, methodName, options) {
+    var ctrl = new GUIControl(
+      {
+        type: 'button',
+        title: title,
+        contextObject: contextObject,
+        methodName: methodName,
+        activeArea: new Rect(0, 0, 0, 0),
+        dirty : true,
+        options : options || {}
+      }
+    );
+    this.items.push(ctrl);
+    return ctrl;
+  }
+
+  GUI.prototype.addRadioList = function(title, contextObject, attributeName, items, onchange) {
+    var ctrl = new GUIControl(
+      {
+        type: 'radiolist',
+        title: title,
+        contextObject: contextObject,
+        attributeName: attributeName,
+        activeArea: new Rect(0, 0, 0, 0),
+        items: items,
+        onchange : onchange,
+        dirty : true
+      }
+    );
+    this.items.push(ctrl);
+    return ctrl;
+  }
+
+  GUI.prototype.addTexture2D = function(title, texture) {
+    var ctrl = new GUIControl(
+      {
+        type: 'texture2D',
+        title: title,
+        texture: texture,
+        activeArea: new Rect(0, 0, 0, 0),
+        dirty : true
+      }
+    );
+    this.items.push(ctrl);
+    return ctrl;
+  }
+
+  GUI.prototype.dispose = function() {
+    //TODO: delete texture object
+  }
+
+  var frame = 0;
+  GUI.prototype.draw = function() {
+    if (this.items.length == 0) {
+      return;
+    }
+    this.renderer.draw(this.items);
+    //if (!IO.Image)
+    var gl = Context.currentContext.gl;
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    this.screenImage.draw(this.renderer.getTexture());
+    gl.disable(gl.BLEND);
+    //this.drawTextures();
+  }
+
+  //GUI.prototype.drawTextures = function() {
+  //  for(var i=0; i<this.items.length; i++) {
+  //    var item = this.items[i];
+  //    if (item.type == 'texture2D') {
+  //      if (item.texture.bind) item.texture.bind();
+  //      else {
+  //        this.gl.bindTexture(item.texture.target, item.texture.handle);
+  //      }
+  //      var bounds;
+  //      if (item.texture.flipped) {
+  //        bounds  = new Rect(item.activeArea.x, this.window.height - item.activeArea.y, item.activeArea.width, -item.activeArea.height);
+  //      }
+  //      else {
+  //        bounds = new Rect(item.activeArea.x, this.window.height - item.activeArea.y - item.activeArea.height, item.activeArea.width, item.activeArea.height);
+  //      }
+  //      this.screenImage.setBounds(bounds);
+  //      this.screenImage.setTexture(null);
+  //      this.screenImage.draw();
+  //    }
+  //  }
+  //  this.screenImage.setBounds(this.screenBounds);
+  //  this.screenImage.setTexture(this.renderer.getTexture());
+  //}
+
+  GUI.prototype.serialize = function() {
+    var data = {};
+    this.items.forEach(function(item, i) {
+      data[item.title] = item.getNormalizedValue();
+    })
+    return data;
+  }
+
+  GUI.prototype.deserialize = function(data) {
+    this.items.forEach(function(item, i) {
+      if (!(data[item.title] == undefined)) {
+        item.setNormalizedValue(data[item.title]);
+      }
+    })
+  }
+
+  GUI.prototype.save = function(path) {
+    var data = this.serialize();
+    IO.saveTextFile(path, JSON.stringify(data));
+  }
+
+  GUI.prototype.load = function(path) {
+    var self = this;
+    IO.loadTextFile(path, function(dataStr) {
+      var data = JSON.parse(dataStr);
+      self.deserialize(data);
+    })
+  }
+
+  GUI.ScreenImage = ScreenImage;
+
+  return GUI;
+});
+
+//Module wrapper for gl classes.
+define('pex/gui',
+  [
+    'pex/gui/GUI'
+  ],
+  function(GUI) {
+    return {
+      GUI : GUI
+    };
+  }
+);
 //Module wrapper for the whole Pex library.
 define('pex',
   [
@@ -6573,9 +9924,11 @@ define('pex',
     'pex/sys',
     'pex/gl',
     'pex/materials',
-    'pex/scene'
+    'pex/scene',
+    'pex/fx',
+    'pex/gui'
   ],
-  function(geom, utils, sys, gl, materials, scene) {
+  function(geom, utils, sys, gl, materials, scene, fx, gui) {
     return {
       geom : geom,
       utils : utils,
@@ -6583,7 +9936,9 @@ define('pex',
       gl : gl,
       materials : materials,
       scene : scene,
-      require : sys.Require //shortcut
+      fx : fx,
+      require : sys.Require, //shortcut,
+      gui : gui
     };
   }
 );
