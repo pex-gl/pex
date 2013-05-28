@@ -9,7 +9,7 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pex/geom/Quat', 'pex
     this.radius = Math.min(window.width/2, window.height/2) * 2;
     this.center = Vec2.fromValues(window.width/2, window.height/2);
     this.currRot = Quat.create();
-    Quat.setAxisAngle(this.currRot, Vec3.fromValues(0, 1, 0), Math.PI);
+    Quat.setAxisAngle(this.currRot, Vec3.fromValues(0, 1, 0), Math.PI/4);
     this.clickRot = Quat.create();
     this.dragRot = Quat.create();
     this.clickPos = Vec3.create();
