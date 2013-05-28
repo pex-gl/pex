@@ -12,9 +12,10 @@ define(
     'pex/fx/Threshold',
     'pex/fx/Image',
     'pex/fx/Mult',
-    'pex/fx/SSAO'
+    'pex/fx/SSAO',
+    'pex/fx/FXAA'
   ],
-  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO) {
+  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO, FXAO) {
     var globalFx;
     return function() {
       if (!globalFx) {
