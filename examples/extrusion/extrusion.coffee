@@ -63,10 +63,7 @@ pex.sys.Window.create
     @hem = hem().fromGeometry(new Cube(1, 1, 1))
     @mesh = new Mesh(@hem.toFlatGeometry(), @material)
     @hem.selectRandomFaces().subdivide().selectRandomFaces(1000)
-    #@hem.triangulate().toFlatGeometry(@mesh.geometry)
-    #@mesh = new Mesh(@hem.extrude(1).triangulate().toFlatGeometry(), @material)
     selectedFaces = @hem.getSelectedFaces()
-    #@hem.triangulate().extrude(1).triangulate()
 
     @turtles = selectedFaces.map (face) => new Turtle(@hem, face)
 
@@ -112,8 +109,7 @@ pex.sys.Window.create
         turtle.move(0.1)
         turtle.radiusScale *= 2
         turtle.move(0.1)
-      #@hem.triangulate().toFlatGeometry(@mesh.geometry)
-      @mesh = new Mesh(@hem.triangulate().toFlatGeometry(), @material)
+      @hem.toFlatGeometry(@mesh.geometry)
       @totalLength += 10.2
 
     @gl.clearColor(0, 0, 0, 1);

@@ -134,7 +134,7 @@ pex.sys.Window.create({
         turtle.radiusScale *= 2;
         return turtle.move(0.1);
       });
-      this.mesh = new Mesh(this.hem.triangulate().toFlatGeometry(), this.material);
+      this.hem.toFlatGeometry(this.mesh.geometry);
       this.totalLength += 10.2;
     }
     this.gl.clearColor(0, 0, 0, 1);
