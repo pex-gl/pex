@@ -9,8 +9,9 @@ define(
     'pex/materials/ShowColors',
     'pex/materials/PackDepth',
     'pex/materials/Diffuse',
+    'pex/materials/Test',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -19,7 +20,8 @@ define(
       ShowDepth : ShowDepth,
       ShowColors : ShowColors,
       PackDepth : PackDepth,
-      Diffuse : Diffuse
+      Diffuse : Diffuse,
+      Test : Test
     };
   }
 );
