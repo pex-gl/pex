@@ -3,7 +3,6 @@ define(
     'pex/geom/Vec2',
     'pex/geom/Vec3',
     'pex/geom/Vec4',
-    'pex/geom/Mat3',
     'pex/geom/Mat4',
     'pex/geom/Quat',
     'pex/geom/Geometry',
@@ -20,14 +19,13 @@ define(
     'pex/geom/BoundingBox',
     'pex/geom/Octree'
   ],
-  function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen,
+  function(Vec2, Vec3, Vec4, Mat4, Quat, Geometry, gen,
     Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem, 
     BoundingBox, Octree) {
     return {
       Vec2 : Vec2,
       Vec3 : Vec3,
       Vec4 : Vec4,
-      Mat3 : Mat3,
       Mat4 : Mat4,
       Quat : Quat,
       Geometry : Geometry,
