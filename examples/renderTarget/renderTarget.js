@@ -27,7 +27,7 @@ pex.sys.Window.create({
     this.rt.bind();
     gl.clearColor(0.2, 0.2, 0.2, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    pex.geom.Quat.setAxisAngle(this.renderedMesh.rotation, this.camera.up, pex.utils.Time.seconds);
+    this.renderedMesh.rotation.setAxisAngle(this.camera.up, pex.utils.Time.seconds);
     gl.viewport(0, 0, this.rt.width, this.rt.height);
     this.renderedMesh.draw(this.rtCamera);
     this.rt.unbind();
