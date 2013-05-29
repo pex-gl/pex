@@ -79,11 +79,9 @@ pex.sys.Window.create({
       diffuseColor: Color.create(1, 0, 0, 1)
     });
     this.framerate(30);
-    this.hem = hem().fromGeometry(new Cube(2, 1, 1));
+    this.hem = hem().fromGeometry(new Cube(1, 1, 1));
     this.mesh = new Mesh(this.hem.toFlatGeometry(), this.material);
     this.hem.selectRandomFaces().subdivide().selectRandomFaces(1000);
-    this.hem.toFlatGeometry(this.mesh.geometry);
-    this.mesh = new Mesh(this.hem.toFlatGeometry(), this.material);
     selectedFaces = this.hem.getSelectedFaces();
     this.turtles = selectedFaces.map(function(face) {
       return new Turtle(_this.hem, face);
@@ -91,8 +89,8 @@ pex.sys.Window.create({
     return this.on('keyDown', function(e) {
       switch (e.str) {
         case 'e':
-          hem.extrude(1);
-          hem.toFlatGeometry(_this.mesh.geometry);
+          _this.hem.extrude(1);
+          _this.hem.toFlatGeometry(_this.mesh.geometry);
       }
       switch (e.keyCode) {
         case 48:
@@ -136,7 +134,7 @@ pex.sys.Window.create({
         turtle.radiusScale *= 2;
         return turtle.move(0.1);
       });
-      this.hem.toFlatGeometry(this.mesh.geometry);
+      this.mesh = new Mesh(this.hem.triangulate().toFlatGeometry(), this.material);
       this.totalLength += 10.2;
     }
     this.gl.clearColor(0, 0, 0, 1);

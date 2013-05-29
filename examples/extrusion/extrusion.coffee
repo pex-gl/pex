@@ -60,20 +60,21 @@ pex.sys.Window.create
 
     @framerate(30)
 
-    @hem = hem().fromGeometry(new Cube(2, 1, 1))
+    @hem = hem().fromGeometry(new Cube(1, 1, 1))
     @mesh = new Mesh(@hem.toFlatGeometry(), @material)
     @hem.selectRandomFaces().subdivide().selectRandomFaces(1000)
-    @hem.toFlatGeometry(@mesh.geometry)
-    @mesh = new Mesh(@hem.toFlatGeometry(), @material)
+    #@hem.triangulate().toFlatGeometry(@mesh.geometry)
+    #@mesh = new Mesh(@hem.extrude(1).triangulate().toFlatGeometry(), @material)
     selectedFaces = @hem.getSelectedFaces()
+    #@hem.triangulate().extrude(1).triangulate()
 
     @turtles = selectedFaces.map (face) => new Turtle(@hem, face)
 
     @on 'keyDown', (e) =>
       switch e.str
         when 'e'
-          hem.extrude(1)
-          hem.toFlatGeometry(@mesh.geometry)
+          @hem.extrude(1)
+          @hem.toFlatGeometry(@mesh.geometry)
 
       switch e.keyCode
         when 48  #TAB
@@ -111,7 +112,8 @@ pex.sys.Window.create
         turtle.move(0.1)
         turtle.radiusScale *= 2
         turtle.move(0.1)
-      @hem.toFlatGeometry(@mesh.geometry)
+      #@hem.triangulate().toFlatGeometry(@mesh.geometry)
+      @mesh = new Mesh(@hem.triangulate().toFlatGeometry(), @material)
       @totalLength += 10.2
 
     @gl.clearColor(0, 0, 0, 1);
