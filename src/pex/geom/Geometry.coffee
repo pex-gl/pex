@@ -21,10 +21,10 @@ define (require) ->
         attrib.elementSize = elementSizeMap[attrib.type];
         attrib.data = []
         attrib.length = attrib.length ? 0
-        attrib.buf = new Float32Array(attrib.elementSize * attrib.length)
 
     allocate: (numVertices) ->
       for attribName, attrib of @attribs
+        attrib.length = numVertices
         for i in [0..numVertices-1] by 1
           if not attrib.data[i]?
             switch attrib.type

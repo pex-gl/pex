@@ -64,6 +64,7 @@ define(function(require) {
         this.indices = {};
         this.indices.buffer = this.gl.createBuffer();
       }
+      this.indices.isDirty = false;
       data = [];
       if (geometry.faces.length > 0) {
         geometry.faces.forEach(function(face) {
@@ -114,6 +115,9 @@ define(function(require) {
       }
       this.material.use();
       program = this.material.program;
+      if (this.indices.isDirty) {
+        this.updateIndices(this.geometry);
+      }
       _ref1 = this.attributes;
       for (name in _ref1) {
         attrib = _ref1[name];
@@ -124,6 +128,9 @@ define(function(require) {
           this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
           if (this.geometry.attribs[name].isDirty) {
             attrib.dataBuf = this.geometry.attribs[name].buf;
+            if (!attrib.dataBuf || !attrib.dataBuf.length / attrib.elementSize < this.geometry.attribs[name].data.length) {
+              attrib.dataBuf = this.geometry.attribs[name].buf = new Float32Array(this.geometry.attribs[name].data.length * attrib.elementSize);
+            }
             if (this.geometry.attribs[name].type === 'Vec2') {
               this.geometry.attribs[name].data.forEach(function(v, i) {
                 attrib.dataBuf[i * 2 + 0] = v.x;

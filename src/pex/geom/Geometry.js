@@ -26,7 +26,6 @@ define(function(require) {
         attrib.elementSize = elementSizeMap[attrib.type];
         attrib.data = [];
         attrib.length = (_ref1 = attrib.length) != null ? _ref1 : 0;
-        attrib.buf = new Float32Array(attrib.elementSize * attrib.length);
       }
     }
 
@@ -37,6 +36,7 @@ define(function(require) {
       _results = [];
       for (attribName in _ref) {
         attrib = _ref[attribName];
+        attrib.length = numVertices;
         _results.push((function() {
           var _i, _ref1, _results1;
 

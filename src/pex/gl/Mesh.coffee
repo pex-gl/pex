@@ -129,6 +129,8 @@ define (require) ->
           @gl.bindBuffer(@gl.ARRAY_BUFFER, attrib.buffer)
           if @geometry.attribs[name].isDirty
             attrib.dataBuf = @geometry.attribs[name].buf
+            if !attrib.dataBuf || !attrib.dataBuf.length / attrib.elementSize < @geometry.attribs[name].data.length
+                attrib.dataBuf = @geometry.attribs[name].buf = new Float32Array(@geometry.attribs[name].data.length * attrib.elementSize)
             if @geometry.attribs[name].type is 'Vec2'
               @geometry.attribs[name].data.forEach (v, i) ->
                 attrib.dataBuf[i * 2 + 0] = v.x
