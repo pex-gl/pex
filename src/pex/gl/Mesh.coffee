@@ -170,18 +170,17 @@ define (require) ->
         .invert()
         .transpose()
 
-  ###
-    Mesh::getMaterial = ->
+    getMaterial: ->
       @material
 
-    Mesh::setMaterial = (material) ->
+    setMaterial: (material) ->
       @material = material
       @resetAttribLocations()
 
-    Mesh::getProgram = ->
+    getProgram: ->
       @material.program
 
-    Mesh::setProgram = (program) ->
+    setProgram: (program) ->
       @material.program = program
       @resetAttribLocations()
 

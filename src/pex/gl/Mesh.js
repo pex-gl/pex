@@ -181,25 +181,27 @@ define(function(require) {
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
     };
 
+    Mesh.prototype.getMaterial = function() {
+      return this.material;
+    };
+
+    Mesh.prototype.setMaterial = function(material) {
+      this.material = material;
+      return this.resetAttribLocations();
+    };
+
+    Mesh.prototype.getProgram = function() {
+      return this.material.program;
+    };
+
+    Mesh.prototype.setProgram = function(program) {
+      this.material.program = program;
+      return this.resetAttribLocations();
+    };
+
+    Mesh;
+
     return Mesh;
 
   })();
-  /*
-    Mesh::getMaterial = ->
-      @material
-  
-    Mesh::setMaterial = (material) ->
-      @material = material
-      @resetAttribLocations()
-  
-    Mesh::getProgram = ->
-      @material.program
-  
-    Mesh::setProgram = (program) ->
-      @material.program = program
-      @resetAttribLocations()
-  
-    Mesh
-  */
-
 });
