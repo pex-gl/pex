@@ -1381,8 +1381,8 @@ define('pex/geom/gen/Cube',['require','pex/geom/Vec2','pex/geom/Vec2','pex/geom/
             normal[v] = 0;
             normal[w] = pw / Math.abs(pw);
             texCoord = texCoords[vertexIndex] = Vec2.create();
-            texCoord[0] = i / nu;
-            texCoord[1] = j / nv;
+            texCoord.x = i / nu;
+            texCoord.y = j / nv;
             ++vertexIndex;
           }
         }
@@ -1917,7 +1917,7 @@ define('pex/geom/hem/HEEdge',[], function() {
 
 define('pex/geom/hem/HEVertex',['pex/geom/Vec3'], function(Vec3) {
   function HEVertex(x, y, z, edge) {
-    this.position = Vec3.fromValues(x, y, z);
+    this.position = Vec3.create(x, y, z);
     this.edge = edge;
     this.selected = 0;
   }
@@ -1931,7 +1931,7 @@ define('pex/geom/hem/HEVertex',['pex/geom/Vec3'], function(Vec3) {
       edge = edge.pair.next;
     } while (edge != this.edge);
 
-    var n = Vec3.fromValues(0, 0, 0);
+    var n = Vec3.create(0, 0, 0);
     for(var i in faces) {
       Vec3.add(n, n, faces[i].getNormal());
     }
@@ -2078,13 +2078,13 @@ define('pex/geom/BoundingBox',['pex/geom/Vec3'], function(Vec3) {
 
   BoundingBox.fromPositionSize = function(pos, size) {
     return new BoundingBox(
-      Vec3.fromValues(pos[0] - size[0]/2, pos[1] - size[1]/2, pos[2] - size[2]/2),
-      Vec3.fromValues(pos[0] + size[0]/2, pos[1] + size[1]/2, pos[2] + size[2]/2)
+      Vec3.create(pos.x - size.x/2, pos.y - size.y/2, pos.z - size.z/2),
+      Vec3.create(pos.x + size.x/2, pos.y + size.y/2, pos.z + size.z/2)
     );
   }
 
   BoundingBox.fromPoints = function(points) {
-    var bbox = new BoundingBox(Vec3.clone(points[0], Vec3.clone(points[0])));
+    var bbox = new BoundingBox(points[0].clone(), points[0].clone());
     points.forEach(bbox.addPoint.bind(bbox));
     return bbox;
   }
@@ -2096,53 +2096,32 @@ define('pex/geom/BoundingBox',['pex/geom/Vec3'], function(Vec3) {
 
   BoundingBox.prototype.addPoint = function(p) {
     if (this.isEmpty()) {
-      this.min = Vec3.clone(p);
-      this.max = Vec3.clone(p);
+      this.min = p.clone();
+      this.max = p.clone();
     }
 
-    if (p[0] < this.min[0]) this.min[0] = p[0];
-    if (p[1] < this.min[1]) this.min[1] = p[1];
-    if (p[2] < this.min[2]) this.min[2] = p[2];
-    if (p[0] > this.max[0]) this.max[0] = p[0];
-    if (p[1] > this.max[1]) this.max[1] = p[1];
-    if (p[2] > this.max[2]) this.max[2] = p[2];
+    if (p.x < this.min.x) this.min.x = p.x;
+    if (p.y < this.min.y) this.min.y = p.y;
+    if (p.z < this.min.z) this.min.z = p.z;
+    if (p.x > this.max.x) this.max.x = p.x;
+    if (p.y > this.max.y) this.max.y = p.y;
+    if (p.z > this.max.z) this.max.z = p.z;
   }
 
-  BoundingBox.prototype.getSize = function(out) {
-    if (!out) {
-      if (!this.size) {
-        this.size = Vec3.create();
-      }
-      out = this.size;
-    }
-
-    if (this.isEmpty()) {
-      Vec3.set(out, 0, 0, 0);
-      return out;
-    }
-
-    Vec3.set(out,
-     (this.max[0] - this.min[0]),
-     (this.max[1] - this.min[1]),
-     (this.max[2] - this.min[2])
+  BoundingBox.prototype.getSize = function() {
+    return Vec3.create(
+     (this.max.x - this.min.x),
+     (this.max.y - this.min.y),
+     (this.max.z - this.min.z)
     );
-    return out;
   }
 
   BoundingBox.prototype.getCenter = function(out) {
-    if (!out) {
-      if (!this.center) {
-        this.center = Vec3.create();
-      }
-      out = this.center;
-    }
-
-    Vec3.set(out,
-     (this.min[0] + this.max[0])/2,
-     (this.min[1] + this.max[1])/2,
-     (this.min[2] + this.max[2])/2
+    return Vec3.create(
+     this.min.x + (this.max.x - this.min.x)/2,
+     this.min.y + (this.max.y - this.min.y)/2,
+     this.min.z + (this.max.z - this.min.z)/2
     );
-    return out;
   }
 
   return BoundingBox;
@@ -2150,7 +2129,7 @@ define('pex/geom/BoundingBox',['pex/geom/Vec3'], function(Vec3) {
 define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
   //position is bottom left corner of the cell
   function Octree(position, size, accuracy) {
-    this.maxDistance = Math.max(size[0], Math.max(size[1], size[2]));
+    this.maxDistance = Math.max(size.x, Math.max(size.y, size.z));
     this.accuracy = (typeof(accuracy) !== 'undefined') ? accuracy : this.maxDistance / 1000;
     this.root = new Octree.Cell(this, position, size, 0);
   }
@@ -2233,32 +2212,32 @@ define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
   }
 
   Octree.Cell.prototype.contains = function(p) {
-    return p[0] >= this.position[0] - this.tree.accuracy
-        && p[1] >= this.position[1] - this.tree.accuracy
-        && p[2] >= this.position[2] - this.tree.accuracy
-        && p[0] <= this.position[0] + this.size[0] + this.tree.accuracy
-        && p[1] <= this.position[1] + this.size[1] + this.tree.accuracy
-        && p[2] <= this.position[2] + this.size[2] + this.tree.accuracy;
+    return p.x >= this.position.x - this.tree.accuracy
+        && p.y >= this.position.y - this.tree.accuracy
+        && p.z >= this.position.z - this.tree.accuracy
+        && p.x <= this.position.x + this.size.x + this.tree.accuracy
+        && p.y <= this.position.y + this.size.y + this.tree.accuracy
+        && p.z <= this.position.z + this.size.z + this.tree.accuracy;
   }
 
   // 1 2 3 4
   // 5 6 7 8
   Octree.Cell.prototype.split = function() {
-    var x = this.position[0];
-    var y = this.position[1];
-    var z = this.position[2];
-    var w2 = this.size[0]/2;
-    var h2 = this.size[1]/2;
-    var d2 = this.size[2]/2;
+    var x = this.position.x;
+    var y = this.position.y;
+    var z = this.position.z;
+    var w2 = this.size.x/2;
+    var h2 = this.size.y/2;
+    var d2 = this.size.z/2;
 
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
 
     for(var i=0; i<this.points.length; i++) {
       this.addToChildren(this.points[i]);
@@ -2484,7 +2463,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   };
 
   HEMesh.prototype.splitVertex = function(vertex, newVertexPos, startEdge, endEdge) {
-    var newVertex = new HEVertex(newVertexPos[0], newVertexPos[1], newVertexPos[2]);
+    var newVertex = new HEVertex(newVertexPos.x, newVertexPos.y, newVertexPos.z);
     this.vertices.push(newVertex);
     if (startEdge != null && startEdge == endEdge) {
       //edge
@@ -2822,7 +2801,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     for(var i=0; i<positions.length; i++) {
       var pos = positions[i];
-      this.vertices.push(new HEVertex(pos[0], pos[1], pos[2]));
+      this.vertices.push(new HEVertex(pos.x, pos.y, pos.z));
     }
 
     var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
@@ -3650,9 +3629,9 @@ define('pex/utils/MathUtils',['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'
   }
 
   MathUtils.randomVec3InBoundingBox = function(bbox) {
-    var x = bbox.min[0] + Math.random() * (bbox.max[0] - bbox.min[0]);
-    var y = bbox.min[1] + Math.random() * (bbox.max[1] - bbox.min[1]);
-    var z = bbox.min[2] + Math.random() * (bbox.max[2] - bbox.min[2]);
+    var x = bbox.min.x + Math.random() * (bbox.max.x - bbox.min.x);
+    var y = bbox.min.y + Math.random() * (bbox.max.y - bbox.min.y);
+    var z = bbox.min.z + Math.random() * (bbox.max.z - bbox.min.z);
     return Vec3.create(x, y, z);
   }
 
@@ -4658,27 +4637,29 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom'],function(require) {
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
     };
 
+    Mesh.prototype.getMaterial = function() {
+      return this.material;
+    };
+
+    Mesh.prototype.setMaterial = function(material) {
+      this.material = material;
+      return this.resetAttribLocations();
+    };
+
+    Mesh.prototype.getProgram = function() {
+      return this.material.program;
+    };
+
+    Mesh.prototype.setProgram = function(program) {
+      this.material.program = program;
+      return this.resetAttribLocations();
+    };
+
+    Mesh;
+
     return Mesh;
 
   })();
-  /*
-    Mesh::getMaterial = ->
-      @material
-  
-    Mesh::setMaterial = (material) ->
-      @material = material
-      @resetAttribLocations()
-  
-    Mesh::getProgram = ->
-      @material.program
-  
-    Mesh::setProgram = (program) ->
-      @material.program = program
-      @resetAttribLocations()
-  
-    Mesh
-  */
-
 });
 
 define('pex/gl/Texture',['pex/gl/Context'], function(Context) {
@@ -5267,9 +5248,9 @@ define('pex/gl/ScreenImage',[
     var program = new Program(ScreenImageGLSL);
 
     var uniforms = {
-      screenSize : Vec2.fromValues(screenWidth, screenHeight),
-      pixelPosition : Vec2.fromValues(x, y),
-      pixelSize : Vec2.fromValues(w, h),
+      screenSize : Vec2.create(screenWidth, screenHeight),
+      pixelPosition : Vec2.create(x, y),
+      pixelSize : Vec2.create(w, h),
       alpha : 1.0
     };
 
@@ -5288,19 +5269,19 @@ define('pex/gl/ScreenImage',[
       }
     });
 
-    geometry.attribs.position.data.buf.set([
-      -1,  1,
-       1,  1,
-       1, -1,
-      -1, -1
-    ]);
+    geometry.attribs.position.data = [
+      new Vec2(-1,  1),
+      new Vec2( 1,  1),
+      new Vec2( 1, -1),
+      new Vec2(-1, -1)
+    ];
 
-    geometry.attribs.texCoord.data.buf.set([
-       0, 1,
-       1, 1,
-       1, 0,
-       0, 0
-    ]);
+    geometry.attribs.texCoord.data = [
+      new Vec2(0, 1),
+      new Vec2(1, 1),
+      new Vec2(1, 0),
+      new Vec2(0, 0)
+    ];
 
     // 0----1
     // | \  |
@@ -5495,9 +5476,9 @@ define('pex/materials/ShowDepth',[
   'pex/gl/Context',
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
-  'pex/geom/Vec4',
+  'pex/color/Color',
   'lib/text!pex/materials/ShowDepth.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Vec4, ShowDepthGLSL) {
+  ], function(Material, Context, Program, ObjectUtils, Color, ShowDepthGLSL) {
 
   function ShowDepth(uniforms) {
     this.gl = Context.currentContext.gl;
@@ -5506,8 +5487,8 @@ define('pex/materials/ShowDepth',[
     var defaults = {
       near: 0,
       far: 10,
-      nearColor: Vec4.fromValues(0, 0, 0, 1),
-      farColor: Vec4.fromValues(1, 1, 1, 1)
+      nearColor: Color.create(0, 0, 0, 1),
+      farColor: Color.create(1, 1, 1, 1)
     };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
@@ -5579,9 +5560,9 @@ define('pex/materials/Diffuse',[
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'pex/geom/Vec3',
-  'pex/geom/Vec4',
+  'pex/color/Color',
   'lib/text!pex/materials/Diffuse.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Vec3, Vec4, DiffuseGLSL) {
+  ], function(Material, Context, Program, ObjectUtils, Vec3, Color, DiffuseGLSL) {
 
   function Diffuse(uniforms) {
     this.gl = Context.currentContext.gl;
@@ -5590,9 +5571,9 @@ define('pex/materials/Diffuse',[
     var defaults = {
       wrap: 1,
       pointSize : 1,
-      lightPos : Vec3.fromValues(10, 20, 30),
-      ambientColor : Vec4.fromValues(0, 0, 0, 1),
-      diffuseColor : Vec4.fromValues(1, 1, 1, 1)
+      lightPos : Vec3.create(10, 20, 30),
+      ambientColor : Color.create(0, 0, 0, 1),
+      diffuseColor : Color.create(1, 1, 1, 1)
     };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
@@ -6107,7 +6088,7 @@ define('pex/fx/Downsample2',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample2.glsl
 
     var program = this.getShader(Downsample2GLSL);
     program.use();
-    program.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    program.uniforms.imageSize(Vec2.create(source.width, source.height));
     rt.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
     rt.unbind();
@@ -6130,7 +6111,7 @@ define('pex/fx/Downsample4',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample4.glsl
 
     var program = this.getShader(Downsample4GLSL);
     program.use();
-    program.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    program.uniforms.imageSize(Vec2.create(source.width, source.height));
     rt.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
     rt.unbind();
@@ -6155,14 +6136,14 @@ function(FXStage, Blur3HGLSL, Blur3VGLSL, Vec2) {
 
     var programH = this.getShader(Blur3HGLSL);
     programH.use();
-    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
     rth.unbind();
 
     var programV = this.getShader(Blur3VGLSL);
     programV.use();
-    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
@@ -6187,14 +6168,14 @@ function(FXStage, Blur5HGLSL, Blur5VGLSL, Vec2) {
 
     var programH = this.getShader(Blur5HGLSL);
     programH.use();
-    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
     rth.unbind();
 
     var programV = this.getShader(Blur5VGLSL);
     programV.use();
-    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
@@ -6219,7 +6200,7 @@ function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
 
     var programH = this.getShader(Blur7HGLSL);
     programH.use();
-    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     source.bind();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
@@ -6227,7 +6208,7 @@ function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
 
     var programV = this.getShader(Blur7VGLSL);
     programV.use();
-    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
@@ -6339,7 +6320,7 @@ define('pex/fx/SSAO',['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/V
 
     var program = this.getShader(SSAOGLSL);
     program.use();
-    program.uniforms.textureSize(Vec2.fromValues(depthSource.width, depthSource.height));
+    program.uniforms.textureSize(Vec2.create(depthSource.width, depthSource.height));
     program.uniforms.depthTex(0);
     program.uniforms.near(options.near || 0.1);
     program.uniforms.far(options.far || 100);
