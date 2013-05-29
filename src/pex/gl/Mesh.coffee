@@ -82,6 +82,7 @@ define (require) ->
       if @indices is `undefined`
         @indices = {}
         @indices.buffer = @gl.createBuffer()
+      @indices.isDirty = false
       data = []
       if geometry.faces.length > 0
         geometry.faces.forEach (face) ->
@@ -115,6 +116,10 @@ define (require) ->
         materialUniforms.normalMatrix = @normalMatrix if programUniforms.normalMatrix
       @material.use()
       program = @material.program
+
+      if @indices.isDirty
+        @updateIndices(@geometry)
+
       for name, attrib of @attributes
 
         # TODO:this should go another way instad of searching for mesh atribs in shader look for required attribs by shader inside mesh
