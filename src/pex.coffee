@@ -8,6 +8,7 @@ define (require) ->
   scene = require('pex/scene')
   fx = require('pex/fx')
   gui = require('pex/gui')
+  color = require('pex/color')
 
   return {
     geom,
@@ -17,6 +18,7 @@ define (require) ->
     materials,
     scene,
     fx,
-    require : sys.Require, #shortcut,
-    gui
+    require : sys.Require, #shortcut
+    gui,
+    color
   }
