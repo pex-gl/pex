@@ -33,12 +33,10 @@ define(function(require) {
     Geometry.prototype.allocate = function(numVertices) {
       var attrib, attribName, i, _ref, _results;
 
-      console.log('allocating');
       _ref = this.attribs;
       _results = [];
       for (attribName in _ref) {
         attrib = _ref[attribName];
-        console.log('allocating', attribName);
         _results.push((function() {
           var _i, _ref1, _results1;
 

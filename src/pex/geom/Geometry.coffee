@@ -24,9 +24,7 @@ define (require) ->
         attrib.buf = new Float32Array(attrib.elementSize * attrib.length)
 
     allocate: (numVertices) ->
-      console.log('allocating')
       for attribName, attrib of @attribs
-        console.log('allocating', attribName)
         for i in [0..numVertices-1] by 1
           if not attrib.data[i]?
             switch attrib.type
