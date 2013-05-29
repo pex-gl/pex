@@ -3,9 +3,9 @@ define([
   'pex/gl/Context',
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
-  'pex/geom/Vec4',
+  'pex/geom/Color',
   'lib/text!pex/materials/ShowDepth.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Vec4, ShowDepthGLSL) {
+  ], function(Material, Context, Program, ObjectUtils, Color, ShowDepthGLSL) {
 
   function ShowDepth(uniforms) {
     this.gl = Context.currentContext.gl;
@@ -14,8 +14,8 @@ define([
     var defaults = {
       near: 0,
       far: 10,
-      nearColor: Vec4.fromValues(0, 0, 0, 1),
-      farColor: Vec4.fromValues(1, 1, 1, 1)
+      nearColor: Color.create(0, 0, 0, 1),
+      farColor: Color.create(1, 1, 1, 1)
     };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
