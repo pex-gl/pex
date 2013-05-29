@@ -7,7 +7,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
   }
 
   Octree.fromBoundingBox = function(bbox) {
-    return new Octree(Vec3.clone(bbox.min), Vec3.clone(bbox.getSize()));
+    return new Octree(bbox.min.clone(), bbox.getSize().clone());
   }
 
   Octree.MaxLevel = 8;
@@ -52,7 +52,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
       var minDistSqrt = this.tree.accuracy * this.tree.accuracy;
       for(var i=0; i<this.points.length; i++) {
         var o = this.points[i];
-        var distSq = Vec3.squaredDistance(p, o);
+        var distSq = p.squareDistance(o);
         if (distSq <= minDistSqrt) {
           return o;
         }
@@ -130,7 +130,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     if (!nearest && this.points.length > 0) {
       var minDistSq = this.tree.maxDistance * this.tree.maxDistance;
       for(var i=0; i<this.points.length; i++) {
-        var distSq = Vec3.squaredDistance(this.points[i], p);
+        var distSq = this.points[i].squareDistance(p);
         if (distSq <= minDistSq) {
           if (distSq == 0 && options.notSelf) continue;
           minDistSq = distSq;

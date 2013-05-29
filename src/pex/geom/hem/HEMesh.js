@@ -299,10 +299,10 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     //newVertPos = v + ratio * (nv - v)
     //newVertPos = add3(v, scale3(ratio, sub3(nv, v)))
     //newVertPos = nv.clone().sub(v).scale(ratio).add(v);
-    var newVertPos = Vec3.clone(edge.next.vert.position);
-    Vec3.sub(newVertPos, newVertPos, edge.vert.position);
-    Vec3.scale(newVertPos, newVertPos, ratio);
-    Vec3.add(newVertPos, newVertPos, edge.vert.position);
+    var newVertPos = Vec3.create()
+      .asSub(edge.next.vert.position, edge.vert.position)
+      .scale(ratio)
+      .add(edge.vert.position);
 
     this.splitVertex(edge.vert, newVertPos, edge, edge);
   };

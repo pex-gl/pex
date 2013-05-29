@@ -16,9 +16,9 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
     var n = Vec3.create(0, 0, 0);
     for(var i in faces) {
-      Vec3.add(n, n, faces[i].getNormal());
+      n.add(faces[i].getNormal());
     }
-    Vec3.normalize(n, n);
+    n.normalize();
 
     return n;
   }
@@ -60,8 +60,8 @@ define(['pex/geom/Vec3'], function(Vec3) {
       var startEdge = edges[visited++];
       var faceEdge = startEdge;
       do {
-        Vec3.sub(edgeVec3, this.position, faceEdge.next.vert.position);
-        var dist = Vec3.lengthSquared(edgeVec3);
+        edgeVec3.asSub(this.position, faceEdge.next.vert.position);
+        var dist = edgeVec3.lengthSquared();
         if ((edges.indexOf(faceEdge.next) == -1) && (dist < r2)) {
           edges.push(faceEdge.next);
         }

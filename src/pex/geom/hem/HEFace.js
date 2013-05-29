@@ -15,10 +15,9 @@ define(['pex/geom/Vec3'], function(Vec3) {
     var ab = HEFace.prototype.getNormal.ab = HEFace.prototype.getNormal.ab || Vec3.create();
     var ac = HEFace.prototype.getNormal.ac = HEFace.prototype.getNormal.ac || Vec3.create();
 
-    Vec3.sub(ab, b, a);
-    Vec3.sub(ac, c, a);
-    Vec3.cross(this.normal, ab, ac);
-    Vec3.normalize(this.normal, this.normal);
+    ab.asSub(b, a);
+    ac.asSub(c, a);
+    this.normal.asCross(ab, ac).normalize();
 
     return this.normal;
   }
@@ -28,16 +27,16 @@ define(['pex/geom/Vec3'], function(Vec3) {
     if (!this.center) {
       this.center = Vec3.create();
     }
-    Vec3.set(this.center, 0, 0, 0);
+    this.center.set(0, 0, 0);
     var vertexCount = 0;
     var edge = this.edge;
     do {
-      Vec3.add(this.center, this.center, edge.vert.position);
+      this.center.add(edge.vert.position);
       vertexCount++;
       edge = edge.next;
     } while (edge != this.edge);
 
-    Vec3.scale(this.center, this.center, 1/vertexCount);
+    this.center.scale(1/vertexCount);
     return this.center;
   }
 

@@ -35,11 +35,11 @@ define([
       var edge = this.edges[i];
       if (edge.edgePoint != null) continue;
       var edgePoint = Vec3.create();
-      Vec3.add(edgePoint, edgePoint, edge.vert.position);
-      Vec3.add(edgePoint, edgePoint, edge.next.vert.position);
-      Vec3.add(edgePoint, edgePoint, edge.face.facePoint);
-      Vec3.add(edgePoint, edgePoint, edge.pair.face.facePoint);
-      Vec3.scale(edgePoint, edgePoint, 1/4);
+      edgePoint.add(edge.vert.position);
+      edgePoint.add(edge.next.vert.position);
+      edgePoint.add(edge.face.facePoint);
+      edgePoint.add(edge.pair.face.facePoint);
+      edgePoint.scale(1/4);
 
       edge.edgePoint = edgePoint;
       edge.pair.edgePoint = edge.edgePoint;
@@ -53,25 +53,22 @@ define([
       var R = Vec3.create(); //average edgePoint of neighbor edges
       var n = 0; //num faces/edges
       do {
-        Vec3.add(F, F, face.facePoint);
-        Vec3.add(R, R, faceEdge.edgePoint);
+        F.add(face.facePoint);
+        R.add(faceEdge.edgePoint);
         ++n
         faceEdge = faceEdge.pair.next;
         face = faceEdge.face;
       } while(faceEdge != vertex.edge);
-      Vec3.scale(F, F, 1/n);
-      Vec3.scale(R, R, 1/n);
+      F.scale(1/n)
+      R.scale(1/n)
 
-      var newVert = Vec3.create();
-      Vec3.add(newVert, F, R);
-      var scaledVertex = Vec3.clone(vertex.position);
-      Vec3.scale(scaledVertex, scaledVertex, n - 2);
-      Vec3.add(newVert, newVert, scaledVertex);
-      Vec3.scale(newVert, newVert, 1/n);
+      var newVert = Vec3.create().asAdd(F, R);
+      var scaledVertex = vertex.position.clone().scale(n - 2);
+      newVert.add(scaledVertex).scale(1/n);
 
       //we can't simply duplicate vertex and make operations on it
       //as dup() returns Vec3 not HEVertex
-      Vec3.copy(vertex.position, newVert);
+      vertex.position.copy(newVert);
     }
 
     var numEdges = this.edges.length;

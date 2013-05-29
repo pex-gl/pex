@@ -33,9 +33,7 @@ define([
       //we split all the corners within the face effectively adding new internal vertices
       do {
         //var newVertexPos = edgeToSplit.vert.added(normal.scaled(height));
-        var newVertexPos = Vec3.clone(normal);
-        Vec3.scale(newVertexPos, newVertexPos, height);
-        Vec3.add(newVertexPos, newVertexPos, edgeToSplit.vert.position);
+        var newVertexPos = normal.clone().scale(height).add(edgeToSplit.vert.position);
 
         edgeToSplit.vert.edge = edgeToSplit; //TODO: fix that, making sure we split the right face
         var newEdge = self.splitVertex(edgeToSplit.vert, newVertexPos);

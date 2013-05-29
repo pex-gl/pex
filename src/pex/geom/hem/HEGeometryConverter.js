@@ -98,10 +98,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       else if (faceVertexCount == 4) numVertices += 6;
     });
 
-    if (geometry) {
-      geometry.assureSize(numVertices);
-    }
-    else {
+    if (!geometry) {
       geometry = new Geometry({
         position : {
           type: 'Vec3',
@@ -113,6 +110,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
         }
       });
     }
+
+    geometry.allocate(numVertices);
 
     var positions = geometry.attribs.position.data;
     var normals = geometry.attribs.normal.data;
@@ -126,27 +125,27 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
-        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
-        Vec3.copy(positions[vertexIndex+2], faceVertices[2].position);
-        Vec3.copy(normals[vertexIndex+0], faceNormal);
-        Vec3.copy(normals[vertexIndex+1], faceNormal);
-        Vec3.copy(normals[vertexIndex+2], faceNormal);
+        positions[vertexIndex+0].copy(faceVertices[0].position);
+        positions[vertexIndex+1].copy(faceVertices[1].position);
+        positions[vertexIndex+2].copy(faceVertices[2].position);
+        normals[vertexIndex+0].copy(faceNormal);
+        normals[vertexIndex+1].copy(faceNormal);
+        normals[vertexIndex+2].copy(faceNormal);
         vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
-        Vec3.copy(positions[vertexIndex+0], faceVertices[0].position);
-        Vec3.copy(positions[vertexIndex+1], faceVertices[1].position);
-        Vec3.copy(positions[vertexIndex+2], faceVertices[3].position);
-        Vec3.copy(positions[vertexIndex+3], faceVertices[3].position);
-        Vec3.copy(positions[vertexIndex+4], faceVertices[1].position);
-        Vec3.copy(positions[vertexIndex+5], faceVertices[2].position);
-        Vec3.copy(normals[vertexIndex+0], faceNormal);
-        Vec3.copy(normals[vertexIndex+1], faceNormal);
-        Vec3.copy(normals[vertexIndex+2], faceNormal);
-        Vec3.copy(normals[vertexIndex+3], faceNormal);
-        Vec3.copy(normals[vertexIndex+4], faceNormal);
-        Vec3.copy(normals[vertexIndex+5], faceNormal);
+        positions[vertexIndex+0].copy(faceVertices[0].position);
+        positions[vertexIndex+1].copy(faceVertices[1].position);
+        positions[vertexIndex+2].copy(faceVertices[3].position);
+        positions[vertexIndex+3].copy(faceVertices[3].position);
+        positions[vertexIndex+4].copy(faceVertices[1].position);
+        positions[vertexIndex+5].copy(faceVertices[2].position);
+        normals[vertexIndex+0].copy(faceNormal);
+        normals[vertexIndex+1].copy(faceNormal);
+        normals[vertexIndex+2].copy(faceNormal);
+        normals[vertexIndex+3].copy(faceNormal);
+        normals[vertexIndex+4].copy(faceNormal);
+        normals[vertexIndex+5].copy(faceNormal);
         vertexIndex += 6;
       }
       else {
@@ -165,12 +164,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     var b = Vec3.create();
     this.edges.forEach(function(e) {
       var center = e.face.getCenter();
-      Vec3.sub(a, center, e.vert.position);
-      Vec3.sub(b, center, e.next.vert.position);
-      Vec3.scale(a, a, offset);
-      Vec3.scale(b, b, offset);
-      Vec3.add(a, a, e.vert.position);
-      Vec3.add(b, b, e.next.vert.position);
+      a.asSub(center, e.vert.position).scale(offset).add(e.vert.position);
+      b.asSub(center, e.next.vert.position).scale(offset).add(e.next.vert.position);
       lineBuilder.addLine(a, b);
     });
     return lineBuilder;
