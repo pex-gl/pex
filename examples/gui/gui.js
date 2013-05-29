@@ -30,7 +30,7 @@ pex.sys.Window.create({
     this.materials.push(new materials.ShowNormals());
     //this.materials.push(new materials.DiffuseMaterial());
     this.mesh = new pex.gl.Mesh(new pex.geom.gen.Cube(), this.materials[this.materialIndex]);
-    this.mesh.rotationAxis = pex.geom.Vec3.fromValues(0, 1, 0);
+    this.mesh.rotationAxis = pex.geom.Vec3.create(0, 1, 0);
     this.mesh.rotationAngle = 0;
 
     this.framerate(30);
@@ -72,11 +72,11 @@ pex.sys.Window.create({
     gl.clearColor(this.color[0] / 255, this.color[1] / 255, this.color[2] / 255, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    this.camera.setPosition(new pex.geom.Vec3.fromValues(0, this.distance * 1, this.distance * 2));
+    this.camera.setPosition(new pex.geom.Vec3.create(0, this.distance * 1, this.distance * 2));
 
     if (this.rotate) {
       this.mesh.rotationAngle += Time.delta * this.speed;
-      pex.geom.Quat.setAxisAngle(this.mesh.rotation, this.mesh.rotationAxis, this.mesh.rotationAngle);
+      this.mesh.rotation.setAxisAngle(this.mesh.rotationAxis, this.mesh.rotationAngle * 60);
     }
 
     this.mesh.setMaterial(this.materials[this.materialIndex]);
