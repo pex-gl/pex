@@ -1124,6 +1124,25 @@ define('pex/geom/Quat',['require'],function(require) {
       return this;
     };
 
+    Quat.prototype.toMat4 = function(out) {
+      var m, wx, wy, wz, xs, xx, xy, xz, ys, yy, yz, zs, zz;
+
+      xs = this.x + this.x;
+      ys = this.y + this.y;
+      zs = this.z + this.z;
+      wx = this.w * xs;
+      wy = this.w * ys;
+      wz = this.w * zs;
+      xx = this.x * xs;
+      xy = this.x * ys;
+      xz = this.x * zs;
+      yy = this.y * ys;
+      yz = this.y * zs;
+      zz = this.z * zs;
+      m = out || new Mat4();
+      return m.set4x4r(1 - (yy + zz), xy - wz, xz + wy, 0, xy + wz, 1 - (xx + zz), yz - wx, 0, xz - wy, yz + wx, 1 - (xx + yy), 0, 0, 0, 0, 1);
+    };
+
     return Quat;
 
   })();
@@ -2035,7 +2054,7 @@ define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
     if (!this.center) {
       this.center = Vec3.create();
     }
-    this.center.set(0, 0, 0);
+    Vec3.set(this.center, 0, 0, 0);
     var vertexCount = 0;
     var edge = this.edge;
     do {
@@ -4633,7 +4652,7 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom'],function(require) {
     };
 
     Mesh.prototype.updateMatrices = function(camera) {
-      this.rotationMatrix.identity();
+      this.rotation.toMat4(this.rotationMatrix);
       this.modelWorldMatrix.identity().translate(this.position.x, this.position.y, this.position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
@@ -5587,6 +5606,30 @@ define('pex/materials/Diffuse',[
 
   return Diffuse;
 });
+define('lib/text!pex/materials/Test.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\n\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 texCoord;\n\nvarying vec3 vNormal;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = 2.0;\n  vNormal = normal;\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvec4 checker(vec2 uv) {\n  float checkSize = 8.0;\n  float fmodResult = mod(floor(checkSize * uv.x) + floor(checkSize * uv.y),2.0);\n  if (fmodResult < 1.0) {\n    return vec4(1, 1, 1, 1);\n  } else {\n    return vec4(0, 0, 0, 1);\n  }\n}\n\nvarying vec3 vNormal;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_FragColor.rgba = 0.25 * checker(vTexCoord);\n  gl_FragColor.rgb += 0.5 * normalize(vNormal)*0.5 + 0.5;\n  gl_FragColor.a = 1.0;\n}\n\n#endif';});
+
+define('pex/materials/Test',[
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/color/Color',
+  'pex/utils/ObjectUtils',
+  'lib/text!pex/materials/Test.glsl'
+  ], function(Material, Context, Program, Color, ObjectUtils, TestGLSL) {
+
+  function Test() {
+    this.gl = Context.currentContext.gl;
+    var program = new Program(TestGLSL);
+
+    var uniforms = {}
+
+    Material.call(this, program, uniforms);
+  }
+
+  Test.prototype = Object.create(Material.prototype);
+
+  return Test;
+});
 //Module wrapper for materials classes.
 define('pex/materials',
   [
@@ -5598,8 +5641,9 @@ define('pex/materials',
     'pex/materials/ShowColors',
     'pex/materials/PackDepth',
     'pex/materials/Diffuse',
+    'pex/materials/Test',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -5608,7 +5652,8 @@ define('pex/materials',
       ShowDepth : ShowDepth,
       ShowColors : ShowColors,
       PackDepth : PackDepth,
-      Diffuse : Diffuse
+      Diffuse : Diffuse,
+      Test : Test
     };
   }
 );
