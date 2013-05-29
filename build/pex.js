@@ -1393,19 +1393,17 @@ define('pex/geom/Geometry',['require','pex/geom/Vec2','pex/geom/Vec3','pex/geom/
         attrib.elementSize = elementSizeMap[attrib.type];
         attrib.data = [];
         attrib.length = (_ref1 = attrib.length) != null ? _ref1 : 0;
-        attrib.buf = new Float32Array(attrib.elementSize * attrib.length);
       }
     }
 
     Geometry.prototype.allocate = function(numVertices) {
       var attrib, attribName, i, _ref, _results;
 
-      console.log('allocating');
       _ref = this.attribs;
       _results = [];
       for (attribName in _ref) {
         attrib = _ref[attribName];
-        console.log('allocating', attribName);
+        attrib.length = numVertices;
         _results.push((function() {
           var _i, _ref1, _results1;
 
@@ -4623,6 +4621,7 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom'],function(require) {
         this.indices = {};
         this.indices.buffer = this.gl.createBuffer();
       }
+      this.indices.isDirty = false;
       data = [];
       if (geometry.faces.length > 0) {
         geometry.faces.forEach(function(face) {
@@ -4673,6 +4672,9 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom'],function(require) {
       }
       this.material.use();
       program = this.material.program;
+      if (this.indices.isDirty) {
+        this.updateIndices(this.geometry);
+      }
       _ref1 = this.attributes;
       for (name in _ref1) {
         attrib = _ref1[name];
@@ -4683,6 +4685,9 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom'],function(require) {
           this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer);
           if (this.geometry.attribs[name].isDirty) {
             attrib.dataBuf = this.geometry.attribs[name].buf;
+            if (!attrib.dataBuf || !attrib.dataBuf.length / attrib.elementSize < this.geometry.attribs[name].data.length) {
+              attrib.dataBuf = this.geometry.attribs[name].buf = new Float32Array(this.geometry.attribs[name].data.length * attrib.elementSize);
+            }
             if (this.geometry.attribs[name].type === 'Vec2') {
               this.geometry.attribs[name].data.forEach(function(v, i) {
                 attrib.dataBuf[i * 2 + 0] = v.x;
