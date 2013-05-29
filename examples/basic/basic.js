@@ -23,12 +23,7 @@ pex.sys.Window.create({
     gl.enable(gl.DEPTH_TEST);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    //pex.geom.Quat.setAxisAngle(this.mesh.rotation, this.camera.up, pex.utils.Time.seconds);
-
     this.mesh.draw(this.camera);
-
-    //var mem = process.memoryUsage();
-    //console.log(Math.floor(mem.rss/10000)/100, Math.floor(mem.heapTotal/10000)/100, Math.floor(mem.heapUsed/10000)/100);
   }
 });
 
