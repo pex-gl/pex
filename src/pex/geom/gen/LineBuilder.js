@@ -1,10 +1,8 @@
 define([
   'pex/geom/Geometry',
   'pex/geom/Vec3',
-  'pex/geom/Vec3Array',
-  'pex/geom/Vec3',
-  'pex/geom/Vec3Array'],
-  function(Geometry, Vec3, Vec3Array, Vec4, Vec4Array) {
+  'pex/color/Color'],
+  function(Geometry, Vec3, Color) {
   function LineBuilder() {
     this.numVertices = 0;
     var initialLength = 8;
@@ -23,18 +21,17 @@ define([
   LineBuilder.prototype = Object.create(Geometry);
 
   LineBuilder.prototype.addLine = function(a, b, colorA, colorB) {
-    this.assureSize(this.numVertices + 2);
-    colorA = colorA || [1, 1, 1, 1];
+    colorA = colorA || Color.White;
     colorB = colorB || colorA;
 
     var positions = this.attribs.position.data;
     var colors = this.attribs.color.data;
 
-    Vec3.copy(positions[this.numVertices + 0], a);
-    Vec3.copy(positions[this.numVertices + 1], b);
+    positions[this.numVertices + 0] = Vec3.create().copy(a);
+    positions[this.numVertices + 1] = Vec3.create().copy(b);
 
-    Vec3.copy(colors[this.numVertices + 0], colorA);
-    Vec3.copy(colors[this.numVertices + 1], colorB);
+    colors[this.numVertices + 0] = Color.create().copy(colorA);
+    colors[this.numVertices + 1] = Color.create().copy(colorB);
 
     this.numVertices += 2;
   }
@@ -45,48 +42,26 @@ define([
     size = size || 0.1;
     var halfSize = size / 2;
 
-    color = color || [1, 1, 1, 1];
+    color = color || Color.White;
 
     var positions = this.attribs.position.data;
     var colors = this.attribs.color.data;
 
-    Vec3.set(positions[this.numVertices + 0], pos[0] - halfSize, pos[1], pos[2]);
-    Vec3.set(positions[this.numVertices + 1], pos[0] + halfSize, pos[1], pos[2]);
-    Vec3.set(positions[this.numVertices + 2], pos[0], pos[1] - halfSize, pos[2]);
-    Vec3.set(positions[this.numVertices + 3], pos[0], pos[1] + halfSize, pos[2]);
-    Vec3.set(positions[this.numVertices + 4], pos[0], pos[1], pos[2] - halfSize);
-    Vec3.set(positions[this.numVertices + 5], pos[0], pos[1], pos[2] + halfSize);
+    positions[this.numVertices + 0] = Vec3.create().set(pos.x - halfSize, pos.y, pos.z);
+    positions[this.numVertices + 1] = Vec3.create().set(pos.x + halfSize, pos.y, pos.z);
+    positions[this.numVertices + 2] = Vec3.create().set(pos.x, pos.y - halfSize, pos.z);
+    positions[this.numVertices + 3] = Vec3.create().set(pos.x, pos.y + halfSize, pos.z);
+    positions[this.numVertices + 4] = Vec3.create().set(pos.x, pos.y, pos.z - halfSize);
+    positions[this.numVertices + 5] = Vec3.create().set(pos.x, pos.y, pos.z + halfSize);
 
-    Vec4.set(colors[this.numVertices + 0], color[0], color[1], color[2], color[3]);
-    Vec4.set(colors[this.numVertices + 1], color[0], color[1], color[2], color[3]);
-    Vec4.set(colors[this.numVertices + 2], color[0], color[1], color[2], color[3]);
-    Vec4.set(colors[this.numVertices + 3], color[0], color[1], color[2], color[3]);
-    Vec4.set(colors[this.numVertices + 4], color[0], color[1], color[2], color[3]);
-    Vec4.set(colors[this.numVertices + 5], color[0], color[1], color[2], color[3]);
+    colors[this.numVertices + 0] = Color.create().set(color.r, color.g, color.b, color.a);
+    colors[this.numVertices + 1] = Color.create().set(color.r, color.g, color.b, color.a);
+    colors[this.numVertices + 2] = Color.create().set(color.r, color.g, color.b, color.a);
+    colors[this.numVertices + 3] = Color.create().set(color.r, color.g, color.b, color.a);
+    colors[this.numVertices + 4] = Color.create().set(color.r, color.g, color.b, color.a);
+    colors[this.numVertices + 5] = Color.create().set(color.r, color.g, color.b, color.a);
 
     this.numVertices += 6;
-  }
-
-  LineBuilder.prototype.assureSize = function(neededSize) {
-    var currPositions = this.attribs.position.data;
-    var currColors = this.attribs.color.data;
-
-    if (neededSize < currPositions.length - 1) {
-      return;
-    }
-    else {
-      var newSize = 2 * currPositions.length;
-      var newPositions = new Vec3Array(newSize);
-      newPositions.buf.set(currPositions.buf);
-      this.attribs.position.data = newPositions;
-
-      var newColors = new Vec4Array(newSize);
-      newColors.buf.set(currColors.buf);
-      this.attribs.color.data = newColors;
-
-      console.log('LineBuilder.assureSize: Resizing to ' + newSize);
-    }
-
   }
 
   LineBuilder.prototype.start = function() {
