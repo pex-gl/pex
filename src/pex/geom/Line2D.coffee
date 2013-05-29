@@ -16,7 +16,6 @@ define (require) ->
       d = ab.dot(ap)
       ab.scale(d).add(@a)
 
-    #TODO: distanceToPoint creates 3 vectors!!!
     distanceToPoint: (p) ->
       @projectPoint(p).distance(p)
 
