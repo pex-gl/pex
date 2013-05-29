@@ -11,7 +11,7 @@ function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
 
     var programH = this.getShader(Blur7HGLSL);
     programH.use();
-    programH.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     source.bind();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
@@ -19,7 +19,7 @@ function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
 
     var programV = this.getShader(Blur7VGLSL);
     programV.use();
-    programV.uniforms.imageSize(Vec2.fromValues(source.width, source.height));
+    programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();

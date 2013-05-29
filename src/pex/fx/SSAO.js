@@ -9,7 +9,7 @@ define(['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/Vec2'], functio
 
     var program = this.getShader(SSAOGLSL);
     program.use();
-    program.uniforms.textureSize(Vec2.fromValues(depthSource.width, depthSource.height));
+    program.uniforms.textureSize(Vec2.create(depthSource.width, depthSource.height));
     program.uniforms.depthTex(0);
     program.uniforms.near(options.near || 0.1);
     program.uniforms.far(options.far || 100);
