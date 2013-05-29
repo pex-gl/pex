@@ -56,6 +56,15 @@ define(function(require) {
       return Math.sqrt(dx * dx + dy * dy);
     };
 
+    Vec3.prototype.squareDistance = function(v) {
+      var dx, dy, dz;
+
+      dx = v.x - this.x;
+      dy = v.y - this.y;
+      dz = v.z - this.z;
+      return dx * dx + dy * dy;
+    };
+
     Vec3.prototype.copy = function(v) {
       this.x = v.x;
       this.y = v.y;
@@ -110,6 +119,10 @@ define(function(require) {
 
     Vec3.prototype.length = function() {
       return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    };
+
+    Vec3.prototype.lengthSquared = function() {
+      return this.x * this.x + this.y * this.y + this.z * this.z;
     };
 
     Vec3.prototype.normalize = function() {

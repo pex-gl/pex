@@ -40,6 +40,12 @@ define (require) ->
       dz = v.z - @z
       return Math.sqrt(dx * dx + dy * dy)
 
+    squareDistance: (v) ->
+      dx = v.x - @x
+      dy = v.y - @y
+      dz = v.z - @z
+      return dx * dx + dy * dy
+
     copy: (v) ->
       @x = v.x
       @y = v.y
@@ -81,6 +87,9 @@ define (require) ->
 
     length: () ->
       Math.sqrt(@x*@x + @y*@y + @z*@z)
+
+    lengthSquared: () ->
+      @x*@x + @y*@y + @z*@z
 
     normalize: () ->
       @scale(1 / @length())
