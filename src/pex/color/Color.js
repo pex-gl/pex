@@ -22,20 +22,38 @@ define(function(require) {
       return new Color(r, g, b, a);
     };
 
+    Color.prototype.set = function(r, g, b, a) {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
+      if (a == null) {
+        this.a = 1;
+      }
+      return this;
+    };
+
+    Color.prototype.copy = function(c) {
+      this.r = c.r;
+      this.g = c.g;
+      this.b = c.b;
+      return this.a = c.a;
+    };
+
     return Color;
 
   })();
-  Color.prototype.Transparent = new Color(0, 0, 0, 0);
-  Color.prototype.None = new Color(0, 0, 0, 0);
-  Color.prototype.Black = new Color(0, 0, 0, 1);
-  Color.prototype.White = new Color(1, 1, 1, 1);
-  Color.prototype.Grey = new Color(0.5, 0.5, 0.5, 1);
-  Color.prototype.Red = new Color(1, 0, 0, 1);
-  Color.prototype.Green = new Color(0, 1, 0, 1);
-  Color.prototype.Blue = new Color(0, 0, 1, 1);
-  Color.prototype.Yellow = new Color(1, 1, 0, 1);
-  Color.prototype.Pink = new Color(1, 0, 1, 1);
-  Color.prototype.Cyan = new Color(0, 1, 1, 1);
-  Color.prototype.Orange = new Color(1, 0.5, 0, 1);
+  Color.Transparent = new Color(0, 0, 0, 0);
+  Color.None = new Color(0, 0, 0, 0);
+  Color.Black = new Color(0, 0, 0, 1);
+  Color.White = new Color(1, 1, 1, 1);
+  Color.Grey = new Color(0.5, 0.5, 0.5, 1);
+  Color.Red = new Color(1, 0, 0, 1);
+  Color.Green = new Color(0, 1, 0, 1);
+  Color.Blue = new Color(0, 0, 1, 1);
+  Color.Yellow = new Color(1, 1, 0, 1);
+  Color.Pink = new Color(1, 0, 1, 1);
+  Color.Cyan = new Color(0, 1, 1, 1);
+  Color.Orange = new Color(1, 0.5, 0, 1);
   return Color;
 });
