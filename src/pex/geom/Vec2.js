@@ -16,6 +16,12 @@ define(function(require) {
       return new Vec2(x, y);
     };
 
+    Vec2.prototype.set = function(x, y) {
+      this.x = x;
+      this.y = y;
+      return this;
+    };
+
     Vec2.prototype.add = function(v) {
       this.x += v.x;
       this.y += v.y;

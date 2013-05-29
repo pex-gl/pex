@@ -14,6 +14,7 @@ define (require) ->
       @x = x
       @y = y
       @z = z
+      this
 
     add: (v) ->
       @x += v.x

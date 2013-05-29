@@ -22,7 +22,8 @@ define(function(require) {
     Vec3.prototype.set = function(x, y, z) {
       this.x = x;
       this.y = y;
-      return this.z = z;
+      this.z = z;
+      return this;
     };
 
     Vec3.prototype.add = function(v) {

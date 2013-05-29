@@ -9,6 +9,11 @@ define (require) ->
     @create: (x, y) ->
       new Vec2(x, y)
 
+    set: (x, y) ->
+      @x = x
+      @y = y
+      this
+
     add: (v) ->
       @x += v.x
       @y += v.y
