@@ -76,8 +76,6 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face3', 'pex/geom/Geometry']
         }
       }
     }
-
-    //console.log('Num vertices estimated', numVertices, 'final', vertices.length);
   }
 
   Sphere.prototype = Object.create(Geometry.prototype);
