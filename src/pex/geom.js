@@ -8,6 +8,7 @@ define(
     'pex/geom/Quat',
     'pex/geom/Geometry',
     'pex/geom/gen',
+    'pex/geom/Edge',
     'pex/geom/Face3',
     'pex/geom/Face4',
     'pex/geom/FacePolygon',
@@ -23,7 +24,7 @@ define(
     'pex/geom/Octree'
   ],
   function(Vec2, Vec3, Vec4, Mat3, Mat4, Quat, Geometry, gen,
-    Face3, Face4, FacePolygon, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D, Polygon2D, hem, 
+    Edge, Face3, Face4, FacePolygon, Vec2Array, Vec3Array, Vec4Array, Line2D, Rect, Triangle2D, Polygon2D, hem, 
     BoundingBox, Octree) {
     return {
       Vec2 : Vec2,
@@ -34,6 +35,7 @@ define(
       Quat : Quat,
       Geometry : Geometry,
       gen : gen,
+      Edge : Edge,
       Face3 : Face3,
       Face4 : Face4,
       FacePolygon : FacePolygon,

@@ -1,6 +1,6 @@
 define(['pex/geom/Line2D'], function(Line2D) {
   function sign(a, b, c) {
-    return (a[0] - c[0]) * (b[1] - c[1]) - (b[0] - c[0]) * (a[1] - c[1]);
+    return (a.x - c.x) * (b.y - c.y) - (b.x - c.x) * (a.y - c.y);
   }
 
   function Triangle2D(a, b, c) {
