@@ -26,6 +26,33 @@ define(function(require) {
       return this.projectPoint(p).distance(p);
     };
 
+    Line2D.prototype.intersect = function(line) {
+      var D0, D1, E, P0, P1, kross, out, s, sqrEpsilon, sqrKross, sqrLen0, sqrLen1, sqrLenE;
+
+      sqrEpsilon = 0.000001;
+      P0 = this.a;
+      D0 = Vec2.create().asSub(this.b, this.a);
+      P1 = line.a;
+      D1 = Vec2.create().asSub(line.b, line.a);
+      E = Vec2.create().asSub(P1, P0);
+      kross = D0.x * D1.y - D0.y * D1.x;
+      sqrKross = kross * kross;
+      sqrLen0 = D0.x * D0.x + D0.y * D0.y;
+      sqrLen1 = D1.x * D1.x + D1.y * D1.y;
+      if (sqrKross > sqrEpsilon * sqrLen0 * sqrLen1) {
+        s = (E.x * D1.y - E.y * D1.x) / kross;
+        out = Vec2.create().copy(D0).scale(s).add(P0);
+        return out;
+      }
+      sqrLenE = E.x * E.x + E.y * E.y;
+      kross = E.x * D0.y - E.y * D0.x;
+      sqrKross = kross * kross;
+      if (sqrKross > sqrEpsilon * sqrLen0 * sqrLenE) {
+        return null;
+      }
+      return null;
+    };
+
     return Line2D;
 
   })();
