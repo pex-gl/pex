@@ -76,7 +76,7 @@ pex.sys.Window.create({
 
     if (this.rotate) {
       this.mesh.rotationAngle += Time.delta * this.speed;
-      this.mesh.rotation.setAxisAngle(this.mesh.rotationAxis, this.mesh.rotationAngle * 60);
+      this.mesh.rotation.setAxisAngle(this.mesh.rotationAxis, this.mesh.rotationAngle);
     }
 
     this.mesh.setMaterial(this.materials[this.materialIndex]);
