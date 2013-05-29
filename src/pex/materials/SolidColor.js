@@ -2,17 +2,17 @@ define([
   'pex/materials/Material',
   'pex/gl/Context',
   'pex/gl/Program',
-  'pex/geom/Vec4',
+  'pex/color/Color',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/SolidColor.glsl'
-  ], function(Material, Context, Program, Vec4, ObjectUtils, SolidColorGLSL) {
+  ], function(Material, Context, Program, Color, ObjectUtils, SolidColorGLSL) {
 
   function SolidColor(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(SolidColorGLSL);
 
     var defaults = {
-     color : Vec4.fromValues(1, 1, 1, 1),
+     color : Color.create(1, 1, 1, 1),
      pointSize : 1
     };
 
