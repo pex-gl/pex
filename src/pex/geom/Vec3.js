@@ -137,6 +137,18 @@ define(function(require) {
       return this;
     };
 
+    Vec3.prototype.transformMat4 = function(m) {
+      var x, y, z;
+
+      x = m.a14 + m.a11 * this.x + m.a12 * this.y + m.a13 * this.z;
+      y = m.a24 + m.a21 * this.x + m.a22 * this.y + m.a23 * this.z;
+      z = m.a34 + m.a31 * this.x + m.a32 * this.y + m.a33 * this.z;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      return this;
+    };
+
     Vec3.prototype.toString = function() {
       return "{" + this.x + "," + this.y + "," + this.z + "}";
     };

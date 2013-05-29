@@ -101,5 +101,14 @@ define (require) ->
       @z = iz * qw + iw * -qz + ix * -qy - iy * -qx
       this
 
+    transformMat4: (m) ->
+      x = m.a14 + m.a11*@x + m.a12*@y + m.a13*@z
+      y = m.a24 + m.a21*@x + m.a22*@y + m.a23*@z
+      z = m.a34 + m.a31*@x + m.a32*@y + m.a33*@z
+      @x = x
+      @y = y
+      @z = z
+      this
+
     toString: () ->
       "{#{@x},#{@y},#{@z}}"

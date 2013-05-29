@@ -22,6 +22,28 @@ define(function(require) {
       return new Vec4(x, y, z, w);
     };
 
+    Vec4.prototype.set = function(x, y, z, w) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+      return this;
+    };
+
+    Vec4.prototype.transformMat4 = function(m) {
+      var w, x, y, z;
+
+      x = m.a14 * this.w + m.a11 * this.x + m.a12 * this.y + m.a13 * this.z;
+      y = m.a24 * this.w + m.a21 * this.x + m.a22 * this.y + m.a23 * this.z;
+      z = m.a34 * this.w + m.a31 * this.x + m.a32 * this.y + m.a33 * this.z;
+      w = m.a44 * this.w + m.a41 * this.x + m.a42 * this.y + m.a43 * this.z;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+      return this;
+    };
+
     return Vec4;
 
   })();
