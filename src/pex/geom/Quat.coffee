@@ -74,6 +74,30 @@ define (require) ->
         this.w /= len
       this
 
+    toMat4: (out) ->
+      xs = @x + @x
+      ys = @y + @y
+      zs = @z + @z
+      wx = @w * xs
+      wy = @w * ys
+      wz = @w * zs
+      xx = @x * xs
+      xy = @x * ys
+      xz = @x * zs
+      yy = @y * ys
+      yz = @y * zs
+      zz = @z * zs
+
+      m = out || new Mat4()
+
+      return m.set4x4r(
+          1 - (yy+zz), xy - wz,      xz + wy,     0,
+          xy + wz,     1 - (xx+zz ), yz - wx,     0,
+          xz - wy,     yz + wx,      1 - (xx+yy), 0,
+          0,           0,            0,           1
+      )
+
+
 ###
 Quat ( x, y, z, w )
   //Builds a quaternion representing rotation around an axis

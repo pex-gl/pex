@@ -106,6 +106,25 @@ define(function(require) {
       return this;
     };
 
+    Quat.prototype.toMat4 = function(out) {
+      var m, wx, wy, wz, xs, xx, xy, xz, ys, yy, yz, zs, zz;
+
+      xs = this.x + this.x;
+      ys = this.y + this.y;
+      zs = this.z + this.z;
+      wx = this.w * xs;
+      wy = this.w * ys;
+      wz = this.w * zs;
+      xx = this.x * xs;
+      xy = this.x * ys;
+      xz = this.x * zs;
+      yy = this.y * ys;
+      yz = this.y * zs;
+      zz = this.z * zs;
+      m = out || new Mat4();
+      return m.set4x4r(1 - (yy + zz), xy - wz, xz + wy, 0, xy + wz, 1 - (xx + zz), yz - wx, 0, xz - wy, yz + wx, 1 - (xx + yy), 0, 0, 0, 0, 1);
+    };
+
     return Quat;
 
   })();
