@@ -129,7 +129,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
 
   GUI.prototype.onMouseDown = function(e) {
     this.activeControl = null;
-    Vec2.set(this.mousePos, e.x - this.x, e.y - this.y);
+    this.mousePos.set(e.x - this.x, e.y - this.y);
     for(var i=0; i<this.items.length; i++) {
       if (this.items[i].activeArea.contains(this.mousePos)) {
         this.activeControl = this.items[i];
@@ -145,7 +145,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
           }
         }
         else if (this.activeControl.type == 'radiolist') {
-          var hitY = this.mousePos[1] - this.activeControl.activeArea.y;
+          var hitY = this.mousePos.y - this.activeControl.activeArea.y;
           var hitItemIndex = Math.floor(this.activeControl.items.length * hitY/this.activeControl.activeArea.height);
           if (hitItemIndex < 0) continue;
           if (hitItemIndex >= this.activeControl.items.length) continue;
