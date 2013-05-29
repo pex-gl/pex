@@ -37,22 +37,21 @@ define(['pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Face3', 'pex/geom/Geometry']
     var dtheta = 180.0/nsegments;
 
     function evalPos(pos, theta, phi) {
-      pos[0] = r * Math.sin(theta * degToRad) * Math.sin(phi * degToRad);
-      pos[1] = r * Math.cos(theta * degToRad);
-      pos[2] = r * Math.sin(theta * degToRad) * Math.cos(phi * degToRad);
+      pos.x = r * Math.sin(theta * degToRad) * Math.sin(phi * degToRad);
+      pos.y = r * Math.cos(theta * degToRad);
+      pos.z = r * Math.sin(theta * degToRad) * Math.cos(phi * degToRad);
     }
 
     for (var theta=0, segment=0; theta<=180; theta+=dtheta, ++segment) {
       for (var phi=0, side=0; phi<=360; phi+=dphi, ++side) {
-        var vert = positions[vertexIndex];
-        var normal = normals[vertexIndex];
-        var texCoord = texCoords[vertexIndex];
+        var vert = positions[vertexIndex] = Vec3.create();
+        var normal = normals[vertexIndex] = Vec3.create();
+        var texCoord = texCoords[vertexIndex] = Vec2.create();
 
         evalPos(vert, theta, phi);
 
-        Vec3.copy(normal, vert);
-        Vec3.normalize(normal, normal);
-        Vec2.set(texCoord, phi/360.0, theta/180.0);
+        normal.copy(vert).normalize();
+        texCoord.set(phi/360.0, theta/180.0);
 
         ++vertexIndex;
 
