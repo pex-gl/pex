@@ -4,6 +4,7 @@ define (require) ->
   Context = require('pex/gl/Context')
   BrowserWindow = require('pex/sys/BrowserWindow')
   ObjectUtils = require('pex/utils/ObjectUtils')
+  Time = require('pex/utils/Time')
 
   Window =
     create: (obj) ->
@@ -34,7 +35,7 @@ define (require) ->
 
       obj.__draw = obj.draw;
       obj.draw = () ->
-        #Time.update()
+        Time.update()
         Context.currentContext = context;
         if obj.__draw
           obj.__draw()
