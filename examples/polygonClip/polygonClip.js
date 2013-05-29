@@ -2,7 +2,7 @@ var pex = require('../../build/pex');
 
 var Polygon2D = pex.geom.Polygon2D;
 var Vec2 = pex.geom.Vec2;
-var Vec4 = pex.geom.Vec4;
+var Color = pex.color.Color;
 
 pex.sys.Window.create({
   settings: {
@@ -15,26 +15,26 @@ pex.sys.Window.create({
     var H = this.height;
 
     this.targetPolygon = new Polygon2D([
-      Vec2.fromValues(W/2 - 70, H/2 -  50),
-      Vec2.fromValues(W/2 -  90, H/2 +  20),
-      Vec2.fromValues(W/2 +   0, H/2 + 150),
-      Vec2.fromValues(W/2 + 200, H/2 -  20),
-      Vec2.fromValues(W/2 + 150, H/2 -  70)
+      Vec2.create(W/2 - 70, H/2 -  50),
+      Vec2.create(W/2 -  90, H/2 +  20),
+      Vec2.create(W/2 +   0, H/2 + 150),
+      Vec2.create(W/2 + 200, H/2 -  20),
+      Vec2.create(W/2 + 150, H/2 -  70)
     ]);
 
     this.clippingPolygon = new Polygon2D([
-      Vec2.fromValues(W/2, H/2 - 150),
-      Vec2.fromValues(W/2 - 150, H/2 + 170),
-      Vec2.fromValues(W/2 + 150, H/2 + 200)
+      Vec2.create(W/2, H/2 - 150),
+      Vec2.create(W/2 - 150, H/2 + 170),
+      Vec2.create(W/2 + 150, H/2 + 200)
     ]);
 
     this.resultPolygon = this.targetPolygon.clip(this.clippingPolygon);
 
     this.on("mouseMoved", function(e) {
       this.clippingPolygon = new Polygon2D([
-        Vec2.fromValues(+ e.x, - 150 + e.y),
-        Vec2.fromValues(- 150 + e.x, + 170 + e.y),
-        Vec2.fromValues(+ 150 + e.x, + 200 + e.y)
+        Vec2.create(+ e.x, - 150 + e.y),
+        Vec2.create(- 150 + e.x, + 170 + e.y),
+        Vec2.create(+ 150 + e.x, + 200 + e.y)
       ]);
       this.resultPolygon = this.targetPolygon.clip(this.clippingPolygon);
     }.bind(this))
@@ -49,7 +49,7 @@ pex.sys.Window.create({
 
     polygon.vertices.forEach(function(v, i) {
       var nv = polygon.vertices[(i + 1) % polygon.vertices.length];
-      canvas.drawLine(paint, v[0], v[1], nv[0], nv[1]);
+      canvas.drawLine(paint, v.x, v.y, nv.x, nv.y);
     });
   },
   fillPolygon: function(polygon, color) {
@@ -64,20 +64,25 @@ pex.sys.Window.create({
     paint.setFlags(paint.kAntiAliasFlag);
 
     var path = new pex.sys.Node.plask.SkPath();
-    path.moveTo(polygon.vertices[0][0], polygon.vertices[0][1]);
+    path.moveTo(polygon.vertices[0].x, polygon.vertices[0].y);
 
     var numVertices = polygon.vertices.length;
     for(var i=0, j; i<numVertices; i++) {
       j = (i+1) % numVertices;
-      path.lineTo(polygon.vertices[j][0], polygon.vertices[j][1]);
+      path.lineTo(polygon.vertices[j].x, polygon.vertices[j].y);
     }
 
     canvas.drawPath(paint, path);
   },
   draw: function() {
     this.canvas.clear(215, 215, 215, 255);
-    this.drawPolygon(this.targetPolygon, Vec4.fromValues(0,0,0,255));
-    this.drawPolygon(this.clippingPolygon, Vec4.fromValues(255,0,0,255));
-    this.fillPolygon(this.resultPolygon, Vec4.fromValues(0,255,0,255));
+    this.drawPolygon(this.targetPolygon, Color.create(0,0,0,1));
+    this.drawPolygon(this.clippingPolygon, Color.create(1,0,0,1));
+    this.fillPolygon(this.resultPolygon, Color.create(0,1,0,1));
+
+    this.paint.setFill();
+    this.paint.setColor(255, 0, 0, 255);
+    var c = this.clippingPolygon.getCenter();
+    this.canvas.drawText(this.paint, "" + this.resultPolygon.getArea(), c.x, c.y);
   }
 });
