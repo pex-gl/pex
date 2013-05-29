@@ -155,7 +155,7 @@ define (require) ->
         attrib.location = -1
 
     updateMatrices: (camera) ->
-      @rotationMatrix.identity() #TODO: Mat4.fromQuat @rotationMatrix, @rotation
+      @rotation.toMat4(@rotationMatrix);
       @modelWorldMatrix.identity()
         .translate(@position.x, @position.y, @position.z)
         .mul(@rotationMatrix)

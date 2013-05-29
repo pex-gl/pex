@@ -175,7 +175,7 @@ define(function(require) {
     };
 
     Mesh.prototype.updateMatrices = function(camera) {
-      this.rotationMatrix.identity();
+      this.rotation.toMat4(this.rotationMatrix);
       this.modelWorldMatrix.identity().translate(this.position.x, this.position.y, this.position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
