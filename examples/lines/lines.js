@@ -9,13 +9,13 @@ pex.sys.Window.create({
     width: 800,
     height: 600
   },
-  point: Vec2.fromValues(0, 0),
-  line: new Line2D(Vec2.fromValues(20, 50), Vec2.fromValues(700, 400)),
-  line2: new Line2D(Vec2.fromValues(120, 150), Vec2.fromValues(800, 500)),
+  point: Vec2.create(0, 0),
+  line: new Line2D(Vec2.create(20, 50), Vec2.create(700, 400)),
+  line2: new Line2D(Vec2.create(120, 150), Vec2.create(800, 500)),
   init: function() {
     this.on('mouseMoved', function(e) {
-      this.point[0] = e.x;
-      this.point[1] = e.y;
+      this.point.x = e.x;
+      this.point.y = e.y;
     }.bind(this));
   },
   draw: function() {
@@ -27,29 +27,28 @@ pex.sys.Window.create({
     paint.setFill();
     paint.setColor(0, 255, 0, 255);
 
-    canvas.drawCircle(paint, this.point[0], this.point[1], 5, 5);
+    canvas.drawCircle(paint, this.point.x, this.point.y, 5, 5);
 
     paint.setColor(255, 0, 0, 255);
     paint.setStroke();
-    canvas.drawLine(paint, this.line.a[0], this.line.a[1], this.line.b[0], this.line.b[1]);
-    canvas.drawLine(paint, this.line2.a[0], this.line2.a[1], this.line2.b[0], this.line2.b[1]);
+    canvas.drawLine(paint, this.line.a.x, this.line.a.y, this.line.b.x, this.line.b.y);
+    canvas.drawLine(paint, this.line2.a.x, this.line2.a.y, this.line2.b.x, this.line2.b.y);
 
-    var hit = Vec2.create();
-    this.line.projectPoint(hit, this.point);
+    var hit = this.line.projectPoint(this.point);
     paint.setColor(0, 255, 0, 255);
-    canvas.drawLine(paint, this.point[0], this.point[1], hit[0], hit[1]);
+    canvas.drawLine(paint, this.point.x, this.point.y, hit.x, hit.y);
 
     paint.setColor(255, 0, 0, 255);
     paint.setFill();
-    canvas.drawCircle(paint, hit[0], hit[1], 5, 5);
+    canvas.drawCircle(paint, hit.x, hit.y, 5, 5);
 
     var perpendicularLine = new Line2D(hit, this.point);
-    var intersection = Vec2.create();
-    perpendicularLine.intersect(intersection, this.line2);
-    canvas.drawCircle(paint, intersection[0], intersection[1], 5, 5);
-
-    paint.setStroke();
-    paint.setColor(255, 255, 0, 255);
-    canvas.drawLine(paint, intersection[0], intersection[1], this.point[0], this.point[1]);
+    var intersection = perpendicularLine.intersect(this.line2);
+    if (intersection) {
+      canvas.drawCircle(paint, intersection.x, intersection.y, 5, 5);
+      paint.setStroke();
+      paint.setColor(255, 255, 0, 255);
+      canvas.drawLine(paint, intersection.x, intersection.y, this.point.x, this.point.y);
+    }
   }
 });
