@@ -38,19 +38,19 @@ define([
       }
     });
 
-    geometry.attribs.position.data.buf.set([
-      -1,  1,
-       1,  1,
-       1, -1,
-      -1, -1
-    ]);
+    geometry.attribs.position.data = [
+      new Vec2(-1,  1),
+      new Vec2( 1,  1),
+      new Vec2( 1, -1),
+      new Vec2(-1, -1)
+    ];
 
-    geometry.attribs.texCoord.data.buf.set([
-       0, 1,
-       1, 1,
-       1, 0,
-       0, 0
-    ]);
+    geometry.attribs.texCoord.data = [
+      new Vec2(0, 1),
+      new Vec2(1, 1),
+      new Vec2(1, 0),
+      new Vec2(0, 0)
+    ];
 
     // 0----1
     // | \  |

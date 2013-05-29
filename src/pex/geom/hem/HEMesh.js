@@ -48,7 +48,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     }.bind(this));
     indices = indices.sort();
     var hash = indices.join('_');
-    if (indices.x == indices[1] || indices[1] == indices[2]) {
+    if (indices[0] == indices[1] || indices[1] == indices[2]) {
       console.log(hash);
     }
     return hash;
