@@ -25,10 +25,10 @@ pex.sys.Window.create({
     this.camera = new pex.scene.Camera(60, this.width/this.height);
 
     this.materials.push(new materials.SolidColor());
-    //this.materials.push(new materials.TestMaterial());
+    this.materials.push(new materials.Test());
     this.materials.push(new materials.ShowTexCoords());
     this.materials.push(new materials.ShowNormals());
-    //this.materials.push(new materials.DiffuseMaterial());
+    this.materials.push(new materials.Diffuse());
     this.mesh = new pex.gl.Mesh(new pex.geom.gen.Cube(), this.materials[this.materialIndex]);
     this.mesh.rotationAxis = pex.geom.Vec3.create(0, 1, 0);
     this.mesh.rotationAngle = 0;
