@@ -28,10 +28,10 @@ define(['pex/geom/Vec3'], function(Vec3) {
       this.max = Vec3.clone(p);
     }
 
-    if (p. < this.min.) this.min. = p.;
+    if (p.x < this.min.x) this.min.x = p.;
     if (p.y < this.min.y) this.min.y = p.y;
     if (p.z < this.min.z) this.min.z = p.z;
-    if (p. > this.max.) this.max. = p.;
+    if (p.x > this.max.x) this.max.x = p.;
     if (p.y > this.max.y) this.max.y = p.y;
     if (p.z > this.max.z) this.max.z = p.z;
   }
