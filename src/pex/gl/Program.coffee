@@ -105,7 +105,9 @@ define (require) ->
         when gl.FLOAT_VEC3
           setterFun = (v) -> gl.uniform3f(location, v.x, v.y, v.z)
         when gl.FLOAT_VEC4
-          setterFun = (v) -> gl.uniform4f(location, v.x, v.y, v.z, v.w)
+          setterFun = (v) ->
+            gl.uniform4f(location, v.r, v.g, v.b, v.a) if v.r?
+            gl.uniform4f(location, v.x, v.y, v.z, v.w) if v.x?
         when gl.FLOAT_MAT4
           mv = new Float32Array(16)
           setterFun = (m) ->

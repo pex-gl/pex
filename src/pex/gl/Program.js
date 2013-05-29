@@ -151,7 +151,12 @@ define(function(require) {
           break;
         case gl.FLOAT_VEC4:
           setterFun = function(v) {
-            return gl.uniform4f(location, v.x, v.y, v.z, v.w);
+            if (v.r != null) {
+              gl.uniform4f(location, v.r, v.g, v.b, v.a);
+            }
+            if (v.x != null) {
+              return gl.uniform4f(location, v.x, v.y, v.z, v.w);
+            }
           };
           break;
         case gl.FLOAT_MAT4:
