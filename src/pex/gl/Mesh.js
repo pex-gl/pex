@@ -6,12 +6,17 @@ define(function(require) {
   _ref = require('pex/geom'), Vec3 = _ref.Vec3, Quat = _ref.Quat, Mat4 = _ref.Mat4, Face3 = _ref.Face3, Face4 = _ref.Face4;
   return Mesh = (function() {
     function Mesh(geometry, material, options) {
+      var _ref1;
+
       this.gl = Context.currentContext.gl;
       this.geometry = geometry;
       this.material = material;
       options = options || {};
       this.gl = Context.currentContext.gl;
-      this.primitiveType = (options.primitiveType !== undefined ? options.primitiveType : this.gl.TRIANGLES);
+      this.primitiveType = options.primitiveType;
+      if ((_ref1 = this.primitiveType) == null) {
+        this.primitiveType = this.gl.TRIANGLES;
+      }
       this.attributes = {};
       this.usage = this.gl.STATIC_DRAW;
       this.addAttrib("position", geometry.attribs.position.data, geometry.attribs.position.elementSize);

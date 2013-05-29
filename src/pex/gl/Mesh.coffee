@@ -38,7 +38,9 @@ define (require) ->
       @material = material
       options = options or {}
       @gl = Context.currentContext.gl
-      @primitiveType = (if (options.primitiveType isnt `undefined`) then options.primitiveType else @gl.TRIANGLES)
+      #@primitiveType = (if (options.primitiveType isnt `undefined`) then options.primitiveType else @gl.TRIANGLES)
+      @primitiveType = options.primitiveType
+      @primitiveType ?= @gl.TRIANGLES
       @attributes = {}
       @usage = @gl.STATIC_DRAW
       @addAttrib "position", geometry.attribs.position.data, geometry.attribs.position.elementSize
