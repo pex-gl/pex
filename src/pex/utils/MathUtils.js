@@ -37,9 +37,9 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
   }
 
   MathUtils.randomVec3InBoundingBox = function(bbox) {
-    var x = bbox.min[0] + Math.random() * (bbox.max[0] - bbox.min[0]);
-    var y = bbox.min[1] + Math.random() * (bbox.max[1] - bbox.min[1]);
-    var z = bbox.min[2] + Math.random() * (bbox.max[2] - bbox.min[2]);
+    var x = bbox.min.x + Math.random() * (bbox.max.x - bbox.min.x);
+    var y = bbox.min.y + Math.random() * (bbox.max.y - bbox.min.y);
+    var z = bbox.min.z + Math.random() * (bbox.max.z - bbox.min.z);
     return Vec3.create(x, y, z);
   }
 

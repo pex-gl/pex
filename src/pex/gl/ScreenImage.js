@@ -17,9 +17,9 @@ define([
     var program = new Program(ScreenImageGLSL);
 
     var uniforms = {
-      screenSize : Vec2.fromValues(screenWidth, screenHeight),
-      pixelPosition : Vec2.fromValues(x, y),
-      pixelSize : Vec2.fromValues(w, h),
+      screenSize : Vec2.create(screenWidth, screenHeight),
+      pixelPosition : Vec2.create(x, y),
+      pixelSize : Vec2.create(w, h),
       alpha : 1.0
     };
 
