@@ -72,8 +72,8 @@ define([
     var n = this.attribs.position.data.length;
 
     for(var i=this.numVertices; i<n; i++) {
-      Vec3.set(this.attribs.position.data[i], 0, 0, 0);
-      Vec4.set(this.attribs.color.data[i], 0, 0, 0);
+      this.attribs.position.data[i].set(0, 0, 0);
+      this.attribs.color.data[i].set(0, 0, 0, 0);
     }
     this.attribs.position.isDirty = true;
     this.attribs.color.isDirty = true;
