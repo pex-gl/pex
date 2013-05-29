@@ -6,8 +6,9 @@ define(
     'pex/geom/hem/HEGeometryConverter',
     'pex/geom/hem/HEExtrude',
     'pex/geom/hem/HECatmullClark',
+    'pex/geom/hem/HETriangulate'
   ],
-  function(HEMesh, HESelection, HEMarking, HEGeometryConverter, HEExtrude, HECatmullClark) {
+  function(HEMesh, HESelection, HEMarking, HEGeometryConverter, HEExtrude, HECatmullClark, HETriangulate) {
     return function() {
       return new HEMesh();
     }

@@ -1,9 +1,9 @@
 define([
-  'hem/HEMesh',
-  'hem/HEVertex',
-  'hem/HEEdge',
-  'hem/HEFace',
-  'pex/core/Vec3'
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Vec3'
   ],
   function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
 
