@@ -62,7 +62,7 @@ define (require) ->
     perspective: (fovy, aspect, znear, zfar) ->
       f = 1.0 / Math.tan(fovy / 180 * Math.PI / 2)
       nf = 1.0 / (znear - zfar)
-      this.mul4x4r(
+      @mul4x4r(
           f/aspect, 0,                 0,                 0,
                  0, f,                 0,                 0,
                  0, 0, (zfar+znear) * nf, 2*znear*zfar * nf,
@@ -170,10 +170,10 @@ define (require) ->
       this
 
     transpose: () ->
-      a11 = this.a11; a12 = this.a12; a13 = this.a13; a14 = this.a14;
-      a21 = this.a21; a22 = this.a22; a23 = this.a23; a24 = this.a24;
-      a31 = this.a31; a32 = this.a32; a33 = this.a33; a34 = this.a34;
-      a41 = this.a41; a42 = this.a42; a43 = this.a43; a44 = this.a44;
+      a11 = @a11; a12 = @a12; a13 = @a13; a14 = @a14;
+      a21 = @a21; a22 = @a22; a23 = @a23; a24 = @a24;
+      a31 = @a31; a32 = @a32; a33 = @a33; a34 = @a34;
+      a41 = @a41; a42 = @a42; a43 = @a43; a44 = @a44;
 
       @a11 = a11; @a12 = a21; @a13 = a31; @a14 = a41;
       @a21 = a12; @a22 = a22; @a23 = a32; @a24 = a42;
