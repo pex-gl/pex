@@ -3,7 +3,7 @@ define([
   'pex/gl/Context',
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
-  'pex/geom/Color',
+  'pex/color/Color',
   'lib/text!pex/materials/ShowDepth.glsl'
   ], function(Material, Context, Program, ObjectUtils, Color, ShowDepthGLSL) {
 

@@ -4,7 +4,7 @@ define([
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'pex/geom/Vec3',
-  'pex/geom/Color',
+  'pex/color/Color',
   'lib/text!pex/materials/Diffuse.glsl'
   ], function(Material, Context, Program, ObjectUtils, Vec3, Color, DiffuseGLSL) {
 
