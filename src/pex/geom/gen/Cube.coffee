@@ -50,8 +50,8 @@ define (require) ->
             normal[w] = pw/Math.abs(pw)
 
             texCoord = texCoords[vertexIndex] = Vec2.create()
-            texCoord[0] = i/nu
-            texCoord[1] = j/nv
+            texCoord.x = i/nu
+            texCoord.y = j/nv
 
             ++vertexIndex;
 

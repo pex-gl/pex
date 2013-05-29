@@ -1,7 +1,7 @@
 define(['pex/geom/Vec3'], function(Vec3) {
   //position is bottom left corner of the cell
   function Octree(position, size, accuracy) {
-    this.maxDistance = Math.max(size[0], Math.max(size[1], size[2]));
+    this.maxDistance = Math.max(size.x, Math.max(size.y, size.z));
     this.accuracy = (typeof(accuracy) !== 'undefined') ? accuracy : this.maxDistance / 1000;
     this.root = new Octree.Cell(this, position, size, 0);
   }
@@ -84,32 +84,32 @@ define(['pex/geom/Vec3'], function(Vec3) {
   }
 
   Octree.Cell.prototype.contains = function(p) {
-    return p[0] >= this.position[0] - this.tree.accuracy
-        && p[1] >= this.position[1] - this.tree.accuracy
-        && p[2] >= this.position[2] - this.tree.accuracy
-        && p[0] <= this.position[0] + this.size[0] + this.tree.accuracy
-        && p[1] <= this.position[1] + this.size[1] + this.tree.accuracy
-        && p[2] <= this.position[2] + this.size[2] + this.tree.accuracy;
+    return p.x >= this.position.x - this.tree.accuracy
+        && p.y >= this.position.y - this.tree.accuracy
+        && p.z >= this.position.z - this.tree.accuracy
+        && p.x <= this.position.x + this.size.x + this.tree.accuracy
+        && p.y <= this.position.y + this.size.y + this.tree.accuracy
+        && p.z <= this.position.z + this.size.z + this.tree.accuracy;
   }
 
   // 1 2 3 4
   // 5 6 7 8
   Octree.Cell.prototype.split = function() {
-    var x = this.position[0];
-    var y = this.position[1];
-    var z = this.position[2];
-    var w2 = this.size[0]/2;
-    var h2 = this.size[1]/2;
-    var d2 = this.size[2]/2;
+    var x = this.position.x;
+    var y = this.position.y;
+    var z = this.position.z;
+    var w2 = this.size.x/2;
+    var h2 = this.size.y/2;
+    var d2 = this.size.z/2;
 
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z), Vec3.fromValues(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.fromValues(x + w2, y + h2, z + d2), Vec3.fromValues( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
 
     for(var i=0; i<this.points.length; i++) {
       this.addToChildren(this.points[i]);

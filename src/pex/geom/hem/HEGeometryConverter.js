@@ -24,7 +24,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     for(var i=0; i<positions.length; i++) {
       var pos = positions[i];
-      this.vertices.push(new HEVertex(pos[0], pos[1], pos[2]));
+      this.vertices.push(new HEVertex(pos.x, pos.y, pos.z));
     }
 
     var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];

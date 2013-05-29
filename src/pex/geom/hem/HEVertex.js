@@ -1,6 +1,6 @@
 define(['pex/geom/Vec3'], function(Vec3) {
   function HEVertex(x, y, z, edge) {
-    this.position = Vec3.fromValues(x, y, z);
+    this.position = Vec3.create(x, y, z);
     this.edge = edge;
     this.selected = 0;
   }
@@ -14,7 +14,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
       edge = edge.pair.next;
     } while (edge != this.edge);
 
-    var n = Vec3.fromValues(0, 0, 0);
+    var n = Vec3.create(0, 0, 0);
     for(var i in faces) {
       Vec3.add(n, n, faces[i].getNormal());
     }

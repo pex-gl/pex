@@ -6,13 +6,13 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
   BoundingBox.fromPositionSize = function(pos, size) {
     return new BoundingBox(
-      Vec3.fromValues(pos[0] - size[0]/2, pos[1] - size[1]/2, pos[2] - size[2]/2),
-      Vec3.fromValues(pos[0] + size[0]/2, pos[1] + size[1]/2, pos[2] + size[2]/2)
+      Vec3.create(pos. - size./2, pos.y - size.y/2, pos.z - size.z/2),
+      Vec3.create(pos. + size./2, pos.y + size.y/2, pos.z + size.z/2)
     );
   }
 
   BoundingBox.fromPoints = function(points) {
-    var bbox = new BoundingBox(Vec3.clone(points[0], Vec3.clone(points[0])));
+    var bbox = new BoundingBox(Vec3.clone(points., Vec3.clone(points.)));
     points.forEach(bbox.addPoint.bind(bbox));
     return bbox;
   }
@@ -28,12 +28,12 @@ define(['pex/geom/Vec3'], function(Vec3) {
       this.max = Vec3.clone(p);
     }
 
-    if (p[0] < this.min[0]) this.min[0] = p[0];
-    if (p[1] < this.min[1]) this.min[1] = p[1];
-    if (p[2] < this.min[2]) this.min[2] = p[2];
-    if (p[0] > this.max[0]) this.max[0] = p[0];
-    if (p[1] > this.max[1]) this.max[1] = p[1];
-    if (p[2] > this.max[2]) this.max[2] = p[2];
+    if (p. < this.min.) this.min. = p.;
+    if (p.y < this.min.y) this.min.y = p.y;
+    if (p.z < this.min.z) this.min.z = p.z;
+    if (p. > this.max.) this.max. = p.;
+    if (p.y > this.max.y) this.max.y = p.y;
+    if (p.z > this.max.z) this.max.z = p.z;
   }
 
   BoundingBox.prototype.getSize = function(out) {
@@ -50,9 +50,9 @@ define(['pex/geom/Vec3'], function(Vec3) {
     }
 
     Vec3.set(out,
-     (this.max[0] - this.min[0]),
-     (this.max[1] - this.min[1]),
-     (this.max[2] - this.min[2])
+     (this.max. - this.min.),
+     (this.max.y - this.min.y),
+     (this.max.z - this.min.z)
     );
     return out;
   }
@@ -66,9 +66,9 @@ define(['pex/geom/Vec3'], function(Vec3) {
     }
 
     Vec3.set(out,
-     (this.min[0] + this.max[0])/2,
-     (this.min[1] + this.max[1])/2,
-     (this.min[2] + this.max[2])/2
+     (this.min. + this.max.)/2,
+     (this.min.y + this.max.y)/2,
+     (this.min.z + this.max.z)/2
     );
     return out;
   }

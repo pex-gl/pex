@@ -48,7 +48,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     }.bind(this));
     indices = indices.sort();
     var hash = indices.join('_');
-    if (indices[0] == indices[1] || indices[1] == indices[2]) {
+    if (indices.x == indices[1] || indices[1] == indices[2]) {
       console.log(hash);
     }
     return hash;
@@ -190,7 +190,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   };
 
   HEMesh.prototype.splitVertex = function(vertex, newVertexPos, startEdge, endEdge) {
-    var newVertex = new HEVertex(newVertexPos[0], newVertexPos[1], newVertexPos[2]);
+    var newVertex = new HEVertex(newVertexPos.x, newVertexPos.y, newVertexPos.z);
     this.vertices.push(newVertex);
     if (startEdge != null && startEdge == endEdge) {
       //edge
