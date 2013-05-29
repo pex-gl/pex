@@ -4,9 +4,9 @@ define([
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'pex/geom/Vec3',
-  'pex/geom/Vec4',
+  'pex/geom/Color',
   'lib/text!pex/materials/Diffuse.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Vec3, Vec4, DiffuseGLSL) {
+  ], function(Material, Context, Program, ObjectUtils, Vec3, Color, DiffuseGLSL) {
 
   function Diffuse(uniforms) {
     this.gl = Context.currentContext.gl;
@@ -15,9 +15,9 @@ define([
     var defaults = {
       wrap: 1,
       pointSize : 1,
-      lightPos : Vec3.fromValues(10, 20, 30),
-      ambientColor : Vec4.fromValues(0, 0, 0, 1),
-      diffuseColor : Vec4.fromValues(1, 1, 1, 1)
+      lightPos : Vec3.create(10, 20, 30),
+      ambientColor : Color.create(0, 0, 0, 1),
+      diffuseColor : Color.create(1, 1, 1, 1)
     };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
