@@ -196,9 +196,6 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   function simpleWindow(obj) {
     var canvas = obj.settings.canvas;
 
-    obj.settings.width = obj.settings.width || 800;
-    obj.settings.height = obj.settings.height || 600;
-
     if (obj.settings.fullscreen) {
        obj.settings.width = window.innerWidth;
        obj.settings.height = window.innerHeight;
