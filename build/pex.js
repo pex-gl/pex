@@ -4197,20 +4197,20 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
   function simpleWindow(obj) {
     var canvas = obj.settings.canvas;
 
-    obj.settings.width = obj.settings.width || 800;
-    obj.settings.height = obj.settings.height || 600;
-
     if (obj.settings.fullscreen) {
        obj.settings.width = window.innerWidth;
        obj.settings.height = window.innerHeight;
     }
 
-    if ((!canvas || !document.getElementById) && Platform.isEjecta) {
+    if (!canvas) {
       canvas = document.getElementById('canvas');
-      obj.settings.width = canvas.width;
-      obj.settings.height = canvas.height;
+      if (canvas) {
+        obj.settings.width = canvas.width;
+        obj.settings.height = canvas.height;
+      }
     }
-    else {
+
+    if (!canvas) {
       canvas = document.createElement('canvas');
       canvas.width = obj.settings.width;
       canvas.height = obj.settings.height;
@@ -4240,12 +4240,19 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
       }
 
       var gl = null;
-      try {
-        gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+      var ctx = null;
+
+      if (obj.settings.type == '3d') {
+        try {
+          gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+        }
+        catch(err){
+          console.error(err.message);
+          return;
+        }
       }
-      catch(err){
-        console.error(err.message);
-        return;
+      else if (obj.settings.type == '2d') {
+        ctx = canvas.getContext('2d');
       }
 
       obj.framerate = function(fps) {
@@ -4259,6 +4266,7 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
       registerEvents(canvas);
 
       obj.gl = gl;
+      obj.ctx = ctx;
       obj.init();
 
       function drawloop() {
