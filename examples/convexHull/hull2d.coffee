@@ -108,7 +108,6 @@ pex.sys.Window.create
     edgePoints.push(points[minX])
     edgePoints.push(points[maxX])
     dividingEdge = new Edge(points[minX], points[maxX])
-    #edges.push(dividingEdge)
 
     quickHullStep = (points, edgePoints, dividingLine, dividingEdge, depth) ->
       leftPoints = points.filter(isLeft(dividingLine))
