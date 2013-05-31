@@ -1,13 +1,18 @@
+# based on Wikipedia http://en.wikipedia.org/wiki/QuickHull
+
 pex = require('../../build/pex')
 
 { Rect, Vec2, Edge, Line2D, Triangle2D } = pex.geom
 { MathUtils } = pex.utils
 
+sigstep = 1
+
+
 #TODO: cleanup remove resultA, increasedDises etc
 pex.sys.Window.create
   settings:
-    width: 1280
-    height: 720
+    width: 640 * 0.75
+    height: 1136 * 0.75
     type: '2d'
   points: []
   edges: []
