@@ -4201,9 +4201,6 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
     obj.settings.height = obj.settings.height || 600;
 
     if (obj.settings.fullscreen) {
-       document.body.style.margin = '0';
-       document.body.style.padding = '0';
-       document.body.style.overflow = 'hidden';
        obj.settings.width = window.innerWidth;
        obj.settings.height = window.innerHeight;
     }
@@ -4220,6 +4217,10 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
     }
 
     if (Platform.isEjecta && (window.devicePixelRatio == 2)) {
+      canvas.width = obj.settings.width * 2;
+      canvas.height = obj.settings.height * 2;
+      canvas.style.width = obj.settings.width;
+      canvas.style.height = obj.settings.height;
       obj.settings.width *= 2;
       obj.settings.height *= 2;
     }
@@ -4231,6 +4232,11 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
 
     function go() {
       if (obj.stencil === undefined) obj.stencil = false;
+      if (obj.settings.fullscreen) {
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.body.style.overflow = 'hidden';
+      }
 
       var gl = null;
       try {
