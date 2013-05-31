@@ -124,32 +124,15 @@ pex.sys.Window.create
 
       cleanSide = (sidePoints, left) ->
         return 0 if sidePoints.length == 0
-        sidePoints.forEach (p) ->
-            p.considered = false
+
         max = sidePoints.reduce(findFurthestPoint, { distance : 0, point : null })
 
-        #return if !max.point
-        #return if steps >= sigstep
-
-        #if steps == sigstep - 1 and Math.random() > 0.9
-        #  console.log(dividingLine, max.point)
         max.point.used = 1
         sidePoints.splice(sidePoints.indexOf(max.point), 1)
         edgePoints.push(max.point)
         projectedMaxPoint = dividingLine.projectPoint(max.point)
         dividingEdgeA = new Edge(dividingLine.a, max.point)
         dividingEdgeB = new Edge(dividingLine.b, max.point)
-
-        self.paint.setStroke()
-        a = 15
-        a = 255 if steps == sigstep - 1
-        self.paint.setColor(255, 0, 0, a)
-        self.canvas.drawRect(self.paint, dividingLine.a.x, dividingLine.a.y, dividingLine.a.x + 5, dividingLine.a.y + 5)
-        self.canvas.drawLine(self.paint, dividingLine.a.x, dividingLine.a.y, dividingLine.b.x, dividingLine.b.y)
-        self.paint.setColor(150, 0, 150, a)
-        self.canvas.drawLine(self.paint, max.point.x, max.point.y, dividingLine.a.x, dividingLine.a.y)
-        self.paint.setColor(255, 0, 255, a)
-        self.canvas.drawLine(self.paint, max.point.x, max.point.y, dividingLine.b.x, dividingLine.b.y)
 
         edges.push(dividingEdgeA)
         edges.push(dividingEdgeB)
