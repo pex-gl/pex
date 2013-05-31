@@ -4432,6 +4432,7 @@ function css_hue_to_rgb(m1, m2, h) {
 }
 
 function parseCSSColor(css_str) {
+  console.log(css_str);
   // Remove all whitespace, not compliant, but should just be more accepting.
   var str = css_str.replace(/ /g, '').toLowerCase();
 
@@ -4449,7 +4450,7 @@ function parseCSSColor(css_str) {
               1];
     } else if (str.length === 7) {
       var iv = parseInt(str.substr(1), 16);  // TODO(deanm): Stricter parsing.
-      if (!(iv >= 0 && iv < 0xffffff)) return null;  // Covers NaN.
+      if (!(iv >= 0 && iv <= 0xffffff)) return null;  // Covers NaN.
       return [(iv & 0xff0000) >> 16,
               (iv & 0xff00) >> 8,
               iv & 0xff,
