@@ -4227,6 +4227,7 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
 
     obj.width = obj.settings.width;
     obj.height = obj.settings.height;
+    obj.canvas = canvas;
 
     canvas.style.backgroundColor = '#000000';
 
