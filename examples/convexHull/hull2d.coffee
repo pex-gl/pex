@@ -108,7 +108,7 @@ pex.sys.Window.create
     edgePoints.push(points[minX])
     edgePoints.push(points[maxX])
     dividingEdge = new Edge(points[minX], points[maxX])
-    edges.push(dividingEdge)
+    #edges.push(dividingEdge)
 
     quickHullStep = (points, edgePoints, dividingLine, dividingEdge, depth) ->
       leftPoints = points.filter(isLeft(dividingLine))
@@ -122,15 +122,35 @@ pex.sys.Window.create
           max.point = p
         max
 
-      cleanSide = (sidePoints) ->
+      cleanSide = (sidePoints, left) ->
         return 0 if sidePoints.length == 0
+        sidePoints.forEach (p) ->
+            p.considered = false
         max = sidePoints.reduce(findFurthestPoint, { distance : 0, point : null })
+
+        #return if !max.point
+        #return if steps >= sigstep
+
+        #if steps == sigstep - 1 and Math.random() > 0.9
+        #  console.log(dividingLine, max.point)
         max.point.used = 1
         sidePoints.splice(sidePoints.indexOf(max.point), 1)
         edgePoints.push(max.point)
         projectedMaxPoint = dividingLine.projectPoint(max.point)
-        dividingEdgeA = new Edge(max.point, dividingLine.a)
-        dividingEdgeB = new Edge(max.point, dividingLine.b)
+        dividingEdgeA = new Edge(dividingLine.a, max.point)
+        dividingEdgeB = new Edge(dividingLine.b, max.point)
+
+        self.paint.setStroke()
+        a = 15
+        a = 255 if steps == sigstep - 1
+        self.paint.setColor(255, 0, 0, a)
+        self.canvas.drawRect(self.paint, dividingLine.a.x, dividingLine.a.y, dividingLine.a.x + 5, dividingLine.a.y + 5)
+        self.canvas.drawLine(self.paint, dividingLine.a.x, dividingLine.a.y, dividingLine.b.x, dividingLine.b.y)
+        self.paint.setColor(150, 0, 150, a)
+        self.canvas.drawLine(self.paint, max.point.x, max.point.y, dividingLine.a.x, dividingLine.a.y)
+        self.paint.setColor(255, 0, 255, a)
+        self.canvas.drawLine(self.paint, max.point.x, max.point.y, dividingLine.b.x, dividingLine.b.y)
+
         edges.push(dividingEdgeA)
         edges.push(dividingEdgeB)
 
@@ -139,13 +159,11 @@ pex.sys.Window.create
 
         sidePoints = sidePoints.filter(notUsed)
 
-        paLine = new Line2D(max.point, dividingLine.a)
-        paIsLeft = paLine.isPointOnTheLeftSide(projectedMaxPoint)
-        paPoints = sidePoints.filter((p) -> paLine.isPointOnTheLeftSide(p) != paIsLeft)
+        paLine = new Line2D(dividingLine.a, max.point)
+        paPoints = sidePoints.filter((p) -> paLine.isPointOnTheLeftSide(p) == left)
 
-        pbLine = new Line2D(max.point, dividingLine.b)
-        pbIsLeft = pbLine.isPointOnTheLeftSide(projectedMaxPoint)
-        pbPoints = sidePoints.filter((p) -> pbLine.isPointOnTheLeftSide(p) == paIsLeft)
+        pbLine = new Line2D(dividingLine.b, max.point)
+        pbPoints = sidePoints.filter((p) -> pbLine.isPointOnTheLeftSide(p) == !left)
 
         resultA = quickHullStep(paPoints, edgePoints, paLine, dividingEdgeA, depth + 1)
         resultB = quickHullStep(pbPoints, edgePoints, pbLine, dividingEdgeB, depth + 1)
@@ -153,14 +171,15 @@ pex.sys.Window.create
         edges.splice(edges.indexOf(dividingEdgeA), 1) if (paPoints.length > 0)
         edges.splice(edges.indexOf(dividingEdgeB), 1) if (pbPoints.length > 0)
 
+
       increasedSides = 0
 
-      cleanSide(leftPoints)
+      cleanSide(leftPoints, true)
       if edgePoints.length > numEdgePoints
         numEdgePoints = edgePoints.length
         increasedSides++
 
-      cleanSide(rightPoints)
+      cleanSide(rightPoints, false)
       if edgePoints.length > numEdgePoints
         numEdgePoints = edgePoints.length
         increasedSides++
@@ -170,14 +189,15 @@ pex.sys.Window.create
         if idx > -1
           edges.splice(idx, 1)
 
+
       increasedSides
 
     result = quickHullStep(points.filter(notUsed), edgePoints, dividingLine, dividingEdge, 0)
-    if result == 2
-      if dividingEdge != null
-        idx = edges.indexOf(dividingEdge)
-        if idx > -1
-          edges.splice(idx, 1)
+    #if result == 2
+    #  if dividingEdge != null
+    #    idx = edges.indexOf(dividingEdge)
+    #    if idx > -1
+    #      edges.splice(idx, 1)
 
     #ordering edges
     for i in [0..edges.length-1] by 1
