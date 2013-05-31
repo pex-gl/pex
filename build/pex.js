@@ -4500,11 +4500,12 @@ function parseCSSColor(css_str) {
   return null;
 }
 
+if (typeof(exports) !== "undefined")
 try { exports.parseCSSColor = parseCSSColor } catch(e) { }
 
-  return {
-    parseCSSColor : parseCSSColor
-  }
+return {
+  parseCSSColor : parseCSSColor
+}
 });
 // (c) Dean McNamee <dean@gmail.com>, 2012.
 //
@@ -5033,6 +5034,7 @@ function CanvasContext(skcanvas) {
   };
 }
 
+if (typeof(exports) !== "undefined")
 exports.CanvasContext = CanvasContext;
 
 // TODO(deanm): These are the parts of the interface unfinished.

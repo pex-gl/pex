@@ -525,6 +525,7 @@ function CanvasContext(skcanvas) {
   };
 }
 
+if (typeof(exports) !== "undefined")
 exports.CanvasContext = CanvasContext;
 
 // TODO(deanm): These are the parts of the interface unfinished.

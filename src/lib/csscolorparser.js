@@ -201,9 +201,10 @@ function parseCSSColor(css_str) {
   return null;
 }
 
+if (typeof(exports) !== "undefined")
 try { exports.parseCSSColor = parseCSSColor } catch(e) { }
 
-  return {
-    parseCSSColor : parseCSSColor
-  }
+return {
+  parseCSSColor : parseCSSColor
+}
 })
