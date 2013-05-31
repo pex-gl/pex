@@ -23,7 +23,7 @@ pex.sys.Window.create({
       _this = this;
 
     pex.utils.MathUtils.seed(0);
-    bounds = new Rect(50, 50, this.width - 100, this.height - 100);
+    bounds = new Rect(this.width * 0.2, this.width * 0.2, this.width - this.width * 0.4, this.height - this.width * 0.4);
     center = new Vec2(this.width / 2, this.height / 2);
     for (i = _i = 0, _ref1 = this.numPoints - 1; _i <= _ref1; i = _i += 1) {
       p = MathUtils.randomVec2InRect(bounds);

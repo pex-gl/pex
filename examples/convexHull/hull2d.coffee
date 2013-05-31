@@ -20,7 +20,7 @@ pex.sys.Window.create
 
   init: () ->
     pex.utils.MathUtils.seed(0)
-    bounds = new Rect(50, 50, this.width - 100, this.height - 100)
+    bounds = new Rect(this.width*0.2, this.width*0.2, this.width - this.width*0.4, this.height - this.width*0.4)
     center = new Vec2(this.width/2, this.height/2)
     for i in [0..@numPoints-1] by 1
       p = MathUtils.randomVec2InRect(bounds)
@@ -108,6 +108,7 @@ pex.sys.Window.create
     edgePoints.push(points[minX])
     edgePoints.push(points[maxX])
     dividingEdge = new Edge(points[minX], points[maxX])
+    #edges.push(dividingEdge)
 
     quickHullStep = (points, edgePoints, dividingLine, dividingEdge, depth) ->
       leftPoints = points.filter(isLeft(dividingLine))
