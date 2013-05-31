@@ -5,6 +5,7 @@ define (require) ->
   BrowserWindow = require('pex/sys/BrowserWindow')
   ObjectUtils = require('pex/utils/ObjectUtils')
   Time = require('pex/utils/Time')
+  omgcanvas = require('lib/omgcanvas')
 
   Window =
     create: (obj) ->
@@ -29,6 +30,10 @@ define (require) ->
         gl = this.gl
         context = new Context(gl)
         Context.currentContext = context;
+
+        if Platform.isPlask && obj.settings.type == '2d'
+          obj.ctx = new omgcanvas.CanvasContext(this.canvas);
+
         if obj.__init
           obj.framerate(60)
           obj.__init()
