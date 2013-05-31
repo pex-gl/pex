@@ -155,32 +155,15 @@ pex.sys.Window.create
         edges.splice(edges.indexOf(dividingEdgeB), 1) if (pbPoints.length > 0)
 
 
-      increasedSides = 0
-
       cleanSide(leftPoints, true)
       if edgePoints.length > numEdgePoints
         numEdgePoints = edgePoints.length
-        increasedSides++
 
       cleanSide(rightPoints, false)
       if edgePoints.length > numEdgePoints
         numEdgePoints = edgePoints.length
-        increasedSides++
 
-      if increasedSides == 2 && dividingEdge != null
-        idx = edges.indexOf(dividingEdge)
-        if idx > -1
-          edges.splice(idx, 1)
-
-
-      increasedSides
-
-    result = quickHullStep(points.filter(notUsed), edgePoints, dividingLine, dividingEdge, 0)
-    #if result == 2
-    #  if dividingEdge != null
-    #    idx = edges.indexOf(dividingEdge)
-    #    if idx > -1
-    #      edges.splice(idx, 1)
+    quickHullStep(points.filter(notUsed), edgePoints, dividingLine, dividingEdge, 0)
 
     #ordering edges
     for i in [0..edges.length-1] by 1
