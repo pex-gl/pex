@@ -20,8 +20,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-var plask = require('plask');
-var parseCSSColor = require('./csscolorparser.js').parseCSSColor;
+//wrapped with AMD by Marcin Ignac on 2013-05-31
+
+define(['pex/sys/Node', 'lib/csscolorparser'], function(Node, csscolorparser) {
+
+var plask = Node.plask;
+var parseCSSColor = csscolorparser.parseCSSColor;
 
 // NOTE(deanm): Although in Chrome for DOM styles it seems to return a string
 // of the form rgb() or rgba() always, for <canvas> it seems to return #123123
@@ -625,3 +629,8 @@ exports.CanvasContext = CanvasContext;
 //     raises (DOMException);
 // CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
 //     raises (DOMException);
+
+  return {
+    CanvasContext : CanvasContext
+  }
+})
