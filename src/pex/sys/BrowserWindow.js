@@ -239,12 +239,19 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       }
 
       var gl = null;
-      try {
-        gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+      var ctx = null;
+
+      if (obj.settings.type == '3d') {
+        try {
+          gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+        }
+        catch(err){
+          console.error(err.message);
+          return;
+        }
       }
-      catch(err){
-        console.error(err.message);
-        return;
+      else if (obj.settings.type == '2d') {
+        ctx = canvas.getContext('2d');
       }
 
       obj.framerate = function(fps) {
@@ -258,6 +265,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       registerEvents(canvas);
 
       obj.gl = gl;
+      obj.ctx = ctx;
       obj.init();
 
       function drawloop() {
