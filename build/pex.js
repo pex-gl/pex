@@ -1790,17 +1790,20 @@ define('pex/geom/Line2D',['require','pex/geom/Vec2'],function(require) {
       return ((this.b.x - this.a.x) * (p.y - this.a.y) - (this.b.y - this.a.y) * (p.x - this.a.x)) <= 0;
     };
 
-    Line2D.prototype.projectPoint = function(p) {
+    Line2D.prototype.projectPoint = function(p, trace) {
       var ab, ap, d;
 
       ab = Vec2.create().asSub(this.b, this.a).normalize();
       ap = Vec2.create().asSub(p, this.a);
       d = ab.dot(ap);
+      if (trace) {
+        console.log(ap, ab, d);
+      }
       return ab.scale(d).add(this.a);
     };
 
-    Line2D.prototype.distanceToPoint = function(p) {
-      return this.projectPoint(p).distance(p);
+    Line2D.prototype.distanceToPoint = function(p, trace) {
+      return this.projectPoint(p, trace).distance(p);
     };
 
     Line2D.prototype.intersect = function(line) {
@@ -4432,7 +4435,6 @@ function css_hue_to_rgb(m1, m2, h) {
 }
 
 function parseCSSColor(css_str) {
-  console.log(css_str);
   // Remove all whitespace, not compliant, but should just be more accepting.
   var str = css_str.replace(/ /g, '').toLowerCase();
 
