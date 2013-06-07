@@ -6693,7 +6693,7 @@ define('pex/scene/Camera',['require','pex/geom'],function(require) {
     };
 
     Camera.prototype.setPosition = function(position) {
-      position = position;
+      this.position = position;
       return this.updateMatrices();
     };
 

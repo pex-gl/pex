@@ -49,7 +49,7 @@ define (require) ->
       @updateMatrices()
 
     setPosition: (position) ->
-      position = position
+      @position = position
       @updateMatrices()
 
     setTarget: (target) ->
