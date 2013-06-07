@@ -1,5 +1,5 @@
 define (require) ->
-  #3D vector class
+  #Color class
   class Color
     r: 0
     g: 0
