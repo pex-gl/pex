@@ -11,7 +11,7 @@ define (require) ->
       @radius = Math.min(window.width/2, window.height/2) * 2
       @center = Vec2.create(window.width/2, window.height/2)
       @currRot = Quat.create()
-      @currRot.setAxisAngle(Vec3.create(0, 1, 0), Math.PI/4)
+      @currRot.setAxisAngle(Vec3.create(0, 1, 0), 0)
       @clickRot = Quat.create()
       @dragRot = Quat.create()
       @clickPos = Vec3.create()
