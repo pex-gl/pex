@@ -37,7 +37,6 @@ define(function(require) {
           this.elementSize = 1;
         }
       } else if (data[0] instanceof Vec2) {
-        console.log('Compiling Vec2');
         if (!this.dataBuf || this.dataBuf.length !== data.length * 2) {
           this.dataBuf = new this.type(data.length * 2);
           this.elementSize = 2;
@@ -48,7 +47,6 @@ define(function(require) {
           this.dataBuf[i * 2 + 1] = v.y;
         }
       } else if (data[0] instanceof Vec3) {
-        console.log('Compiling Vec3');
         if (!this.dataBuf || this.dataBuf.length !== data.length * 3) {
           this.dataBuf = new this.type(data.length * 3);
           this.elementSize = 3;
@@ -131,7 +129,7 @@ define(function(require) {
           }
         }
       } else {
-        console.log('Buffer.unknown type', data[0]);
+        console.log('Buffer.unknown type', data.name, data[0]);
       }
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.handle);
       return this.gl.bufferData(this.gl.ARRAY_BUFFER, this.dataBuf, this.usage);

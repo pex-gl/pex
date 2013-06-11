@@ -26,7 +26,6 @@ define (require) ->
           @elementSize = 1
 
       else if data[0] instanceof Vec2
-        console.log('Compiling Vec2')
         if !@dataBuf || @dataBuf.length != data.length * 2
           @dataBuf = new @type(data.length * 2)
           @elementSize = 2
@@ -35,7 +34,6 @@ define (require) ->
           @dataBuf[i * 2 + 1] = v.y
 
       else if data[0] instanceof Vec3
-        console.log('Compiling Vec3')
         if !@dataBuf || @dataBuf.length != data.length * 3
           @dataBuf = new @type(data.length * 3)
           @elementSize = 3
@@ -97,7 +95,7 @@ define (require) ->
             @dataBuf[index + 5] = face.c
             index += 6
 
-      else console.log('Buffer.unknown type', data[0])
+      else console.log('Buffer.unknown type', data.name, data[0])
 
       @gl.bindBuffer(@gl.ARRAY_BUFFER, @handle)
       @gl.bufferData(@gl.ARRAY_BUFFER, @dataBuf, @usage)
