@@ -105,8 +105,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     var positions = geometry.vertices;
     var normals = geometry.normals;
 
-    geometry.vertices.isDirty = true;
-    geometry.normals.isDirty = true;
+    geometry.vertices.dirty = true;
+    geometry.normals.dirty = true;
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -136,26 +136,22 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
       }
+      positions.length = vertexIndex; //truncs excess of data
+      normals.length = vertexIndex; //truncs excess of data
     }
     return geometry;
   };
 
   HEMesh.prototype.toSmoothGeometry = function(geometry) {
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true, tangents:true})
-    }
-
-    if (!geometry.attribs.tangent) {
-      geometry.addAttrib('tangents', 'tangent');
+      geometry = new Geometry({vertices:true, normals:true})
     }
 
     var positions = geometry.vertices;
     var normals = geometry.normals;
-    var tangents = geometry.tangents;
 
-    geometry.vertices.isDirty = true;
-    geometry.normals.isDirty = true;
-    geometry.tangents.isDirty = true;
+    geometry.vertices.dirty = true;
+    geometry.normals.dirty = true;
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -179,15 +175,14 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
           else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[face4Swizzle[j]].getNormal();
           else normals[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].getNormal());
-          if (!tangents[vertexIndex+j]) tangents[vertexIndex+j] = faceVertices[face4Swizzle[j]].tangent;
-          else tangents[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].tangent);
         }
         vertexIndex += 6;
       }
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-        //throw("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
       }
+      positions.length = vertexIndex; //truncs excess of data
+      normals.length = vertexIndex; //truncs excess of data
     }
     return geometry;
   }
