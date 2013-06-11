@@ -37,19 +37,19 @@ define(function(require) {
       }
       this.attribs = {};
       if (vertices) {
-        this.addAttrib('vertices', 'position', 'Vec3');
+        this.addAttrib('vertices', 'position');
       }
       if (normals) {
-        this.addAttrib('normals', 'normal', 'Vec3');
+        this.addAttrib('normals', 'normal');
       }
       if (texCoords) {
-        this.addAttrib('texCoords', 'texCoord', 'Vec2');
+        this.addAttrib('texCoords', 'texCoord');
       }
       if (tangents) {
-        this.addAttrib('tangents', 'tangent', 'Vec3');
+        this.addAttrib('tangents', 'tangent');
       }
       if (colors) {
-        this.addAttrib('colors', 'color', 'Color');
+        this.addAttrib('colors', 'color');
       }
       if (indices) {
         this.addIndices();
@@ -62,10 +62,7 @@ define(function(require) {
       }
     }
 
-    Geometry.prototype.addAttrib = function(propertyName, attributeName, type, dynamic) {
-      if (type == null) {
-        type = 'Vec3';
-      }
+    Geometry.prototype.addAttrib = function(propertyName, attributeName, dynamic) {
       if (dynamic == null) {
         dynamic = false;
       }
@@ -73,7 +70,6 @@ define(function(require) {
       this[propertyName].name = attributeName;
       this[propertyName].dirty = true;
       this[propertyName].dynamic = dynamic;
-      this[propertyName].type = type;
       this.attribs[propertyName] = this[propertyName];
       return this;
     };
@@ -120,47 +116,6 @@ define(function(require) {
         dirty || (dirty = attrib.dirty);
       }
       return dirty;
-    };
-
-    Geometry.prototype.allocate = function(numVertices) {
-      var attrib, attribName, i, _ref, _results;
-
-      _ref = this.attribs;
-      _results = [];
-      for (attribName in _ref) {
-        attrib = _ref[attribName];
-        console.log(attrib);
-        attrib.length = numVertices;
-        _results.push((function() {
-          var _i, _ref1, _results1;
-
-          _results1 = [];
-          for (i = _i = 0, _ref1 = numVertices - 1; _i <= _ref1; i = _i += 1) {
-            if (attrib[i] == null) {
-              switch (attrib.type) {
-                case 'Vec2':
-                  _results1.push(attrib[i] = new Vec2());
-                  break;
-                case 'Vec3':
-                  _results1.push(attrib[i] = new Vec3());
-                  break;
-                case 'Vec4':
-                  _results1.push(attrib[i] = new Vec4());
-                  break;
-                case 'Color':
-                  _results1.push(attrib[i] = new Color());
-                  break;
-                default:
-                  _results1.push(void 0);
-              }
-            } else {
-              _results1.push(void 0);
-            }
-          }
-          return _results1;
-        })());
-      }
-      return _results;
     };
 
     Geometry.prototype.addEdge = function(a, b) {

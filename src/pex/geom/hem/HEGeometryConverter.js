@@ -102,13 +102,13 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       geometry = new Geometry({vertices:true, normals:true})
     }
 
-    geometry.allocate(numVertices);
-
     var positions = geometry.vertices;
     var normals = geometry.normals;
 
     geometry.vertices.isDirty = true;
     geometry.normals.isDirty = true;
+
+    var face4Swizzle = [0, 1, 3, 3, 1, 2];
 
     var vertexIndex = 0;
     for(var i in faces) {
@@ -116,32 +116,25 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        positions[vertexIndex+0].copy(faceVertices[0].position);
-        positions[vertexIndex+1].copy(faceVertices[1].position);
-        positions[vertexIndex+2].copy(faceVertices[2].position);
-        normals[vertexIndex+0].copy(faceNormal);
-        normals[vertexIndex+1].copy(faceNormal);
-        normals[vertexIndex+2].copy(faceNormal);
+        for(var j=0; j<3; j++) {
+          if (!positions[vertexIndex+j]) positions[vertexIndex+0] = faceVertices[j].position.clone()
+          else positions[vertexIndex+j].copy(faceVertices[j].position);
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
+          else normals[vertexIndex+j].copy(faceNormal);
+        }
         vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
-        positions[vertexIndex+0].copy(faceVertices[0].position);
-        positions[vertexIndex+1].copy(faceVertices[1].position);
-        positions[vertexIndex+2].copy(faceVertices[3].position);
-        positions[vertexIndex+3].copy(faceVertices[3].position);
-        positions[vertexIndex+4].copy(faceVertices[1].position);
-        positions[vertexIndex+5].copy(faceVertices[2].position);
-        normals[vertexIndex+0].copy(faceNormal);
-        normals[vertexIndex+1].copy(faceNormal);
-        normals[vertexIndex+2].copy(faceNormal);
-        normals[vertexIndex+3].copy(faceNormal);
-        normals[vertexIndex+4].copy(faceNormal);
-        normals[vertexIndex+5].copy(faceNormal);
+        for(var j=0; j<6; j++) {
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
+          else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
+          else normals[vertexIndex+j].copy(faceNormal);
+        }
         vertexIndex += 6;
       }
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-        //throw("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
       }
     }
     return geometry;

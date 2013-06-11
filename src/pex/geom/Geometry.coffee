@@ -19,21 +19,20 @@ define (require) ->
 
       @attribs = {}
 
-      @addAttrib('vertices', 'position', 'Vec3') if vertices
-      @addAttrib('normals', 'normal', 'Vec3') if normals
-      @addAttrib('texCoords', 'texCoord', 'Vec2') if texCoords
-      @addAttrib('tangents', 'tangent', 'Vec3') if tangents
-      @addAttrib('colors', 'color', 'Color') if colors
+      @addAttrib('vertices', 'position') if vertices
+      @addAttrib('normals', 'normal') if normals
+      @addAttrib('texCoords', 'texCoord') if texCoords
+      @addAttrib('tangents', 'tangent') if tangents
+      @addAttrib('colors', 'color') if colors
       @addIndices() if indices
       @addEdges() if edges
       @addFaces() if faces
 
-    addAttrib: (propertyName, attributeName, type='Vec3', dynamic=false) ->
+    addAttrib: (propertyName, attributeName, dynamic=false) ->
       @[propertyName] = []
       @[propertyName].name = attributeName
       @[propertyName].dirty = true
       @[propertyName].dynamic = dynamic
-      @[propertyName].type = type
       @attribs[propertyName] = @[propertyName]
       this
 
@@ -63,18 +62,18 @@ define (require) ->
         dirty ||= attrib.dirty
       return dirty
 
-    allocate: (numVertices) ->
-      for attribName, attrib of @attribs
-        console.log(attrib)
-        attrib.length = numVertices
-
-        for i in [0..numVertices-1] by 1
-          if not attrib[i]?
-            switch attrib.type
-              when 'Vec2' then attrib[i] = new Vec2()
-              when 'Vec3' then attrib[i] = new Vec3()
-              when 'Vec4' then attrib[i] = new Vec4()
-              when 'Color' then attrib[i] = new Color()
+    #allocate: (numVertices) ->
+    #  for attribName, attrib of @attribs
+    #    console.log(attrib)
+    #    attrib.length = numVertices
+    #
+    #    for i in [0..numVertices-1] by 1
+    #      if not attrib[i]?
+    #        switch attrib.type
+    #          when 'Vec2' then attrib[i] = new Vec2()
+    #          when 'Vec3' then attrib[i] = new Vec3()
+    #          when 'Vec4' then attrib[i] = new Vec4()
+    #          when 'Color' then attrib[i] = new Color()
 
     addEdge: (a, b) ->
       @addEdges() if !@edges
