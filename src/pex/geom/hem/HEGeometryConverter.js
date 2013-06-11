@@ -108,9 +108,9 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     geometry.vertices.isDirty = true;
     geometry.normals.isDirty = true;
 
+    var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
 
-    var vertexIndex = 0;
     for(var i in faces) {
       var face = faces[i];
       var faceVertices = face.getAllVertices();
@@ -140,69 +140,49 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return geometry;
   };
 
-  /*
   HEMesh.prototype.toSmoothGeometry = function(geometry) {
     if (!geometry) {
-      geometry = new Geometry({
-        vertices : {
-          name: 'position'
-          type: 'Vec3',
-          length : numVertices
-        },
-        normal : {
-          name: 'normal'
-          type: 'Vec3',
-          length : numVertices
-        }
-      });
-
-      geometry = Geometry.create().addAttribute('normals', 'normal', Vec3)
+      geometry = new Geometry({vertices:true, normals:true, tangents:true})
     }
 
     if (!geometry.attribs.tangent) {
-      geometry.addAttribute('vertices', 'postion', Vec3 })
-      geometry.addAttribute('tangents', 'tangent', Vec3 })
+      geometry.addAttrib('tangents', 'tangent');
     }
 
-    var positions = geometry.attribs.position.data;
-    var normals = geometry.attribs.normal.data;
-    var tangents = geometry.attribs.tangents.data;
+    var positions = geometry.vertices;
+    var normals = geometry.normals;
+    var tangents = geometry.tangents;
 
-    geometry.attribs.position.data
-    geometry.positions
+    geometry.vertices.isDirty = true;
+    geometry.normals.isDirty = true;
+    geometry.tangents.isDirty = true;
 
-    var idx = 0;
+    var vertexIndex = 0;
+    var face4Swizzle = [0, 1, 3, 3, 1, 2];
+
     for(var i in this.faces) {
       var face = this.faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
-        geometry.normals.push(faceVertices[0].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[2].getNormal());
+        for(var j=0; j<3; j++) {
+          if (!positions[vertexIndex+j]) positions[vertexIndex+0] = faceVertices[j].position.clone()
+          else positions[vertexIndex+j].copy(faceVertices[j].position);
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[j].getNormal();
+          else normals[vertexIndex+j].copy(faceVertices[j].getNormal());
+        }
+        vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
-        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
-        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
-        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
-        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
-        geometry.tangents.push(faceVertices[0].tangent);
-        geometry.tangents.push(faceVertices[1].tangent);
-        geometry.tangents.push(faceVertices[3].tangent);
-        geometry.tangents.push(faceVertices[3].tangent);
-        geometry.tangents.push(faceVertices[1].tangent);
-        geometry.tangents.push(faceVertices[2].tangent);
-        geometry.normals.push(faceVertices[0].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[3].getNormal());
-        geometry.normals.push(faceVertices[3].getNormal());
-        geometry.normals.push(faceVertices[1].getNormal());
-        geometry.normals.push(faceVertices[2].getNormal());
+        for(var j=0; j<6; j++) {
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
+          else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[face4Swizzle[j]].getNormal();
+          else normals[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].getNormal());
+          if (!tangents[vertexIndex+j]) tangents[vertexIndex+j] = faceVertices[face4Swizzle[j]].tangent;
+          else tangents[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].tangent);
+        }
+        vertexIndex += 6;
       }
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
@@ -211,8 +191,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     }
     return geometry;
   }
-  */
 
+  /*
   HEMesh.prototype.toEdgesGeometry = function(offset) {
     offset = (offset !== undefined) ? offset : 0.1;
     var lineBuilder = new LineBuilder();
@@ -227,6 +207,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
     return lineBuilder;
   };
+  */
 
   return HEGeometryConverter;
 });
