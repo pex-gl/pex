@@ -1526,44 +1526,6 @@ define('pex/geom/Geometry',['require','pex/geom/Vec2','pex/geom/Vec3','pex/geom/
         }
       }
       return _results;
-      /*
-      Geometry.prototype.computeEdges = function() {
-      this.edges = [];
-      this.vertexEdges = [];
-      
-      for(var i=0; i<this.vertices.length; i++) {
-        this.vertexEdges.push([]);
-      }
-      
-      for(var i=0; i<this.faces.length; i++) {
-        var face = this.faces[i];
-        if (face instanceof Face3) {
-          this.edges.push(new Edge(face.a, face.b));
-          this.edges.push(new Edge(face.b, face.c));
-          this.edges.push(new Edge(face.c, face.a));
-        }
-        else if (face instanceof Face4) {
-          this.edges.push(new Edge(face.a, face.b));
-          this.edges.push(new Edge(face.b, face.c));
-          this.edges.push(new Edge(face.c, face.d));
-          this.edges.push(new Edge(face.d, face.a));
-        }
-      }
-      
-      for(var i=0; i<this.edges.length; i++) {
-        var edgeI = this.edges[i];
-        for(var j=i+1; j<this.edges.length; j++) {
-          var edgeJ = this.edges[j];
-          if ((edgeI.a == edgeJ.a && edgeI.b == edgeJ.b) || (edgeI.a == edgeJ.b && edgeI.b == edgeJ.a)) {
-            this.edges.splice(j, 1);
-            j--;
-          }
-        }
-        this.vertexEdges[edgeI.a].push(edgeI);
-        this.vertexEdges[edgeI.b].push(edgeI);
-      }
-      */
-
     };
 
     return Geometry;
