@@ -17,6 +17,9 @@ define(function(require) {
       if ((_ref1 = this.primitiveType) == null) {
         this.primitiveType = this.gl.TRIANGLES;
       }
+      if (options.useEdges) {
+        this.primitiveType = this.gl.LINES;
+      }
       this.attributes = {};
       this.usage = this.gl.STATIC_DRAW;
       this.addAttrib("position", geometry.attribs.position.data, geometry.attribs.position.elementSize);
@@ -36,7 +39,7 @@ define(function(require) {
       this.modelViewMatrix = Mat4.create();
       this.rotationMatrix = Mat4.create();
       this.normalMatrix = Mat4.create();
-      this.updateIndices(geometry);
+      this.updateIndices(geometry, options.useEdges);
     }
 
     Mesh.prototype.addAttrib = function(name, data, elementSize, usage) {
@@ -57,7 +60,7 @@ define(function(require) {
       return this.attributes[attrib.name] = attrib;
     };
 
-    Mesh.prototype.updateIndices = function(geometry) {
+    Mesh.prototype.updateIndices = function(geometry, useEdges) {
       var data, oldArrayBinding;
 
       if (this.indices === undefined) {
@@ -66,7 +69,11 @@ define(function(require) {
       }
       this.indices.isDirty = false;
       data = [];
-      if (geometry.faces.length > 0) {
+      if (useEdges && geometry.edges.length > 0) {
+        geometry.edges.forEach(function(e) {
+          return data.push(e.a, e.b);
+        });
+      } else if (geometry.faces.length > 0) {
         geometry.faces.forEach(function(face) {
           if (face.constructor === Face4) {
             data.push(face.a);

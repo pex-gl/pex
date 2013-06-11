@@ -41,6 +41,7 @@ define (require) ->
       #@primitiveType = (if (options.primitiveType isnt `undefined`) then options.primitiveType else @gl.TRIANGLES)
       @primitiveType = options.primitiveType
       @primitiveType ?= @gl.TRIANGLES
+      @primitiveType = @gl.LINES if options.useEdges
       @attributes = {}
       @usage = @gl.STATIC_DRAW
       @addAttrib "position", geometry.attribs.position.data, geometry.attribs.position.elementSize
@@ -54,7 +55,7 @@ define (require) ->
       @modelViewMatrix = Mat4.create()
       @rotationMatrix = Mat4.create()
       @normalMatrix = Mat4.create()
-      @updateIndices(geometry)
+      @updateIndices(geometry, options.useEdges)
 
     # ### addAttrib ( name, data, elementSize, usage )
     # `name` - *{ String }*
@@ -78,13 +79,15 @@ define (require) ->
 
     # ### updateIndices ( geometry )
     # `geometry` - *{ Geometry }*
-    updateIndices: (geometry) ->
+    updateIndices: (geometry, useEdges) ->
       if @indices is `undefined`
         @indices = {}
         @indices.buffer = @gl.createBuffer()
       @indices.isDirty = false
       data = []
-      if geometry.faces.length > 0
+      if useEdges and geometry.edges.length > 0
+        geometry.edges.forEach (e) -> data.push(e.a, e.b)
+      else if geometry.faces.length > 0
         geometry.faces.forEach (face) ->
           if face.constructor is Face4
             data.push face.a
