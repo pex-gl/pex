@@ -6,14 +6,15 @@ define(function(require) {
   var Cube, Face4, Geometry, Vec2, Vec3;
 
   Vec2 = require('pex/geom/Vec2');
-  Vec3 = require('pex/geom/Vec2');
+  Vec3 = require('pex/geom/Vec3');
   Face4 = require('pex/geom/Face4');
   Geometry = require('pex/geom/Geometry');
   return Cube = (function(_super) {
     __extends(Cube, _super);
 
     function Cube(sx, sy, sz, nx, ny, nz) {
-      var attribs, faces, makePlane, normals, numVertices, positions, texCoords, vertexIndex;
+      var makePlane, numVertices, vertexIndex,
+        _this = this;
 
       sx = sx || 1;
       sy = sy || sx || 1;
@@ -22,25 +23,12 @@ define(function(require) {
       ny = ny || 1;
       nz = nz || 1;
       numVertices = (nx + 1) * (ny + 1) * 2 + (nx + 1) * (nz + 1) * 2 + (nz + 1) * (ny + 1) * 2;
-      attribs = {
-        position: {
-          type: 'Vec3',
-          length: numVertices
-        },
-        normal: {
-          type: 'Vec3',
-          length: numVertices
-        },
-        texCoord: {
-          type: 'Vec2',
-          length: numVertices
-        }
-      };
-      Cube.__super__.constructor.call(this, attribs);
-      positions = this.attribs.position.data;
-      normals = this.attribs.normal.data;
-      texCoords = this.attribs.texCoord.data;
-      faces = this.faces;
+      Cube.__super__.constructor.call(this, {
+        vertices: true,
+        normals: true,
+        texCoords: true,
+        faces: true
+      });
       vertexIndex = 0;
       makePlane = function(u, v, w, su, sv, nu, nv, pw, flipu, flipv) {
         var face, i, j, n, normal, texCoord, vert, vertShift, _i, _j, _k, _ref, _results;
@@ -48,15 +36,15 @@ define(function(require) {
         vertShift = vertexIndex;
         for (j = _i = 0; 0 <= nv ? _i <= nv : _i >= nv; j = 0 <= nv ? ++_i : --_i) {
           for (i = _j = 0; 0 <= nu ? _j <= nu : _j >= nu; i = 0 <= nu ? ++_j : --_j) {
-            vert = positions[vertexIndex] = Vec3.create();
+            vert = _this.vertices[vertexIndex] = Vec3.create();
             vert[u] = (-su / 2 + i * su / nu) * flipu;
             vert[v] = (-sv / 2 + j * sv / nv) * flipv;
             vert[w] = pw;
-            normal = normals[vertexIndex] = Vec3.create();
+            normal = _this.normals[vertexIndex] = Vec3.create();
             normal[u] = 0;
             normal[v] = 0;
             normal[w] = pw / Math.abs(pw);
-            texCoord = texCoords[vertexIndex] = Vec2.create();
+            texCoord = _this.texCoords[vertexIndex] = Vec2.create();
             texCoord.x = i / nu;
             texCoord.y = j / nv;
             ++vertexIndex;
@@ -71,10 +59,10 @@ define(function(require) {
             for (i = _l = 0, _ref1 = nu - 1; 0 <= _ref1 ? _l <= _ref1 : _l >= _ref1; i = 0 <= _ref1 ? ++_l : --_l) {
               n = vertShift + j * (nu + 1) + i;
               face = new Face4(n, n + nu + 1, n + nu + 2, n + 1);
-              _results1.push(faces.push(face));
+              _results1.push(this.faces.push(face));
             }
             return _results1;
-          })());
+          }).call(_this));
         }
         return _results;
       };

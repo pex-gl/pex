@@ -1,6 +1,6 @@
 define (require) ->
   Vec2 = require('pex/geom/Vec2')
-  Vec3 = require('pex/geom/Vec2')
+  Vec3 = require('pex/geom/Vec3')
   Face4 = require('pex/geom/Face4')
   Geometry = require('pex/geom/Geometry')
 
@@ -15,41 +15,25 @@ define (require) ->
 
       numVertices = (nx + 1) * (ny + 1) * 2 + (nx + 1) * (nz + 1) * 2 + (nz + 1) * (ny + 1) * 2
 
-      attribs =
-        position:
-          type: 'Vec3'
-          length: numVertices
-        normal:
-          type: 'Vec3'
-          length: numVertices
-        texCoord:
-          type: 'Vec2'
-          length: numVertices
-
-      super(attribs)
-
-      positions = @attribs.position.data
-      normals = @attribs.normal.data
-      texCoords = @attribs.texCoord.data
-      faces = @faces
+      super({vertices:true, normals:true, texCoords:true, faces:true})
 
       vertexIndex = 0
 
-      makePlane = (u, v, w, su, sv, nu, nv, pw, flipu, flipv) ->
+      makePlane = (u, v, w, su, sv, nu, nv, pw, flipu, flipv) =>
         vertShift = vertexIndex
         for j in [0..nv]
           for i in [0..nu]
-            vert = positions[vertexIndex] = Vec3.create()
+            vert = @vertices[vertexIndex] = Vec3.create()
             vert[u] = (-su/2 + i*su/nu) * flipu
             vert[v] = (-sv/2 + j*sv/nv) * flipv
             vert[w] = pw
 
-            normal = normals[vertexIndex] = Vec3.create()
+            normal = @normals[vertexIndex] = Vec3.create()
             normal[u] = 0
             normal[v] = 0
             normal[w] = pw/Math.abs(pw)
 
-            texCoord = texCoords[vertexIndex] = Vec2.create()
+            texCoord = @texCoords[vertexIndex] = Vec2.create()
             texCoord.x = i/nu
             texCoord.y = j/nv
 
@@ -59,7 +43,7 @@ define (require) ->
           for i in [0..nu-1]
             n = vertShift + j * (nu + 1) + i
             face = new Face4(n, n + nu  + 1, n + nu + 2, n + 1)
-            faces.push(face)
+            @faces.push(face)
 
       makePlane('x', 'y', 'z', sx, sy, nx, ny,  sz/2,  1, -1) #front
       makePlane('x', 'y', 'z', sx, sy, nx, ny, -sz/2, -1, -1) #back

@@ -20,7 +20,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     this.faces.length = 0;
     this.edges.length = 0;
 
-    var positions = geom.attribs.position.data;
+    var positions = geom.vertices;
 
     for(var i=0; i<positions.length; i++) {
       var pos = positions[i];
@@ -99,25 +99,16 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
 
     if (!geometry) {
-      geometry = new Geometry({
-        position : {
-          type: 'Vec3',
-          length : numVertices
-        },
-        normal : {
-          type: 'Vec3',
-          length : numVertices
-        }
-      });
+      geometry = new Geometry({vertices:true, normals:true})
     }
 
     geometry.allocate(numVertices);
 
-    var positions = geometry.attribs.position.data;
-    var normals = geometry.attribs.normal.data;
+    var positions = geometry.vertices;
+    var normals = geometry.normals;
 
-    geometry.attribs.position.isDirty = true;
-    geometry.attribs.normal.isDirty = true;
+    geometry.vertices.isDirty = true;
+    geometry.normals.isDirty = true;
 
     var vertexIndex = 0;
     for(var i in faces) {
@@ -155,6 +146,79 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     }
     return geometry;
   };
+
+  /*
+  HEMesh.prototype.toSmoothGeometry = function(geometry) {
+    if (!geometry) {
+      geometry = new Geometry({
+        vertices : {
+          name: 'position'
+          type: 'Vec3',
+          length : numVertices
+        },
+        normal : {
+          name: 'normal'
+          type: 'Vec3',
+          length : numVertices
+        }
+      });
+
+      geometry = Geometry.create().addAttribute('normals', 'normal', Vec3)
+    }
+
+    if (!geometry.attribs.tangent) {
+      geometry.addAttribute('vertices', 'postion', Vec3 })
+      geometry.addAttribute('tangents', 'tangent', Vec3 })
+    }
+
+    var positions = geometry.attribs.position.data;
+    var normals = geometry.attribs.normal.data;
+    var tangents = geometry.attribs.tangents.data;
+
+    geometry.attribs.position.data
+    geometry.positions
+
+    var idx = 0;
+    for(var i in this.faces) {
+      var face = this.faces[i];
+      var faceVertices = face.getAllVertices();
+      var faceNormal = face.getNormal();
+      if (faceVertices.length == 3) {
+        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
+        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
+        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
+        geometry.normals.push(faceVertices[0].getNormal());
+        geometry.normals.push(faceVertices[1].getNormal());
+        geometry.normals.push(faceVertices[2].getNormal());
+      }
+      else if (faceVertices.length == 4) {
+        geometry.vertices.push(new Vec3(faceVertices[0].x, faceVertices[0].y, faceVertices[0].z));
+        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
+        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
+        geometry.vertices.push(new Vec3(faceVertices[3].x, faceVertices[3].y, faceVertices[3].z));
+        geometry.vertices.push(new Vec3(faceVertices[1].x, faceVertices[1].y, faceVertices[1].z));
+        geometry.vertices.push(new Vec3(faceVertices[2].x, faceVertices[2].y, faceVertices[2].z));
+        geometry.tangents.push(faceVertices[0].tangent);
+        geometry.tangents.push(faceVertices[1].tangent);
+        geometry.tangents.push(faceVertices[3].tangent);
+        geometry.tangents.push(faceVertices[3].tangent);
+        geometry.tangents.push(faceVertices[1].tangent);
+        geometry.tangents.push(faceVertices[2].tangent);
+        geometry.normals.push(faceVertices[0].getNormal());
+        geometry.normals.push(faceVertices[1].getNormal());
+        geometry.normals.push(faceVertices[3].getNormal());
+        geometry.normals.push(faceVertices[3].getNormal());
+        geometry.normals.push(faceVertices[1].getNormal());
+        geometry.normals.push(faceVertices[2].getNormal());
+      }
+      else {
+        console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+        //throw("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
+      }
+    }
+    return geometry;
+  }
+  */
 
   HEMesh.prototype.toEdgesGeometry = function(offset) {
     offset = (offset !== undefined) ? offset : 0.1;

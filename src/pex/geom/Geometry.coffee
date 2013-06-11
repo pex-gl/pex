@@ -7,37 +7,77 @@ define (require) ->
   Face4 = require('pex/geom/Face4')
   Color = require('pex/color/Color')
 
-  elementSizeMap =
-    'Vec2': 2
-    'Vec3': 3
-    'Vec4': 4
-    'Color': 4
-
   class Geometry
-    constructor: (attribs) ->
-      @faces = []
-      @edges = []
-      @attribs = attribs || {}
+    constructor: ({vertices, normals, texCoords, tangents, colors, indices, edges, faces}) ->
+      vertices ?= true
+      normals ?= false
+      texCoords ?= false
+      tangents ?= false
+      indices ?= false
+      edges ?= false
+      faces ?= true
 
-      for attribName, attrib of @attribs
-        attrib.isDirty = true;
-        attrib.elementSize = elementSizeMap[attrib.type];
-        attrib.data = []
-        attrib.length = attrib.length ? 0
+      @attribs = {}
+
+      @addAttrib('vertices', 'position', 'Vec3') if vertices
+      @addAttrib('normals', 'normal', 'Vec3') if normals
+      @addAttrib('texCoords', 'texCoord', 'Vec2') if texCoords
+      @addAttrib('tangents', 'tangent', 'Vec3') if tangents
+      @addAttrib('colors', 'color', 'Color') if colors
+      @addIndices() if indices
+      @addEdges() if edges
+      @addFaces() if faces
+
+    addAttrib: (propertyName, attributeName, type='Vec3', dynamic=false) ->
+      @[propertyName] = []
+      @[propertyName].name = attributeName
+      @[propertyName].dirty = true
+      @[propertyName].dynamic = dynamic
+      @[propertyName].type = type
+      @attribs[propertyName] = @[propertyName]
+      this
+
+    addFaces: (dynamic=false) ->
+      @faces = []
+      @faces.dirty = true
+      @faces.dynamic = false
+      this
+
+    addEdges: (dynamic=false) ->
+      @edges = []
+      @edges.dirty = true
+      @edges.dynamic = false
+      this
+
+    addIndices: (dynamic=false) ->
+      @indices = []
+      @indices.dirty = true
+      @indices.dynamic = false
+      this
+
+    isDirty: (attibs) ->
+      dirty = false
+      dirty ||= @faces && @faces.dirty
+      dirty ||= @edges && @edges.dirty
+      for attribAlias, attrib of @attribs
+        dirty ||= attrib.dirty
+      return dirty
 
     allocate: (numVertices) ->
       for attribName, attrib of @attribs
+        console.log(attrib)
         attrib.length = numVertices
+
         for i in [0..numVertices-1] by 1
-          if not attrib.data[i]?
+          if not attrib[i]?
             switch attrib.type
-              when 'Vec2' then attrib.data[i] = new Vec2()
-              when 'Vec3' then attrib.data[i] = new Vec3()
-              when 'Vec4' then attrib.data[i] = new Vec4()
-              when 'Color' then attrib.data[i] = new Color()
+              when 'Vec2' then attrib[i] = new Vec2()
+              when 'Vec3' then attrib[i] = new Vec3()
+              when 'Vec4' then attrib[i] = new Vec4()
+              when 'Color' then attrib[i] = new Color()
 
     addEdge: (a, b) ->
-      @edges = [] if !@edges
+      @addEdges() if !@edges
       @edgeHash = [] if !@edgeHash
       ab = a + '_' + b
       ba = a + '_' + a
@@ -55,4 +95,4 @@ define (require) ->
           @addEdge(face.a, face.b)
           @addEdge(face.b, face.c)
           @addEdge(face.c, face.d)
-          @addEdge(face.d, face.a)
+          @addEdge(face.d, face.a)#
