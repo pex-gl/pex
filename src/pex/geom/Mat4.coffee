@@ -150,22 +150,22 @@ define (require) ->
 
       invdet = 1 / (a0*b5 - a1*b4 + a2*b3 + a3*b2 - a4*b1 + a5*b0)
 
-      a11 = (+ x5*b5 - x6*b4 + x7*b3) * invdet
-      a12 = (- x1*b5 + x2*b4 - x3*b3) * invdet
-      a13 = (+ x13*a5 - x14*a4 + x15*a3) * invdet
-      a14 = (- x9*a5 + x10*a4 - x11*a3) * invdet
-      a21 = (- x4*b5 + x6*b2 - x7*b1) * invdet
-      a22 = (+ x0*b5 - x2*b2 + x3*b1) * invdet
-      a23 = (- x12*a5 + x14*a2 - x15*a1) * invdet
-      a24 = (+ x8*a5 - x10*a2 + x11*a1) * invdet
-      a31 = (+ x4*b4 - x5*b2 + x7*b0) * invdet
-      a32 = (- x0*b4 + x1*b2 - x3*b0) * invdet
-      a33 = (+ x12*a4 - x13*a2 + x15*a0) * invdet
-      a34 = (- x8*a4 + x9*a2 - x11*a0) * invdet
-      a41 = (- x4*b3 + x5*b1 - x6*b0) * invdet
-      a42 = (+ x0*b3 - x1*b1 + x2*b0) * invdet
-      a43 = (- x12*a3 + x13*a1 - x14*a0) * invdet
-      a44 = (+ x8*a3 - x9*a1 + x10*a0) * invdet
+      @a11 = (+ x5*b5 - x6*b4 + x7*b3) * invdet
+      @a12 = (- x1*b5 + x2*b4 - x3*b3) * invdet
+      @a13 = (+ x13*a5 - x14*a4 + x15*a3) * invdet
+      @a14 = (- x9*a5 + x10*a4 - x11*a3) * invdet
+      @a21 = (- x4*b5 + x6*b2 - x7*b1) * invdet
+      @a22 = (+ x0*b5 - x2*b2 + x3*b1) * invdet
+      @a23 = (- x12*a5 + x14*a2 - x15*a1) * invdet
+      @a24 = (+ x8*a5 - x10*a2 + x11*a1) * invdet
+      @a31 = (+ x4*b4 - x5*b2 + x7*b0) * invdet
+      @a32 = (- x0*b4 + x1*b2 - x3*b0) * invdet
+      @a33 = (+ x12*a4 - x13*a2 + x15*a0) * invdet
+      @a34 = (- x8*a4 + x9*a2 - x11*a0) * invdet
+      @a41 = (- x4*b3 + x5*b1 - x6*b0) * invdet
+      @a42 = (+ x0*b3 - x1*b1 + x2*b0) * invdet
+      @a43 = (- x12*a3 + x13*a1 - x14*a0) * invdet
+      @a44 = (+ x8*a3 - x9*a1 + x10*a0) * invdet
 
       this
 
