@@ -13,11 +13,11 @@ define (require) ->
 
     setAxisAngle: (v, a) ->
       a = a * 0.5
-      s = Math.sin( a )
+      s = Math.sin( a / 180 * Math.PI )
       @x = s * v.x
       @y = s * v.y
       @z = s * v.z
-      @w = Math.cos( a )
+      @w = Math.cos( a / 180 * Math.PI)
       this
 
     clone: () ->

@@ -24,11 +24,11 @@ define(function(require) {
       var s;
 
       a = a * 0.5;
-      s = Math.sin(a);
+      s = Math.sin(a / 180 * Math.PI);
       this.x = s * v.x;
       this.y = s * v.y;
       this.z = s * v.z;
-      this.w = Math.cos(a);
+      this.w = Math.cos(a / 180 * Math.PI);
       return this;
     };
 
