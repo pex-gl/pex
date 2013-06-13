@@ -27,30 +27,21 @@ define([
 
     var material = new Material(program, uniforms);
 
-    var geometry = new Geometry({
-      position : {
-        type : 'Vec2',
-        length : 4
-      },
-      texCoord : {
-        type : 'Vec2',
-        length : 4
-      }
-    });
-
-    geometry.attribs.position.data = [
+    var vertices = [
       new Vec2(-1,  1),
       new Vec2( 1,  1),
       new Vec2( 1, -1),
       new Vec2(-1, -1)
     ];
 
-    geometry.attribs.texCoord.data = [
+    var texCoords = [
       new Vec2(0, 1),
       new Vec2(1, 1),
       new Vec2(1, 0),
       new Vec2(0, 0)
     ];
+
+    var geometry = new Geometry({vertices:vertices, texCoords:texCoords});
 
     // 0----1
     // | \  |
