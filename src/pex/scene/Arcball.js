@@ -13,7 +13,7 @@ define(function(require) {
       this.radius = Math.min(window.width / 2, window.height / 2) * 2;
       this.center = Vec2.create(window.width / 2, window.height / 2);
       this.currRot = Quat.create();
-      this.currRot.setAxisAngle(Vec3.create(0, 1, 0), 0);
+      this.currRot.setAxisAngle(Vec3.create(0, 1, 0), 180);
       this.clickRot = Quat.create();
       this.dragRot = Quat.create();
       this.clickPos = Vec3.create();
