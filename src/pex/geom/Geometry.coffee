@@ -19,17 +19,17 @@ define (require) ->
 
       @attribs = {}
 
-      @addAttrib('vertices', 'position') if vertices
-      @addAttrib('normals', 'normal') if normals
-      @addAttrib('texCoords', 'texCoord') if texCoords
-      @addAttrib('tangents', 'tangent') if tangents
-      @addAttrib('colors', 'color') if colors
+      @addAttrib('vertices', 'position', vertices, false) if vertices
+      @addAttrib('normals', 'normal', normals, false) if normals
+      @addAttrib('texCoords', 'texCoord', texCoords, false) if texCoords
+      @addAttrib('tangents', 'tangent', tangents, false) if tangents
+      @addAttrib('colors', 'color', colors, false) if colors
       @addIndices() if indices
       @addEdges() if edges
       @addFaces() if faces
 
-    addAttrib: (propertyName, attributeName, dynamic=false) ->
-      @[propertyName] = []
+    addAttrib: (propertyName, attributeName, data=null, dynamic=false) ->
+      @[propertyName] = if data and data.length then data else []
       @[propertyName].name = attributeName
       @[propertyName].dirty = true
       @[propertyName].dynamic = dynamic

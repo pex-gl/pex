@@ -37,19 +37,19 @@ define(function(require) {
       }
       this.attribs = {};
       if (vertices) {
-        this.addAttrib('vertices', 'position');
+        this.addAttrib('vertices', 'position', vertices, false);
       }
       if (normals) {
-        this.addAttrib('normals', 'normal');
+        this.addAttrib('normals', 'normal', normals, false);
       }
       if (texCoords) {
-        this.addAttrib('texCoords', 'texCoord');
+        this.addAttrib('texCoords', 'texCoord', texCoords, false);
       }
       if (tangents) {
-        this.addAttrib('tangents', 'tangent');
+        this.addAttrib('tangents', 'tangent', tangents, false);
       }
       if (colors) {
-        this.addAttrib('colors', 'color');
+        this.addAttrib('colors', 'color', colors, false);
       }
       if (indices) {
         this.addIndices();
@@ -62,11 +62,14 @@ define(function(require) {
       }
     }
 
-    Geometry.prototype.addAttrib = function(propertyName, attributeName, dynamic) {
+    Geometry.prototype.addAttrib = function(propertyName, attributeName, data, dynamic) {
+      if (data == null) {
+        data = null;
+      }
       if (dynamic == null) {
         dynamic = false;
       }
-      this[propertyName] = [];
+      this[propertyName] = data && data.length ? data : [];
       this[propertyName].name = attributeName;
       this[propertyName].dirty = true;
       this[propertyName].dynamic = dynamic;
