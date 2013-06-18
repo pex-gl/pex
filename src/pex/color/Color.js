@@ -37,7 +37,8 @@ define(function(require) {
       this.r = c.r;
       this.g = c.g;
       this.b = c.b;
-      return this.a = c.a;
+      this.a = c.a;
+      return this;
     };
 
     Color.prototype.clone = function(c) {

@@ -24,6 +24,7 @@ define (require) ->
       @g = c.g
       @b = c.b
       @a = c.a
+      this
 
     clone: (c) ->
       new Color(@r, @g, @b, @a)
