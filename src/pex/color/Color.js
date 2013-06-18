@@ -40,6 +40,10 @@ define(function(require) {
       return this.a = c.a;
     };
 
+    Color.prototype.clone = function(c) {
+      return new Color(this.r, this.g, this.b, this.a);
+    };
+
     return Color;
 
   })();

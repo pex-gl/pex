@@ -25,6 +25,9 @@ define (require) ->
       @b = c.b
       @a = c.a
 
+    clone: (c) ->
+      new Color(@r, @g, @b, @a)
+
   Color.Transparent = new Color(0, 0, 0, 0);
   Color.None = new Color(0, 0, 0, 0);
   Color.Black = new Color(0, 0, 0, 1);
