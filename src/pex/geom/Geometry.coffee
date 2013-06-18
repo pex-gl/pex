@@ -13,6 +13,7 @@ define (require) ->
       normals ?= false
       texCoords ?= false
       tangents ?= false
+      colors ?= false
       indices ?= false
       edges ?= false
       faces ?= true

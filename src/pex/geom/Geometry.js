@@ -26,6 +26,9 @@ define(function(require) {
       if (tangents == null) {
         tangents = false;
       }
+      if (colors == null) {
+        colors = false;
+      }
       if (indices == null) {
         indices = false;
       }
