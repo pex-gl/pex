@@ -10,8 +10,9 @@ define(
     'pex/materials/PackDepth',
     'pex/materials/Diffuse',
     'pex/materials/Test',
+    'pex/materials/BlinnPhong',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -21,7 +22,8 @@ define(
       ShowColors : ShowColors,
       PackDepth : PackDepth,
       Diffuse : Diffuse,
-      Test : Test
+      Test : Test,
+      BlinnPhong : BlinnPhong
     };
   }
 );
