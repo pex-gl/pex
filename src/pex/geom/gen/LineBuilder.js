@@ -22,12 +22,10 @@ define(function(require) {
     LineBuilder.prototype.addLine = function(a, b, colorA, colorB) {
       colorA = colorA || Color.White;
       colorB = colorB || colorA;
-      console.log(colorB);
       this.vertices.push(Vec3.create().copy(a));
       this.vertices.push(Vec3.create().copy(b));
       this.colors.push(Color.create().copy(colorA));
       this.colors.push(Color.create().copy(colorB));
-      console.log(this.colors);
       this.vertices.dirty = true;
       return this.colors.dirty = true;
     };
