@@ -17,7 +17,6 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
       Log.message('IO.loadImageData ' + fullPath);
-      texture.flipped = true;
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
       var canvas = Node.plask.SkCanvas.createFromImage(fullPath);
@@ -69,7 +68,6 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
     IO.loadImageData = function(gl, texture, target, url, callback) {
       var image = new Image();
       image.onload = function() {
-        texture.flipped = true;
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(texture.target, texture.handle);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
