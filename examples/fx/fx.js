@@ -25,8 +25,6 @@ var fx = pex.fx;
     for(var i=0; i<10; i++) {
       this.instances.push(pex.utils.MathUtils.randomVec3(0.35));
     }
-
-    this.imgRt = new pex.gl.ScreenImage(this.img);
   },
   drawColor: function() {
     this.mesh.setMaterial(this.showNormals);
