@@ -24,11 +24,15 @@ pex.sys.Window.create({
 
     this.camera = new pex.scene.Camera(60, this.width/this.height);
 
+    this.texture = pex.gl.Texture2D.load('opengl.png');
+
     this.materials.push(new materials.SolidColor());
     this.materials.push(new materials.Test());
     this.materials.push(new materials.ShowTexCoords());
     this.materials.push(new materials.ShowNormals());
     this.materials.push(new materials.Diffuse());
+    this.materials.push(new materials.Textured({texture:this.texture}));
+    this.materials.push(new materials.Textured({texture:this.texture}));
     this.mesh = new pex.gl.Mesh(new pex.geom.gen.Cube(), this.materials[this.materialIndex]);
     this.mesh.rotationAxis = pex.geom.Vec3.create(0, 1, 0);
     this.mesh.rotationAngle = 0;
@@ -49,12 +53,15 @@ pex.sys.Window.create({
     this.gui.addParam('Rotate speed', this, 'speed', {min:0, max:5});
     this.gui.addLabel('CAMERA');
     this.gui.addParam('Distance', this, 'distance', {min:0.5, max:5});
+    this.gui.addTexture2D('Texture', this.texture);
     var radioList = this.gui.addRadioList('MATERIAL', this, 'materialIndex', [
       { name:'None', value:0 },
       { name:'Test', value:1 },
-      { name:'Texture', value:2 },
+      { name:'TexCoords', value:2 },
       { name:'Normal', value:3 },
-      { name:'Diffuse', value:4 }
+      { name:'Diffuse', value:4 },
+      { name:'Textured', value:5 },
+      { name:'Textured with Alpha', value:6 }
     ], function(idx) { console.log('Material changed', idx); }).setPosition(180, 10);
 
     this.gui.load('client.gui.settings.txt');
@@ -75,11 +82,21 @@ pex.sys.Window.create({
     this.camera.setPosition(new pex.geom.Vec3.create(0, this.distance * 1, this.distance * 2));
 
     if (this.rotate) {
-      this.mesh.rotationAngle += Time.delta * this.speed;
+      this.mesh.rotationAngle += Time.delta * this.speed * 5;
       this.mesh.rotation.setAxisAngle(this.mesh.rotationAxis, this.mesh.rotationAngle);
     }
 
     this.mesh.setMaterial(this.materials[this.materialIndex]);
+
+    if (this.materialIndex == 6) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.disable(gl.DEPTH_TEST);
+    }
+    else {
+      gl.disable(gl.BLEND);
+      gl.enable(gl.DEPTH_TEST);
+    }
 
     this.mesh.draw(this.camera);
 
