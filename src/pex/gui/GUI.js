@@ -318,8 +318,6 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
   }
 
   GUI.prototype.drawTextures = function() {
-    if (!this.img) this.img = Texture2D.load('opengl.png');
-
     for(var i=0; i<this.items.length; i++) {
       var item = this.items[i];
       if (item.type == 'texture2D') {
