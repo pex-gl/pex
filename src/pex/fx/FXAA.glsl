@@ -9,7 +9,7 @@ attribute vec2 texCoord;
 varying vec4 posPos;
 
 void main() {
-  gl_Position = vec4(position.x * 2.0 - 1.0, 1.0 - position.y * 2.0, 0.0, 1.0);
+  gl_Position = vec4(position, 0.0, 1.0);
 
   vec2 rcpFrame = vec2(1.0/rtWidth, 1.0/rtHeight);
   posPos.xy = texCoord.xy;

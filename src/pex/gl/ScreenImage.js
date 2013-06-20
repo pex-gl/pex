@@ -28,25 +28,25 @@ define([
     var material = new Material(program, uniforms);
 
     var vertices = [
-      new Vec2( 0,  1),
+      new Vec2(-1,  1),
       new Vec2( 1,  1),
-      new Vec2( 1,  0),
-      new Vec2( 0,  0)
+      new Vec2( 1, -1),
+      new Vec2(-1, -1)
     ];
 
     var texCoords = [
-      new Vec2(0, 0),
-      new Vec2(1, 0),
+      new Vec2(0, 1),
       new Vec2(1, 1),
-      new Vec2(0, 1)
+      new Vec2(1, 0),
+      new Vec2(0, 0)
     ];
 
     var geometry = new Geometry({vertices:vertices, texCoords:texCoords});
 
-    // 0----1  0,0   1,0
+    // 0----1  0,1   1,1
     // | \  |      u
     // |  \ |      v
-    // 3----2  0,1   1,1
+    // 3----2  0,0   0,1
     geometry.faces.push(new Face3(0, 2, 1));
     geometry.faces.push(new Face3(0, 3, 2));
 

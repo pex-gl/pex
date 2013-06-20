@@ -6,7 +6,7 @@ attribute vec2 texCoord;
 varying vec2 vTexCoord;
 
 void main() {
-  gl_Position = vec4(position.x * 2.0 - 1.0, 1.0 - position.y * 2.0, 0.0, 1.0);
+  gl_Position = vec4(position, 0.0, 1.0);
   vTexCoord = texCoord;
 }
 
