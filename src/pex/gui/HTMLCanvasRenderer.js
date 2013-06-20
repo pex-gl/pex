@@ -1,5 +1,4 @@
-define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Context, Texture2D) {
-  /*
+define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
   function HTMLCanvasRenderer(width, height) {
     this.gl = Context.currentContext.gl;
     this.canvas = document.createElement("canvas");
@@ -134,5 +133,4 @@ define(["plask", "pex/core/Context", "pex/core/Texture2D"], function(plask, Cont
 
 
   return HTMLCanvasRenderer;
-  */
 });

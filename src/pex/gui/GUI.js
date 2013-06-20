@@ -3,15 +3,13 @@ define([
   'pex/gl/ScreenImage',
   'pex/utils/Time',
   'pex/gui/SkiaRenderer',
-  //'pex/gui/HTMLCanvasRenderer',
-  //'pex/gui/NodeCanvasRenderer',
+  'pex/gui/HTMLCanvasRenderer',
   'pex/geom/Rect',
   'pex/sys/IO',
   'pex/sys/Platform',
   'pex/geom/Vec2'
 ],
-function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
-  
+function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2) {
   function GUIControl(o) {
     for(var i in o) {
       this[i] = o[i];
@@ -98,12 +96,9 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
     if (Platform.isPlask) {
       this.renderer = new SkiaRenderer(window.width, window.height);
     }
-    //else if (IO.Image) {
-      //this.renderer = new NodeCanvasRenderer(window.width, window.height);
-    //}
-    //else {
-      //this.renderer = new HTMLCanvasRenderer(window.width, window.height);
-    //}
+    else if (Platform.isBrowser) {
+      this.renderer = new HTMLCanvasRenderer(window.width, window.height);
+    }
     this.screenBounds = new Rect(this.x, this.y, window.width, window.height);
     this.screenImage = new ScreenImage(this.renderer.getTexture(), this.x, this.y, window.width, window.height, window.width, window.height);
 
@@ -312,7 +307,6 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
       return;
     }
     this.renderer.draw(this.items);
-    //if (!IO.Image)
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
