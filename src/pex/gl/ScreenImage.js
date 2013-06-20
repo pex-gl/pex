@@ -43,10 +43,10 @@ define([
 
     var geometry = new Geometry({vertices:vertices, texCoords:texCoords});
 
-    // 0----1
-    // | \  |
-    // |  \ |
-    // 3----2
+    // 0----1  0,0   1,0
+    // | \  |      u
+    // |  \ |      v
+    // 3----2  0,1   1,1
     geometry.faces.push(new Face3(0, 2, 1));
     geometry.faces.push(new Face3(0, 3, 2));
 
