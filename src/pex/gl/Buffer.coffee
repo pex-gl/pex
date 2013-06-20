@@ -97,5 +97,5 @@ define (require) ->
 
       else console.log('Buffer.unknown type', data.name, data[0])
 
-      @gl.bindBuffer(@gl.ARRAY_BUFFER, @handle)
-      @gl.bufferData(@gl.ARRAY_BUFFER, @dataBuf, @usage)
+      @gl.bindBuffer(@target, @handle)
+      @gl.bufferData(@target, @dataBuf, @usage)

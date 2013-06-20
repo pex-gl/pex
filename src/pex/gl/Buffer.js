@@ -131,8 +131,8 @@ define(function(require) {
       } else {
         console.log('Buffer.unknown type', data.name, data[0]);
       }
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.handle);
-      return this.gl.bufferData(this.gl.ARRAY_BUFFER, this.dataBuf, this.usage);
+      this.gl.bindBuffer(this.target, this.handle);
+      return this.gl.bufferData(this.target, this.dataBuf, this.usage);
     };
 
     return Buffer;
