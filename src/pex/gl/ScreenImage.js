@@ -70,7 +70,10 @@ define([
   }
 
   ScreenImage.prototype.setBounds = function(bounds) {
-    throw "Unimplemented";
+    this.mesh.material.uniforms.pixelPosition.x = bounds.x;
+    this.mesh.material.uniforms.pixelPosition.y = bounds.y;
+    this.mesh.material.uniforms.pixelSize.x = bounds.width;
+    this.mesh.material.uniforms.pixelSize.y = bounds.height;
   }
 
   ScreenImage.prototype.setImage = function(image) {
@@ -79,11 +82,12 @@ define([
   }
 
   ScreenImage.prototype.draw = function(image, program) {
-    var oldImage = this.mesh.material.uniforms.image;
+    var oldImage = null;
     if (image) {
       oldImage = this.mesh.material.uniforms.image;
       this.mesh.material.uniforms.image = image;
     }
+    this.mesh.material.uniforms.image.bind();
 
     var oldProgram = null;
     if (program) {

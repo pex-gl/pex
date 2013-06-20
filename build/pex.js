@@ -6491,7 +6491,10 @@ define('pex/gl/ScreenImage',[
   }
 
   ScreenImage.prototype.setBounds = function(bounds) {
-    throw "Unimplemented";
+    this.mesh.material.uniforms.pixelPosition.x = bounds.x;
+    this.mesh.material.uniforms.pixelPosition.y = bounds.y;
+    this.mesh.material.uniforms.pixelSize.x = bounds.width;
+    this.mesh.material.uniforms.pixelSize.y = bounds.height;
   }
 
   ScreenImage.prototype.setImage = function(image) {
@@ -6500,11 +6503,12 @@ define('pex/gl/ScreenImage',[
   }
 
   ScreenImage.prototype.draw = function(image, program) {
-    var oldImage = this.mesh.material.uniforms.image;
+    var oldImage = null;
     if (image) {
       oldImage = this.mesh.material.uniforms.image;
       this.mesh.material.uniforms.image = image;
     }
+    this.mesh.material.uniforms.image.bind();
 
     var oldProgram = null;
     if (program) {
@@ -7940,9 +7944,10 @@ define('pex/gui/GUI',[
   'pex/geom/Rect',
   'pex/sys/IO',
   'pex/sys/Platform',
-  'pex/geom/Vec2'
+  'pex/geom/Vec2',
+  'pex/gl/Texture2D'
 ],
-function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2) {
+function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2, Texture2D) {
   function GUIControl(o) {
     for(var i in o) {
       this[i] = o[i];
@@ -8243,34 +8248,27 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    this.screenImage.draw(this.renderer.getTexture());
+    this.screenImage.draw();
     gl.disable(gl.BLEND);
-    //this.drawTextures();
+    gl.disable(gl.DEPTH_TEST);
+    this.drawTextures();
   }
 
-  //GUI.prototype.drawTextures = function() {
-  //  for(var i=0; i<this.items.length; i++) {
-  //    var item = this.items[i];
-  //    if (item.type == 'texture2D') {
-  //      if (item.texture.bind) item.texture.bind();
-  //      else {
-  //        this.gl.bindTexture(item.texture.target, item.texture.handle);
-  //      }
-  //      var bounds;
-  //      if (item.texture.flipped) {
-  //        bounds  = new Rect(item.activeArea.x, this.window.height - item.activeArea.y, item.activeArea.width, -item.activeArea.height);
-  //      }
-  //      else {
-  //        bounds = new Rect(item.activeArea.x, this.window.height - item.activeArea.y - item.activeArea.height, item.activeArea.width, item.activeArea.height);
-  //      }
-  //      this.screenImage.setBounds(bounds);
-  //      this.screenImage.setTexture(null);
-  //      this.screenImage.draw();
-  //    }
-  //  }
-  //  this.screenImage.setBounds(this.screenBounds);
-  //  this.screenImage.setTexture(this.renderer.getTexture());
-  //}
+  GUI.prototype.drawTextures = function() {
+    if (!this.img) this.img = Texture2D.load('opengl.png');
+
+    for(var i=0; i<this.items.length; i++) {
+      var item = this.items[i];
+      if (item.type == 'texture2D') {
+        var bounds = new Rect(item.activeArea.x, item.activeArea.y, item.activeArea.width, item.activeArea.height);
+        this.screenImage.setBounds(bounds);
+        this.screenImage.setImage(item.texture);
+        this.screenImage.draw();
+      }
+    }
+    this.screenImage.setBounds(this.screenBounds);
+    this.screenImage.setImage(this.renderer.getTexture());
+  }
 
   GUI.prototype.serialize = function() {
     var data = {};
