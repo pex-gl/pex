@@ -105,7 +105,6 @@ pex.sys.Window.create
     @gl.clearColor(0.0, 0.0, 1.0, 1)
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
     @rtFSQ2.draw()
-    @gl.writeImage('png', 'dupa2.png')
     @rt2.unbind();
     @gl.viewport(0, 0, @width, @height)
     @rtImage2.draw()

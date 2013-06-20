@@ -105,7 +105,6 @@ pex.sys.Window.create({
     this.gl.clearColor(0.0, 0.0, 1.0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.rtFSQ2.draw();
-    this.gl.writeImage('png', 'dupa2.png');
     this.rt2.unbind();
     this.gl.viewport(0, 0, this.width, this.height);
     this.rtImage2.draw();
