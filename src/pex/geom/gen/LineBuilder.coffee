@@ -12,15 +12,11 @@ define (require) ->
       colorA = colorA || Color.White
       colorB = colorB || colorA
 
-      console.log(colorB)
-
       @vertices.push(Vec3.create().copy(a))
       @vertices.push(Vec3.create().copy(b))
 
       @colors.push(Color.create().copy(colorA))
       @colors.push(Color.create().copy(colorB))
-
-      console.log(@colors)
 
       @vertices.dirty = true
       @colors.dirty = true
