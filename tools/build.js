@@ -4,9 +4,6 @@ var config = {
   baseUrl : '../src',
   name : '../tools/lib/almond',
   include : ['../tools/include/inject.js', 'pex', '../tools/include/export'],
-  //paths : {
-  //  'text' : 'lib/text'
-  //},
   out : '../build/pex.js',
   insertRequire: ['pex'],
   optimize : 'none',
