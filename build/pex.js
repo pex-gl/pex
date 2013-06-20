@@ -5660,8 +5660,8 @@ define('pex/gl/Buffer',['require','pex/gl/Context','pex/geom','pex/color'],funct
       } else {
         console.log('Buffer.unknown type', data.name, data[0]);
       }
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.handle);
-      return this.gl.bufferData(this.gl.ARRAY_BUFFER, this.dataBuf, this.usage);
+      this.gl.bindBuffer(this.target, this.handle);
+      return this.gl.bufferData(this.target, this.dataBuf, this.usage);
     };
 
     return Buffer;
@@ -6417,7 +6417,7 @@ define('pex/materials/Material',['pex/gl/Context'], function(Context) {
         return text;
     });
 }());
-define('lib/text!pex/gl/ScreenImage.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nuniform vec2 screenSize;\nuniform vec2 pixelPosition;\nuniform vec2 pixelSize;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  float tx = position.x * 0.5 + 0.5;\n  float ty = -position.y * 0.5 + 0.5;\n  //(x + 0)/sw * 2 - 1, (x + w)/sw * 2 - 1\n  float x = (pixelPosition.x + pixelSize.x * tx)/screenSize.x * 2.0 - 1.0;  //0 -> -1, 1 -> 1\n  //1.0 - (y + h)/sh * 2, 1.0 - (y + h)/sh * 2\n  float y = 1.0 - (pixelPosition.y + pixelSize.y * ty)/screenSize.y * 2.0;  //0 -> 1, 1 -> -1\n  gl_Position = vec4(x, y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D image;\nuniform float alpha;\n\nvoid main() {\n  gl_FragColor = texture2D(image, vTexCoord);\n  gl_FragColor.a *= alpha;\n}\n\n#endif';});
+define('lib/text!pex/gl/ScreenImage.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nuniform vec2 screenSize;\nuniform vec2 pixelPosition;\nuniform vec2 pixelSize;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  float tx = position.x * 0.5 + 0.5; //-1 -> 0, 1 -> 1\n  float ty = -position.y * 0.5 + 0.5; //-1 -> 1, 1 -> 0\n  //(x + 0)/sw * 2 - 1, (x + w)/sw * 2 - 1\n  float x = (pixelPosition.x + pixelSize.x * tx)/screenSize.x * 2.0 - 1.0;  //0 -> -1, 1 -> 1\n  //1.0 - (y + h)/sh * 2, 1.0 - (y + h)/sh * 2\n  float y = 1.0 - (pixelPosition.y + pixelSize.y * ty)/screenSize.y * 2.0;  //0 -> 1, 1 -> -1\n  gl_Position = vec4(x, y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D image;\nuniform float alpha;\n\nvoid main() {\n  gl_FragColor = texture2D(image, vTexCoord);\n  gl_FragColor.a *= alpha;\n}\n\n#endif';});
 
 define('pex/gl/ScreenImage',[
   'pex/geom/Vec2', 'pex/gl/Context',
@@ -7794,20 +7794,155 @@ define('pex/fx',
   return SkiaRenderer;
 });
 
+define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
+  function HTMLCanvasRenderer(width, height) {
+    this.gl = Context.currentContext.gl;
+    this.canvas = document.createElement("canvas");
+    this.tex = Texture2D.create(width, height);
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.ctx = this.canvas.getContext("2d");
+    this.dirty = true;
+  }
+
+  HTMLCanvasRenderer.prototype.isAnyItemDirty = function(items) {
+    var dirty = false;
+    items.forEach(function(item) {
+      if (item.dirty) {
+        item.dirty = false;
+        dirty = true;
+      }
+    });
+    return dirty;
+  };
+
+  HTMLCanvasRenderer.prototype.draw = function(items) {
+    if (!this.isAnyItemDirty(items)) {
+      return;
+    }
+
+    var ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.font = "10px Monaco";
+
+    var dy = 10;
+    var dx = 10;
+    var w = 160;
+    for(var i=0; i<items.length; i++) {
+      var e = items[i];
+
+      if (e.px && e.px) {
+        dx = e.px;
+        dy = e.py;
+      }
+      var eh = 20;
+
+      if (e.type == "slider") eh = 34;
+      if (e.type == "button") eh = 24;
+      if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.56)";
+      ctx.fillRect(dx, dy, w, eh - 2);
+
+      if (e.type == "slider") {
+        ctx.fillStyle = "rgba(150, 150, 150, 1)";
+        ctx.fillRect(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+
+        ctx.fillStyle = "rgba(255, 255, 0, 1)";
+        ctx.fillRect(dx + 3, dy + 18, (w - 3 - 3)*e.getNormalizedValue(), eh - 5 - 18);
+
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(items[i].title + " : " + e.getStrValue(), dx + 5, dy + 13);
+      }
+      else if (e.type == "button"){
+        ctx.fillStyle = e.active ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+        ctx.fillRect(dx + 3, dy + 3, w - 3 - 3, eh - 5 - 3);
+
+        e.activeArea.set(dx + 3, dy + 3, w - 3 - 3, eh - 5 - 3);
+
+        ctx.fillStyle = e.active ? "rgba(100, 100, 100, 1)" : "rgba(255, 255, 255, 1)";
+        ctx.fillText(items[i].title, dx + 5, dy + 15);
+         if (e.options.color) {
+          var c = e.options.color;
+          ctx.fillStyle = "rgba("+(c.x * 255)+", "+(c.y * 255)+", "+(c.z * 255)+", 1)";
+          ctx.fillRect(dx + w - 8, dy + 3, 5, eh - 5 - 3);
+        }
+      }
+      else if (e.type == "toggle"){
+        var on = e.contextObject[e.attributeName];
+
+        ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+        ctx.fillRect(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
+        e.activeArea.set(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
+
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(items[i].title, dx + 5 + eh - 5, dy + 12);
+      }
+      else if (e.type == "radiolist") {
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(e.title, dx + 5, dy + 13);
+        var itemHeight = 20;
+        for(var j=0; j<e.items.length; j++) {
+          var item = e.items[j];
+          var on = (e.contextObject[e.attributeName] == item.value);
+          ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+          ctx.fillRect(dx + 3, 18 + j*itemHeight + dy + 3, itemHeight - 5 - 3, itemHeight - 5 - 3);
+          ctx.fillStyle = "rgba(255, 255, 255, 1)";
+          ctx.fillText(item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
+        }
+        e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
+      }
+      else if (e.type == "texture2D") {
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(items[i].title, dx + 5, dy + 15);
+        e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
+      }
+      else {
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText(items[i].title, dx + 5, dy + 13);
+      }
+
+      dy += eh;
+    }
+
+    this.updateTexture();
+  }
+
+  HTMLCanvasRenderer.prototype.getTexture = function() {
+    return this.tex;
+  }
+
+  HTMLCanvasRenderer.prototype.updateTexture = function() {
+    var gl = this.gl;
+    this.tex.bind();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.canvas);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+
+
+  return HTMLCanvasRenderer;
+});
+
 define('pex/gui/GUI',[
   'pex/gl/Context',
   'pex/gl/ScreenImage',
   'pex/utils/Time',
   'pex/gui/SkiaRenderer',
-  //'pex/gui/HTMLCanvasRenderer',
-  //'pex/gui/NodeCanvasRenderer',
+  'pex/gui/HTMLCanvasRenderer',
   'pex/geom/Rect',
   'pex/sys/IO',
   'pex/sys/Platform',
   'pex/geom/Vec2'
 ],
-function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
-  
+function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2) {
   function GUIControl(o) {
     for(var i in o) {
       this[i] = o[i];
@@ -7894,12 +8029,9 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
     if (Platform.isPlask) {
       this.renderer = new SkiaRenderer(window.width, window.height);
     }
-    //else if (IO.Image) {
-      //this.renderer = new NodeCanvasRenderer(window.width, window.height);
-    //}
-    //else {
-      //this.renderer = new HTMLCanvasRenderer(window.width, window.height);
-    //}
+    else if (Platform.isBrowser) {
+      this.renderer = new HTMLCanvasRenderer(window.width, window.height);
+    }
     this.screenBounds = new Rect(this.x, this.y, window.width, window.height);
     this.screenImage = new ScreenImage(this.renderer.getTexture(), this.x, this.y, window.width, window.height, window.width, window.height);
 
@@ -8108,7 +8240,6 @@ function(Context, ScreenImage, Time, SkiaRenderer, Rect, IO, Platform, Vec2) {
       return;
     }
     this.renderer.draw(this.items);
-    //if (!IO.Image)
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
