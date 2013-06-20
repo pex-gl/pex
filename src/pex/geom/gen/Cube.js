@@ -46,7 +46,7 @@ define(function(require) {
             normal[w] = pw / Math.abs(pw);
             texCoord = _this.texCoords[vertexIndex] = Vec2.create();
             texCoord.x = i / nu;
-            texCoord.y = j / nv;
+            texCoord.y = 1.0 - j / nv;
             ++vertexIndex;
           }
         }
