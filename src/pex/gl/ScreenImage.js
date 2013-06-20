@@ -87,7 +87,6 @@ define([
       oldImage = this.mesh.material.uniforms.image;
       this.mesh.material.uniforms.image = image;
     }
-    this.mesh.material.uniforms.image.bind();
 
     var oldProgram = null;
     if (program) {
