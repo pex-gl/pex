@@ -3,9 +3,21 @@ define (require) ->
   IO = require('pex/sys/IO')
   Log = require('pex/utils/Log')
 
-  kShaderPrefix         = '#ifdef GL_ES\nprecision highp float;\n#endif\n';
-  kVertexShaderPrefix   = kShaderPrefix + '#define VERT\n';
-  kFragmentShaderPrefix = kShaderPrefix + '#define FRAG\n';
+  kVertexShaderPrefix   = '' +
+    '#ifdef GL_ES\n' +
+    'precision highp float;\n' +
+    '#endif\n' +
+    '#define VERT\n';
+
+  kFragmentShaderPrefix = '' +
+    '#ifdef GL_ES\n' +
+    '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' +
+    '  precision highp float;\n' +
+    '#else\n' +
+    '  precision mediump float;\n' +
+    '#endif\n' +
+    '#endif\n' +
+    '#define FRAG\n';
 
   class Program
     constructor: (vertSrc, fragSrc)->
