@@ -16,7 +16,7 @@ define (require) ->
 
     getFov: () -> @fov
 
-    getAspectRatio: () -> aspectRatio
+    getAspectRatio: () -> @aspectRatio
 
     getNear: () -> @near
 
@@ -26,7 +26,7 @@ define (require) ->
 
     getTarget: () -> @target
 
-    getUp: () -> up
+    getUp: () -> @up
 
     getViewMatrix: () -> @viewMatrix
 

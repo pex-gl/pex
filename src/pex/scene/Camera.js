@@ -24,7 +24,7 @@ define(function(require) {
     };
 
     Camera.prototype.getAspectRatio = function() {
-      return aspectRatio;
+      return this.aspectRatio;
     };
 
     Camera.prototype.getNear = function() {
@@ -44,7 +44,7 @@ define(function(require) {
     };
 
     Camera.prototype.getUp = function() {
-      return up;
+      return this.up;
     };
 
     Camera.prototype.getViewMatrix = function() {
