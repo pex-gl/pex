@@ -86,8 +86,23 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
       console.log('Warning: WebIO.watch is not implemented!');
     }
 
-    IO.saveTextFile = function() {
-      console.log('Warning: WebIO.saveTextFile is not implemented!');
+    IO.saveTextFile = function(url, data, callback) {
+      var request = new XMLHttpRequest();
+      request.open('POST', url, true);
+      request.onreadystatechange = function (e) {
+        if (request.readyState == 4) {
+          if(request.status == 200) {
+             if (callback) {
+               callback(request.responseText, request);
+             }
+          }
+          else {
+             Log.error('WebIO.saveTextFile error : ' + request.statusText);
+          }
+        }
+      };
+      request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+      request.send('data='+encodeURIComponent(data));
     }
 
     return IO;
