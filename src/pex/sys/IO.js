@@ -1,4 +1,4 @@
-define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
+define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node, Platform) {
   var PlaskIO = (function() {
     function IO() {}
 
@@ -11,7 +11,7 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
     }
 
     IO.getWorkingDirectory = function() {
-      return '';
+      return process.cwd();
     }
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
@@ -46,6 +46,10 @@ define(['pex/utils/Log', 'pex/sys/Node'], function(Log, Node) {
 
   var WebIO = (function() {
     function IO() {}
+
+    IO.getWorkingDirectory = function() {
+      return '';
+    }
 
     IO.loadTextFile = function(url, callback) {
       var request = new XMLHttpRequest();
