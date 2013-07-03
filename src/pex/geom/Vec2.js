@@ -62,6 +62,10 @@ define(function(require) {
       return new Vec2(this.x, this.y);
     };
 
+    Vec2.prototype.dup = function() {
+      return this.clone();
+    };
+
     Vec2.prototype.asAdd = function(a, b) {
       this.x = a.x + b.x;
       this.y = a.y + b.y;

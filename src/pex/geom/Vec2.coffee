@@ -45,6 +45,9 @@ define (require) ->
     clone: () ->
       new Vec2(@x, @y)
 
+    dup: () ->
+      @clone()
+
     asAdd: (a, b) ->
       @x = a.x + b.x
       @y = a.y + b.y
