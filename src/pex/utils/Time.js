@@ -9,7 +9,8 @@ define(['pex/utils/Log'], function(Log) {
     fpsTime: 0,
     fps: 0,
     fpsFrequency: 3,
-    paused: false
+    paused: false,
+    verbose: false
   }
 
   Time.update = function(delta) {
@@ -29,7 +30,7 @@ define(['pex/utils/Log'], function(Log) {
       Time.fps = Time.fpsFrames / Time.fpsTime;
       Time.fpsTime = 0;
       Time.fpsFrames = 0;
-      Log.message('FPS: ' + Time.fps);
+      if (this.verbose) Log.message('FPS: ' + Time.fps);
     }
     return Time.seconds;
   }
