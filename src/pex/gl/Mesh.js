@@ -33,7 +33,7 @@ define(function(require) {
     }
 
     Mesh.prototype.draw = function(camera) {
-      var attrib, name, num, program, _ref1, _results;
+      var num;
 
       if (this.geometry.isDirty()) {
         this.geometry.compile();
@@ -43,17 +43,7 @@ define(function(require) {
         this.updateMatricesUniforms(this.material);
       }
       this.material.use();
-      program = this.material.program;
-      _ref1 = this.geometry.attribs;
-      for (name in _ref1) {
-        attrib = _ref1[name];
-        attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
-        if (attrib.location >= 0) {
-          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer.handle);
-          this.gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, this.gl.FLOAT, false, 0, 0);
-          this.gl.enableVertexAttribArray(attrib.location);
-        }
-      }
+      this.bindAttribs();
       if (this.geometry.faces && this.geometry.faces.length > 0 && !this.useEdges) {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.faces.buffer.handle);
         this.gl.drawElements(this.primitiveType, this.geometry.faces.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
@@ -64,6 +54,34 @@ define(function(require) {
         num = this.geometry.vertices.buffer.dataBuf.length / 3;
         this.gl.drawArrays(this.primitiveType, 0, num);
       }
+      return this.unbindAttribs();
+    };
+
+    Mesh.prototype.drawInstances = function(camera, instances) {};
+
+    Mesh.prototype.bindAttribs = function() {
+      var attrib, name, program, _ref1, _results;
+
+      program = this.material.program;
+      _ref1 = this.geometry.attribs;
+      _results = [];
+      for (name in _ref1) {
+        attrib = _ref1[name];
+        attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
+        if (attrib.location >= 0) {
+          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer.handle);
+          this.gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, this.gl.FLOAT, false, 0, 0);
+          _results.push(this.gl.enableVertexAttribArray(attrib.location));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Mesh.prototype.unbindAttribs = function() {
+      var attrib, name, _results;
+
       _results = [];
       for (name in this.attributes) {
         attrib = this.attributes[name];
@@ -75,8 +93,6 @@ define(function(require) {
       }
       return _results;
     };
-
-    Mesh.prototype.drawInstances = function(camera, instances) {};
 
     Mesh.prototype.resetAttribLocations = function() {
       var attrib, name, _results;

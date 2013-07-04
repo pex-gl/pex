@@ -39,17 +39,8 @@ define (require) ->
         @updateMatricesUniforms @material
 
       @material.use()
-      program = @material.program
 
-      for name, attrib of @geometry.attribs
-
-        # TODO:this should go another way instad of searching for mesh atribs in shader look for required attribs by shader inside mesh
-        attrib.location = @gl.getAttribLocation(program.handle, attrib.name) # if attrib.location is 'undefined' or attrib.location is -1
-
-        if attrib.location >= 0
-          @gl.bindBuffer(@gl.ARRAY_BUFFER, attrib.buffer.handle)
-          @gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, @gl.FLOAT, false, 0, 0)
-          @gl.enableVertexAttribArray(attrib.location)
+      @bindAttribs()
 
       if @geometry.faces && @geometry.faces.length > 0 && !@useEdges
         @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, @geometry.faces.buffer.handle)
@@ -61,11 +52,26 @@ define (require) ->
         num = @geometry.vertices.buffer.dataBuf.length / 3
         @gl.drawArrays(@primitiveType, 0, num)
 
+      @unbindAttribs()
+
+    drawInstances: (camera, instances) ->
+
+    bindAttribs: () ->
+      program = @material.program
+
+      for name, attrib of @geometry.attribs
+        # TODO:this should go another way instad of searching for mesh atribs in shader look for required attribs by shader inside mesh
+        attrib.location = @gl.getAttribLocation(program.handle, attrib.name) # if attrib.location is 'undefined' or attrib.location is -1
+
+        if attrib.location >= 0
+          @gl.bindBuffer(@gl.ARRAY_BUFFER, attrib.buffer.handle)
+          @gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, @gl.FLOAT, false, 0, 0)
+          @gl.enableVertexAttribArray(attrib.location)
+
+    unbindAttribs: () ->
       for name of @attributes
         attrib = @attributes[name]
         @gl.disableVertexAttribArray attrib.location  if attrib.location >= 0
-
-    drawInstances: (camera, instances) ->
 
     resetAttribLocations: () ->
       for name of @attributes
