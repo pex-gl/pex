@@ -55,6 +55,28 @@ define (require) ->
       @unbindAttribs()
 
     drawInstances: (camera, instances) ->
+      @geometry.compile() if @geometry.isDirty()
+
+      @material.use()
+
+      @bindAttribs()
+
+      if @geometry.faces && @geometry.faces.length > 0 && !@useEdges
+        @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, @geometry.faces.buffer.handle)
+        for instance in instances
+          if camera
+            @updateMatrices camera, instance
+            @updateMatricesUniforms @material
+            @material.use()
+          @gl.drawElements(@primitiveType, @geometry.faces.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
+      else if @geometry.edges && @useEdges
+        @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, @geometry.edges.buffer.handle)
+        @gl.drawElements(@primitiveType, @geometry.edges.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
+      else if @geometry.vertices
+        num = @geometry.vertices.buffer.dataBuf.length / 3
+        @gl.drawArrays(@primitiveType, 0, num)
+
+      @unbindAttribs()
 
     bindAttribs: () ->
       program = @material.program
@@ -78,7 +100,9 @@ define (require) ->
         attrib = @attributes[name]
         attrib.location = -1
 
-    updateMatrices: (camera) ->
+    updateMatrices: (camera, instance) ->
+      position = if instance and instance.position then instance.position else @position
+
       @projectionMatrix
         .copy(camera.getProjectionMatrix())
 
@@ -87,7 +111,7 @@ define (require) ->
 
       @rotation.toMat4(@rotationMatrix);
       @modelWorldMatrix.identity()
-        .translate(@position.x, @position.y, @position.z)
+        .translate(position.x, position.y, position.z)
         .mul(@rotationMatrix)
         .scale(@scale.x, @scale.y, @scale.z)
 

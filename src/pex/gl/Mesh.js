@@ -57,7 +57,34 @@ define(function(require) {
       return this.unbindAttribs();
     };
 
-    Mesh.prototype.drawInstances = function(camera, instances) {};
+    Mesh.prototype.drawInstances = function(camera, instances) {
+      var instance, num, _i, _len;
+
+      if (this.geometry.isDirty()) {
+        this.geometry.compile();
+      }
+      this.material.use();
+      this.bindAttribs();
+      if (this.geometry.faces && this.geometry.faces.length > 0 && !this.useEdges) {
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.faces.buffer.handle);
+        for (_i = 0, _len = instances.length; _i < _len; _i++) {
+          instance = instances[_i];
+          if (camera) {
+            this.updateMatrices(camera, instance);
+            this.updateMatricesUniforms(this.material);
+            this.material.use();
+          }
+          this.gl.drawElements(this.primitiveType, this.geometry.faces.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+        }
+      } else if (this.geometry.edges && this.useEdges) {
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.edges.buffer.handle);
+        this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+      } else if (this.geometry.vertices) {
+        num = this.geometry.vertices.buffer.dataBuf.length / 3;
+        this.gl.drawArrays(this.primitiveType, 0, num);
+      }
+      return this.unbindAttribs();
+    };
 
     Mesh.prototype.bindAttribs = function() {
       var attrib, name, program, _ref1, _results;
@@ -105,11 +132,14 @@ define(function(require) {
       return _results;
     };
 
-    Mesh.prototype.updateMatrices = function(camera) {
+    Mesh.prototype.updateMatrices = function(camera, instance) {
+      var position;
+
+      position = instance && instance.position ? instance.position : this.position;
       this.projectionMatrix.copy(camera.getProjectionMatrix());
       this.viewMatrix.copy(camera.getViewMatrix());
       this.rotation.toMat4(this.rotationMatrix);
-      this.modelWorldMatrix.identity().translate(this.position.x, this.position.y, this.position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
+      this.modelWorldMatrix.identity().translate(position.x, position.y, position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
     };
