@@ -3435,7 +3435,8 @@ define('pex/utils/Time',['pex/utils/Log'], function(Log) {
     fpsTime: 0,
     fps: 0,
     fpsFrequency: 3,
-    paused: false
+    paused: false,
+    verbose: false
   }
 
   Time.update = function(delta) {
@@ -3455,7 +3456,7 @@ define('pex/utils/Time',['pex/utils/Log'], function(Log) {
       Time.fps = Time.fpsFrames / Time.fpsTime;
       Time.fpsTime = 0;
       Time.fpsFrames = 0;
-      Log.message('FPS: ' + Time.fps);
+      if (this.verbose) Log.message('FPS: ' + Time.fps);
     }
     return Time.seconds;
   }
@@ -5941,6 +5942,8 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
       this.position = Vec3.create(0, 0, 0);
       this.rotation = Quat.create();
       this.scale = Vec3.create(1, 1, 1);
+      this.projectionMatrix = Mat4.create();
+      this.viewMatrix = Mat4.create();
       this.modelWorldMatrix = Mat4.create();
       this.modelViewMatrix = Mat4.create();
       this.rotationMatrix = Mat4.create();
@@ -5948,43 +5951,17 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
     }
 
     Mesh.prototype.draw = function(camera) {
-      var attrib, materialUniforms, name, num, program, programUniforms, _ref1, _results;
+      var num;
 
       if (this.geometry.isDirty()) {
         this.geometry.compile();
       }
-      programUniforms = this.material.program.uniforms;
-      materialUniforms = this.material.uniforms;
       if (camera) {
         this.updateMatrices(camera);
-        if (programUniforms.projectionMatrix) {
-          materialUniforms.projectionMatrix = camera.getProjectionMatrix();
-        }
-        if (programUniforms.modelViewMatrix) {
-          materialUniforms.modelViewMatrix = this.modelViewMatrix;
-        }
-        if (programUniforms.viewMatrix) {
-          materialUniforms.viewMatrix = camera.getViewMatrix();
-        }
-        if (programUniforms.modelWorldMatrix) {
-          materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
-        }
-        if (programUniforms.normalMatrix) {
-          materialUniforms.normalMatrix = this.normalMatrix;
-        }
+        this.updateMatricesUniforms(this.material);
       }
       this.material.use();
-      program = this.material.program;
-      _ref1 = this.geometry.attribs;
-      for (name in _ref1) {
-        attrib = _ref1[name];
-        attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
-        if (attrib.location >= 0) {
-          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer.handle);
-          this.gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, this.gl.FLOAT, false, 0, 0);
-          this.gl.enableVertexAttribArray(attrib.location);
-        }
-      }
+      this.bindAttribs();
       if (this.geometry.faces && this.geometry.faces.length > 0 && !this.useEdges) {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.faces.buffer.handle);
         this.gl.drawElements(this.primitiveType, this.geometry.faces.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
@@ -5995,6 +5972,61 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
         num = this.geometry.vertices.buffer.dataBuf.length / 3;
         this.gl.drawArrays(this.primitiveType, 0, num);
       }
+      return this.unbindAttribs();
+    };
+
+    Mesh.prototype.drawInstances = function(camera, instances) {
+      var instance, num, _i, _len;
+
+      if (this.geometry.isDirty()) {
+        this.geometry.compile();
+      }
+      this.material.use();
+      this.bindAttribs();
+      if (this.geometry.faces && this.geometry.faces.length > 0 && !this.useEdges) {
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.faces.buffer.handle);
+        for (_i = 0, _len = instances.length; _i < _len; _i++) {
+          instance = instances[_i];
+          if (camera) {
+            this.updateMatrices(camera, instance);
+            this.updateMatricesUniforms(this.material);
+            this.material.use();
+          }
+          this.gl.drawElements(this.primitiveType, this.geometry.faces.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+        }
+      } else if (this.geometry.edges && this.useEdges) {
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.edges.buffer.handle);
+        this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+      } else if (this.geometry.vertices) {
+        num = this.geometry.vertices.buffer.dataBuf.length / 3;
+        this.gl.drawArrays(this.primitiveType, 0, num);
+      }
+      return this.unbindAttribs();
+    };
+
+    Mesh.prototype.bindAttribs = function() {
+      var attrib, name, program, _ref1, _results;
+
+      program = this.material.program;
+      _ref1 = this.geometry.attribs;
+      _results = [];
+      for (name in _ref1) {
+        attrib = _ref1[name];
+        attrib.location = this.gl.getAttribLocation(program.handle, attrib.name);
+        if (attrib.location >= 0) {
+          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, attrib.buffer.handle);
+          this.gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, this.gl.FLOAT, false, 0, 0);
+          _results.push(this.gl.enableVertexAttribArray(attrib.location));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Mesh.prototype.unbindAttribs = function() {
+      var attrib, name, _results;
+
       _results = [];
       for (name in this.attributes) {
         attrib = this.attributes[name];
@@ -6018,11 +6050,38 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
       return _results;
     };
 
-    Mesh.prototype.updateMatrices = function(camera) {
+    Mesh.prototype.updateMatrices = function(camera, instance) {
+      var position;
+
+      position = instance && instance.position ? instance.position : this.position;
+      this.projectionMatrix.copy(camera.getProjectionMatrix());
+      this.viewMatrix.copy(camera.getViewMatrix());
       this.rotation.toMat4(this.rotationMatrix);
-      this.modelWorldMatrix.identity().translate(this.position.x, this.position.y, this.position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
+      this.modelWorldMatrix.identity().translate(position.x, position.y, position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
+    };
+
+    Mesh.prototype.updateMatricesUniforms = function(material) {
+      var materialUniforms, programUniforms;
+
+      programUniforms = this.material.program.uniforms;
+      materialUniforms = this.material.uniforms;
+      if (programUniforms.projectionMatrix) {
+        materialUniforms.projectionMatrix = this.projectionMatrix;
+      }
+      if (programUniforms.viewMatrix) {
+        materialUniforms.viewMatrix = this.viewMatrix;
+      }
+      if (programUniforms.modelWorldMatrix) {
+        materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
+      }
+      if (programUniforms.modelViewMatrix) {
+        materialUniforms.modelViewMatrix = this.modelViewMatrix;
+      }
+      if (programUniforms.normalMatrix) {
+        return materialUniforms.normalMatrix = this.normalMatrix;
+      }
     };
 
     Mesh.prototype.getMaterial = function() {
@@ -6802,7 +6861,7 @@ define('pex/materials/ShowNormals',[
 
   return ShowNormals;
 });
-define('lib/text!pex/materials/Textured.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nattribute vec3 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = 2.0;\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform sampler2D texture;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_FragColor = texture2D(texture, vTexCoord);\n}\n\n#endif\n';});
+define('lib/text!pex/materials/Textured.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nattribute vec3 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform sampler2D texture;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_FragColor = texture2D(texture, vTexCoord);\n}\n\n#endif\n';});
 
 define('pex/materials/Textured',[
   'pex/materials/Material',
@@ -6816,7 +6875,11 @@ define('pex/materials/Textured',[
   function Textured(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(TexturedGLSL);
-    var uniforms = ObjectUtils.mergeObjects({}, uniforms);
+
+    var defaults = {
+    };
+
+    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
 
     Material.call(this, program, uniforms);
   }
@@ -7035,6 +7098,35 @@ define('pex/materials/BlinnPhong',['require','pex/materials/Material','pex/gl/Co
   })(Material);
 });
 
+define('lib/text!pex/materials/PointSpriteTextured.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform sampler2D texture;\nuniform float alpha;\n\nvoid main() {\n  gl_FragColor = texture2D(texture, gl_PointCoord);\n  gl_FragColor *= alpha;\n}\n\n#endif\n';});
+
+define('pex/materials/PointSpriteTextured',[
+  'pex/materials/Material',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/geom/Vec4',
+  'pex/utils/ObjectUtils',
+  'lib/text!pex/materials/PointSpriteTextured.glsl'
+  ], function(Material, Context, Program, Vec4, ObjectUtils, PointSpriteTexturedGLSL) {
+
+  function PointSpriteTextured(uniforms) {
+    this.gl = Context.currentContext.gl;
+    var program = new Program(PointSpriteTexturedGLSL);
+
+    var defaults = {
+      pointSize : 1,
+      alpha: 1
+    };
+
+    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+
+    Material.call(this, program, uniforms);
+  }
+
+  PointSpriteTextured.prototype = Object.create(Material.prototype);
+
+  return PointSpriteTextured;
+});
 //Module wrapper for materials classes.
 define('pex/materials',
   [
@@ -7048,8 +7140,9 @@ define('pex/materials',
     'pex/materials/Diffuse',
     'pex/materials/Test',
     'pex/materials/BlinnPhong',
+    'pex/materials/PointSpriteTextured',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -7060,7 +7153,8 @@ define('pex/materials',
       PackDepth : PackDepth,
       Diffuse : Diffuse,
       Test : Test,
-      BlinnPhong : BlinnPhong
+      BlinnPhong : BlinnPhong,
+      PointSpriteTextured : PointSpriteTextured
     };
   }
 );
