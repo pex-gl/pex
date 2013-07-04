@@ -11,7 +11,7 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
     }
 
     IO.getWorkingDirectory = function() {
-      return process.cwd();
+      return Node.path.dirname(module.parent.filename);
     }
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
