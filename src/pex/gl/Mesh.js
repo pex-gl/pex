@@ -24,6 +24,8 @@ define(function(require) {
       this.position = Vec3.create(0, 0, 0);
       this.rotation = Quat.create();
       this.scale = Vec3.create(1, 1, 1);
+      this.projectionMatrix = Mat4.create();
+      this.viewMatrix = Mat4.create();
       this.modelWorldMatrix = Mat4.create();
       this.modelViewMatrix = Mat4.create();
       this.rotationMatrix = Mat4.create();
@@ -31,30 +33,14 @@ define(function(require) {
     }
 
     Mesh.prototype.draw = function(camera) {
-      var attrib, materialUniforms, name, num, program, programUniforms, _ref1, _results;
+      var attrib, name, num, program, _ref1, _results;
 
       if (this.geometry.isDirty()) {
         this.geometry.compile();
       }
-      programUniforms = this.material.program.uniforms;
-      materialUniforms = this.material.uniforms;
       if (camera) {
         this.updateMatrices(camera);
-        if (programUniforms.projectionMatrix) {
-          materialUniforms.projectionMatrix = camera.getProjectionMatrix();
-        }
-        if (programUniforms.modelViewMatrix) {
-          materialUniforms.modelViewMatrix = this.modelViewMatrix;
-        }
-        if (programUniforms.viewMatrix) {
-          materialUniforms.viewMatrix = camera.getViewMatrix();
-        }
-        if (programUniforms.modelWorldMatrix) {
-          materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
-        }
-        if (programUniforms.normalMatrix) {
-          materialUniforms.normalMatrix = this.normalMatrix;
-        }
+        this.updateMatricesUniforms(this.material);
       }
       this.material.use();
       program = this.material.program;
@@ -90,6 +76,8 @@ define(function(require) {
       return _results;
     };
 
+    Mesh.prototype.drawInstances = function(camera, instances) {};
+
     Mesh.prototype.resetAttribLocations = function() {
       var attrib, name, _results;
 
@@ -102,10 +90,34 @@ define(function(require) {
     };
 
     Mesh.prototype.updateMatrices = function(camera) {
+      this.projectionMatrix.copy(camera.getProjectionMatrix());
+      this.viewMatrix.copy(camera.getViewMatrix());
       this.rotation.toMat4(this.rotationMatrix);
       this.modelWorldMatrix.identity().translate(this.position.x, this.position.y, this.position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
+    };
+
+    Mesh.prototype.updateMatricesUniforms = function(material) {
+      var materialUniforms, programUniforms;
+
+      programUniforms = this.material.program.uniforms;
+      materialUniforms = this.material.uniforms;
+      if (programUniforms.projectionMatrix) {
+        materialUniforms.projectionMatrix = this.projectionMatrix;
+      }
+      if (programUniforms.viewMatrix) {
+        materialUniforms.viewMatrix = this.viewMatrix;
+      }
+      if (programUniforms.modelWorldMatrix) {
+        materialUniforms.modelWorldMatrix = this.modelWorldMatrix;
+      }
+      if (programUniforms.modelViewMatrix) {
+        materialUniforms.modelViewMatrix = this.modelViewMatrix;
+      }
+      if (programUniforms.normalMatrix) {
+        return materialUniforms.normalMatrix = this.normalMatrix;
+      }
     };
 
     Mesh.prototype.getMaterial = function() {

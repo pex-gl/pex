@@ -23,23 +23,21 @@ define (require) ->
       @rotation = Quat.create()
       @scale = Vec3.create(1, 1, 1)
 
+      @projectionMatrix = Mat4.create()
+      @viewMatrix = Mat4.create()
       @modelWorldMatrix = Mat4.create()
       @modelViewMatrix = Mat4.create()
       @rotationMatrix = Mat4.create()
       @normalMatrix = Mat4.create()
 
+
     draw: (camera) ->
       @geometry.compile() if @geometry.isDirty()
 
-      programUniforms = @material.program.uniforms
-      materialUniforms = @material.uniforms
       if camera
         @updateMatrices camera
-        materialUniforms.projectionMatrix = camera.getProjectionMatrix() if programUniforms.projectionMatrix
-        materialUniforms.modelViewMatrix = @modelViewMatrix if programUniforms.modelViewMatrix
-        materialUniforms.viewMatrix = camera.getViewMatrix() if programUniforms.viewMatrix
-        materialUniforms.modelWorldMatrix = @modelWorldMatrix if programUniforms.modelWorldMatrix
-        materialUniforms.normalMatrix = @normalMatrix if programUniforms.normalMatrix
+        @updateMatricesUniforms @material
+
       @material.use()
       program = @material.program
 
@@ -67,12 +65,20 @@ define (require) ->
         attrib = @attributes[name]
         @gl.disableVertexAttribArray attrib.location  if attrib.location >= 0
 
+    drawInstances: (camera, instances) ->
+
     resetAttribLocations: () ->
       for name of @attributes
         attrib = @attributes[name]
         attrib.location = -1
 
     updateMatrices: (camera) ->
+      @projectionMatrix
+        .copy(camera.getProjectionMatrix())
+
+      @viewMatrix
+        .copy(camera.getViewMatrix())
+
       @rotation.toMat4(@rotationMatrix);
       @modelWorldMatrix.identity()
         .translate(@position.x, @position.y, @position.z)
@@ -87,6 +93,16 @@ define (require) ->
         .copy(@modelViewMatrix)
         .invert()
         .transpose()
+
+    updateMatricesUniforms: (material) ->
+      programUniforms = @material.program.uniforms
+      materialUniforms = @material.uniforms
+
+      materialUniforms.projectionMatrix = @projectionMatrix if programUniforms.projectionMatrix
+      materialUniforms.viewMatrix = @viewMatrix if programUniforms.viewMatrix
+      materialUniforms.modelWorldMatrix = @modelWorldMatrix if programUniforms.modelWorldMatrix
+      materialUniforms.modelViewMatrix = @modelViewMatrix if programUniforms.modelViewMatrix
+      materialUniforms.normalMatrix = @normalMatrix if programUniforms.normalMatrix
 
     getMaterial: ->
       @material
