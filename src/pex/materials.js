@@ -11,8 +11,9 @@ define(
     'pex/materials/Diffuse',
     'pex/materials/Test',
     'pex/materials/BlinnPhong',
+    'pex/materials/PointSpriteTextured',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -23,7 +24,8 @@ define(
       PackDepth : PackDepth,
       Diffuse : Diffuse,
       Test : Test,
-      BlinnPhong : BlinnPhong
+      BlinnPhong : BlinnPhong,
+      PointSpriteTextured : PointSpriteTextured
     };
   }
 );
