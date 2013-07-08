@@ -63,19 +63,6 @@ define (require) ->
         dirty ||= attrib.dirty
       return dirty
 
-    #allocate: (numVertices) ->
-    #  for attribName, attrib of @attribs
-    #    console.log(attrib)
-    #    attrib.length = numVertices
-    #
-    #    for i in [0..numVertices-1] by 1
-    #      if not attrib[i]?
-    #        switch attrib.type
-    #          when 'Vec2' then attrib[i] = new Vec2()
-    #          when 'Vec3' then attrib[i] = new Vec3()
-    #          when 'Vec4' then attrib[i] = new Vec4()
-    #          when 'Color' then attrib[i] = new Color()
-
     addEdge: (a, b) ->
       @addEdges() if !@edges
       @edgeHash = [] if !@edgeHash
