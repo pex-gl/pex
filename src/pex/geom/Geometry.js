@@ -142,27 +142,45 @@ define(function(require) {
     };
 
     Geometry.prototype.computeEdges = function() {
-      var face, _i, _len, _ref, _results;
+      var a, b, c, face, i, _i, _j, _len, _ref, _ref1, _results, _results1;
 
-      _ref = this.faces;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        face = _ref[_i];
-        if (face instanceof Face3) {
-          this.addEdge(face.a, face.b);
-          this.addEdge(face.b, face.c);
-          this.addEdge(face.c, face.a);
-        }
-        if (face instanceof Face4) {
-          this.addEdge(face.a, face.b);
-          this.addEdge(face.b, face.c);
-          this.addEdge(face.c, face.d);
-          _results.push(this.addEdge(face.d, face.a));
-        } else {
-          _results.push(void 0);
-        }
+      if (this.edges) {
+        this.edges.length = 0;
+      } else {
+        this.edges = [];
       }
-      return _results;
+      if (this.faces && this.faces.length) {
+        _ref = this.faces;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          face = _ref[_i];
+          if (face instanceof Face3) {
+            this.addEdge(face.a, face.b);
+            this.addEdge(face.b, face.c);
+            this.addEdge(face.c, face.a);
+          }
+          if (face instanceof Face4) {
+            this.addEdge(face.a, face.b);
+            this.addEdge(face.b, face.c);
+            this.addEdge(face.c, face.d);
+            _results.push(this.addEdge(face.d, face.a));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      } else {
+        _results1 = [];
+        for (i = _j = 0, _ref1 = this.vertices.length - 1; _j <= _ref1; i = _j += 3) {
+          a = i;
+          b = i + 1;
+          c = i + 2;
+          this.addEdge(a, b);
+          this.addEdge(b, c);
+          _results1.push(this.addEdge(c, a));
+        }
+        return _results1;
+      }
     };
 
     return Geometry;

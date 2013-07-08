@@ -86,13 +86,23 @@ define (require) ->
         @edgeHash[ab] = @edgeHash[ba] = true
 
     computeEdges: () ->
-      for face in @faces
-        if face instanceof Face3
-          @addEdge(face.a, face.b)
-          @addEdge(face.b, face.c)
-          @addEdge(face.c, face.a)
-        if face instanceof Face4
-          @addEdge(face.a, face.b)
-          @addEdge(face.b, face.c)
-          @addEdge(face.c, face.d)
-          @addEdge(face.d, face.a)
+      if @edges then @edges.length = 0 else @edges = []
+      if @faces && @faces.length
+        for face in @faces
+          if face instanceof Face3
+            @addEdge(face.a, face.b)
+            @addEdge(face.b, face.c)
+            @addEdge(face.c, face.a)
+          if face instanceof Face4
+            @addEdge(face.a, face.b)
+            @addEdge(face.b, face.c)
+            @addEdge(face.c, face.d)
+            @addEdge(face.d, face.a)
+      else
+        for i in [0..@vertices.length-1] by 3
+          a = i
+          b = i + 1
+          c = i + 2
+          @addEdge(a, b)
+          @addEdge(b, c)
+          @addEdge(c, a)
