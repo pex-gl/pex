@@ -117,7 +117,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+0] = faceVertices[j].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
           else positions[vertexIndex+j].copy(faceVertices[j].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
           else normals[vertexIndex+j].copy(faceNormal);
