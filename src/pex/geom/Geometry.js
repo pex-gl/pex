@@ -134,7 +134,7 @@ define(function(require) {
         this.edgeHash = [];
       }
       ab = a + '_' + b;
-      ba = a + '_' + a;
+      ba = b + '_' + a;
       if (!this.edgeHash[ab] && !this.edgeHash[ba]) {
         this.edges.push(new Edge(a, b));
         return this.edgeHash[ab] = this.edgeHash[ba] = true;

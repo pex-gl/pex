@@ -80,7 +80,7 @@ define (require) ->
       @addEdges() if !@edges
       @edgeHash = [] if !@edgeHash
       ab = a + '_' + b
-      ba = a + '_' + a
+      ba = b + '_' + a
       if !@edgeHash[ab] && !@edgeHash[ba]
         @edges.push(new Edge(a, b))
         @edgeHash[ab] = @edgeHash[ba] = true
