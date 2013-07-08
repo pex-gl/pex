@@ -190,7 +190,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return geometry;
   }
 
-  /*
   HEMesh.prototype.toEdgesGeometry = function(offset) {
     offset = (offset !== undefined) ? offset : 0.1;
     var lineBuilder = new LineBuilder();
@@ -205,7 +204,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
     return lineBuilder;
   };
-  */
 
   return HEGeometryConverter;
 });
