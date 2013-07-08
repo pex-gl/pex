@@ -1558,7 +1558,7 @@ define('pex/geom/Geometry',['require','pex/geom/Vec2','pex/geom/Vec3','pex/geom/
         this.edgeHash = [];
       }
       ab = a + '_' + b;
-      ba = a + '_' + a;
+      ba = b + '_' + a;
       if (!this.edgeHash[ab] && !this.edgeHash[ba]) {
         this.edges.push(new Edge(a, b));
         return this.edgeHash[ab] = this.edgeHash[ba] = true;
@@ -1566,27 +1566,46 @@ define('pex/geom/Geometry',['require','pex/geom/Vec2','pex/geom/Vec3','pex/geom/
     };
 
     Geometry.prototype.computeEdges = function() {
-      var face, _i, _len, _ref, _results;
+      var a, b, c, face, i, _i, _j, _len, _ref, _ref1, _results, _results1;
 
-      _ref = this.faces;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        face = _ref[_i];
-        if (face instanceof Face3) {
-          this.addEdge(face.a, face.b);
-          this.addEdge(face.b, face.c);
-          this.addEdge(face.c, face.a);
-        }
-        if (face instanceof Face4) {
-          this.addEdge(face.a, face.b);
-          this.addEdge(face.b, face.c);
-          this.addEdge(face.c, face.d);
-          _results.push(this.addEdge(face.d, face.a));
-        } else {
-          _results.push(void 0);
-        }
+      console.log('computeEdges', this.faces.length, this.vertices.length);
+      if (this.edges) {
+        this.edges.length = 0;
+      } else {
+        this.edges = [];
       }
-      return _results;
+      if (this.faces && this.faces.length) {
+        _ref = this.faces;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          face = _ref[_i];
+          if (face instanceof Face3) {
+            this.addEdge(face.a, face.b);
+            this.addEdge(face.b, face.c);
+            this.addEdge(face.c, face.a);
+          }
+          if (face instanceof Face4) {
+            this.addEdge(face.a, face.b);
+            this.addEdge(face.b, face.c);
+            this.addEdge(face.c, face.d);
+            _results.push(this.addEdge(face.d, face.a));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      } else {
+        _results1 = [];
+        for (i = _j = 0, _ref1 = this.vertices.length - 1; _j <= _ref1; i = _j += 3) {
+          a = i;
+          b = i + 1;
+          c = i + 2;
+          this.addEdge(a, b);
+          this.addEdge(b, c);
+          _results1.push(this.addEdge(c, a));
+        }
+        return _results1;
+      }
     };
 
     return Geometry;
@@ -2953,6 +2972,9 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
         var newFace = new HEFace();
         this.faces.push(newFace);
 
+        if (f instanceof Face3) {
+          numEdges = 3;
+        }
         if (f instanceof Face4) {
           numEdges = 4;
         }
@@ -3032,9 +3054,10 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var face = faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
+      console.log('Face', i, faceVertices.length)
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+0] = faceVertices[j].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
           else positions[vertexIndex+j].copy(faceVertices[j].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
           else normals[vertexIndex+j].copy(faceNormal);
@@ -3079,7 +3102,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+0] = faceVertices[j].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
           else positions[vertexIndex+j].copy(faceVertices[j].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[j].getNormal();
           else normals[vertexIndex+j].copy(faceVertices[j].getNormal());
@@ -3104,7 +3127,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return geometry;
   }
 
-  /*
   HEMesh.prototype.toEdgesGeometry = function(offset) {
     offset = (offset !== undefined) ? offset : 0.1;
     var lineBuilder = new LineBuilder();
@@ -3119,7 +3141,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
     return lineBuilder;
   };
-  */
 
   return HEGeometryConverter;
 });
@@ -5743,6 +5764,11 @@ define('pex/gl/Buffer',['require','pex/gl/Context','pex/geom','pex/color'],funct
       }
     }
 
+    Buffer.prototype.dispose = function() {
+      this.gl.deleteBuffer(this.handle);
+      return this.handle = null;
+    };
+
     Buffer.prototype.update = function(data, usage) {
       var e, face, i, index, numIndices, v, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _p;
 
@@ -5874,7 +5900,7 @@ define('pex/gl/RenderableGeometry',['require','pex/geom/Geometry','pex/gl/Contex
   Context = require('pex/gl/Context');
   Buffer = require('pex/gl/Buffer');
   indexTypes = ['faces', 'edges', 'indices'];
-  return Geometry.prototype.compile = function() {
+  Geometry.prototype.compile = function() {
     var attrib, attribName, indexName, usage, _i, _len, _ref, _ref1, _results;
 
     if ((_ref = this.gl) == null) {
@@ -5908,6 +5934,27 @@ define('pex/gl/RenderableGeometry',['require','pex/geom/Geometry','pex/gl/Contex
         } else {
           _results.push(void 0);
         }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+  return Geometry.prototype.dispose = function() {
+    var attrib, attribName, indexName, _i, _len, _ref, _results;
+
+    _ref = this.attribs;
+    for (attribName in _ref) {
+      attrib = _ref[attribName];
+      if (attrib && attrib.buffer) {
+        attrib.buffer.dispose();
+      }
+    }
+    _results = [];
+    for (_i = 0, _len = indexTypes.length; _i < _len; _i++) {
+      indexName = indexTypes[_i];
+      if (this[indexName] && this[indexName].buffer) {
+        _results.push(this[indexName].buffer.dispose());
       } else {
         _results.push(void 0);
       }
@@ -6100,6 +6147,10 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
     Mesh.prototype.setProgram = function(program) {
       this.material.program = program;
       return this.resetAttribLocations();
+    };
+
+    Mesh.prototype.dispose = function() {
+      return this.geometry.dispose();
     };
 
     return Mesh;
