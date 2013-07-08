@@ -36,6 +36,9 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
         var newFace = new HEFace();
         this.faces.push(newFace);
 
+        if (f instanceof Face3) {
+          numEdges = 3;
+        }
         if (f instanceof Face4) {
           numEdges = 4;
         }
