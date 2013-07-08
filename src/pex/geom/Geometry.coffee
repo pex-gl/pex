@@ -95,4 +95,4 @@ define (require) ->
           @addEdge(face.a, face.b)
           @addEdge(face.b, face.c)
           @addEdge(face.c, face.d)
-          @addEdge(face.d, face.a)#
+          @addEdge(face.d, face.a)
