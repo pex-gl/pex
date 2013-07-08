@@ -25,3 +25,10 @@ define (require) ->
         if @[indexName].dirty
           @[indexName].buffer.update(@[indexName])
           @[indexName].dirty = false
+
+  Geometry::dispose = () ->
+    for attribName, attrib of @attribs
+      attrib.buffer.dispose() if attrib and attrib.buffer
+
+    for indexName in indexTypes
+      @[indexName].buffer.dispose() if @[indexName] and @[indexName].buffer

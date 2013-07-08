@@ -184,6 +184,10 @@ define(function(require) {
       return this.resetAttribLocations();
     };
 
+    Mesh.prototype.dispose = function() {
+      return this.geometry.dispose();
+    };
+
     return Mesh;
 
   })();

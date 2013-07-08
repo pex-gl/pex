@@ -134,16 +134,19 @@ define (require) ->
       materialUniforms.modelViewMatrix = @modelViewMatrix if programUniforms.modelViewMatrix
       materialUniforms.normalMatrix = @normalMatrix if programUniforms.normalMatrix
 
-    getMaterial: ->
+    getMaterial: () ->
       @material
 
     setMaterial: (material) ->
       @material = material
       @resetAttribLocations()
 
-    getProgram: ->
+    getProgram: () ->
       @material.program
 
     setProgram: (program) ->
       @material.program = program
       @resetAttribLocations()
+
+    dispose: () ->
+      @geometry.dispose()

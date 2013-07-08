@@ -17,6 +17,11 @@ define(function(require) {
       }
     }
 
+    Buffer.prototype.dispose = function() {
+      this.gl.deleteBuffer(this.handle);
+      return this.handle = null;
+    };
+
     Buffer.prototype.update = function(data, usage) {
       var e, face, i, index, numIndices, v, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _p;
 

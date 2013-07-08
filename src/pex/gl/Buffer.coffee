@@ -12,6 +12,10 @@ define (require) ->
       @dataBuf = null
       @update(data, @usage) if data
 
+    dispose: () ->
+      @gl.deleteBuffer(@handle)
+      @handle = null
+
     update: (data, usage) ->
       @handle = @gl.createBuffer() if !@handle
       @usage = usage || @usage

@@ -6,7 +6,7 @@ define(function(require) {
   Context = require('pex/gl/Context');
   Buffer = require('pex/gl/Buffer');
   indexTypes = ['faces', 'edges', 'indices'];
-  return Geometry.prototype.compile = function() {
+  Geometry.prototype.compile = function() {
     var attrib, attribName, indexName, usage, _i, _len, _ref, _ref1, _results;
 
     if ((_ref = this.gl) == null) {
@@ -40,6 +40,27 @@ define(function(require) {
         } else {
           _results.push(void 0);
         }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+  return Geometry.prototype.dispose = function() {
+    var attrib, attribName, indexName, _i, _len, _ref, _results;
+
+    _ref = this.attribs;
+    for (attribName in _ref) {
+      attrib = _ref[attribName];
+      if (attrib && attrib.buffer) {
+        attrib.buffer.dispose();
+      }
+    }
+    _results = [];
+    for (_i = 0, _len = indexTypes.length; _i < _len; _i++) {
+      indexName = indexTypes[_i];
+      if (this[indexName] && this[indexName].buffer) {
+        _results.push(this[indexName].buffer.dispose());
       } else {
         _results.push(void 0);
       }
