@@ -110,6 +110,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
+    geometry.faces.length = []
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -155,6 +156,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
+    geometry.faces.length = []
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];

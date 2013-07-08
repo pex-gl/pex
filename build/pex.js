@@ -1568,7 +1568,6 @@ define('pex/geom/Geometry',['require','pex/geom/Vec2','pex/geom/Vec3','pex/geom/
     Geometry.prototype.computeEdges = function() {
       var a, b, c, face, i, _i, _j, _len, _ref, _ref1, _results, _results1;
 
-      console.log('computeEdges', this.faces.length, this.vertices.length);
       if (this.edges) {
         this.edges.length = 0;
       } else {
@@ -3046,6 +3045,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
+    geometry.faces.length = []
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -3054,7 +3054,6 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var face = faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
-      console.log('Face', i, faceVertices.length)
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
           if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
@@ -3092,6 +3091,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
+    geometry.faces.length = []
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
