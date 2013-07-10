@@ -108,6 +108,11 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     var positions = geometry.vertices;
     var normals = geometry.normals;
 
+    if (!normals) {
+      geometry.addAttrib('normals', 'normal');
+      normals = geometry.normals;
+    }
+
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
     geometry.faces.length = []
