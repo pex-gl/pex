@@ -55,13 +55,13 @@ define(function(require) {
         this.addAttrib('colors', 'color', colors, false);
       }
       if (indices) {
-        this.addIndices();
+        this.addIndices(indices);
       }
       if (edges) {
-        this.addEdges();
+        this.addEdges(edges);
       }
       if (faces) {
-        this.addFaces();
+        this.addFaces(faces);
       }
     }
 
@@ -80,31 +80,40 @@ define(function(require) {
       return this;
     };
 
-    Geometry.prototype.addFaces = function(dynamic) {
+    Geometry.prototype.addFaces = function(data, dynamic) {
+      if (data == null) {
+        data = null;
+      }
       if (dynamic == null) {
         dynamic = false;
       }
-      this.faces = [];
+      this.faces = data && data.length ? data : [];
       this.faces.dirty = true;
       this.faces.dynamic = false;
       return this;
     };
 
-    Geometry.prototype.addEdges = function(dynamic) {
+    Geometry.prototype.addEdges = function(data, dynamic) {
+      if (data == null) {
+        data = null;
+      }
       if (dynamic == null) {
         dynamic = false;
       }
-      this.edges = [];
+      this.edges = data && data.length ? data : [];
       this.edges.dirty = true;
       this.edges.dynamic = false;
       return this;
     };
 
-    Geometry.prototype.addIndices = function(dynamic) {
+    Geometry.prototype.addIndices = function(data, dynamic) {
+      if (data == null) {
+        data = null;
+      }
       if (dynamic == null) {
         dynamic = false;
       }
-      this.indices = [];
+      this.indices = data && data.length ? data : [];
       this.indices.dirty = true;
       this.indices.dynamic = false;
       return this;

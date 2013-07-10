@@ -25,9 +25,9 @@ define (require) ->
       @addAttrib('texCoords', 'texCoord', texCoords, false) if texCoords
       @addAttrib('tangents', 'tangent', tangents, false) if tangents
       @addAttrib('colors', 'color', colors, false) if colors
-      @addIndices() if indices
-      @addEdges() if edges
-      @addFaces() if faces
+      @addIndices(indices) if indices
+      @addEdges(edges) if edges
+      @addFaces(faces) if faces
 
     addAttrib: (propertyName, attributeName, data=null, dynamic=false) ->
       @[propertyName] = if data and data.length then data else []
@@ -37,20 +37,20 @@ define (require) ->
       @attribs[propertyName] = @[propertyName]
       this
 
-    addFaces: (dynamic=false) ->
-      @faces = []
+    addFaces: (data=null, dynamic=false) ->
+      @faces = if data and data.length then data else []
       @faces.dirty = true
       @faces.dynamic = false
       this
 
-    addEdges: (dynamic=false) ->
-      @edges = []
+    addEdges: (data=null, dynamic=false) ->
+      @edges = if data and data.length then data else []
       @edges.dirty = true
       @edges.dynamic = false
       this
 
-    addIndices: (dynamic=false) ->
-      @indices = []
+    addIndices: (data=null, dynamic=false) ->
+      @indices = if data and data.length then data else []
       @indices.dirty = true
       @indices.dynamic = false
       this
