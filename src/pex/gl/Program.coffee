@@ -61,7 +61,6 @@ define (require) ->
 
       for i in [0..numUniforms-1]
         info     = @gl.getActiveUniform(@handle, i);
-        console.log(info)
         if info.size > 1
           for j in [0..info.size-1]
             arrayElementName = info.name.replace(/\[\d+\]/, '[' + j + ']')

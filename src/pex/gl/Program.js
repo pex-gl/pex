@@ -60,7 +60,6 @@ define(function(require) {
       numUniforms = this.gl.getProgramParameter(this.handle, this.gl.ACTIVE_UNIFORMS);
       for (i = _i = 0, _ref = numUniforms - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
         info = this.gl.getActiveUniform(this.handle, i);
-        console.log(info);
         if (info.size > 1) {
           for (j = _j = 0, _ref1 = info.size - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
             arrayElementName = info.name.replace(/\[\d+\]/, '[' + j + ']');
