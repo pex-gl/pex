@@ -61,8 +61,15 @@ define (require) ->
 
       for i in [0..numUniforms-1]
         info     = @gl.getActiveUniform(@handle, i);
-        location = @gl.getUniformLocation(@handle, info.name);
-        @uniforms[info.name] = Program.makeUniformSetter(@gl, info.type, location);
+        console.log(info)
+        if info.size > 1
+          for j in [0..info.size-1]
+            arrayElementName = info.name.replace(/\[\d+\]/, '[' + j + ']')
+            location = @gl.getUniformLocation(@handle, arrayElementName);
+            @uniforms[arrayElementName] = Program.makeUniformSetter(@gl, info.type, location);
+        else
+          location = @gl.getUniformLocation(@handle, info.name);
+          @uniforms[info.name] = Program.makeUniformSetter(@gl, info.type, location);
 
       numAttributes = @gl.getProgramParameter(@handle, @gl.ACTIVE_ATTRIBUTES)
 
