@@ -11,7 +11,7 @@ pex.sys.Window.create({
     center: true
   },
   init: function() {
-    this.camera = new pex.scene.Camera(60, this.width/this.height);
+    this.camera = new pex.scene.PerspectiveCamera(60, this.width/this.height);
     new pex.scene.Arcball(this, this.camera, 5);
     var cube = new pex.geom.gen.Cube();
 

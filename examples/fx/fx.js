@@ -14,7 +14,7 @@ var fx = pex.fx;
   },
   init: function() {
     var gl = pex.gl.Context.currentContext.gl;
-    this.camera = new pex.scene.Camera(60, this.width/this.height, 0.1, 3);
+    this.camera = new pex.scene.PerspectiveCamera(60, this.width/this.height, 0.1, 3);
     this.arcball = new pex.scene.Arcball(this, this.camera, 2);
 
     this.showNormals = new pex.materials.ShowNormals();

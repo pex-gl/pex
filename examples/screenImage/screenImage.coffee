@@ -6,7 +6,7 @@ pex = pex || require('../../build/pex')
 { Mesh, Texture2D } = pex.gl
 { ShowColors, SolidColor, Textured } = pex.materials
 { IO } = pex.sys
-{ Camera, Arcball } = pex.scene
+{ PerspectiveCamera, Arcball } = pex.scene
 
 pex.sys.Window.create
   settings:
@@ -15,7 +15,7 @@ pex.sys.Window.create
     type: '3d',
 
   init: () ->
-    @camera = new Camera(60, 1)
+    @camera = new PerspectiveCamera(60, 1)
     @arcball = new Arcball(this, @camera)
     @camera.setPosition(new Vec3(1, 1, 2))
 

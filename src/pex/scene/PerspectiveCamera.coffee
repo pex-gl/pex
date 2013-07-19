@@ -1,7 +1,7 @@
 define (require) ->
   { Vec2, Vec3, Vec4, Mat4 } = require('pex/geom')
 
-  class Camera
+  class PerspectiveCamera
     constructor: (fov, aspectRatio, near, far, position, target, up) ->
       @fov = fov || 60
       @aspectRatio = aspectRatio || 4/3

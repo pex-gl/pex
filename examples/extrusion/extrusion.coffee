@@ -2,7 +2,7 @@ pex = pex || require('../../build/pex')
 
 { hem, Vec3, Vec4 } = pex.geom
 { Color } = pex.color
-{ Camera, Arcball } = pex.scene
+{ PerspectiveCamera, Arcball } = pex.scene
 { ShowNormals, Diffuse } = pex.materials
 { Time } = pex.utils
 { Cube, Sphere } = pex.geom.gen
@@ -53,7 +53,7 @@ pex.sys.Window.create
     @gl.clearColor(0, 0, 0, 1)
     @gl.enable(@gl.DEPTH_TEST)
 
-    @camera = new Camera(60, this.width/this.height)
+    @camera = new PerspectiveCamera(60, this.width/this.height)
     @arcball = new Arcball(this, this.camera, 3)
     @material = new ShowNormals()
     @selectionMaterial = new Diffuse({ ambientColor : Color.create(0.2, 0, 0, 1), diffuseColor : Color.create(1, 0, 0, 1) })

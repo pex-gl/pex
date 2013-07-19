@@ -22,7 +22,7 @@ pex.sys.Window.create({
     gl.clearColor(0, 0, 0, 1);
     gl.enable(gl.DEPTH_TEST);
 
-    this.camera = new pex.scene.Camera(60, this.width/this.height);
+    this.camera = new pex.scene.PerspectiveCamera(60, this.width/this.height);
 
     this.texture = pex.gl.Texture2D.load('opengl.png');
 

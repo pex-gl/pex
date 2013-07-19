@@ -1,11 +1,11 @@
 define(
   [
-    'pex/scene/Camera',
+    'pex/scene/PerspectiveCamera',
     'pex/scene/Arcball'
   ],
-  function(Camera, Arcball) {
+  function(PerspectiveCamera, Arcball) {
     return {
-      Camera : Camera,
+      PerspectiveCamera : PerspectiveCamera,
       Arcball : Arcball
     };
   }

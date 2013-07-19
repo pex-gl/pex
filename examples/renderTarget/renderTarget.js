@@ -12,8 +12,8 @@ pex.sys.Window.create({
     canvas : pex.sys.Platform.isBrowser ? document.getElementById('canvas') : null
   },
   init: function() {
-    this.camera = new pex.scene.Camera(60, this.width/this.height);
-    this.rtCamera = new pex.scene.Camera(60, 1);
+    this.camera = new pex.scene.PerspectiveCamera(60, this.width/this.height);
+    this.rtCamera = new pex.scene.PerspectiveCamera(60, 1);
     this.arcball = new pex.scene.Arcball(this, this.camera, 2);
 
     this.rt = new pex.gl.RenderTarget(512, 512, { depth : true });
