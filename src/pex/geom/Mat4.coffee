@@ -88,6 +88,19 @@ define (require) ->
                0, 0, 0,  1)
       this
 
+    #http://www.cs.rutgers.edu/~decarlo/428/gl_man/rotate.html
+
+    rotate: (theta, x, y, z) ->
+      s = Math.sin(theta);
+      c = Math.cos(theta);
+      @mul4x4r(
+        x*x*(1-c)+c  , x*y*(1-c)-z*s, x*z*(1-c)+y*s, 0,
+        y*x*(1-c)+z*s,   y*y*(1-c)+c, y*z*(1-c)-x*s, 0,
+        x*z*(1-c)-y*s, y*z*(1-c)+x*s,   z*z*(1-c)+c, 0,
+                    0,             0,             0, 1
+      )
+      this
+
     asMul: (a, b) ->
       a11 = a.a11; a12 = a.a12; a13 = a.a13; a14 = a.a14;
       a21 = a.a21; a22 = a.a22; a23 = a.a23; a24 = a.a24;
@@ -187,3 +200,6 @@ define (require) ->
        @a12, @a22, @a32, @a42,
        @a13, @a23, @a33, @a43,
        @a14, @a24, @a34, @a44]
+
+  Mat4.count = 0
+  Mat4

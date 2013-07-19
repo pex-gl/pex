@@ -3,7 +3,7 @@ define(function(require) {
   var Mat4, Vec3;
 
   Vec3 = require('../geom/Vec3');
-  return Mat4 = (function() {
+  Mat4 = (function() {
     function Mat4() {
       this.reset();
     }
@@ -122,6 +122,15 @@ define(function(require) {
 
     Mat4.prototype.translate = function(dx, dy, dz) {
       this.mul4x4r(1, 0, 0, dx, 0, 1, 0, dy, 0, 0, 1, dz, 0, 0, 0, 1);
+      return this;
+    };
+
+    Mat4.prototype.rotate = function(theta, x, y, z) {
+      var c, s;
+
+      s = Math.sin(theta);
+      c = Math.cos(theta);
+      this.mul4x4r(x * x * (1 - c) + c, x * y * (1 - c) - z * s, x * z * (1 - c) + y * s, 0, y * x * (1 - c) + z * s, y * y * (1 - c) + c, y * z * (1 - c) - x * s, 0, x * z * (1 - c) - y * s, y * z * (1 - c) + x * s, z * z * (1 - c) + c, 0, 0, 0, 0, 1);
       return this;
     };
 
@@ -284,4 +293,6 @@ define(function(require) {
     return Mat4;
 
   })();
+  Mat4.count = 0;
+  return Mat4;
 });
