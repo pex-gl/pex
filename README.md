@@ -1,14 +1,14 @@
 # Pex
 
-![assets/pex.jpg]
+![Pex](assets/pex.jpg)
 
 Pex is a JavaScript/CoffeScript 3d utility library for WebGL.
 
 Examples of use
-http://marcinignac.com/experiments/technology/webgl/
-http://marcinignac.com/projects/technology/webgl/
-http://variable.io/ (All WebGL projects)
-http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
+http://marcinignac.com/experiments/technology/webgl/  
+http://marcinignac.com/projects/technology/webgl/  
+http://variable.io/ (All WebGL projects)  
+http://www.flickr.com/photos/marcinignac/sets/72157629801608107/  
 
 # FAQ
 
