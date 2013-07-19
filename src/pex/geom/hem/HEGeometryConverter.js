@@ -9,9 +9,10 @@ define([
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Edge',
-  'pex/geom/gen/LineBuilder'
+  'pex/geom/gen/LineBuilder',
+  'pex/color/Color'
 ],
-function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder)  {
+function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder, Color)  {
   function HEGeometryConverter() {
   }
 
@@ -95,26 +96,36 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       faces = this.getSelectedFaces();
     }
 
+    var hasFaceColors = false;
+
     faces.forEach(function(f) {
       var faceVertexCount = f.getAllVertices().length;
       if (faceVertexCount == 3) numVertices += 3;
       else if (faceVertexCount == 4) numVertices += 6;
+      if (f.color) hasFaceColors = true;
     });
 
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true})
+      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors})
     }
 
     var positions = geometry.vertices;
     var normals = geometry.normals;
+    var colors = geometry.colors;
 
     if (!normals) {
       geometry.addAttrib('normals', 'normal');
       normals = geometry.normals;
     }
 
+    if (!colors && hasFaceColors) {
+      geometry.addAttrib('colors', 'color');
+      colors = geometry.colors;
+    }
+
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
+    if (geometry.colors) geometry.colors.dirty = true;
     geometry.faces.length = []
 
     var vertexIndex = 0;
@@ -130,6 +141,11 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
           else positions[vertexIndex+j].copy(faceVertices[j].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
           else normals[vertexIndex+j].copy(faceNormal);
+          if (hasFaceColors) {
+            var c = face.color || Color.White;
+            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
+            else colors[vertexIndex+j].copy(c);
+          }
         }
         vertexIndex += 3;
       }
@@ -139,6 +155,11 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
           else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
           else normals[vertexIndex+j].copy(faceNormal);
+          if (hasFaceColors) {
+            var c = face.color || Color.White;
+            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
+            else colors[vertexIndex+j].copy(c);
+          }
         }
         vertexIndex += 6;
       }
