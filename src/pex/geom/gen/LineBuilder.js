@@ -51,7 +51,7 @@ define(function(require) {
     };
 
     LineBuilder.prototype.reset = function() {
-      this.positions.length = 0;
+      this.vertices.length = 0;
       return this.colors.length = 0;
     };
 

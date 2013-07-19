@@ -42,6 +42,6 @@ define (require) ->
       @colors.push(Color.create().copy(color))
 
     reset: () ->
-      @positions.length = 0
+      @vertices.length = 0
       @colors.length = 0
 
