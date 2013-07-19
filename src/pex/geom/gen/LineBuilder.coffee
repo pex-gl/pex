@@ -27,12 +27,12 @@ define (require) ->
 
       color = color || Color.White
 
-      @positions.push(Vec3.create().set(pos.x - halfSize, pos.y, pos.z))
-      @positions.push(Vec3.create().set(pos.x + halfSize, pos.y, pos.z))
-      @positions.push(Vec3.create().set(pos.x, pos.y - halfSize, pos.z))
-      @positions.push(Vec3.create().set(pos.x, pos.y + halfSize, pos.z))
-      @positions.push(Vec3.create().set(pos.x, pos.y, pos.z - halfSize))
-      @positions.push(Vec3.create().set(pos.x, pos.y, pos.z + halfSize))
+      @vertices.push(Vec3.create().set(pos.x - halfSize, pos.y, pos.z))
+      @vertices.push(Vec3.create().set(pos.x + halfSize, pos.y, pos.z))
+      @vertices.push(Vec3.create().set(pos.x, pos.y - halfSize, pos.z))
+      @vertices.push(Vec3.create().set(pos.x, pos.y + halfSize, pos.z))
+      @vertices.push(Vec3.create().set(pos.x, pos.y, pos.z - halfSize))
+      @vertices.push(Vec3.create().set(pos.x, pos.y, pos.z + halfSize))
 
       @colors.push(Color.create().copy(color))
       @colors.push(Color.create().copy(color))

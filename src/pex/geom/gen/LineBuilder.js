@@ -36,12 +36,12 @@ define(function(require) {
       size = size || 0.1;
       halfSize = size / 2;
       color = color || Color.White;
-      this.positions.push(Vec3.create().set(pos.x - halfSize, pos.y, pos.z));
-      this.positions.push(Vec3.create().set(pos.x + halfSize, pos.y, pos.z));
-      this.positions.push(Vec3.create().set(pos.x, pos.y - halfSize, pos.z));
-      this.positions.push(Vec3.create().set(pos.x, pos.y + halfSize, pos.z));
-      this.positions.push(Vec3.create().set(pos.x, pos.y, pos.z - halfSize));
-      this.positions.push(Vec3.create().set(pos.x, pos.y, pos.z + halfSize));
+      this.vertices.push(Vec3.create().set(pos.x - halfSize, pos.y, pos.z));
+      this.vertices.push(Vec3.create().set(pos.x + halfSize, pos.y, pos.z));
+      this.vertices.push(Vec3.create().set(pos.x, pos.y - halfSize, pos.z));
+      this.vertices.push(Vec3.create().set(pos.x, pos.y + halfSize, pos.z));
+      this.vertices.push(Vec3.create().set(pos.x, pos.y, pos.z - halfSize));
+      this.vertices.push(Vec3.create().set(pos.x, pos.y, pos.z + halfSize));
       this.colors.push(Color.create().copy(color));
       this.colors.push(Color.create().copy(color));
       this.colors.push(Color.create().copy(color));
