@@ -27,6 +27,26 @@ define(['pex/geom/Vec3'], function(Vec3) {
     return this.root.findNearestPoint(p, options);
   }
 
+  Octree.prototype.getAllCellsAtLevel = function(cell, level, result) {
+    if (typeof(level) == 'undefined') {
+      level = cell;
+      cell = this.root;
+    }
+    result = result || [];
+    if (cell.level == level) {
+      if (cell.points.length > 0) {
+        result.push(cell);
+      }
+      return result
+    }
+    else {
+      cell.children.forEach(function(child) {
+        this.getAllCellsAtLevel(child, level, result);
+      }.bind(this))
+      return result
+    }
+  }
+
   Octree.Cell = function(tree, position, size, level) {
     this.tree = tree;
     this.position = position;
