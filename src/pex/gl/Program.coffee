@@ -115,7 +115,7 @@ define (require) ->
         when gl.BOOL, gl.INT
           setterFun = (value) => gl.uniform1i(location, value)
         when gl.SAMPLER_2D, gl.SAMPLER_CUBE
-          setterFun = (value) => gl.uniform1i(location, value.handle)
+          setterFun = (value) => gl.uniform1i(location, value)
         when gl.FLOAT
           setterFun = (value) -> gl.uniform1f(location, value)
         when gl.FLOAT_VEC2

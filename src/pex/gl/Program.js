@@ -138,7 +138,7 @@ define(function(require) {
         case gl.SAMPLER_2D:
         case gl.SAMPLER_CUBE:
           setterFun = function(value) {
-            return gl.uniform1i(location, value.handle);
+            return gl.uniform1i(location, value);
           };
           break;
         case gl.FLOAT:
