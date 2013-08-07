@@ -18,7 +18,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
   }
 
   MathUtils.randomInt = function(min, max) {
-    return Math.floor(MathUtils.randomInt(min, max));
+    return Math.floor(MathUtils.randomFloat(min, max));
   }
 
   MathUtils.randomVec3 = function(r) {
