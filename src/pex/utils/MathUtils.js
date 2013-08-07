@@ -40,6 +40,10 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
     return Vec2.create(rect.x + Math.random() * rect.width, rect.y + Math.random() * rect.height);
   }
 
+  MathUtils.randomChance = function(probability) {
+    return Math.random() <= probability;
+  }
+
   MathUtils.mix = function(a, b, t) {
     return a + (b - a) * t;
   }
