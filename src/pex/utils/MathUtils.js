@@ -26,13 +26,6 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
     var x = Math.random() - 0.5;
     var y = Math.random() - 0.5;
     var z = Math.random() - 0.5;
-    var len = x * x + y * y + z * z;
-    if (len > 0) {
-      len = Math.sqrt(len);
-      x /= len;
-      y /= len;
-      z /= len;
-    }
     return Vec3.create(x * r, y * r, z * r);
   }
 
