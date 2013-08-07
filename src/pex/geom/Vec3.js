@@ -53,7 +53,7 @@ define(function(require) {
       dx = v.x - this.x;
       dy = v.y - this.y;
       dz = v.z - this.z;
-      return Math.sqrt(dx * dx + dy * dy);
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
 
     Vec3.prototype.squareDistance = function(v) {

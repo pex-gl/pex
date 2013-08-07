@@ -38,7 +38,7 @@ define (require) ->
       dx = v.x - @x
       dy = v.y - @y
       dz = v.z - @z
-      return Math.sqrt(dx * dx + dy * dy)
+      return Math.sqrt(dx * dx + dy * dy + dz * dz)
 
     squareDistance: (v) ->
       dx = v.x - @x
