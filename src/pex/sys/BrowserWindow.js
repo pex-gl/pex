@@ -114,8 +114,6 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-      e.preventDefault();
-      return false;
     });
   }
 
