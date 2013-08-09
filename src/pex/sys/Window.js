@@ -48,7 +48,7 @@ define(function(require) {
         }
       };
       if (Platform.isPlask) {
-        Node.plask.simpleWindow(obj);
+        return Node.plask.simpleWindow(obj);
       }
       if (Platform.isBrowser) {
         return BrowserWindow.simpleWindow(obj);

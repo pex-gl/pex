@@ -45,5 +45,5 @@ define (require) ->
         if obj.__draw
           obj.__draw()
 
-      Node.plask.simpleWindow(obj) if Platform.isPlask
-      BrowserWindow.simpleWindow(obj) if Platform.isBrowser
+      return Node.plask.simpleWindow(obj) if Platform.isPlask
+      return BrowserWindow.simpleWindow(obj) if Platform.isBrowser

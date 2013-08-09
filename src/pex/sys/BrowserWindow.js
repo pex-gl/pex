@@ -289,6 +289,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     else {
       go();
     }
+
+    return obj;
   }
 
   var BrowserWindow = {
