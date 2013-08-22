@@ -63,7 +63,6 @@ define (require) ->
       for j in [0..nv]
         for i in [0..nu]
           n = j * (nu + 1) + i
-          console.log j, i, '->', n, n + nu  + 1, n + nu + 2, n + 1
 
           if j < nv && i < nu
             face = new Face4(n, n + nu  + 1, n + nu + 2, n + 1)

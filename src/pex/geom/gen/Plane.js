@@ -50,7 +50,6 @@ define(function(require) {
       for (j = _k = 0; 0 <= nv ? _k <= nv : _k >= nv; j = 0 <= nv ? ++_k : --_k) {
         for (i = _l = 0; 0 <= nu ? _l <= nu : _l >= nu; i = 0 <= nu ? ++_l : --_l) {
           n = j * (nu + 1) + i;
-          console.log(j, i, '->', n, n + nu + 1, n + nu + 2, n + 1);
           if (j < nv && i < nu) {
             face = new Face4(n, n + nu + 1, n + nu + 2, n + 1);
           }
