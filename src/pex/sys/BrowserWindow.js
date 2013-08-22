@@ -262,13 +262,19 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
       registerEvents(canvas);
 
+      obj.dispose = function() {
+        obj.__disposed = true;
+      }
+
       obj.gl = gl;
       obj.ctx = ctx;
       obj.init();
 
       function drawloop() {
-        obj.draw();
-        requestAnimFrame(drawloop);
+        if (!obj.__disposed) {
+          obj.draw();
+          requestAnimFrame(drawloop);
+        }
       }
 
       requestAnimFrame(drawloop);

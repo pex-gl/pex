@@ -44,6 +44,7 @@ define (require) ->
         Context.currentContext = context;
         if obj.__draw
           obj.__draw()
+      obj.dispose = () ->
 
       return Node.plask.simpleWindow(obj) if Platform.isPlask
       return BrowserWindow.simpleWindow(obj) if Platform.isBrowser

@@ -47,6 +47,7 @@ define(function(require) {
           return obj.__draw();
         }
       };
+      obj.dispose = function() {};
       if (Platform.isPlask) {
         return Node.plask.simpleWindow(obj);
       }
