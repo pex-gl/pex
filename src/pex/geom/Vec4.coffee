@@ -18,6 +18,13 @@ define (require) ->
       @w = w
       this
 
+    setVec4: (v) ->
+      @x = v.x
+      @y = v.y
+      @z = v.z
+      @w = v.w
+      this
+
     transformMat4: (m) ->
       x = m.a14*@w + m.a11*@x + m.a12*@y + m.a13*@z
       y = m.a24*@w + m.a21*@x + m.a22*@y + m.a23*@z

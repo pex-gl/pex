@@ -30,6 +30,14 @@ define(function(require) {
       return this;
     };
 
+    Vec4.prototype.setVec4 = function(v) {
+      this.x = v.x;
+      this.y = v.y;
+      this.z = v.z;
+      this.w = v.w;
+      return this;
+    };
+
     Vec4.prototype.transformMat4 = function(m) {
       var w, x, y, z;
 

@@ -44,6 +44,14 @@ define(function(require) {
       return this;
     };
 
+    Quat.prototype.setQuat = function(q) {
+      this.x = q.x;
+      this.y = q.y;
+      this.z = q.z;
+      this.w = q.w;
+      return this;
+    };
+
     Quat.prototype.set = function(x, y, z, w) {
       this.x = x;
       this.y = y;

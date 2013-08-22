@@ -72,6 +72,13 @@ define(function(require) {
       return this;
     };
 
+    Vec3.prototype.setVec3 = function(v) {
+      this.x = v.x;
+      this.y = v.y;
+      this.z = v.z;
+      return this;
+    };
+
     Vec3.prototype.clone = function() {
       return new Vec3(this.x, this.y, this.z);
     };

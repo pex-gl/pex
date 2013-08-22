@@ -14,6 +14,11 @@ define (require) ->
       @y = y
       this
 
+    setVec2: (v) ->
+      @x = v.x
+      @y = v.y
+      this
+
     add: (v) ->
       @x += v.x
       @y += v.y

@@ -290,6 +290,26 @@ define(function(require) {
       return [this.a11, this.a21, this.a31, this.a41, this.a12, this.a22, this.a32, this.a42, this.a13, this.a23, this.a33, this.a43, this.a14, this.a24, this.a34, this.a44];
     };
 
+    Mat4.prototype.fromArray = function(a) {
+      this.a11 = a[0];
+      this.a21 = a[1];
+      this.a31 = a[2];
+      this.a41 = a[3];
+      this.a12 = a[4];
+      this.a22 = a[5];
+      this.a32 = a[6];
+      this.a42 = a[7];
+      this.a13 = a[8];
+      this.a23 = a[9];
+      this.a33 = a[10];
+      this.a43 = a[11];
+      this.a14 = a[12];
+      this.a24 = a[13];
+      this.a34 = a[14];
+      this.a44 = a[15];
+      return this;
+    };
+
     return Mat4;
 
   })();

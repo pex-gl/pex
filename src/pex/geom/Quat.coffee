@@ -30,6 +30,13 @@ define (require) ->
       @w = q.w
       this
 
+    setQuat: (q) ->
+      @x = q.x
+      @y = q.y
+      @z = q.z
+      @w = q.w
+      this
+
     set: (x, y, z, w) ->
       @x = x
       @y = y

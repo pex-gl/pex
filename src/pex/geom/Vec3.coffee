@@ -52,6 +52,12 @@ define (require) ->
       @z = v.z
       this
 
+    setVec3: (v) ->
+      @x = v.x
+      @y = v.y
+      @z = v.z
+      this
+
     clone: () ->
       new Vec3(@x, @y, @z)
 
