@@ -48,6 +48,7 @@ pex.sys.Window.create({
     this.gui.addLabel('L - load settings');
     this.gui.addLabel('');
     this.gui.addLabel('CUBE');
+    this.gui.addParam('Scale', this.mesh, 'scale', {min:0, max:1});
     this.gui.addParam('Color', this, 'color', {min:0, max:255});
     this.gui.addParam('Rotate', this, 'rotate');
     this.gui.addParam('Rotate speed', this, 'speed', {min:0, max:5});
