@@ -76,6 +76,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     if (this.type == 'slider') {
       var str = '' + this.contextObject[this.attributeName];
       var dotPos = str.indexOf('.') + 1;
+      if (dotPos == 0) return str + '.0';
       while(str.charAt(dotPos) == '0') {
         dotPos++;
       }
