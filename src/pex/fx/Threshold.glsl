@@ -24,7 +24,7 @@ void main() {
   color = (luma > threshold) ? color : vec3(0.0);
 
   gl_FragColor.rgb = color;
-  gl_FragColor.a = 1.0;
+  gl_FragColor.a = color.r;
 }
 
 #endif
