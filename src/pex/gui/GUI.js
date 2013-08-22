@@ -344,6 +344,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     this.items.forEach(function(item, i) {
       if (!(data[item.title] == undefined)) {
         item.setNormalizedValue(data[item.title]);
+        item.dirty = true;
       }
     })
   }
