@@ -52,6 +52,10 @@ define(function(require) {
       return this;
     };
 
+    Mat4.prototype.dup = function() {
+      return Mat4.create().copy(this);
+    };
+
     Mat4.prototype.reset = function() {
       this.set4x4r(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
       return this;

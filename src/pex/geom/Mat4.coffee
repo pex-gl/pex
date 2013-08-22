@@ -22,6 +22,9 @@ define (require) ->
       @a41 = m.a41; @a42 = m.a42; @a43 = m.a43; @a44 = m.a44;
       this
 
+    dup: () ->
+      Mat4.create().copy(this)
+
     reset: () ->
       @set4x4r(
         1, 0, 0, 0,
