@@ -1,4 +1,5 @@
-define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom, Vec2, Vec3) {
+define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pex/geom/Mat4', 'pex/geom/Quat'], 
+  function(seedrandom, Vec2, Vec3, Vec4, Mat4, Quat) {
   function MathUtils() {
   }
 
@@ -58,6 +59,61 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
 
   MathUtils.clamp = function(value, min, max) {
     return Math.max(min, Math.min(value, max));
+  }
+
+  var temporaryVec1 = {};
+
+  MathUtils.getTempVec2 = function(name) {
+    var result = temporaryVec2[name];
+    if (!result) {
+      result = temporaryVec2[name] = Vec2.create();
+    }
+    result.set(0, 0, 0);
+    return result;
+  }
+
+  var temporaryVec3 = {};
+
+  MathUtils.getTempVec3 = function(name) {
+    var result = temporaryVec3[name];
+    if (!result) {
+      result = temporaryVec3[name] = Vec3.create();
+    }
+    result.set(0, 0, 0);
+    return result;
+  }
+
+  var temporaryVec4 = {};
+
+  MathUtils.getTempVec4 = function(name) {
+    var result = temporaryVec4[name];
+    if (!result) {
+      result = temporaryVec4[name] = Vec4.create();
+    }
+    result.set(0, 0, 0);
+    return result;
+  }
+
+  var temporaryMat4 = {};
+
+  MathUtils.getTempMat4 = function(name) {
+    var result = temporaryMat4[name];
+    if (!result) {
+      result = temporaryMat4[name] = Mat4.create();
+    }
+    result.identity();
+    return result;
+  }
+
+  var temporaryQuat = {};
+
+  MathUtils.getTempQuat = function(name) {
+    var result = temporaryQuat[name];
+    if (!result) {
+      result = temporaryQuat[name] = Quat.create();
+    }
+    result.identity();
+    return result;
   }
 
   return MathUtils;
