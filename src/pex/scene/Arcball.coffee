@@ -67,7 +67,7 @@ define (require) ->
       q = @currRot.clone()
       q.w *= -1;
 
-      target = Vec3.create(0, 0, 0);
+      target = @target || Vec3.create(0, 0, 0);
       offset = Vec3.create(0, 0, @distance).transformQuat(q)
       eye = Vec3.create().asSub(target, offset)
       up = Vec3.create(0, 1, 0).transformQuat(q)
@@ -75,3 +75,9 @@ define (require) ->
 
     disableZoom: () ->
       @allowZooming = false
+
+    setDistance: (distance) ->
+      @distance = distance || 2;
+      @minDistance = distance/2 || 0.3;
+      @maxDistance = distance*2 || 5;
+      @updateCamera()

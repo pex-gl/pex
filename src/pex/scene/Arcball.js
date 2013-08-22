@@ -87,7 +87,7 @@ define(function(require) {
 
       q = this.currRot.clone();
       q.w *= -1;
-      target = Vec3.create(0, 0, 0);
+      target = this.target || Vec3.create(0, 0, 0);
       offset = Vec3.create(0, 0, this.distance).transformQuat(q);
       eye = Vec3.create().asSub(target, offset);
       up = Vec3.create(0, 1, 0).transformQuat(q);
@@ -96,6 +96,13 @@ define(function(require) {
 
     Arcball.prototype.disableZoom = function() {
       return this.allowZooming = false;
+    };
+
+    Arcball.prototype.setDistance = function(distance) {
+      this.distance = distance || 2;
+      this.minDistance = distance / 2 || 0.3;
+      this.maxDistance = distance * 2 || 5;
+      return this.updateCamera();
     };
 
     return Arcball;
