@@ -44,6 +44,10 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
     return Math.random() <= probability;
   }
 
+  MathUtils.randomElement = function(list) {
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
   MathUtils.mix = function(a, b, t) {
     return a + (b - a) * t;
   }
