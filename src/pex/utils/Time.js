@@ -21,6 +21,10 @@ define(['pex/utils/Log'], function(Log) {
     }
     Time.now = Date.now();
     Time.delta = (delta !== undefined) ? delta : (Time.now - Time.prev)/1000;
+    //More than 1s = probably switched back from another window so we have big jump now
+    if (Time.delta > 1) {
+      Time.delta = 0;
+    }
     Time.prev = Time.now;
     Time.seconds += Time.delta;
     Time.fpsTime += Time.delta;
