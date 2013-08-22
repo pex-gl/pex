@@ -11,7 +11,7 @@ define (require) ->
     clearDepth: true
     viewport: null
     constructor: () ->
-      @meshes = []
+      @drawables = []
       @cameras = []
       @gl = Context.currentContext.gl
 
@@ -25,8 +25,8 @@ define (require) ->
       @viewport = viewport
 
     add: (obj) ->
-      if (obj instanceof Mesh)
-        @meshes.push(obj)
+      if (obj.draw)
+        @drawables.push(obj)
       if (obj instanceof PerspectiveCamera)
         @cameras.push(obj)
 
@@ -58,8 +58,8 @@ define (require) ->
 
       @clear()
 
-      for mesh in @meshes
-        mesh.draw(camera)
+      for drawable in @drawables
+        drawable.draw(camera)
 
       if @viewport
         @viewport.unbind()

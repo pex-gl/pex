@@ -8691,7 +8691,7 @@ define('pex/scene/Scene',['require','pex/gl/Context','pex/gl/Mesh','pex/color/Co
     Scene.prototype.viewport = null;
 
     function Scene() {
-      this.meshes = [];
+      this.drawables = [];
       this.cameras = [];
       this.gl = Context.currentContext.gl;
     }
@@ -8709,8 +8709,8 @@ define('pex/scene/Scene',['require','pex/gl/Context','pex/gl/Mesh','pex/color/Co
     };
 
     Scene.prototype.add = function(obj) {
-      if (obj instanceof Mesh) {
-        this.meshes.push(obj);
+      if (obj.draw) {
+        this.drawables.push(obj);
       }
       if (obj instanceof PerspectiveCamera) {
         return this.cameras.push(obj);
@@ -8734,7 +8734,7 @@ define('pex/scene/Scene',['require','pex/gl/Context','pex/gl/Mesh','pex/color/Co
     };
 
     Scene.prototype.draw = function(camera) {
-      var aspectRatio, mesh, _i, _len, _ref;
+      var aspectRatio, drawable, _i, _len, _ref;
 
       if (!camera) {
         if (this.currentCamera >= 0 && this.currentCamera < this.cameras.length) {
@@ -8753,10 +8753,10 @@ define('pex/scene/Scene',['require','pex/gl/Context','pex/gl/Mesh','pex/color/Co
         }
       }
       this.clear();
-      _ref = this.meshes;
+      _ref = this.drawables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        mesh = _ref[_i];
-        mesh.draw(camera);
+        drawable = _ref[_i];
+        drawable.draw(camera);
       }
       if (this.viewport) {
         return this.viewport.unbind();

@@ -16,7 +16,7 @@ define(function(require) {
     Scene.prototype.viewport = null;
 
     function Scene() {
-      this.meshes = [];
+      this.drawables = [];
       this.cameras = [];
       this.gl = Context.currentContext.gl;
     }
@@ -34,8 +34,8 @@ define(function(require) {
     };
 
     Scene.prototype.add = function(obj) {
-      if (obj instanceof Mesh) {
-        this.meshes.push(obj);
+      if (obj.draw) {
+        this.drawables.push(obj);
       }
       if (obj instanceof PerspectiveCamera) {
         return this.cameras.push(obj);
@@ -59,7 +59,7 @@ define(function(require) {
     };
 
     Scene.prototype.draw = function(camera) {
-      var aspectRatio, mesh, _i, _len, _ref;
+      var aspectRatio, drawable, _i, _len, _ref;
 
       if (!camera) {
         if (this.currentCamera >= 0 && this.currentCamera < this.cameras.length) {
@@ -78,10 +78,10 @@ define(function(require) {
         }
       }
       this.clear();
-      _ref = this.meshes;
+      _ref = this.drawables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        mesh = _ref[_i];
-        mesh.draw(camera);
+        drawable = _ref[_i];
+        drawable.draw(camera);
       }
       if (this.viewport) {
         return this.viewport.unbind();
