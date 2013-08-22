@@ -8,9 +8,11 @@ define(
     'pex/gl/RenderTarget',
     'pex/gl/ScreenImage',
     'pex/gl/Buffer',
-    'pex/gl/RenderableGeometry'
+    'pex/gl/RenderableGeometry',
+    'pex/gl/TextureCube',
+    'pex/gl/Viewport'
   ],
-  function(Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage, Buffer, RenderableGeometry) {
+  function(Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage, Buffer, RenderableGeometry, TextureCube, Viewport) {
     return {
       Context : Context,
       Program : Program,
@@ -19,7 +21,9 @@ define(
       RenderTarget : RenderTarget,
       ScreenImage : ScreenImage,
       Buffer : Buffer,
-      RenderableGeometry : RenderableGeometry
+      RenderableGeometry : RenderableGeometry,
+      TextureCube: TextureCube,
+      Viewport: Viewport
     };
   }
 );
