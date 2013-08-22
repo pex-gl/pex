@@ -1,5 +1,5 @@
 define (require) ->
-  { Vec2, Vec3, Vec4, Mat4 } = require('pex/geom')
+  { Vec2, Vec3, Vec4, Mat4, Ray } = require('pex/geom')
 
   class PerspectiveCamera
     constructor: (fov, aspectRatio, near, far, position, target, up) ->
@@ -87,3 +87,31 @@ define (require) ->
       out.x *= windowWidth
       out.y *= windowHeight
       out
+
+    ## getWorldRay (x, y, windowWidth, windowHeight)
+    #Gets ray in world coordinates for a x,y screen position
+    #
+    #`x` - x position *{ Number }*  
+    #`y` - y position *{ Number }*  
+    #`windowWidth` - width of the window *{ Number }*  
+    #`windowHeight` - height of the window *{ Number }*  
+    #Returns the ray in world coordinates *{ Vec3 }*
+    getWorldRay: (x, y, windowWidth, windowHeight) ->
+      x = (x - windowWidth/2) / (windowWidth/2)
+      y = -(y - windowHeight/2) / (windowHeight/2)
+
+      hNear = 2 * Math.tan(@getFov() / 180*Math.PI / 2) * @getNear()
+      wNear = hNear * @getAspectRatio()
+
+      x *= wNear / 2
+      y *= hNear / 2
+
+      vOrigin = new Vec3(0, 0, 0);
+      vTarget = new Vec3(x, y, -this.getNear())
+      invViewMatrix = @getViewMatrix().dup().invert()
+
+      wOrigin = vOrigin.dup().transformMat4(invViewMatrix)
+      wTarget = vTarget.dup().transformMat4(invViewMatrix)
+      wDirection = wTarget.dup().sub(wOrigin)
+
+      new Ray(wOrigin, wDirection)
