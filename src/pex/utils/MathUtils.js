@@ -56,5 +56,9 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'], function(seedrandom
     return newMin + (value - oldMin)/(oldMax - oldMin) * (newMax - newMin);
   }
 
+  MathUtils.clamp = function(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
   return MathUtils;
 });
