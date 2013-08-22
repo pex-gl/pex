@@ -91,6 +91,12 @@ define (require) ->
     asCross: (a, b) ->
       @copy(a).cross(b)
 
+    addScaled: (a, f) ->
+      @x += a.x * f
+      @y += a.y * f
+      @z += a.z * f
+      this
+
     length: () ->
       Math.sqrt(@x*@x + @y*@y + @z*@z)
 

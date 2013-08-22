@@ -124,6 +124,13 @@ define(function(require) {
       return this.copy(a).cross(b);
     };
 
+    Vec3.prototype.addScaled = function(a, f) {
+      this.x += a.x * f;
+      this.y += a.y * f;
+      this.z += a.z * f;
+      return this;
+    };
+
     Vec3.prototype.length = function() {
       return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     };
