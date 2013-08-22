@@ -4,7 +4,10 @@ define (require) ->
   Mat4 = require('pex/geom/Mat4')
 
   class Quat
+    @count: 0
+
     constructor: (@x=0, @y=0, @z=0, @w=1) ->
+      Quat.count++
 
     @create: (x, y, z, w) ->
       new Quat(x, y, z, w)

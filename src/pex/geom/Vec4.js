@@ -11,11 +11,14 @@ define(function(require) {
 
     Vec4.prototype.w = 0;
 
+    Vec4.count = 0;
+
     function Vec4(x, y, z, w) {
       this.x = x != null ? x : 0;
       this.y = y != null ? y : 0;
       this.z = z != null ? z : 0;
       this.w = w != null ? w : 0;
+      Vec4.count++;
     }
 
     Vec4.create = function(x, y, z, w) {

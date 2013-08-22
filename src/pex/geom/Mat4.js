@@ -4,7 +4,10 @@ define(function(require) {
 
   Vec3 = require('../geom/Vec3');
   Mat4 = (function() {
+    Mat4.count = 0;
+
     function Mat4() {
+      Mat4.count++;
       this.reset();
     }
 

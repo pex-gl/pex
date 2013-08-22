@@ -5,11 +5,14 @@ define(function(require) {
   kEpsilon = Math.pow(2, -24);
   Mat4 = require('pex/geom/Mat4');
   return Quat = (function() {
+    Quat.count = 0;
+
     function Quat(x, y, z, w) {
       this.x = x != null ? x : 0;
       this.y = y != null ? y : 0;
       this.z = z != null ? z : 0;
       this.w = w != null ? w : 1;
+      Quat.count++;
     }
 
     Quat.create = function(x, y, z, w) {

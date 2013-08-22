@@ -5,8 +5,10 @@ define (require) ->
     y: 0
     z: 0
     w: 0
+    @count: 0
 
     constructor: (@x=0, @y=0, @z=0, @w=0) ->
+      Vec4.count++
 
     @create: (x, y, z, w) ->
       new Vec4(x, y, z, w)

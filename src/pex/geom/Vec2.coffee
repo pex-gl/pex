@@ -3,8 +3,10 @@ define (require) ->
   class Vec2
     x: 0
     y: 0
+    @count: 0
 
     constructor: (@x=0, @y=0) ->
+      Vec2.count++
 
     @create: (x, y) ->
       new Vec2(x, y)

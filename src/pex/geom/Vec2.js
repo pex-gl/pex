@@ -7,9 +7,12 @@ define(function(require) {
 
     Vec2.prototype.y = 0;
 
+    Vec2.count = 0;
+
     function Vec2(x, y) {
       this.x = x != null ? x : 0;
       this.y = y != null ? y : 0;
+      Vec2.count++;
     }
 
     Vec2.create = function(x, y) {

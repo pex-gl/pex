@@ -2,7 +2,10 @@ define (require) ->
   Vec3 = require('../geom/Vec3')
 
   class Mat4
+    @count: 0
+
     constructor: () ->
+      Mat4.count++
       @reset()
 
     @create: () ->
@@ -83,6 +86,14 @@ define (require) ->
         0,   0,   0,   1)
       @translate(-eye.x, -eye.y, -eye.z)
       this
+
+    #Mat4.prototype.ortho = function(l, r, b, t, n, f) {
+    #this.mul4x4r(2/(r-l),        0,        0,  (r+l)/(l-r),
+    #                 0,  2/(t-b),        0,  (t+b)/(b-t),
+    #                 0,        0,  2/(n-f),  (f+n)/(n-f),
+    #                 0,        0,        0,            1);
+    #return this;
+    #  };
 
     translate:(dx, dy, dz) ->
       @mul4x4r(1, 0, 0, dx,

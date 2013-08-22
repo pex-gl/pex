@@ -9,10 +9,13 @@ define(function(require) {
 
     Vec3.prototype.z = 0;
 
+    Vec3.count = 0;
+
     function Vec3(x, y, z) {
       this.x = x != null ? x : 0;
       this.y = y != null ? y : 0;
       this.z = z != null ? z : 0;
+      Vec3.count++;
     }
 
     Vec3.create = function(x, y, z) {
