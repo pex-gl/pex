@@ -102,6 +102,8 @@ define (require) ->
 
     updateMatrices: (camera, instance) ->
       position = if instance and instance.position then instance.position else @position
+      rotation = if instance and instance.rotation then instance.rotation else @rotation
+      scale = if instance and instance.scale then instance.scale else @scale
 
       @projectionMatrix
         .copy(camera.getProjectionMatrix())
@@ -109,11 +111,11 @@ define (require) ->
       @viewMatrix
         .copy(camera.getViewMatrix())
 
-      @rotation.toMat4(@rotationMatrix);
+      rotation.toMat4(@rotationMatrix);
       @modelWorldMatrix.identity()
         .translate(position.x, position.y, position.z)
         .mul(@rotationMatrix)
-        .scale(@scale.x, @scale.y, @scale.z)
+        .scale(scale.x, scale.y, scale.z)
 
       @modelViewMatrix
         .copy(camera.getViewMatrix())

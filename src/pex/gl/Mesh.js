@@ -133,13 +133,15 @@ define(function(require) {
     };
 
     Mesh.prototype.updateMatrices = function(camera, instance) {
-      var position;
+      var position, rotation, scale;
 
       position = instance && instance.position ? instance.position : this.position;
+      rotation = instance && instance.rotation ? instance.rotation : this.rotation;
+      scale = instance && instance.scale ? instance.scale : this.scale;
       this.projectionMatrix.copy(camera.getProjectionMatrix());
       this.viewMatrix.copy(camera.getViewMatrix());
-      this.rotation.toMat4(this.rotationMatrix);
-      this.modelWorldMatrix.identity().translate(position.x, position.y, position.z).mul(this.rotationMatrix).scale(this.scale.x, this.scale.y, this.scale.z);
+      rotation.toMat4(this.rotationMatrix);
+      this.modelWorldMatrix.identity().translate(position.x, position.y, position.z).mul(this.rotationMatrix).scale(scale.x, scale.y, scale.z);
       this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
       return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
     };
