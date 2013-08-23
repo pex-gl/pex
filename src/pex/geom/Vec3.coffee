@@ -133,5 +133,9 @@ define (require) ->
       @z = z
       this
 
+    equals: (v, tolerance) ->
+      tolerance = if tolerance? then tolerance else 0.0000001
+      (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance) && (Math.abs(v.z - @z) <= tolerance)
+
     toString: () ->
       "{#{@x},#{@y},#{@z}}"
