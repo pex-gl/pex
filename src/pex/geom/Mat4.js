@@ -116,6 +116,11 @@ define(function(require) {
       return this;
     };
 
+    Mat4.prototype.ortho = function(l, r, b, t, n, f) {
+      this.mul4x4r(2 / (r - l), 0, 0, (r + l) / (l - r), 0, 2 / (t - b), 0, (t + b) / (b - t), 0, 0, 2 / (n - f), (f + n) / (n - f), 0, 0, 0, 1);
+      return this;
+    };
+
     Mat4.prototype.lookAt = function(eye, target, up) {
       var x, y, z;
 
