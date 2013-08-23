@@ -4,7 +4,7 @@ define (require) ->
   # - free type arrays if index or attribute are not dynamic
 
   Context = require('pex/gl/Context')
-  { Vec3, Quat, Mat4 } = require('pex/geom')
+  { Vec3, Quat, Mat4, BoundingBox } = require('pex/geom')
   RenderableGeometry = require('pex/gl/RenderableGeometry')
 
   class Mesh
@@ -105,26 +105,27 @@ define (require) ->
       rotation = if instance and instance.rotation then instance.rotation else @rotation
       scale = if instance and instance.scale then instance.scale else @scale
 
-      @projectionMatrix
-        .copy(camera.getProjectionMatrix())
-
-      @viewMatrix
-        .copy(camera.getViewMatrix())
-
       rotation.toMat4(@rotationMatrix);
       @modelWorldMatrix.identity()
         .translate(position.x, position.y, position.z)
         .mul(@rotationMatrix)
         .scale(scale.x, scale.y, scale.z)
 
-      @modelViewMatrix
-        .copy(camera.getViewMatrix())
-        .mul(@modelWorldMatrix)
+      if camera
+        @projectionMatrix
+          .copy(camera.getProjectionMatrix())
 
-      @normalMatrix
-        .copy(@modelViewMatrix)
-        .invert()
-        .transpose()
+        @viewMatrix
+          .copy(camera.getViewMatrix())
+
+        @modelViewMatrix
+          .copy(camera.getViewMatrix())
+          .mul(@modelWorldMatrix)
+
+        @normalMatrix
+          .copy(@modelViewMatrix)
+          .invert()
+          .transpose()
 
     updateMatricesUniforms: (material) ->
       programUniforms = @material.program.uniforms
@@ -152,3 +153,12 @@ define (require) ->
 
     dispose: () ->
       @geometry.dispose()
+
+    getBoundingBox: () ->
+      if !@boundingBox then @updateBoundingBox()
+      @boundingBox
+
+    updateBoundingBox: () ->
+      @updateMatrices()
+      @boundingBox = BoundingBox.fromPoints @geometry.vertices.map (v) =>
+        v.dup().transformMat4(@modelWorldMatrix)
