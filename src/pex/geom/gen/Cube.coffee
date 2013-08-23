@@ -6,9 +6,9 @@ define (require) ->
 
   class Cube extends Geometry
     constructor: (sx, sy, sz, nx, ny, nz) ->
-      sx = sx || 1
-      sy = sy || sx || 1
-      sz = sz || sx || 1
+      sx = if sx? then sx else 1
+      sy = if sy? then sy else if sx? then sx else 1
+      sz = if sz? then sz else if sx? then sx else 1
       nx = nx || 1
       ny = ny || 1
       nz = nz || 1

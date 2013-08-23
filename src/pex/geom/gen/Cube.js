@@ -16,9 +16,9 @@ define(function(require) {
       var makePlane, numVertices, vertexIndex,
         _this = this;
 
-      sx = sx || 1;
-      sy = sy || sx || 1;
-      sz = sz || sx || 1;
+      sx = sx != null ? sx : 1;
+      sy = sy != null ? sy : sx != null ? sx : 1;
+      sz = sz != null ? sz : sx != null ? sx : 1;
       nx = nx || 1;
       ny = ny || 1;
       nz = nz || 1;
