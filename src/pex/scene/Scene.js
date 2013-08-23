@@ -81,7 +81,9 @@ define(function(require) {
       _ref = this.drawables;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         drawable = _ref[_i];
-        drawable.draw(camera);
+        if (drawable.enabled !== false) {
+          drawable.draw(camera);
+        }
       }
       if (this.viewport) {
         return this.viewport.unbind();

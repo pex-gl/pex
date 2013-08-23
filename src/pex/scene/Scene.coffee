@@ -59,7 +59,7 @@ define (require) ->
       @clear()
 
       for drawable in @drawables
-        drawable.draw(camera)
+        drawable.draw(camera) if drawable.enabled != false
 
       if @viewport
         @viewport.unbind()
