@@ -16,6 +16,10 @@ define (require) ->
       @set(0, 0, 0, 1)
       this
 
+    equals: (q, tolerance) ->
+      tolerance = if tolerance? then tolerance else 0.0000001
+      (Math.abs(q.x - @x) <= tolerance) && (Math.abs(q.y - @y) <= tolerance) && (Math.abs(q.z - @z) <= tolerance) && (Math.abs(q.w - @w) <= tolerance)
+
     setAxisAngle: (v, a) ->
       a = a * 0.5
       s = Math.sin( a / 180 * Math.PI )

@@ -24,6 +24,11 @@ define(function(require) {
       return this;
     };
 
+    Quat.prototype.equals = function(q, tolerance) {
+      tolerance = tolerance != null ? tolerance : 0.0000001;
+      return (Math.abs(q.x - this.x) <= tolerance) && (Math.abs(q.y - this.y) <= tolerance) && (Math.abs(q.z - this.z) <= tolerance) && (Math.abs(q.w - this.w) <= tolerance);
+    };
+
     Quat.prototype.setAxisAngle = function(v, a) {
       var s;
 
