@@ -71,7 +71,12 @@ define (require) ->
           @gl.drawElements(@primitiveType, @geometry.faces.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
       else if @geometry.edges && @useEdges
         @gl.bindBuffer(@gl.ELEMENT_ARRAY_BUFFER, @geometry.edges.buffer.handle)
-        @gl.drawElements(@primitiveType, @geometry.edges.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
+        for instance in instances
+          if camera
+            @updateMatrices camera, instance
+            @updateMatricesUniforms @material
+            @material.use()
+          @gl.drawElements(@primitiveType, @geometry.edges.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
       else if @geometry.vertices
         num = @geometry.vertices.buffer.dataBuf.length / 3
         @gl.drawArrays(@primitiveType, 0, num)

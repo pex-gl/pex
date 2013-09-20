@@ -58,7 +58,7 @@ define(function(require) {
     };
 
     Mesh.prototype.drawInstances = function(camera, instances) {
-      var instance, num, _i, _len;
+      var instance, num, _i, _j, _len, _len1;
 
       if (this.geometry.isDirty()) {
         this.geometry.compile();
@@ -78,7 +78,15 @@ define(function(require) {
         }
       } else if (this.geometry.edges && this.useEdges) {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.edges.buffer.handle);
-        this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+        for (_j = 0, _len1 = instances.length; _j < _len1; _j++) {
+          instance = instances[_j];
+          if (camera) {
+            this.updateMatrices(camera, instance);
+            this.updateMatricesUniforms(this.material);
+            this.material.use();
+          }
+          this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
+        }
       } else if (this.geometry.vertices) {
         num = this.geometry.vertices.buffer.dataBuf.length / 3;
         this.gl.drawArrays(this.primitiveType, 0, num);
