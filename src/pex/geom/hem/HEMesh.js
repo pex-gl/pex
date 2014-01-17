@@ -16,10 +16,9 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     this.edges = new Array();
   }
 
-  HEMesh.prototype.fixDuplicatedVertices = function() {
+  HEMesh.prototype.fixDuplicatedVertices = function(debug) {
     var bbox = BoundingBox.fromPoints(this.vertices.map(function(v) { return v.position; }));
     var octree = Octree.fromBoundingBox(bbox);
-    var dup = 0;
     for(var i=0; i<this.vertices.length; i++) {
       var v = this.vertices[i];
       var duplicate = octree.has(v.position);
@@ -28,6 +27,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         octree.add(v.position);
       }
       else {
+        if (debug) console.log('HEMesh duplicated vert', v)
         this.vertices.splice(i, 1);
         i--;
         var duplicateVertex = duplicate.vertex;
@@ -61,7 +61,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
     return hash;
   }
 
-  HEMesh.prototype.fixDuplicatedEdges = function() {
+  HEMesh.prototype.fixDuplicatedEdges = function(debug) {
     var uniques = [];
     for(var i=0; i<this.edges.length; i++) {
       var edge = this.edges[i];
@@ -72,6 +72,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         uniques.push(hash);
       }
       else {
+        if (debug) console.log('HEMesh duplicated edge', hash)
         var duplicateEdge = this.edges[duplicateIndex];
         this.edges.splice(i, 1);
         i--;
@@ -163,7 +164,13 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       var e = edge;
       var watchDog = 0;
 
-      if (edge.pair == null) {
+      if (edge.next == edge) {
+        console.log("Edge refers to itself", i);
+      }
+      if (edge.next.vert == edge.vert) {
+        console.log("Edge corner loop", i);
+      }
+      else if (edge.pair == null) {
         console.log("Edge doesn't have it's pair", i);
       }
       else if (edge.pair.pair != edge) {
@@ -304,7 +311,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       .scale(ratio)
       .add(edge.vert.position);
 
-    this.splitVertex(edge.vert, newVertPos, edge, edge);
+    return this.splitVertex(edge.vert, newVertPos, edge, edge);
   };
 
   HEMesh.prototype.splitFaceAtPoint = function(face, newPoint) {
