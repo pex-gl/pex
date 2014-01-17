@@ -7,13 +7,14 @@ define(
     'pex/materials/ShowTexCoords',
     'pex/materials/ShowDepth',
     'pex/materials/ShowColors',
+    'pex/materials/ShowPositions',
     'pex/materials/PackDepth',
     'pex/materials/Diffuse',
     'pex/materials/Test',
     'pex/materials/BlinnPhong',
     'pex/materials/PointSpriteTextured',
   ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
+  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, ShowPositions, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
     return {
       SolidColor : SolidColor,
       ShowNormals : ShowNormals,
@@ -21,6 +22,7 @@ define(
       ShowTexCoords : ShowTexCoords,
       ShowDepth : ShowDepth,
       ShowColors : ShowColors,
+      ShowPositions : ShowPositions,
       PackDepth : PackDepth,
       Diffuse : Diffuse,
       Test : Test,
