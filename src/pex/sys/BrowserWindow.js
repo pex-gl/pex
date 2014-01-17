@@ -201,10 +201,14 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
     if (!canvas) {
       canvas = document.getElementById('canvas');
-      if (canvas) {
-        obj.settings.width = canvas.width;
-        obj.settings.height = canvas.height;
-      }
+    }
+    else if (obj.settings.width && obj.setttings.height) {
+      canvas.width = obj.settings.width;
+      canvas.height = obj.settings.height;
+    }
+    else {
+      obj.settings.width = canvas.width;
+      obj.settings.height = canvas.height;
     }
 
     if (!canvas) {
