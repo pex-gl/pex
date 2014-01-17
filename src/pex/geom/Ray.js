@@ -54,5 +54,47 @@ define(['pex/geom/Vec3'], function(Vec3) {
     return [this.origin.dup().add(this.direction.dup().scale(t))];
   }
 
+
+  Ray.prototype.hitTestBoundingBox = function(bbox) {
+    var hits = [];
+    var self = this;
+    function testFace(pos, size, normal, u, v) {
+      var faceHits = self.hitTestPlane(pos, normal)
+      if (faceHits.length > 0) {
+        var hit = faceHits[0];
+        if (hit[u] > pos[u] - size[u]/2 && hit[u] < pos[u] + size[u]/2 &&
+          hit[v] > pos[v] - size[v]/2 && hit[v] < pos[v] + size[v]/2) {
+          hits.push(hit);
+        }
+      }
+    }
+
+    var bboxCenter = bbox.getCenter();
+    var bboxSize = bbox.getSize();
+    testFace(bboxCenter.dup().add(new Vec3(0, 0, bboxSize.z/2)), bboxSize, new Vec3(0, 0, 1), 'x', 'y');
+    testFace(bboxCenter.dup().add(new Vec3(0, 0, -bboxSize.z/2)), bboxSize, new Vec3(0, 0, -1), 'x', 'y');
+    testFace(bboxCenter.dup().add(new Vec3(bboxSize.x/2, 0, 0)), bboxSize, new Vec3(1, 0, 0), 'y', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(-bboxSize.x/2, 0, 0)), bboxSize, new Vec3(-1, 0, 0), 'y', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(0, bboxSize.y/2, 0)), bboxSize, new Vec3(0, 1, 0), 'x', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(0, -bboxSize.y/2, 0)), bboxSize, new Vec3(0, -1, 0), 'x', 'z');
+
+    hits.forEach(function(hit) {
+      hit._distance = hit.distance(self.origin);
+    });
+
+    hits.sort(function(a, b) {
+      return (a._distance - b._distance);
+    });
+
+    hits.forEach(function(hit) {
+      delete hit._distance;
+    });
+
+    if (hits.length > 0) {
+      hits = [hits[0]];
+    }
+    return hits;
+  }
+
   return Ray;
 });
