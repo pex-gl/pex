@@ -55,6 +55,9 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       else {
         val = options.min + val * (options.max - options.min);
       }
+      if (options && options.step) {
+        val = val - val % options.step;
+      }
     }
     this.contextObject[this.attributeName] = val;
   }
