@@ -80,7 +80,15 @@ define (require) ->
           @gl.drawElements(@primitiveType, @geometry.edges.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
       else if @geometry.vertices
         num = @geometry.vertices.buffer.dataBuf.length / 3
-        @gl.drawArrays(@primitiveType, 0, num)
+        num /= 3 if (@primitiveType == @gl.TRIANGLES)
+        num /= 2 if (@primitiveType == @gl.LINES)
+        #@gl.drawArrays(@primitiveType, 0, num)
+        for instance in instances
+          if camera
+            @updateMatrices camera, instance
+            @updateMatricesUniforms @material
+            @material.use()
+          @gl.drawArrays(@primitiveType, 0, num)
 
       @unbindAttribs()
 
@@ -90,7 +98,6 @@ define (require) ->
       for name, attrib of @geometry.attribs
         # TODO:this should go another way instad of searching for mesh atribs in shader look for required attribs by shader inside mesh
         attrib.location = @gl.getAttribLocation(program.handle, attrib.name) # if attrib.location is 'undefined' or attrib.location is -1
-
         if attrib.location >= 0
           @gl.bindBuffer(@gl.ARRAY_BUFFER, attrib.buffer.handle)
           @gl.vertexAttribPointer(attrib.location, attrib.buffer.elementSize, @gl.FLOAT, false, 0, 0)
