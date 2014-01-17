@@ -18,7 +18,7 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
 4. Click File->Open and choose one of Pex examples e.g. pex-master/examples/basic/basic.js
 5. You should see a cube. You can rotate it by dragging the mouse.
 
-# How to use Pex in Plask from scratch?
+# How to use Pex in Plask?
 
 1. Make sure the example from above runs
 2. Create new folder
@@ -47,7 +47,7 @@ pex.sys.Window.create({
 5. Open main.js with PlaskLauncher.
 6. You should see a window with grey background
 
-# How to use Pex in the browser from scratch?
+# How to use Pex in WebGL capable browser?
 1. Follow steps 1-4 from "How to use in Plask from scratch?"
 2. In the same folder copy require.js from pex-master/build/require.js
 3. Create index.html in the same folder with the following code:
