@@ -139,3 +139,8 @@ define (require) ->
 
     toString: () ->
       "{#{@x},#{@y},#{@z}}"
+
+
+    Vec3.Zero = new Vec3(0, 0, 0)
+
+    Vec3
