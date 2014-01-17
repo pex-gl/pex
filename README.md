@@ -25,24 +25,24 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
 3. Copy there pex.js from pex-master/build/pex.js
 4. Create main.js in the same folder and copy this code:
 
-	    ```JavaScript
-	    var pex = require('pex.js');
-	
-	    pex.sys.Window.create({
-	      settings: {
-	        width: 1280,
-	        height: 720
-	      },
-	      init: function() {
-	        //your setup things like texture loading goes here
-	      },
-	      draw: function() {
-	        this.gl.clearColor(0.3,0.3,0.3,1);
-	        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-	        //your drawing code goes here
-	      }
-	    });
-	    ```
+```JavaScript
+var pex = require('pex.js');
+
+pex.sys.Window.create({
+  settings: {
+    width: 1280,
+    height: 720
+  },
+  init: function() {
+    //your setup things like texture loading goes here
+  },
+  draw: function() {
+    this.gl.clearColor(0.3,0.3,0.3,1);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    //your drawing code goes here
+  }
+});
+```
 
 5. Open main.js with PlaskLauncher.
 6. You should see a window with grey background
@@ -52,20 +52,20 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
 2. In the same folder copy require.js from pex-master/build/require.js
 3. Create index.html in the same folder with the following code:
 
-	    ```HTML
-	    <!doctype html>
-	    <html lang="en">
-	    <head>
-	      <meta charset="UTF-8">
-	      <title>Pex</title>
-	      <script type="text/javascript" src="require.js"></script>
-	      <script type="text/javascript" src="pex.js"></script>
-	      <script type="text/javascript" src="main.js"></script>
-	    </head>
-	    <body>
-	    </body>
-	    </html>
-	    ```
+```HTML
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pex</title>
+  <script type="text/javascript" src="require.js"></script>
+  <script type="text/javascript" src="pex.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+</head>
+<body>
+</body>
+</html>
+```
 
 4. Open index.html in the browser
 5. You should see a grey rectangle
