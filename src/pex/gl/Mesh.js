@@ -72,6 +72,7 @@ define(function(require) {
           if (camera) {
             this.updateMatrices(camera, instance);
             this.updateMatricesUniforms(this.material);
+            this.updateUniforms(this.material, instance);
             this.material.use();
           }
           this.gl.drawElements(this.primitiveType, this.geometry.faces.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
@@ -154,6 +155,18 @@ define(function(require) {
         this.modelViewMatrix.copy(camera.getViewMatrix()).mul(this.modelWorldMatrix);
         return this.normalMatrix.copy(this.modelViewMatrix).invert().transpose();
       }
+    };
+
+    Mesh.prototype.updateUniforms = function(material, instance) {
+      var uniformName, uniformValue, _ref1, _results;
+
+      _ref1 = instance.uniforms;
+      _results = [];
+      for (uniformName in _ref1) {
+        uniformValue = _ref1[uniformName];
+        _results.push(material.uniforms[uniformName] = uniformValue);
+      }
+      return _results;
     };
 
     Mesh.prototype.updateMatricesUniforms = function(material) {

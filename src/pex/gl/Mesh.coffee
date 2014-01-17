@@ -67,6 +67,7 @@ define (require) ->
           if camera
             @updateMatrices camera, instance
             @updateMatricesUniforms @material
+            @updateUniforms @material, instance
             @material.use()
           @gl.drawElements(@primitiveType, @geometry.faces.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
       else if @geometry.edges && @useEdges
@@ -131,6 +132,10 @@ define (require) ->
           .copy(@modelViewMatrix)
           .invert()
           .transpose()
+
+    updateUniforms: (material, instance) ->
+      for uniformName, uniformValue of instance.uniforms
+        material.uniforms[uniformName] = uniformValue
 
     updateMatricesUniforms: (material) ->
       programUniforms = @material.program.uniforms
