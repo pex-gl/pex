@@ -1,4 +1,7 @@
 define (require) ->
+  MathUtils = require 'pex/utils/MathUtils'
+  { clamp } = MathUtils
+
   #Color class
   class Color
     r: 0
@@ -17,6 +20,20 @@ define (require) ->
       @b = b
       @a = a
       @a = 1 if !a?
+      this
+
+    # We basically just make the ramp curves using builtins, see:
+    #http://en.wikipedia.org/wiki/File:HSV-RGB-comparison.svg
+    setHSV: (h, s, v) ->
+      h6 = h * 6.0
+      r = clamp(h6 - 4.0, 0.0, 1.0) - clamp(h6 - 1.0, 0.0, 1.0) + 1.0
+      g = clamp(h6, 0.0, 1.0) - clamp(h6 - 3.0, 0.0, 1.0)
+      b = clamp(h6 - 2.0, 0.0, 1.0) - clamp(h6 - 5.0, 0.0, 1.0)
+      #Map from 0 .. 1 to v(1-s) .. v.
+      #rgb * (v - (v*(1-s)) + (v*(1-s)) #becomes rgb / (v*s) + (v*(1-s)).
+      @r = r * v * s + (v * (1.0 - s))
+      @g = g * v * s + (v * (1.0 - s))
+      @b = b * v * s + (v * (1.0 - s))
       this
 
     copy: (c) ->
