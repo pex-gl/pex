@@ -101,12 +101,12 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     faces.forEach(function(f) {
       var faceVertexCount = f.getAllVertices().length;
       if (faceVertexCount == 3) numVertices += 3;
-      else if (faceVertexCount == 4) numVertices += 6;
+      else if (faceVertexCount == 4) numVertices += 4;
       if (f.color) hasFaceColors = true;
     });
 
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors})
+      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors, faces:true})
     }
 
     var positions = geometry.vertices;
@@ -126,10 +126,12 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
     if (geometry.colors) geometry.colors.dirty = true;
+    geometry.faces.dirty = true;
     geometry.faces.length = []
 
     var vertexIndex = 0;
-    var face4Swizzle = [0, 1, 3, 3, 1, 2];
+    //var face4Swizzle = [0, 1, 3, 3, 1, 2];
+    var face4Swizzle = [0, 1, 2, 3];
 
     for(var i in faces) {
       var face = faces[i];
@@ -147,10 +149,11 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
             else colors[vertexIndex+j].copy(c);
           }
         }
+        geometry.faces.push(new Face3(vertexIndex, vertexIndex+1, vertexIndex+2))
         vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
-        for(var j=0; j<6; j++) {
+        for(var j=0; j<4; j++) {
           if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
           else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
@@ -161,7 +164,8 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
             else colors[vertexIndex+j].copy(c);
           }
         }
-        vertexIndex += 6;
+        geometry.faces.push(new Face4(vertexIndex, vertexIndex+1, vertexIndex+2, vertexIndex+3))
+        vertexIndex += 4;
       }
       else {
         console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
