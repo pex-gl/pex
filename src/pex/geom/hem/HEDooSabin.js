@@ -16,7 +16,7 @@ define([
   HEMesh.prototype.smoothDooSabin = function(depth) {
     if (depth) this.depth = depth;
 
-    this.clearSelection();
+    this.clearMarking();
     //keep these numbers to iterate only over original faces/edges/vertices
     var numFaces = this.faces.length;
     var numEdges = this.edges.length;
@@ -91,10 +91,10 @@ define([
     var edgeFaces = 0;
     for(i=0; i<numEdges; i++) {
       var edge = this.edges[i];
-      if (edge.selected) continue;
+      if (edge.marked) continue;
 
-      edge.selected = true;
-      edge.pair.selected = true;
+      edge.marked = true;
+      edge.pair.marked = true;
 
       var a = edge.edgeFacePoint;
       var b = edge.next.edgeFacePoint;
