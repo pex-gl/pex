@@ -119,5 +119,20 @@ define(['pex/geom/hem/HEMesh', 'pex/utils/ArrayUtils'], function(HEMesh, ArrayUt
     return selectedVertexCount + selectedEdgesCount + selectedFacesCount > 0;
   };
 
+  HEMesh.prototype.selectVerticesBy = function(filter) {
+    this.vertices.filter(filter).forEach(function(vert) { vert.selected = true; });
+    return this;
+  }
+
+  HEMesh.prototype.selectEdgesBy = function(filter) {
+    this.edges.filter(filter).forEach(function(v) { edge.selected = true; });
+    return this;
+  }
+
+  HEMesh.prototype.selectFacesBy = function(filter) {
+    this.faces.filter(filter).forEach(function(face) { face.selected = true; });
+    return this;
+  }
+
   return HESelection;
 });
