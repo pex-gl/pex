@@ -97,7 +97,7 @@ define(function(require) {
       var program;
 
       program = new Program();
-      return IO.loadTextFile(url, function(source) {
+      IO.loadTextFile(url, function(source) {
         Log.message("Program.Compiling " + url);
         program.addSources(source);
         program.link();
@@ -121,6 +121,7 @@ define(function(require) {
           });
         }
       });
+      return program;
     };
 
     Program.makeUniformSetter = function(gl, type, location) {

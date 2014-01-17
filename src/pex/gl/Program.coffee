@@ -108,6 +108,7 @@ define (require) ->
               Log.message(e)
           )
       )
+      program
 
     @makeUniformSetter = (gl, type, location) ->
       setterFun = null;
