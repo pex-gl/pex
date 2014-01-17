@@ -245,11 +245,14 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
       if (obj.settings.type == '3d') {
         try {
-          gl = canvas.getContext('experimental-webgl'); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+          gl = canvas.getContext('experimental-webgl', {antialias: true}); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
         }
         catch(err){
           console.error(err.message);
           return;
+        }
+        if (gl == null) {
+          throw 'No WebGL context is available.'
         }
       }
       else if (obj.settings.type == '2d') {
