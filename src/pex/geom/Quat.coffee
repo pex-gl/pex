@@ -20,6 +20,19 @@ define (require) ->
       tolerance = if tolerance? then tolerance else 0.0000001
       (Math.abs(q.x - @x) <= tolerance) && (Math.abs(q.y - @y) <= tolerance) && (Math.abs(q.z - @z) <= tolerance) && (Math.abs(q.w - @w) <= tolerance)
 
+    copy: (q) ->
+      @x = q.x
+      @y = q.y
+      @z = q.z
+      @w = q.w
+      this
+
+    clone: () ->
+      new Quat(@x, @y, @z)
+
+    dup: () ->
+      @clone()
+
     setAxisAngle: (v, a) ->
       a = a * 0.5
       s = Math.sin( a / 180 * Math.PI )
