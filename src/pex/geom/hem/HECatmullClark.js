@@ -14,6 +14,8 @@ define([
   function CatmullClark() {
   }
 
+  //Catmull Clark subdivision
+  //Edges and vertices support 'sharp' property. If set to true, they won't be smoothened out
   HEMesh.prototype.catmullClark = function() {
     this.clearMarking();
 
@@ -37,9 +39,15 @@ define([
       var edgePoint = Vec3.create();
       edgePoint.add(edge.vert.position);
       edgePoint.add(edge.next.vert.position);
-      edgePoint.add(edge.face.facePoint);
-      edgePoint.add(edge.pair.face.facePoint);
-      edgePoint.scale(1/4);
+
+      if (edge.sharp) {
+        edgePoint.scale(1/2);
+      }
+      else {
+        edgePoint.add(edge.face.facePoint);
+        edgePoint.add(edge.pair.face.facePoint);
+        edgePoint.scale(1/4);
+      }
 
       edge.edgePoint = edgePoint;
       edge.pair.edgePoint = edge.edgePoint;
@@ -51,20 +59,42 @@ define([
       var face = faceEdge.face;
       var F = Vec3.create(); //average facePoint of neighbor faces
       var R = Vec3.create(); //average edgePoint of neighbor edges
+      var sharpEdges = [];
       var n = 0; //num faces/edges
+      var numSharpEdges = 0;
+      var newVert;
+
       do {
         F.add(face.facePoint);
         R.add(faceEdge.edgePoint);
+        if (faceEdge.sharp) {
+          sharpEdges.push(faceEdge);
+          numSharpEdges++;
+        }
         ++n
         faceEdge = faceEdge.pair.next;
         face = faceEdge.face;
       } while(faceEdge != vertex.edge);
-      F.scale(1/n)
-      R.scale(1/n)
 
-      var newVert = Vec3.create().asAdd(F, R);
-      var scaledVertex = vertex.position.clone().scale(n - 2);
-      newVert.add(scaledVertex).scale(1/n);
+      if (!vertex.sharp && numSharpEdges < 2) {
+        F.scale(1/n);
+        R.scale(1/n);
+        newVert = Vec3.create().asAdd(F, R);
+        var scaledVertex = vertex.position.clone().scale(n - 2);
+        newVert.add(scaledVertex).scale(1/n);
+      }
+      else if (!vertex.sharp && numSharpEdges == 2) {
+        newVert = Vec3.create();
+        for(var j=0; j<2; j++) {
+          if (sharpEdges[j].vert == vertex) newVert.add(sharpEdges[j].next.vert.position.dup().scale(1/8));
+          else newVert.add(sharpEdges[j].findPrev().vert.position.dup().scale(1/8));
+        }
+        newVert.add(vertex.position.dup().scale(3/4));
+      }
+      else {
+        //else do nothing
+        newVert = vertex.position;
+      }
 
       //we can't simply duplicate vertex and make operations on it
       //as dup() returns Vec3 not HEVertex
@@ -81,6 +111,10 @@ define([
       delete edge.edgePoint;
       delete edge.pair.edgePoint;
       var newEdge = this.splitVertex(edge.vert, edgePoint, edge, edge);
+      if (edge.sharp) {
+        newEdge.sharp = true;
+        edge.pair.sharp = true;
+      }
       edge.edgePointVertex = newEdge.next.vert;
     }
 
