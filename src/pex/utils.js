@@ -7,9 +7,10 @@ define(
     'pex/utils/MathUtils',
     'pex/utils/ArrayUtils',
     'pex/utils/ObjReader',
-    'pex/utils/ObjWriter'
+    'pex/utils/ObjWriter',
+    'pex/utils/MovieRecorder'
   ],
-  function(Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter) {
+  function(Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter, MovieRecorder) {
     return {
       Log : Log,
       Time : Time,
@@ -17,7 +18,8 @@ define(
       MathUtils : MathUtils,
       ArrayUtils : ArrayUtils,
       ObjReader : ObjReader,
-      ObjWriter : ObjWriter
+      ObjWriter : ObjWriter,
+      MovieRecorder : MovieRecorder
     };
   }
 );
