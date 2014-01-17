@@ -12,7 +12,7 @@ varying vec4 vColor;
 void main() {
   vec4 pos = modelViewMatrix * vec4(position, 1.0);
   gl_Position = projectionMatrix * pos;
-  float depth = clamp((-pos.z - near) / (far - near), 0, 1);
+  float depth = clamp((-pos.z - near) / (far - near), 0.0, 1.0);
   vColor = mix(nearColor, farColor, depth);
 }
 
