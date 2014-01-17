@@ -14,7 +14,6 @@ pex.sys.Window.create({
     this.camera = new pex.scene.PerspectiveCamera(60, this.width/this.height);
     this.arcball = new pex.scene.Arcball(this, this.camera, 2);
     this.mesh = new pex.gl.Mesh(new pex.geom.gen.Cube(), new pex.materials.ShowNormals());
-    this.mesh.position = new pex.geom.Vec3(1, 0, 0)
     this.mesh.rotation = new pex.geom.Quat().setAxisAngle(new pex.geom.Vec3(1, 0, 0), 45)
     this.framerate(60);
   },
