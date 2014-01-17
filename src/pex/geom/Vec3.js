@@ -65,7 +65,7 @@ define(function(require) {
       dx = v.x - this.x;
       dy = v.y - this.y;
       dz = v.z - this.z;
-      return dx * dx + dy * dy;
+      return dx * dx + dy * dy + dz * dz;
     };
 
     Vec3.prototype.copy = function(v) {
@@ -187,6 +187,10 @@ define(function(require) {
     Vec3.prototype.toString = function() {
       return "{" + this.x + "," + this.y + "," + this.z + "}";
     };
+
+    Vec3.Zero = new Vec3(0, 0, 0);
+
+    Vec3;
 
     return Vec3;
 

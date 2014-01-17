@@ -46,7 +46,7 @@ define (require) ->
       dx = v.x - @x
       dy = v.y - @y
       dz = v.z - @z
-      return dx * dx + dy * dy
+      return dx * dx + dy * dy + dz * dz
 
     copy: (v) ->
       @x = v.x
