@@ -47,7 +47,7 @@ pex.sys.Window.create({
 5. Open main.js with PlaskLauncher.
 6. You should see a window with grey background
 
-# How to use Pex in WebGL capable browser?
+# How to use Pex in the browser*?
 1. Follow steps 1-4 from "How to use in Plask from scratch?"
 2. In the same folder copy require.js from pex-master/build/require.js
 3. Create index.html in the same folder with the following code:
@@ -70,9 +70,20 @@ pex.sys.Window.create({
 4. Open index.html in the browser
 5. You should see a grey rectangle
 
+* the borwser must support WebGL in order for Pex to work.
+
 ## Using with Sublime Text
 
-Opening and relaunching with PlaskLauncher
+Opening and relaunching with PlaskLauncher is tedious so I created a Build System
+
+`Plask.sublime-build`
+
+```JSON
+{
+  "cmd" : ["/path/to/PlaskLauncher.app/Contents/Resources/Plask.app/Contents/MacOS/Plask", "$file"]
+}
+```
+
 
 ## FAQ
 
