@@ -22,8 +22,8 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
 
 1. Make sure the example from above runs
 2. Create new folder
-3. Copy there pex.js from pex-master/build/pex.js
-4. Create main.js in the same folder and copy this code:
+3. Copy there `pex.js` from pex-master/build/pex.js
+4. Create `main.js` in the same folder and copy this code:
 
 ```JavaScript
 var pex = require('pex.js');
@@ -49,8 +49,8 @@ pex.sys.Window.create({
 
 # How to use Pex in the browser*?
 1. Follow steps 1-4 from "How to use in Plask from scratch?"
-2. In the same folder copy require.js from pex-master/build/require.js
-3. Create index.html in the same folder with the following code:
+2. In the same folder copy `require.js` from pex-master/build/require.js
+3. Create `index.html` in the same folder with the following code:
 
 ```HTML
 <!doctype html>
@@ -67,7 +67,7 @@ pex.sys.Window.create({
 </html>
 ```
 
-4. Open index.html in the browser
+4. Open `index.html` in the browser
 5. You should see a grey rectangle
 
 * the borwser must support WebGL in order for Pex to work.
@@ -87,9 +87,7 @@ Opening and relaunching with PlaskLauncher is tedious so I created a Build Syste
 }
 ```
 
-
 ## FAQ
-
 
 **How does it compare to ThreeJS?**
 
