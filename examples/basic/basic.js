@@ -17,7 +17,6 @@ pex.sys.Window.create({
     this.mesh.rotation = new pex.geom.Quat().setAxisAngle(new pex.geom.Vec3(1, 0, 0), 45)
     this.framerate(60);
   },
-  dates:[],
   draw: function() {
     var gl = pex.gl.Context.currentContext.gl;
     gl.clearColor(0, 0, 0, 1);
