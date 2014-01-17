@@ -39,8 +39,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   function makeMouseDownHandler(canvas) {
     canvas.addEventListener('mousedown', function(e) {
       fireEvent('leftMouseDown', {
-        x: (e.offsetX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
-        y: (e.offsetY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
+        x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
+        y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
@@ -51,8 +51,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   function makeMouseUpHandler(canvas) {
     canvas.addEventListener('mouseup', function(e) {
       fireEvent('leftMouseUp', {
-        x: (e.offsetX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
-        y: (e.offsetY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
+        x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
+        y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
@@ -66,16 +66,16 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
     var py = 0;
     canvas.addEventListener('mousedown', function(e) {
       down = true;
-      px = (e.offsetX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
-      py = (e.offsetY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
+      px = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
+      py = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
     });
     canvas.addEventListener('mouseup', function(e) {
       down = false;
     });
     canvas.addEventListener('mousemove', function(e) {
       if (down) {
-        var x = (e.offsetX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
-        var y = (e.offsetY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
+        var x = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
+        var y = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
         fireEvent('mouseDragged', {
           x: x,
           y: y,
@@ -94,8 +94,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
   function makeMouseMovedHandler(canvas) {
     canvas.addEventListener('mousemove', function(e) {
       fireEvent('mouseMoved', {
-        x: (e.offsetX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
-        y: (e.offsetY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
+        x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
+        y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
