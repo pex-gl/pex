@@ -47,7 +47,7 @@ define(['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2D, Vec2) {
     return this.center;
   }
 
-  Polygon2D.prototype.clip = function(clippingPolygon2D) {
+  Polygon2D.prototype.clip = function(clippingShape) {
     var clippedVertices = [];
     var vertices = this.vertices;
 
@@ -82,6 +82,40 @@ define(['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2D, Vec2) {
       vertices = clippedVertices;
       clippedVertices = [];
     }
+
+    return new Polygon2D(vertices);
+  }
+
+  Polygon2D.prototype.clipToLine = function(clippingLine) {
+    var clippedVertices = [];
+    var vertices = this.vertices;
+
+    var clippingEdge = clippingLine;
+    for(var j=0; j<vertices.length; j++) {
+      var start = vertices[(j - 1 + vertices.length) % vertices.length];
+      var end = vertices[j];
+      var isStartInside = clippingEdge.isPointOnTheLeftSide(start);
+      var isEndInside = clippingEdge.isPointOnTheLeftSide(end);
+      //console.log(start, end);
+      if (isStartInside && isEndInside) {
+        clippedVertices.push(end);
+        prevStart = end;
+      }
+      else if (isStartInside && !isEndInside) {
+        intersection = clippingEdge.intersect(new Line2D(start, end));
+        clippedVertices.push( intersection );
+      }
+      else if (!isStartInside && !isEndInside) {
+        //do nothing
+        prevStart = null;
+      }
+      else if (!isStartInside && isEndInside) {
+        var intersection = clippingEdge.intersect(new Line2D(start, end));
+        clippedVertices.push( intersection );
+        clippedVertices.push( end );
+      }
+    }
+    vertices = clippedVertices;
 
     return new Polygon2D(vertices);
   }
