@@ -517,7 +517,12 @@ define('pex/geom/Vec2',['require'],function(require) {
     };
 
     Vec2.prototype.normalize = function() {
-      this.scale(1 / this.length());
+      var len;
+
+      len = this.length();
+      if (len > 0) {
+        this.scale(1 / len);
+      }
       return this;
     };
 
@@ -675,7 +680,12 @@ define('pex/geom/Vec3',['require'],function(require) {
     };
 
     Vec3.prototype.normalize = function() {
-      this.scale(1 / this.length());
+      var len;
+
+      len = this.length();
+      if (len > 0) {
+        this.scale(1 / len);
+      }
       return this;
     };
 
@@ -3822,6 +3832,8 @@ define('pex/geom/hem/HECatmullClark',[
   function CatmullClark() {
   }
 
+  //Catmull Clark subdivision
+  //Edges and vertices support 'sharp' property. If set to true, they won't be smoothened out
   HEMesh.prototype.catmullClark = function() {
     this.clearMarking();
 
@@ -7419,7 +7431,7 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
     };
 
     Mesh.prototype.drawInstances = function(camera, instances) {
-      var instance, num, _i, _j, _len, _len1;
+      var instance, num, _i, _j, _k, _len, _len1, _len2;
 
       if (this.geometry.isDirty()) {
         this.geometry.compile();
@@ -7451,7 +7463,21 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
         }
       } else if (this.geometry.vertices) {
         num = this.geometry.vertices.buffer.dataBuf.length / 3;
-        this.gl.drawArrays(this.primitiveType, 0, num);
+        if (this.primitiveType === this.gl.TRIANGLES) {
+          num /= 3;
+        }
+        if (this.primitiveType === this.gl.LINES) {
+          num /= 2;
+        }
+        for (_k = 0, _len2 = instances.length; _k < _len2; _k++) {
+          instance = instances[_k];
+          if (camera) {
+            this.updateMatrices(camera, instance);
+            this.updateMatricesUniforms(this.material);
+            this.material.use();
+          }
+          this.gl.drawArrays(this.primitiveType, 0, num);
+        }
       }
       return this.unbindAttribs();
     };
