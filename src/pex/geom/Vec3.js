@@ -143,7 +143,12 @@ define(function(require) {
     };
 
     Vec3.prototype.normalize = function() {
-      this.scale(1 / this.length());
+      var len;
+
+      len = this.length();
+      if (len > 0) {
+        this.scale(1 / len);
+      }
       return this;
     };
 

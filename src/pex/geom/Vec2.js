@@ -92,7 +92,12 @@ define(function(require) {
     };
 
     Vec2.prototype.normalize = function() {
-      this.scale(1 / this.length());
+      var len;
+
+      len = this.length();
+      if (len > 0) {
+        this.scale(1 / len);
+      }
       return this;
     };
 

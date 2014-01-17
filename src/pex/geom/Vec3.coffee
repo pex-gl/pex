@@ -106,7 +106,8 @@ define (require) ->
       @x*@x + @y*@y + @z*@z
 
     normalize: () ->
-      @scale(1 / @length())
+      len = @length()
+      if len > 0 then @scale(1 / len)
       this
 
     transformQuat: (q) ->

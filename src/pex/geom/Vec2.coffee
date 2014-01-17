@@ -69,7 +69,8 @@ define (require) ->
       Math.sqrt(@x*@x + @y*@y)
 
     normalize: () ->
-      @scale(1/@length())
+      len = @length()
+      if len > 0 then @scale(1/len)
       this
 
     toString: () ->
