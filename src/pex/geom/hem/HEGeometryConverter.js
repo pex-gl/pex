@@ -222,16 +222,18 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     return geometry;
   }
 
-  HEMesh.prototype.toEdgesGeometry = function(offset) {
+  HEMesh.prototype.toEdgesGeometry = function(offset, normalOffset) {
     offset = (offset !== undefined) ? offset : 0.1;
+    normalOffset = (normalOffset !== undefined) ? normalOffset : 0.001;
     var lineBuilder = new LineBuilder();
 
     var a = Vec3.create();
     var b = Vec3.create();
     this.edges.forEach(function(e) {
       var center = e.face.getCenter();
-      a.asSub(center, e.vert.position).scale(offset).add(e.vert.position);
-      b.asSub(center, e.next.vert.position).scale(offset).add(e.next.vert.position);
+      var offsetNormal = e.face.getNormal().dup().scale(normalOffset);
+      a.asSub(center, e.vert.position).normalize().scale(offset).add(e.vert.position).add(offsetNormal);
+      b.asSub(center, e.next.vert.position).normalize().scale(offset).add(e.next.vert.position).add(offsetNormal);
       lineBuilder.addLine(a, b);
     });
     return lineBuilder;
