@@ -29,6 +29,22 @@ define(function(require) {
       return (Math.abs(q.x - this.x) <= tolerance) && (Math.abs(q.y - this.y) <= tolerance) && (Math.abs(q.z - this.z) <= tolerance) && (Math.abs(q.w - this.w) <= tolerance);
     };
 
+    Quat.prototype.copy = function(q) {
+      this.x = q.x;
+      this.y = q.y;
+      this.z = q.z;
+      this.w = q.w;
+      return this;
+    };
+
+    Quat.prototype.clone = function() {
+      return new Quat(this.x, this.y, this.z);
+    };
+
+    Quat.prototype.dup = function() {
+      return this.clone();
+    };
+
     Quat.prototype.setAxisAngle = function(v, a) {
       var s;
 
