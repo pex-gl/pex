@@ -6,6 +6,7 @@ define (require) ->
   Face3 = require('pex/geom/Face3')
   Face4 = require('pex/geom/Face4')
   Color = require('pex/color/Color')
+  MathUtils = require('pex/utils/MathUtils')
 
   class Geometry
     constructor: ({vertices, normals, texCoords, tangents, colors, indices, edges, faces}) ->
@@ -93,3 +94,36 @@ define (require) ->
           @addEdge(a, b)
           @addEdge(b, c)
           @addEdge(c, a)
+
+    computeSmoothNormals: () ->
+      if !this.faces
+        throw 'Geometry.computeSmoothNormals no faces found'
+      if !this.normals
+        @addAttrib('normals', 'normal', null, false)
+
+      count = []
+
+      @vertices.forEach (v, i) =>
+        @normals.push(new Vec3(0, 0, 0))
+        count[i] = 0
+
+      #assume triangles for now
+      @faces.forEach (f) =>
+        a = @vertices[f.a]
+        b = @vertices[f.b]
+        c = @vertices[f.c]
+        ab = MathUtils.getTempVec3('ab').asSub(b, a).normalize()
+        ac = MathUtils.getTempVec3('ac').asSub(c, a).normalize()
+        n = Vec3.create().asCross(ab, ac)
+
+        @normals[f.a].add(n)
+        count[f.a]++
+        @normals[f.b].add(n)
+        count[f.b]++
+        @normals[f.c].add(n)
+        count[f.c]++
+
+      @normals.forEach (n, i) =>
+        n.scale(1 / count[i])
+
+
