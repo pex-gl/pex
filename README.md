@@ -80,7 +80,10 @@ Opening and relaunching with PlaskLauncher is tedious so I created a Build Syste
 
 ```JSON
 {
-  "cmd" : ["/path/to/PlaskLauncher.app/Contents/Resources/Plask.app/Contents/MacOS/Plask", "$file"]
+  "cmd" : [
+    "/path/to/PlaskLauncher.app/Contents/Resources/Plask.app/Contents/MacOS/Plask", 
+    "$file"
+  ]
 }
 ```
 
