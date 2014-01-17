@@ -34,8 +34,8 @@ define(function(require) {
         if (Platform.isPlask && obj.settings.type === '2d') {
           obj.ctx = new omgcanvas.CanvasContext(this.canvas);
         }
+        obj.framerate(60);
         if (obj.__init) {
-          obj.framerate(60);
           return obj.__init();
         }
       };
