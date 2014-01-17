@@ -24,6 +24,7 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
 2. Create new folder
 3. Copy there pex.js from pex-master/build/pex.js
 4. Create main.js in the same folder and copy this code:
+
     var pex = require('pex.js');
 
     pex.sys.Window.create({
@@ -40,6 +41,7 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
         //your drawing code goes here
       }
     });
+
 5. Open main.js with PlaskLauncher.
 6. You should see a window with grey background
 
@@ -60,6 +62,7 @@ http://www.flickr.com/photos/marcinignac/sets/72157629801608107/
     <body>
     </body>
     </html>
+
 4. Open index.html in the browser
 5. You should see a grey rectangle
 
