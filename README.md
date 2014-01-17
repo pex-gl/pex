@@ -10,6 +10,63 @@ http://marcinignac.com/projects/technology/webgl/
 http://variable.io/ (All WebGL projects)  
 http://www.flickr.com/photos/marcinignac/sets/72157629801608107/  
 
+## How to start?
+
+1. Download [latest Pex source](https://github.com/vorg/pex/archive/master.zip).
+2. Download [Plask](http://plask.org).
+3. Unpack .DMG and open PlaskLauncher.
+4. Click File->Open and choose one of Pex examples e.g. pex-master/examples/basic/basic.js
+5. You should see a cube. You can rotate it by dragging the mouse.
+
+# How to use Pex in Plask from scratch?
+
+1. Make sure the example from above runs
+2. Create new folder
+3. Copy there pex.js from pex-master/build/pex.js
+4. Create main.js in the same folder and copy this code:
+    var pex = require('pex.js');
+
+    pex.sys.Window.create({
+      settings: {
+        width: 1280,
+        height: 720
+      },
+      init: function() {
+        //your setup things like texture loading goes here
+      },
+      draw: function() {
+        this.gl.clearColor(0.3,0.3,0.3,1);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        //your drawing code goes here
+      }
+    });
+5. Open main.js with PlaskLauncher.
+6. You should see a window with grey background
+
+# How to use Pex in the browser from scratch?
+1. Follow steps 1-4 from "How to use in Plask from scratch?"
+2. In the same folder copy require.js from pex-master/build/require.js
+3. Create index.html in the same folder with the following code:
+
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Pex</title>
+      <script type="text/javascript" src="require.js"></script>
+      <script type="text/javascript" src="pex.js"></script>
+      <script type="text/javascript" src="main.js"></script>
+    </head>
+    <body>
+    </body>
+    </html>
+4. Open index.html in the browser
+5. You should see a grey rectangle
+
+## Using with Sublime Text
+
+Opening and relaunching with PlaskLauncher
+
 ## FAQ
 
 
