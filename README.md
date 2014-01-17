@@ -74,7 +74,7 @@ pex.sys.Window.create({
 
 ## Using with Sublime Text
 
-Opening and relaunching with PlaskLauncher is tedious so I created a Build System
+Opening and relaunching with PlaskLauncher is tedious so I [added a Build System](http://www.sublimetext.com/docs/build):
 
 `Plask.sublime-build`
 
