@@ -6,6 +6,7 @@ define(
     'pex/geom/Mat4',
     'pex/geom/Quat',
     'pex/geom/Geometry',
+    'pex/geom/GeometryOperations',
     'pex/geom/gen',
     'pex/geom/Edge',
     'pex/geom/Face3',
@@ -21,8 +22,8 @@ define(
     'pex/geom/Spline3D',
     'pex/geom/Ray'
   ],
-  function(Vec2, Vec3, Vec4, Mat4, Quat, Geometry, gen,
-    Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem, 
+  function(Vec2, Vec3, Vec4, Mat4, Quat, Geometry, GeometryOperations, gen,
+    Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem,
     BoundingBox, Octree, Spline3D, Ray) {
     return {
       Vec2 : Vec2,
@@ -31,6 +32,7 @@ define(
       Mat4 : Mat4,
       Quat : Quat,
       Geometry : Geometry,
+      GeometryOperations : GeometryOperations,
       gen : gen,
       Edge : Edge,
       Face3 : Face3,
