@@ -5,33 +5,36 @@ define (require) ->
 
   Geometry.prototype.translate = (v) ->
     @vertices.forEach (vert) -> vert.add(v)
+    return this
 
   Geometry.prototype.scale = (s) ->
     @vertices.forEach (vert) -> vert.scale(s)
+    return this
 
   Geometry.prototype.rotate = (q) ->
     @vertices.forEach (vert) -> vert.transformQuat(q)
+    return this
 
   Geometry.merge = (a, b) ->
-    vertices = a.vertices.concat(b.vertices);
+    vertices = a.vertices.concat(b.vertices).map (v) -> v.dup()
     geom = new Geometry({vertices:vertices})
-    vertexOffset = a.vertices.length;
+    vertexOffset = a.vertices.length
 
     if a.faces and b.faces
       faceOffset = a.faces.length
       faces = []
 
-      for i in [0..a.faces.length-1]
-        face = a.faces[i]
+      for face in a.faces
         if face instanceof Face3
           faces.push new Face3(face.a, face.b, face.c)
-        else faces.push new Face4(face.a, face.b, face.c, face.d)  if face instanceof Face4
+        if face instanceof Face4
+          faces.push new Face4(face.a, face.b, face.c, face.d)
 
-      for i in [0..b.faces.length-1]
-        face = b.faces[i]
+      for face in b.faces
         if face instanceof Face3
           faces.push new Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset)
-        else faces.push new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset)  if face instanceof Face4
+        if face instanceof Face4
+          faces.push new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset)
 
       geom.faces = faces
 
@@ -40,31 +43,34 @@ define (require) ->
     if a.normals and b.normals
       normals = []
 
-      for i in [0..a.normals.length-1]
-        normals.push(a.normals[i].dup())
+      for normal in a.normals
+        normals.push(normal.dup())
 
-      for i in [0..b.normals.length-1]
-        normals.push(b.normals[i].dup())
+      for normal in b.normals
+        normals.push(normal.dup())
+
       geom.addAttrib('normals', 'normal', normals)
 
     if a.texCoords and b.texCoords
       texCoords = []
 
-      for i in [0..a.texCoords.length-1]
-        texCoords.push(a.texCoords[i].dup())
+      for texCoord in a.texCoords
+        texCoords.push(texCoord.dup())
 
-      for i in [0..b.texCoords.length-1]
-        texCoords.push(b.texCoords[i].dup())
+      for texCoord in b.texCoords
+        texCoords.push(texCoord.dup())
+
       geom.addAttrib('texCoords', 'texCoord', texCoords)
 
     if a.colors and b.colors
       colors = []
 
-      for i in [0..a.colors.length-1]
-        colors.push(a.colors[i].dup())
+      for color in a.colors
+        colors.push(color.dup())
 
-      for i in [0..b.colors.length-1]
-        colors.push(b.colors[i].dup())
+      for color in b.colors
+        colors.push(color.dup())
+
       geom.addAttrib('colors', 'color', colors)
     geom
 

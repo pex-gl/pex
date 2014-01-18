@@ -2211,24 +2211,29 @@ define('pex/geom/GeometryOperations',['require','pex/geom/Face3','pex/geom/Face4
   Face4 = require('pex/geom/Face4');
   Geometry = require('pex/geom/Geometry');
   Geometry.prototype.translate = function(v) {
-    return this.vertices.forEach(function(vert) {
+    this.vertices.forEach(function(vert) {
       return vert.add(v);
     });
+    return this;
   };
   Geometry.prototype.scale = function(s) {
-    return this.vertices.forEach(function(vert) {
+    this.vertices.forEach(function(vert) {
       return vert.scale(s);
     });
+    return this;
   };
   Geometry.prototype.rotate = function(q) {
-    return this.vertices.forEach(function(vert) {
+    this.vertices.forEach(function(vert) {
       return vert.transformQuat(q);
     });
+    return this;
   };
   Geometry.merge = function(a, b) {
-    var colors, face, faceOffset, faces, geom, i, normals, texCoords, vertexOffset, vertices, _i, _j, _k, _l, _m, _n, _o, _p, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var color, colors, face, faceOffset, faces, geom, normal, normals, texCoord, texCoords, vertexOffset, vertices, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _len7, _m, _n, _o, _p, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
 
-    vertices = a.vertices.concat(b.vertices);
+    vertices = a.vertices.concat(b.vertices).map(function(v) {
+      return v.dup();
+    });
     geom = new Geometry({
       vertices: vertices
     });
@@ -2236,55 +2241,67 @@ define('pex/geom/GeometryOperations',['require','pex/geom/Face3','pex/geom/Face4
     if (a.faces && b.faces) {
       faceOffset = a.faces.length;
       faces = [];
-      for (i = _i = 0, _ref = a.faces.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-        face = a.faces[i];
+      _ref = a.faces;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        face = _ref[_i];
         if (face instanceof Face3) {
           faces.push(new Face3(face.a, face.b, face.c));
-        } else {
-          if (face instanceof Face4) {
-            faces.push(new Face4(face.a, face.b, face.c, face.d));
-          }
+        }
+        if (face instanceof Face4) {
+          faces.push(new Face4(face.a, face.b, face.c, face.d));
         }
       }
-      for (i = _j = 0, _ref1 = b.faces.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-        face = b.faces[i];
+      _ref1 = b.faces;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        face = _ref1[_j];
         if (face instanceof Face3) {
           faces.push(new Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset));
-        } else {
-          if (face instanceof Face4) {
-            faces.push(new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset));
-          }
+        }
+        if (face instanceof Face4) {
+          faces.push(new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset));
         }
       }
       geom.faces = faces;
     }
     if (a.normals && b.normals) {
       normals = [];
-      for (i = _k = 0, _ref2 = a.normals.length - 1; 0 <= _ref2 ? _k <= _ref2 : _k >= _ref2; i = 0 <= _ref2 ? ++_k : --_k) {
-        normals.push(a.normals[i].dup());
+      _ref2 = a.normals;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        normal = _ref2[_k];
+        normals.push(normal.dup());
       }
-      for (i = _l = 0, _ref3 = b.normals.length - 1; 0 <= _ref3 ? _l <= _ref3 : _l >= _ref3; i = 0 <= _ref3 ? ++_l : --_l) {
-        normals.push(b.normals[i].dup());
+      _ref3 = b.normals;
+      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+        normal = _ref3[_l];
+        normals.push(normal.dup());
       }
       geom.addAttrib('normals', 'normal', normals);
     }
     if (a.texCoords && b.texCoords) {
       texCoords = [];
-      for (i = _m = 0, _ref4 = a.texCoords.length - 1; 0 <= _ref4 ? _m <= _ref4 : _m >= _ref4; i = 0 <= _ref4 ? ++_m : --_m) {
-        texCoords.push(a.texCoords[i].dup());
+      _ref4 = a.texCoords;
+      for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+        texCoord = _ref4[_m];
+        texCoords.push(texCoord.dup());
       }
-      for (i = _n = 0, _ref5 = b.texCoords.length - 1; 0 <= _ref5 ? _n <= _ref5 : _n >= _ref5; i = 0 <= _ref5 ? ++_n : --_n) {
-        texCoords.push(b.texCoords[i].dup());
+      _ref5 = b.texCoords;
+      for (_n = 0, _len5 = _ref5.length; _n < _len5; _n++) {
+        texCoord = _ref5[_n];
+        texCoords.push(texCoord.dup());
       }
       geom.addAttrib('texCoords', 'texCoord', texCoords);
     }
     if (a.colors && b.colors) {
       colors = [];
-      for (i = _o = 0, _ref6 = a.colors.length - 1; 0 <= _ref6 ? _o <= _ref6 : _o >= _ref6; i = 0 <= _ref6 ? ++_o : --_o) {
-        colors.push(a.colors[i].dup());
+      _ref6 = a.colors;
+      for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
+        color = _ref6[_o];
+        colors.push(color.dup());
       }
-      for (i = _p = 0, _ref7 = b.colors.length - 1; 0 <= _ref7 ? _p <= _ref7 : _p >= _ref7; i = 0 <= _ref7 ? ++_p : --_p) {
-        colors.push(b.colors[i].dup());
+      _ref7 = b.colors;
+      for (_p = 0, _len7 = _ref7.length; _p < _len7; _p++) {
+        color = _ref7[_p];
+        colors.push(color.dup());
       }
       geom.addAttrib('colors', 'color', colors);
     }
