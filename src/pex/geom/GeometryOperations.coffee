@@ -1,6 +1,7 @@
 define (require) ->
   Face3 = require('pex/geom/Face3')
   Face4 = require('pex/geom/Face4')
+  Edge = require('pex/geom/Edge')
   Geometry = require('pex/geom/Geometry')
 
   Geometry.prototype.translate = (v) ->
@@ -21,7 +22,6 @@ define (require) ->
     vertexOffset = a.vertices.length
 
     if a.faces and b.faces
-      faceOffset = a.faces.length
       faces = []
 
       for face in a.faces
@@ -37,6 +37,17 @@ define (require) ->
           faces.push new Face4(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset, face.d + vertexOffset)
 
       geom.faces = faces
+
+    if a.edges and b.edges
+      edges = []
+
+      for edge in a.edges
+        edges.push new Edge(edge.a, edge.b)
+
+      for edge in b.edges
+        edges.push new Edge(edge.a + vertexOffset, edge.b + vertexOffset)
+
+      geom.edges = edges
 
     #attribs = ['']
 
