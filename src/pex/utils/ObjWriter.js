@@ -42,7 +42,11 @@ define(function(require) {
       });
       if (geometry.faces && geometry.faces.length > 0) {
         return geometry.faces.forEach(function(f) {
-          return s += 'f ' + (f.a + 1) + ' ' + (f.b + 1) + ' ' + (f.c + 1) + '\n';
+          s += 'f ' + (f.a + 1) + ' ' + (f.b + 1) + ' ' + (f.c + 1);
+          if (f.d) {
+            s += ' ' + (f.d + 1);
+          }
+          return s += '\n';
         });
       } else {
         _results = [];

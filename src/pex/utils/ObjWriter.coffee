@@ -37,7 +37,9 @@ define (require) ->
 
       if geometry.faces && geometry.faces.length > 0
         geometry.faces.forEach (f) ->
-          s += 'f ' + (f.a+1) + ' ' + (f.b+1) + ' ' + (f.c+1) + '\n'
+          s += 'f ' + (f.a+1) + ' ' + (f.b+1) + ' ' + (f.c+1)
+          if f.d then s += ' ' + (f.d+1)
+          s  += '\n'
       else
         for i in [0..geometry.vertices.length-1] by 3
           s += 'f ' + (vertexOffset+i+1) + ' ' + (vertexOffset+i+2) + ' ' + (vertexOffset+i+3) + '\n';
