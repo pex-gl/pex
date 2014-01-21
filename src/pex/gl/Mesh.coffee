@@ -76,6 +76,7 @@ define (require) ->
           if camera
             @updateMatrices camera, instance
             @updateMatricesUniforms @material
+            @updateUniforms @material, instance
             @material.use()
           @gl.drawElements(@primitiveType, @geometry.edges.buffer.dataBuf.length, @gl.UNSIGNED_SHORT, 0)
       else if @geometry.vertices
@@ -87,6 +88,7 @@ define (require) ->
           if camera
             @updateMatrices camera, instance
             @updateMatricesUniforms @material
+            @updateUniforms @material, instance
             @material.use()
           @gl.drawArrays(@primitiveType, 0, num)
 

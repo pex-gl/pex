@@ -84,6 +84,7 @@ define(function(require) {
           if (camera) {
             this.updateMatrices(camera, instance);
             this.updateMatricesUniforms(this.material);
+            this.updateUniforms(this.material, instance);
             this.material.use();
           }
           this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
@@ -101,6 +102,7 @@ define(function(require) {
           if (camera) {
             this.updateMatrices(camera, instance);
             this.updateMatricesUniforms(this.material);
+            this.updateUniforms(this.material, instance);
             this.material.use();
           }
           this.gl.drawArrays(this.primitiveType, 0, num);
