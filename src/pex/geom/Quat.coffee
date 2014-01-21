@@ -78,7 +78,7 @@ define (require) ->
       this
 
     mul: (q) ->
-      @mul2(this, q)
+      @asMul(this, q)
       this
 
     mul4: (x, y, z, w) ->

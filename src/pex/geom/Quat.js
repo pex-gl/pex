@@ -104,7 +104,7 @@ define(function(require) {
     };
 
     Quat.prototype.mul = function(q) {
-      this.mul2(this, q);
+      this.asMul(this, q);
       return this;
     };
 
