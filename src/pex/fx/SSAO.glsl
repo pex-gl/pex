@@ -78,8 +78,8 @@ void main() {
   float pw;
   float ph;
 
-  float ao;
-  float s;
+  float ao = 0.0;
+  float s = 0.0;
   float fade = 1.0;
 
   for (int i = 0 ; i < rings; i += 1)
