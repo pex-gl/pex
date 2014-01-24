@@ -20,7 +20,7 @@ define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Co
     return dirty;
   };
 
-  HTMLCanvasRenderer.prototype.draw = function(items) {
+  HTMLCanvasRenderer.prototype.draw = function(items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
@@ -39,12 +39,12 @@ define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Co
         dx = e.px;
         dy = e.py;
       }
-      var eh = 20;
+      var eh = 20 * scale;
 
-      if (e.type == "slider") eh = 34;
-      if (e.type == "button") eh = 24;
+      if (e.type == "slider") eh = 20 * scale + 14;
+      if (e.type == "button") eh = 24 * scale;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.56)";
       ctx.fillRect(dx, dy, w, eh - 2);
@@ -88,7 +88,7 @@ define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Co
       else if (e.type == "radiolist") {
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(e.title, dx + 5, dy + 13);
-        var itemHeight = 20;
+        var itemHeight = 20 * scale;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);

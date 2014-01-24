@@ -47,7 +47,7 @@
     return dirty;
   };
 
-  SkiaRenderer.prototype.draw = function(items) {
+  SkiaRenderer.prototype.draw = function(items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
@@ -66,13 +66,13 @@
         dx = e.px;
         dy = e.py;
       }
-      var eh = 20;
+      var eh = 20 * scale;
 
-      if (e.type == "slider") eh = 34;
-      if (e.type == "multislider") eh = 18 + e.getValue().length * 20;
-      if (e.type == "button") eh = 24;
+      if (e.type == "slider") eh = 20 * scale + 14;
+      if (e.type == "multislider") eh = 18 + e.getValue().length * 20 * scale;
+      if (e.type == "button") eh = 24 * scale;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
 
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
 
@@ -85,8 +85,8 @@
       }
       else if (e.type == "multislider") {
         for(var j=0; j<e.getValue().length; j++) {
-          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20, dx + w - 3, dy + 18 + (j+1)*20 - 6);
-          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20 - 6);
+          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20*scale, dx + w - 3, dy + 18 + (j+1)*20*scale - 6);
+          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20*scale, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20*scale - 6);
         }
         canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
@@ -113,7 +113,7 @@
       else if (e.type == "radiolist") {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         var itemColor = this.controlBgPaint;
-        var itemHeight = 20;
+        var itemHeight = 20 * scale;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);
