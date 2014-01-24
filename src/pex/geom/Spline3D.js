@@ -26,7 +26,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     this.points = points || [];
     this.dirtyLength = true;
     this.loop = loop || false;
-    this.samplesCount = 2000;
+    this.samplesCount = 100;
   }
 
   //### getPoint ( t )
