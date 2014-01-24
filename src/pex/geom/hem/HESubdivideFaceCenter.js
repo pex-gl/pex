@@ -14,11 +14,16 @@ define([
     var numFaces = this.faces.length;
     var edgesToSelect = [];
 
-    for(var i=0; i<numFaces; i++) {
-      var face = this.faces[i];
+    var faces = this.faces;
+    var selectedFaces = this.getSelectedFaces();
+    if (selectedFaces.length > 0) {
+      faces = selectedFaces;
+    }
+
+    faces.forEach(function(face, i) {
       var newEdge = this.splitFaceAtPoint(face, face.getCenter());
       edgesToSelect.push(newEdge);
-    }
+    }.bind(this));
 
     this.clearSelection();
     edgesToSelect.forEach(function(edge) {
