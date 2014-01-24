@@ -106,8 +106,7 @@ define (require) ->
           @gl.enableVertexAttribArray(attrib.location)
 
     unbindAttribs: () ->
-      for name of @attributes
-        attrib = @attributes[name]
+      for name, attrib of @geometry.attribs
         @gl.disableVertexAttribArray attrib.location  if attrib.location >= 0
 
     resetAttribLocations: () ->

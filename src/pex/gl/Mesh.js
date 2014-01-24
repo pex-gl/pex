@@ -132,11 +132,12 @@ define(function(require) {
     };
 
     Mesh.prototype.unbindAttribs = function() {
-      var attrib, name, _results;
+      var attrib, name, _ref1, _results;
 
+      _ref1 = this.geometry.attribs;
       _results = [];
-      for (name in this.attributes) {
-        attrib = this.attributes[name];
+      for (name in _ref1) {
+        attrib = _ref1[name];
         if (attrib.location >= 0) {
           _results.push(this.gl.disableVertexAttribArray(attrib.location));
         } else {
