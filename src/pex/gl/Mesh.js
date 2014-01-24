@@ -51,7 +51,7 @@ define(function(require) {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.edges.buffer.handle);
         this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
       } else if (this.geometry.vertices) {
-        num = this.geometry.vertices.buffer.dataBuf.length / 3;
+        num = this.geometry.vertices.length;
         this.gl.drawArrays(this.primitiveType, 0, num);
       }
       return this.unbindAttribs();
@@ -90,13 +90,7 @@ define(function(require) {
           this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
         }
       } else if (this.geometry.vertices) {
-        num = this.geometry.vertices.buffer.dataBuf.length / 3;
-        if (this.primitiveType === this.gl.TRIANGLES) {
-          num /= 3;
-        }
-        if (this.primitiveType === this.gl.LINES) {
-          num /= 2;
-        }
+        num = this.geometry.vertices.length;
         for (_k = 0, _len2 = instances.length; _k < _len2; _k++) {
           instance = instances[_k];
           if (camera) {
