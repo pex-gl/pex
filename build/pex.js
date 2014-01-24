@@ -4192,11 +4192,16 @@ define('pex/geom/hem/HESubdivideFaceCenter',[
     var numFaces = this.faces.length;
     var edgesToSelect = [];
 
-    for(var i=0; i<numFaces; i++) {
-      var face = this.faces[i];
+    var faces = this.faces;
+    var selectedFaces = this.getSelectedFaces();
+    if (selectedFaces.length > 0) {
+      faces = selectedFaces;
+    }
+
+    faces.forEach(function(face, i) {
       var newEdge = this.splitFaceAtPoint(face, face.getCenter());
       edgesToSelect.push(newEdge);
-    }
+    }.bind(this));
 
     this.clearSelection();
     edgesToSelect.forEach(function(edge) {
@@ -10042,7 +10047,7 @@ define(
     return dirty;
   };
 
-  SkiaRenderer.prototype.draw = function(items) {
+  SkiaRenderer.prototype.draw = function(items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
@@ -10061,13 +10066,13 @@ define(
         dx = e.px;
         dy = e.py;
       }
-      var eh = 20;
+      var eh = 20 * scale;
 
-      if (e.type == "slider") eh = 34;
-      if (e.type == "multislider") eh = 18 + e.getValue().length * 20;
-      if (e.type == "button") eh = 24;
+      if (e.type == "slider") eh = 20 * scale + 14;
+      if (e.type == "multislider") eh = 18 + e.getValue().length * 20 * scale;
+      if (e.type == "button") eh = 24 * scale;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
 
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
 
@@ -10080,8 +10085,8 @@ define(
       }
       else if (e.type == "multislider") {
         for(var j=0; j<e.getValue().length; j++) {
-          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20, dx + w - 3, dy + 18 + (j+1)*20 - 6);
-          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20 - 6);
+          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20*scale, dx + w - 3, dy + 18 + (j+1)*20*scale - 6);
+          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20*scale, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20*scale - 6);
         }
         canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
@@ -10108,7 +10113,7 @@ define(
       else if (e.type == "radiolist") {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         var itemColor = this.controlBgPaint;
-        var itemHeight = 20;
+        var itemHeight = 20 * scale;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);
@@ -10170,7 +10175,7 @@ define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/T
     return dirty;
   };
 
-  HTMLCanvasRenderer.prototype.draw = function(items) {
+  HTMLCanvasRenderer.prototype.draw = function(items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
@@ -10189,12 +10194,12 @@ define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/T
         dx = e.px;
         dy = e.py;
       }
-      var eh = 20;
+      var eh = 20 * scale;
 
-      if (e.type == "slider") eh = 34;
-      if (e.type == "button") eh = 24;
+      if (e.type == "slider") eh = 20 * scale + 14;
+      if (e.type == "button") eh = 24 * scale;
       if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20;
+      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.56)";
       ctx.fillRect(dx, dy, w, eh - 2);
@@ -10238,7 +10243,7 @@ define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/T
       else if (e.type == "radiolist") {
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fillText(e.title, dx + 5, dy + 13);
-        var itemHeight = 20;
+        var itemHeight = 20 * scale;
         for(var j=0; j<e.items.length; j++) {
           var item = e.items[j];
           var on = (e.contextObject[e.attributeName] == item.value);
@@ -10378,12 +10383,13 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     else return '';
   }
 
-  function GUI(window, x, y) {
+  function GUI(window, x, y, scale) {
     this.gl = Context.currentContext.gl;
     this.window = window;
     this.x = (x == undefined) ? 0 : x;
     this.y = (y == undefined) ? 0 : y;
     this.mousePos = Vec2.create();
+    this.scale = scale || 1;
 
     if (Platform.isPlask) {
       this.renderer = new SkiaRenderer(window.width, window.height);
@@ -10391,7 +10397,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     else if (Platform.isBrowser) {
       this.renderer = new HTMLCanvasRenderer(window.width, window.height);
     }
-    this.screenBounds = new Rect(this.x, this.y, window.width, window.height);
+    this.screenBounds = new Rect(this.x, this.y, window.width*this.scale, window.height*this.scale);
     this.screenImage = new ScreenImage(this.renderer.getTexture(), this.x, this.y, window.width, window.height, window.width, window.height);
 
     this.items = [];
@@ -10416,7 +10422,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
 
   GUI.prototype.onMouseDown = function(e) {
     this.activeControl = null;
-    this.mousePos.set(e.x - this.x, e.y - this.y);
+    this.mousePos.set(e.x/this.scale - this.x, e.y/this.scale - this.y);
     for(var i=0; i<this.items.length; i++) {
       if (this.items[i].activeArea.contains(this.mousePos)) {
         this.activeControl = this.items[i];
@@ -10452,7 +10458,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     if (this.activeControl) {
       var aa = this.activeControl.activeArea;
       if (this.activeControl.type == 'slider') {
-        var val = (e.x - aa.x) / aa.width;
+        var val = (e.x/this.scale - aa.x) / aa.width;
         val = Math.max(0, Math.min(val, 1));
         this.activeControl.setNormalizedValue(val);
         if (this.activeControl.onchange) {
@@ -10461,9 +10467,9 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
         this.activeControl.dirty = true;
       }
       else if (this.activeControl.type == 'multislider') {
-        var val = (e.x - aa.x) / aa.width;
+        var val = (e.x/this.scale - aa.x) / aa.width;
         val = Math.max(0, Math.min(val, 1));
-        var idx = Math.floor(this.activeControl.getValue().length * (e.y - aa.y) / aa.height);
+        var idx = Math.floor(this.activeControl.getValue().length * (e.y/this.scale - aa.y) / aa.height);
         this.activeControl.setNormalizedValue(val, idx);
         if (this.activeControl.onchange) {
           this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
@@ -10598,7 +10604,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     if (this.items.length == 0) {
       return;
     }
-    this.renderer.draw(this.items);
+    this.renderer.draw(this.items, this.scale);
     var gl = Context.currentContext.gl;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -10612,7 +10618,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     for(var i=0; i<this.items.length; i++) {
       var item = this.items[i];
       if (item.type == 'texture2D') {
-        var bounds = new Rect(item.activeArea.x, item.activeArea.y, item.activeArea.width, item.activeArea.height);
+        var bounds = new Rect(item.activeArea.x*this.scale, item.activeArea.y*this.scale, item.activeArea.width*this.scale, item.activeArea.height*this.scale);
         this.screenImage.setBounds(bounds);
         this.screenImage.setImage(item.texture);
         this.screenImage.draw();
