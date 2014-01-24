@@ -4855,7 +4855,7 @@ define('pex/geom/Spline3D',['pex/geom/Vec3'], function(Vec3) {
     this.points = points || [];
     this.dirtyLength = true;
     this.loop = loop || false;
-    this.samplesCount = 2000;
+    this.samplesCount = 100;
   }
 
   //### getPoint ( t )
@@ -7551,7 +7551,7 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.geometry.edges.buffer.handle);
         this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
       } else if (this.geometry.vertices) {
-        num = this.geometry.vertices.buffer.dataBuf.length / 3;
+        num = this.geometry.vertices.length;
         this.gl.drawArrays(this.primitiveType, 0, num);
       }
       return this.unbindAttribs();
@@ -7590,13 +7590,7 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
           this.gl.drawElements(this.primitiveType, this.geometry.edges.buffer.dataBuf.length, this.gl.UNSIGNED_SHORT, 0);
         }
       } else if (this.geometry.vertices) {
-        num = this.geometry.vertices.buffer.dataBuf.length / 3;
-        if (this.primitiveType === this.gl.TRIANGLES) {
-          num /= 3;
-        }
-        if (this.primitiveType === this.gl.LINES) {
-          num /= 2;
-        }
+        num = this.geometry.vertices.length;
         for (_k = 0, _len2 = instances.length; _k < _len2; _k++) {
           instance = instances[_k];
           if (camera) {
@@ -7632,11 +7626,12 @@ define('pex/gl/Mesh',['require','pex/gl/Context','pex/geom','pex/gl/RenderableGe
     };
 
     Mesh.prototype.unbindAttribs = function() {
-      var attrib, name, _results;
+      var attrib, name, _ref1, _results;
 
+      _ref1 = this.geometry.attribs;
       _results = [];
-      for (name in this.attributes) {
-        attrib = this.attributes[name];
+      for (name in _ref1) {
+        attrib = _ref1[name];
         if (attrib.location >= 0) {
           _results.push(this.gl.disableVertexAttribArray(attrib.location));
         } else {
@@ -9922,7 +9917,7 @@ define('pex/fx/Mult',['pex/fx/FXStage', 'lib/text!pex/fx/Mult.glsl'], function(F
     return this.asFXStage(rt, 'mult');
   }
 });
-define('lib/text!pex/fx/SSAO.glsl',[],function () { return '//based on http://blenderartists.org/forum/showthread.php?184102-nicer-and-faster-SSAO and http://www.pasteall.org/12299\n#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\n#define PI    3.14159265\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D depthTex;\nuniform vec2 textureSize;\nuniform float near;\nuniform float far;\n\nfloat near2 = 1;\nfloat far2 = 10;\n\nconst int samples = 5;\nconst int rings = 3;\n\n\nvec2 rand(vec2 coord)\n{\n  float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));\n  float noiseY = (fract(sin(dot(coord, vec2(12.9898,78.233) * 2.0)) * 43758.5453));\n  return vec2(noiseX,noiseY) * 0.004;\n}\n\nfloat unpackDepth(const in vec4 rgba_depth) {\n  const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);\n  float depth = dot(rgba_depth, bit_shift);\n  return depth;\n}\n\nfloat getDepth(vec2 coord) {\n  return unpackDepth(texture2D(depthTex, coord.xy));\n}\n\nfloat readDepth(vec2 coord) {\n  return (getDepth(coord) * far2 - near2)/(far2 - near2);\n}\n\nfloat compareDepths( in float depth1, in float depth2 )\n{\n  float aoCap = 1.0;\n  float aoMultiplier = 100.0;\n  float depthTolerance = 0.0001;\n  float aorange = 1.0;// units in space the AO effect extends to (this gets divided by the camera far range\n  float diff = sqrt(clamp(1.0-(depth1-depth2) / (aorange/(far-near)),0.0,1.0));\n  float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;\n  return ao;\n}\n\nvoid main() {\n  vec2 texCoord = vec2(gl_FragCoord.x / textureSize.x, gl_FragCoord.y / textureSize.y);\n  float depth = readDepth(texCoord);\n\n  float d;\n\n  float aspect = textureSize.x / textureSize.y;\n  vec2 noise = vec2(0.0, 0.0);//rand(vTexCoord);\n\n  float w = (1.0 / textureSize.x)/clamp(depth,0.05,1.0)+(noise.x*(1.0-noise.x));\n  float h = (1.0 / textureSize.y)/clamp(depth,0.05,1.0)+(noise.y*(1.0-noise.y));\n\n  float pw;\n  float ph;\n\n  float ao = 0.0;\n  float s = 0.0;\n  float fade = 1.0;\n\n  for (int i = 0 ; i < rings; i += 1)\n  {\n    fade *= 0.5;\n    for (int j = 0 ; j < samples*rings; j += 1)\n    {\n      if (j >= samples*i) break;\n      float step = PI * 2.0 / (float(samples) * float(i));\n      pw = (cos(float(j)*step) * float(i) * 0.5);\n      ph = (sin(float(j)*step) * float(i) * 0.5) * aspect;\n      d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));\n      ao += compareDepths(depth,d) * fade;\n      s += 1.0 * fade;\n    }\n  }\n\n  ao /= s;\n  ao *= 1.5;\n  ao = 1.0 - ao;\n\n  if (depth > 0.99) ao += 0.5;\n\n  vec3 black = vec3(0.0, 0.0, 0.0);\n  vec3 treshold = vec3(0.2, 0.2, 0.2);\n\n  gl_FragColor = vec4(texCoord, 0.0, 1.0);\n  //gl_FragColor = vec4(getDepth(texCoord), 0.0, 0.0, 1.0);\n  gl_FragColor = vec4(ao, ao, ao, 1.0);\n}\n\n#endif';});
+define('lib/text!pex/fx/SSAO.glsl',[],function () { return '//based on http://blenderartists.org/forum/showthread.php?184102-nicer-and-faster-SSAO and http://www.pasteall.org/12299\n#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\n#define PI    3.14159265\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D depthTex;\nuniform vec2 textureSize;\nuniform float near;\nuniform float far;\n\nconst int samples = 5;\nconst int rings = 3;\n\n\nvec2 rand(vec2 coord)\n{\n  float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));\n  float noiseY = (fract(sin(dot(coord, vec2(12.9898,78.233) * 2.0)) * 43758.5453));\n  return vec2(noiseX,noiseY) * 0.004;\n}\n\nfloat unpackDepth(const in vec4 rgba_depth) {\n  const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);\n  float depth = dot(rgba_depth, bit_shift);\n  return depth;\n}\n\nfloat getDepth(vec2 coord) {\n  return unpackDepth(texture2D(depthTex, coord.xy));\n}\n\nfloat readDepth(vec2 coord) {\n  return (getDepth(coord) * far - near)/(far - near);\n}\n\nfloat compareDepths( in float depth1, in float depth2 )\n{\n  float aoCap = 1.0;\n  float aoMultiplier = 100.0;\n  float depthTolerance = 0.0001;\n  float aorange = 1.0;// units in space the AO effect extends to (this gets divided by the camera far range\n  float diff = sqrt(clamp(1.0-(depth1-depth2) / (aorange/(far-near)),0.0,1.0));\n  float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;\n  return ao;\n}\n\nvoid main() {\n  vec2 texCoord = vec2(gl_FragCoord.x / textureSize.x, gl_FragCoord.y / textureSize.y);\n  float depth = readDepth(texCoord);\n\n  //gl_FragColor = vec4(depth, depth ,depth, 1.0);\n  //return;\n\n  float d;\n\n  float aspect = textureSize.x / textureSize.y;\n  vec2 noise = rand(vTexCoord);\n\n  float w = (1.0 / textureSize.x)/clamp(depth,0.05,1.0)+(noise.x*(1.0-noise.x));\n  float h = (1.0 / textureSize.y)/clamp(depth,0.05,1.0)+(noise.y*(1.0-noise.y));\n\n  float pw;\n  float ph;\n\n  float ao = 0.0;\n  float s = 0.0;\n  float fade = 1.0;\n\n  for (int i = 0 ; i < rings; i += 1)\n  {\n    fade *= 0.5;\n    for (int j = 0 ; j < samples*rings; j += 1)\n    {\n      if (j >= samples*i) break;\n      float step = PI * 2.0 / (float(samples) * float(i));\n      pw = (cos(float(j)*step) * float(i) * 0.5);\n      ph = (sin(float(j)*step) * float(i) * 0.5) * aspect;\n      d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));\n      ao += compareDepths(depth,d) * fade;\n      s += 1.0 * fade;\n    }\n  }\n\n  ao /= s;\n  ao *= 1.5;\n  ao = 1.0 - ao;\n\n  if (depth > 0.99) ao += 0.5;\n\n  vec3 black = vec3(0.0, 0.0, 0.0);\n  vec3 treshold = vec3(0.2, 0.2, 0.2);\n\n  gl_FragColor = vec4(texCoord, 0.0, 1.0);\n  //gl_FragColor = vec4(getDepth(texCoord), 0.0, 0.0, 1.0);\n  gl_FragColor = vec4(ao, ao, ao, 1.0);\n}\n\n#endif';});
 
 define('pex/fx/SSAO',['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/Vec2'], function(FXStage, SSAOGLSL, Vec2) {
   FXStage.prototype.ssao = function(options) {
