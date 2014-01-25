@@ -8,6 +8,8 @@ define(function(require) {
   kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float;\n' + '#endif\n' + '#define VERT\n';
   kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float;\n' + '#else\n' + '  precision mediump float;\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
   return Program = (function() {
+    Program.currentProgram = null;
+
     function Program(vertSrc, fragSrc) {
       this.gl = Context.currentContext.gl;
       this.handle = this.gl.createProgram();
@@ -84,7 +86,10 @@ define(function(require) {
     };
 
     Program.prototype.use = function() {
-      return this.gl.useProgram(this.handle);
+      if (Program.currentProgram !== this.handle) {
+        Program.currentProgram = this.handle;
+        return this.gl.useProgram(this.handle);
+      }
     };
 
     Program.prototype.dispose = function() {

@@ -20,6 +20,7 @@ define (require) ->
     '#define FRAG\n';
 
   class Program
+    @currentProgram: null
     constructor: (vertSrc, fragSrc)->
       @gl = Context.currentContext.gl
       @handle = @gl.createProgram()
@@ -81,7 +82,9 @@ define (require) ->
       this
 
     use: () ->
-      @gl.useProgram(@handle);
+      if Program.currentProgram != @handle
+        Program.currentProgram = @handle
+        @gl.useProgram(@handle);
 
     dispose: () ->
       @gl.deleteShader(this.vertShader)

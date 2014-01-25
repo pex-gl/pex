@@ -4,6 +4,7 @@ define(['pex/gl/Context'], function(Context) {
     this.gl = Context.currentContext.gl;
     this.program = program;
     this.uniforms = uniforms || {};
+    this.prevUniforms = {}
   }
 
   Material.prototype.use = function() {
@@ -23,7 +24,22 @@ define(['pex/gl/Context'], function(Context) {
           numTextures++;
         }
         else {
+          var newValue = this.uniforms[name];
+          var oldValue = this.prevUniforms[name];
+          var newHash = null;
+          if (oldValue != null) {
+            if (newValue.hash) {
+              newHash = newValue.hash()
+              if (newHash == oldValue) {
+                continue;
+              }
+            }
+            else if (newValue == oldValue) {
+              continue;
+            }
+          }
           this.program.uniforms[name]( this.uniforms[name] );
+          this.prevUniforms[name] = newHash ? newHash : newValue
         }
       }
     }
