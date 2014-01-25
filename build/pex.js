@@ -457,6 +457,10 @@ define('pex/geom/Vec2',['require'],function(require) {
       return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance);
     };
 
+    Vec2.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z;
+    };
+
     Vec2.prototype.setVec2 = function(v) {
       this.x = v.x;
       this.y = v.y;
@@ -571,6 +575,10 @@ define('pex/geom/Vec3',['require'],function(require) {
         tolerance = 0.0000001;
       }
       return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
+    };
+
+    Vec3.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z;
     };
 
     Vec3.prototype.set = function(x, y, z) {
@@ -783,6 +791,10 @@ define('pex/geom/Vec4',['require'],function(require) {
       return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance) && (Math.abs(v.w - this.w) <= tolerance);
     };
 
+    Vec4.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z + 1234 * this.w;
+    };
+
     Vec4.create = function(x, y, z, w) {
       return new Vec4(x, y, z, w);
     };
@@ -844,6 +856,10 @@ define('pex/geom/Mat4',['require','../geom/Vec3'],function(require) {
         tolerance = 0.0000001;
       }
       return (Math.abs(m.a11 - this.a11) <= tolerance) && (Math.abs(m.a12 - this.a12) <= tolerance) && (Math.abs(m.a13 - this.a13) <= tolerance) && (Math.abs(m.a14 - this.a14) <= tolerance) && (Math.abs(m.a21 - this.a21) <= tolerance) && (Math.abs(m.a22 - this.a22) <= tolerance) && (Math.abs(m.a23 - this.a23) <= tolerance) && (Math.abs(m.a24 - this.a24) <= tolerance) && (Math.abs(m.a31 - this.a31) <= tolerance) && (Math.abs(m.a32 - this.a32) <= tolerance) && (Math.abs(m.a33 - this.a33) <= tolerance) && (Math.abs(m.a34 - this.a34) <= tolerance) && (Math.abs(m.a41 - this.a41) <= tolerance) && (Math.abs(m.a42 - this.a42) <= tolerance) && (Math.abs(m.a43 - this.a43) <= tolerance) && (Math.abs(m.a44 - this.a44) <= tolerance);
+    };
+
+    Mat4.prototype.hash = function() {
+      return this.a11 * 0.01 + this.a12 * 0.02 + this.a13 * 0.03 + this.a14 * 0.04 + this.a21 * 0.05 + this.a22 * 0.06 + this.a23 * 0.07 + this.a24 * 0.08 + this.a31 * 0.09 + this.a32 * 0.10 + this.a33 * 0.11 + this.a34 * 0.12 + this.a41 * 0.13 + this.a42 * 0.14 + this.a43 * 0.15 + this.a44 * 0.16;
     };
 
     Mat4.prototype.set4x4r = function(a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44) {
@@ -1191,6 +1207,10 @@ define('pex/geom/Quat',['require','pex/geom/Mat4'],function(require) {
         tolerance = 0.0000001;
       }
       return (Math.abs(q.x - this.x) <= tolerance) && (Math.abs(q.y - this.y) <= tolerance) && (Math.abs(q.z - this.z) <= tolerance) && (Math.abs(q.w - this.w) <= tolerance);
+    };
+
+    Quat.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z + 1234 * this.w;
     };
 
     Quat.prototype.copy = function(q) {
@@ -7108,6 +7128,8 @@ define('pex/gl/Program',['require','pex/gl/Context','pex/sys/IO','pex/utils/Log'
   kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float;\n' + '#endif\n' + '#define VERT\n';
   kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float;\n' + '#else\n' + '  precision mediump float;\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
   return Program = (function() {
+    Program.currentProgram = null;
+
     function Program(vertSrc, fragSrc) {
       this.gl = Context.currentContext.gl;
       this.handle = this.gl.createProgram();
@@ -7184,7 +7206,10 @@ define('pex/gl/Program',['require','pex/gl/Context','pex/sys/IO','pex/utils/Log'
     };
 
     Program.prototype.use = function() {
-      return this.gl.useProgram(this.handle);
+      if (Program.currentProgram !== this.handle) {
+        Program.currentProgram = this.handle;
+        return this.gl.useProgram(this.handle);
+      }
     };
 
     Program.prototype.dispose = function() {
@@ -8034,6 +8059,7 @@ define('pex/materials/Material',['pex/gl/Context'], function(Context) {
     this.gl = Context.currentContext.gl;
     this.program = program;
     this.uniforms = uniforms || {};
+    this.prevUniforms = {}
   }
 
   Material.prototype.use = function() {
@@ -8053,7 +8079,22 @@ define('pex/materials/Material',['pex/gl/Context'], function(Context) {
           numTextures++;
         }
         else {
+          var newValue = this.uniforms[name];
+          var oldValue = this.prevUniforms[name];
+          var newHash = null;
+          if (oldValue != null) {
+            if (newValue.hash) {
+              newHash = newValue.hash()
+              if (newHash == oldValue) {
+                continue;
+              }
+            }
+            else if (newValue == oldValue) {
+              continue;
+            }
+          }
           this.program.uniforms[name]( this.uniforms[name] );
+          this.prevUniforms[name] = newHash ? newHash : newValue
         }
       }
     }
