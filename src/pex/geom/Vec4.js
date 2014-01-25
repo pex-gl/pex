@@ -28,6 +28,10 @@ define(function(require) {
       return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance) && (Math.abs(v.w - this.w) <= tolerance);
     };
 
+    Vec4.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z + 1234 * this.w;
+    };
+
     Vec4.create = function(x, y, z, w) {
       return new Vec4(x, y, z, w);
     };

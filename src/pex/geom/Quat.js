@@ -31,6 +31,10 @@ define(function(require) {
       return (Math.abs(q.x - this.x) <= tolerance) && (Math.abs(q.y - this.y) <= tolerance) && (Math.abs(q.z - this.z) <= tolerance) && (Math.abs(q.w - this.w) <= tolerance);
     };
 
+    Quat.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z + 1234 * this.w;
+    };
+
     Quat.prototype.copy = function(q) {
       this.x = q.x;
       this.y = q.y;

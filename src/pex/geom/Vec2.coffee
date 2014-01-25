@@ -19,6 +19,9 @@ define (require) ->
     equals: (v, tolerance=0.0000001) ->
       (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance)
 
+    hash: () ->
+      return 1 * @x + 12 * @y + 123 * @z
+
     setVec2: (v) ->
       @x = v.x
       @y = v.y

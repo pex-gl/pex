@@ -29,6 +29,10 @@ define(function(require) {
       return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
     };
 
+    Vec3.prototype.hash = function() {
+      return 1 * this.x + 12 * this.y + 123 * this.z;
+    };
+
     Vec3.prototype.set = function(x, y, z) {
       this.x = x;
       this.y = y;

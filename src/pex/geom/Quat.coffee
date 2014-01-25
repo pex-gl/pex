@@ -19,6 +19,9 @@ define (require) ->
     equals: (q, tolerance=0.0000001) ->
       (Math.abs(q.x - @x) <= tolerance) && (Math.abs(q.y - @y) <= tolerance) && (Math.abs(q.z - @z) <= tolerance) && (Math.abs(q.w - @w) <= tolerance)
 
+    hash: () ->
+      return 1 * @x + 12 * @y + 123 * @z + 1234 * @w
+
     copy: (q) ->
       @x = q.x
       @y = q.y

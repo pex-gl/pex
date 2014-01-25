@@ -13,6 +13,9 @@ define (require) ->
     equals: (v, tolerance=0.0000001) ->
       (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance) && (Math.abs(v.z - @z) <= tolerance) && (Math.abs(v.w - @w) <= tolerance)
 
+    hash: () ->
+      return 1 * @x + 12 * @y + 123 * @z + 1234 * @w
+
     @create: (x, y, z, w) ->
       new Vec4(x, y, z, w)
 
