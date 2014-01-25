@@ -16,6 +16,9 @@ define (require) ->
       @y = y
       this
 
+    equals: (v, tolerance=0.0000001) ->
+      (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance)
+
     setVec2: (v) ->
       @x = v.x
       @y = v.y

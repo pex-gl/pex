@@ -16,8 +16,7 @@ define (require) ->
       @set(0, 0, 0, 1)
       this
 
-    equals: (q, tolerance) ->
-      tolerance = if tolerance? then tolerance else 0.0000001
+    equals: (q, tolerance=0.0000001) ->
       (Math.abs(q.x - @x) <= tolerance) && (Math.abs(q.y - @y) <= tolerance) && (Math.abs(q.z - @z) <= tolerance) && (Math.abs(q.w - @w) <= tolerance)
 
     copy: (q) ->

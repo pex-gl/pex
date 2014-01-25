@@ -450,6 +450,13 @@ define('pex/geom/Vec2',['require'],function(require) {
       return this;
     };
 
+    Vec2.prototype.equals = function(v, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance);
+    };
+
     Vec2.prototype.setVec2 = function(v) {
       this.x = v.x;
       this.y = v.y;
@@ -557,6 +564,13 @@ define('pex/geom/Vec3',['require'],function(require) {
 
     Vec3.create = function(x, y, z) {
       return new Vec3(x, y, z);
+    };
+
+    Vec3.prototype.equals = function(v, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
     };
 
     Vec3.prototype.set = function(x, y, z) {
@@ -762,6 +776,13 @@ define('pex/geom/Vec4',['require'],function(require) {
       Vec4.count++;
     }
 
+    Vec4.prototype.equals = function(v, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance) && (Math.abs(v.w - this.w) <= tolerance);
+    };
+
     Vec4.create = function(x, y, z, w) {
       return new Vec4(x, y, z, w);
     };
@@ -816,6 +837,13 @@ define('pex/geom/Mat4',['require','../geom/Vec3'],function(require) {
 
     Mat4.create = function() {
       return new Mat4();
+    };
+
+    Mat4.prototype.equals = function(m, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(m.a11 - this.a11) <= tolerance) && (Math.abs(m.a12 - this.a12) <= tolerance) && (Math.abs(m.a13 - this.a13) <= tolerance) && (Math.abs(m.a14 - this.a14) <= tolerance) && (Math.abs(m.a21 - this.a21) <= tolerance) && (Math.abs(m.a22 - this.a22) <= tolerance) && (Math.abs(m.a23 - this.a23) <= tolerance) && (Math.abs(m.a24 - this.a24) <= tolerance) && (Math.abs(m.a31 - this.a31) <= tolerance) && (Math.abs(m.a32 - this.a32) <= tolerance) && (Math.abs(m.a33 - this.a33) <= tolerance) && (Math.abs(m.a34 - this.a34) <= tolerance) && (Math.abs(m.a41 - this.a41) <= tolerance) && (Math.abs(m.a42 - this.a42) <= tolerance) && (Math.abs(m.a43 - this.a43) <= tolerance) && (Math.abs(m.a44 - this.a44) <= tolerance);
     };
 
     Mat4.prototype.set4x4r = function(a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44) {
@@ -1159,7 +1187,9 @@ define('pex/geom/Quat',['require','pex/geom/Mat4'],function(require) {
     };
 
     Quat.prototype.equals = function(q, tolerance) {
-      tolerance = tolerance != null ? tolerance : 0.0000001;
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
       return (Math.abs(q.x - this.x) <= tolerance) && (Math.abs(q.y - this.y) <= tolerance) && (Math.abs(q.z - this.z) <= tolerance) && (Math.abs(q.w - this.w) <= tolerance);
     };
 

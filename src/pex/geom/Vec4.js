@@ -21,6 +21,13 @@ define(function(require) {
       Vec4.count++;
     }
 
+    Vec4.prototype.equals = function(v, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance) && (Math.abs(v.w - this.w) <= tolerance);
+    };
+
     Vec4.create = function(x, y, z, w) {
       return new Vec4(x, y, z, w);
     };

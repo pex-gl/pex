@@ -11,6 +11,25 @@ define (require) ->
     @create: () ->
       return new Mat4()
 
+    equals: (m, tolerance=0.0000001) ->
+      (Math.abs(m.a11 - @a11) <= tolerance) &&
+      (Math.abs(m.a12 - @a12) <= tolerance) &&
+      (Math.abs(m.a13 - @a13) <= tolerance) &&
+      (Math.abs(m.a14 - @a14) <= tolerance) &&
+      (Math.abs(m.a21 - @a21) <= tolerance) &&
+      (Math.abs(m.a22 - @a22) <= tolerance) &&
+      (Math.abs(m.a23 - @a23) <= tolerance) &&
+      (Math.abs(m.a24 - @a24) <= tolerance) &&
+      (Math.abs(m.a31 - @a31) <= tolerance) &&
+      (Math.abs(m.a32 - @a32) <= tolerance) &&
+      (Math.abs(m.a33 - @a33) <= tolerance) &&
+      (Math.abs(m.a34 - @a34) <= tolerance) &&
+      (Math.abs(m.a41 - @a41) <= tolerance) &&
+      (Math.abs(m.a42 - @a42) <= tolerance) &&
+      (Math.abs(m.a43 - @a43) <= tolerance) &&
+      (Math.abs(m.a44 - @a44) <= tolerance)
+
+
     set4x4r: (a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44) ->
       @a11 = a11; @a12 = a12; @a13 = a13; @a14 = a14;
       @a21 = a21; @a22 = a22; @a23 = a23; @a24 = a24;

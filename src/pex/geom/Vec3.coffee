@@ -12,6 +12,9 @@ define (require) ->
     @create: (x, y, z) ->
       new Vec3(x, y, z)
 
+    equals: (v, tolerance=0.0000001) ->
+      (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance) && (Math.abs(v.z - @z) <= tolerance)
+
     set: (x, y, z) ->
       @x = x
       @y = y

@@ -25,6 +25,13 @@ define(function(require) {
       return this;
     };
 
+    Vec2.prototype.equals = function(v, tolerance) {
+      if (tolerance == null) {
+        tolerance = 0.0000001;
+      }
+      return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance);
+    };
+
     Vec2.prototype.setVec2 = function(v) {
       this.x = v.x;
       this.y = v.y;
