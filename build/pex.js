@@ -4919,7 +4919,12 @@ define('pex/geom/Spline3D',['pex/geom/Vec3'], function(Vec3) {
   //
   //`t` - *{ Number } <0, 1>*
   Spline3D.prototype.getPoint = function ( t ) {
-    t = (t + 1 ) % 1;
+    if (this.loop) {
+      t = (t + 1 ) % 1;
+    }
+    else {
+      t = Math.max(0, Math.min(t, 1));
+    }
 
     var points = this.points;
     var len = this.loop ? points.length : points.length - 1;
