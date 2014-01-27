@@ -13,7 +13,8 @@ define([
 
     var defaults = {
      color : Color.create(1, 1, 1, 1),
-     pointSize : 1
+     pointSize : 1,
+     premultiplied : 0
     };
 
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);

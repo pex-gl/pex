@@ -15,10 +15,13 @@ void main() {
 #ifdef FRAG
 
 uniform vec4 color;
+uniform bool premultiplied;
 
 void main() {
   gl_FragColor = color;
-  gl_FragColor.rgb *= color.a;
+  if (premultiplied) {
+    gl_FragColor.rgb *= color.a;
+  }
 }
 
 #endif
