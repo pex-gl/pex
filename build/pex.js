@@ -5387,7 +5387,6 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
-      Log.message('IO.loadImageData ' + fullPath);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
       var canvas = Node.plask.SkCanvas.createFromImage(fullPath);
