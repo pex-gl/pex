@@ -1,7 +1,7 @@
 define (require) ->
   { Vec2, Vec3, Vec4, Mat4, Ray } = require('pex/geom')
 
-  class PerspectiveCamera
+  class OrthographicCamera
     constructor: (l, r, b, t, near, far, position, target, up) ->
       @left = l
       @right = r
