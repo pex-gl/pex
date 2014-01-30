@@ -52,7 +52,9 @@ define(function(require) {
 
     LineBuilder.prototype.reset = function() {
       this.vertices.length = 0;
-      return this.colors.length = 0;
+      this.colors.length = 0;
+      this.vertices.dirty = true;
+      return this.colors.dirty = true;
     };
 
     return LineBuilder;

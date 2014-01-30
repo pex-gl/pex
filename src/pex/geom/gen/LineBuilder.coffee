@@ -45,3 +45,6 @@ define (require) ->
       @vertices.length = 0
       @colors.length = 0
 
+      @vertices.dirty = true
+      @colors.dirty = true
+
