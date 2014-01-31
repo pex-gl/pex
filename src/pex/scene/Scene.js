@@ -42,6 +42,15 @@ define(function(require) {
       }
     };
 
+    Scene.prototype.remove = function(obj) {
+      var index;
+
+      index = this.drawables.indexOf(obj);
+      if (index !== -1) {
+        return this.drawables.splice(index, 1);
+      }
+    };
+
     Scene.prototype.clear = function() {
       var clearBits;
 

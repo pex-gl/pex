@@ -2586,7 +2586,9 @@ define('pex/geom/gen/LineBuilder',['require','pex/geom/Vec3','pex/geom/Edge','pe
 
     LineBuilder.prototype.reset = function() {
       this.vertices.length = 0;
-      return this.colors.length = 0;
+      this.colors.length = 0;
+      this.vertices.dirty = true;
+      return this.colors.dirty = true;
     };
 
     return LineBuilder;
@@ -9480,6 +9482,15 @@ define('pex/scene/Scene',['require','pex/gl/Context','pex/gl/Mesh','pex/color/Co
       }
       if (obj instanceof PerspectiveCamera) {
         return this.cameras.push(obj);
+      }
+    };
+
+    Scene.prototype.remove = function(obj) {
+      var index;
+
+      index = this.drawables.indexOf(obj);
+      if (index !== -1) {
+        return this.drawables.splice(index, 1);
       }
     };
 

@@ -30,6 +30,11 @@ define (require) ->
       if (obj instanceof PerspectiveCamera)
         @cameras.push(obj)
 
+    remove: (obj) ->
+      index = @drawables.indexOf(obj)
+      if index != -1
+        @drawables.splice(index, 1)
+
     clear: () ->
       clearBits = 0
       #TODO persist oldClearColorValue
