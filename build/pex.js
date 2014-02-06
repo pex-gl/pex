@@ -458,7 +458,7 @@ define('pex/geom/Vec2',['require'],function(require) {
     };
 
     Vec2.prototype.hash = function() {
-      return 1 * this.x + 12 * this.y + 123 * this.z;
+      return 1 * this.x + 12 * this.y;
     };
 
     Vec2.prototype.setVec2 = function(v) {
@@ -1972,6 +1972,10 @@ define('pex/color/Color',['require','pex/utils/MathUtils'],function(require) {
         this.a = 1;
       }
       return this;
+    };
+
+    Color.prototype.hash = function() {
+      return 1 * this.r + 12 * this.g + 123 * this.b + 1234 * this.a;
     };
 
     Color.prototype.setHSV = function(h, s, v) {
@@ -5377,6 +5381,11 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
 
     IO.loadTextFile = function(file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
+      if (!Node.fs.existsSync(fullPath)) {
+        if (callback) {
+          return callback(null);
+        }
+      }
       var data = Node.fs.readFileSync(fullPath, 'utf8');
       if (callback) {
         callback(data);
@@ -5455,6 +5464,7 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
           callback(image);
         }
       }
+      image.crossOrigin = '';
       image.src = url;
     }
 
