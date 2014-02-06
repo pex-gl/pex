@@ -4,6 +4,11 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
 
     IO.loadTextFile = function(file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
+      if (!Node.fs.existsSync(fullPath)) {
+        if (callback) {
+          return callback(null);
+        }
+      }
       var data = Node.fs.readFileSync(fullPath, 'utf8');
       if (callback) {
         callback(data);
