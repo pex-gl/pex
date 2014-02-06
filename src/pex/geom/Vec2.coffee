@@ -20,7 +20,7 @@ define (require) ->
       (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance)
 
     hash: () ->
-      return 1 * @x + 12 * @y + 123 * @z
+      return 1 * @x + 12 * @y
 
     setVec2: (v) ->
       @x = v.x

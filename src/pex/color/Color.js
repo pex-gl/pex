@@ -35,6 +35,10 @@ define(function(require) {
       return this;
     };
 
+    Color.prototype.hash = function() {
+      return 1 * this.r + 12 * this.g + 123 * this.b + 1234 * this.a;
+    };
+
     Color.prototype.setHSV = function(h, s, v) {
       var b, g, h6, r;
 

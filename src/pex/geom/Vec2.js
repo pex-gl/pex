@@ -33,7 +33,7 @@ define(function(require) {
     };
 
     Vec2.prototype.hash = function() {
-      return 1 * this.x + 12 * this.y + 123 * this.z;
+      return 1 * this.x + 12 * this.y;
     };
 
     Vec2.prototype.setVec2 = function(v) {

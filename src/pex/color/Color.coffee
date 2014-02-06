@@ -22,6 +22,9 @@ define (require) ->
       @a = 1 if !a?
       this
 
+    hash: () ->
+      return 1 * @r + 12 * @g + 123 * @b + 1234 * @a
+
     # We basically just make the ramp curves using builtins, see:
     #http://en.wikipedia.org/wiki/File:HSV-RGB-comparison.svg
     setHSV: (h, s, v) ->
