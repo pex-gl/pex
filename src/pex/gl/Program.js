@@ -120,7 +120,7 @@ define(function(require) {
               return program.link();
             } catch (_error) {
               e = _error;
-              Log.message("Progra.load : failed to reload " + url);
+              Log.message("Program.load : failed to reload " + url);
               return Log.message(e);
             }
           });

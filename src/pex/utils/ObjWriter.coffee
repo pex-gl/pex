@@ -30,10 +30,10 @@ define (require) ->
       vertexOffset += vertexCount
       vertexCount = 0
 
-      s += 'o Mesh' + id + '\n';
+      s += 'o Mesh' + id + '\n'
       geometry.vertices.forEach (v) ->
-        s += 'v ' + v.x + ' ' + v.y + ' ' + v.z + '\n';
-        vertexCount++;
+        s += 'v ' + v.x + ' ' + v.y + ' ' + v.z + '\n'
+        vertexCount++
 
       if geometry.faces && geometry.faces.length > 0
         geometry.faces.forEach (f) ->
@@ -42,7 +42,7 @@ define (require) ->
           s  += '\n'
       else
         for i in [0..geometry.vertices.length-1] by 3
-          s += 'f ' + (vertexOffset+i+1) + ' ' + (vertexOffset+i+2) + ' ' + (vertexOffset+i+3) + '\n';
+          s += 'f ' + (vertexOffset+i+1) + ' ' + (vertexOffset+i+2) + ' ' + (vertexOffset+i+3) + '\n'
 
     return s
 
