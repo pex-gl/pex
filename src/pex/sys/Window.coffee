@@ -1,5 +1,5 @@
 define (require) ->
-  Platform = require('pex/sys//Platform')
+  Platform = require('pex/sys/Platform')
   Node = require('pex/sys/Node')
   Context = require('pex/gl/Context')
   BrowserWindow = require('pex/sys/BrowserWindow')

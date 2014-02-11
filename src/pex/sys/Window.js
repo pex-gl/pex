@@ -2,7 +2,7 @@
 define(function(require) {
   var BrowserWindow, Context, Node, ObjectUtils, Platform, Time, Window, omgcanvas;
 
-  Platform = require('pex/sys//Platform');
+  Platform = require('pex/sys/Platform');
   Node = require('pex/sys/Node');
   Context = require('pex/gl/Context');
   BrowserWindow = require('pex/sys/BrowserWindow');
