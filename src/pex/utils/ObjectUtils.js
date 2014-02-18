@@ -15,7 +15,19 @@ define([], function() {
       }
     }
     return result;
-  }
+  };
+
+  ObjectUtils.property = function(prop, value) {
+    return function(object) {
+      if (value !== undefined) {
+        object[prop] = value;
+        return object;
+      }
+      else {
+        return object[prop];
+      }
+    };
+  };
 
   return ObjectUtils;
 });

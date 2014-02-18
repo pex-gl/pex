@@ -107,7 +107,7 @@ define (require) ->
               program.addSources(source)
               program.link()
             catch e
-              Log.message("Progra.load : failed to reload #{url}")
+              Log.message("Program.load : failed to reload #{url}")
               Log.message(e)
           )
       )
