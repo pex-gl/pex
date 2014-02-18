@@ -124,24 +124,36 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         clientX : (e.touches[0].clientX) * window.devicePixelRatio,
         clientY : (e.touches[0].clientY) * window.devicePixelRatio
       };
+      var touches = e.touches.map(function(touch) {
+        touch.x = touch.clientX * window.devicePixelRatio;
+        touch.y = touch.clientY * window.devicePixelRatio;
+        return touch;
+      })
       fireEvent('leftMouseDown', {
         x: (e.touches[0].clientX) * window.devicePixelRatio,
         y: (e.touches[0].clientY) * window.devicePixelRatio,
         option: false,
         shift: false,
-        control: false
+        control: false,
+        touches: touches
       });
     })
   }
 
   function makeTouchUpHandler(canvas) {
     canvas.addEventListener('touchend', function(e) {
+      var touches = e.touches.map(function(touch) {
+        touch.x = touch.clientX * window.devicePixelRatio;
+        touch.y = touch.clientY * window.devicePixelRatio;
+        return touch;
+      })
       fireEvent('leftMouseUp', {
         x: lastTouch ? lastTouch.clientX : 0,
         y: lastTouch ? lastTouch.clientY : 0,
         option: false,
         shift: false,
-        control: false
+        control: false,
+        touches: touches
       });
       lastTouch = null;
     })
@@ -153,12 +165,18 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         clientX : (e.touches[0].clientX) * window.devicePixelRatio,
         clientY : (e.touches[0].clientY) * window.devicePixelRatio
       };
+      var touches = e.touches.map(function(touch) {
+        touch.x = touch.clientX * window.devicePixelRatio;
+        touch.y = touch.clientY * window.devicePixelRatio;
+        return touch;
+      })
       fireEvent('mouseDragged', {
         x: (e.touches[0].clientX) * window.devicePixelRatio,
         y: (e.touches[0].clientY) * window.devicePixelRatio,
         option: false,
         shift: false,
-        control: false
+        control: false,
+        touches: touches
       });
     })
   }
@@ -222,6 +240,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
       canvas.height = obj.settings.height * 2;
       canvas.style.width = obj.settings.width;
       canvas.style.height = obj.settings.height;
+      canvas.msaaEnabled = true;
+      canvas.msaaSamples = 2;
       obj.settings.width *= 2;
       obj.settings.height *= 2;
     }
