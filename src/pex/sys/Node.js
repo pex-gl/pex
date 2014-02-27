@@ -5,5 +5,5 @@ define(['pex/sys/Platform'], function(Platform) {
     plask : Platform.isPlask ? include('plask') : {},
     fs : Platform.isPlask ? include('fs') : {},
     path : Platform.isPlask ? include('path') : {}
-  }
-})
+  };
+});

@@ -36,8 +36,11 @@ module.exports = function(grunt) {
 				} ]
 			}
 		},
+		coffeelint: {
+			app: [ 'src/**/*.coffee', 'examples/**/*.coffee' ]
+		},
 		jshint: {
-			files: [ 'src/**', 'examples/**', '*.js' ],
+			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js' ],
 		},
 		watch: {
 			files: [ '<%= jshint.files %>', '**/*.coffee' ],
@@ -50,10 +53,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-coffeelint');
 	grunt.loadNpmTasks('grunt-exec');
 
 	// linting task
-	grunt.registerTask('lint', [ 'jshint' ]);
+	grunt.registerTask('lint', [ 'coffeelint', 'jshint' ]);
 
 	// doc building task
 	grunt.registerTask('docs', [ 'docco' ]);
