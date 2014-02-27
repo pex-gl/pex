@@ -1,0 +1,12 @@
+{
+	"name": "pex",
+	"version": "0.0.1",
+	"description": "",
+	"dependencies": {
+		"grunt": "latest",
+		"grunt-contrib-jshint": "latest",
+		"grunt-contrib-watch": "latest",
+		"grunt-contrib-requirejs": "latest",
+		"grunt-exec": "latest"
+	}
+}

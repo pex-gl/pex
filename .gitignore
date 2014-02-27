@@ -4,3 +4,4 @@ experiments
 examples.*
 docs
 src/pex/alpha
+node_modules
