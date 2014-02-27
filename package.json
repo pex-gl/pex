@@ -4,9 +4,10 @@
 	"description": "",
 	"dependencies": {
 		"grunt": "latest",
+		"grunt-contrib-coffee": "latest",
 		"grunt-contrib-jshint": "latest",
-		"grunt-contrib-watch": "latest",
 		"grunt-contrib-requirejs": "latest",
+		"grunt-contrib-watch": "latest",
 		"grunt-exec": "latest"
 	}
 }
