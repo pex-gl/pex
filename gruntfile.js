@@ -56,6 +56,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-coffeelint');
 	grunt.loadNpmTasks('grunt-exec');
 
+	// run task - watch, lint, and convert coffeescripts
+	grunt.registerTask('run', [ 'lint', 'coffee', 'watch' ]);
+
 	// linting task
 	grunt.registerTask('lint', [ 'coffeelint', 'jshint' ]);
 
