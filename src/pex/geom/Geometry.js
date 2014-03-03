@@ -220,11 +220,9 @@
             return count[f.c]++;
           };
         })(this));
-        return this.normals.forEach((function(_this) {
-          return function(n, i) {
-            return n.scale(1 / count[i]);
-          };
-        })(this));
+        return this.normals.forEach(function(n, i) {
+          return n.scale(1 / count[i]);
+        });
       };
 
       return Geometry;

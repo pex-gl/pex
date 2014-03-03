@@ -21,13 +21,6 @@
         return new Vec3(x, y, z);
       };
 
-      Vec3.prototype.equals = function(v, tolerance) {
-        if (tolerance == null) {
-          tolerance = 0.0000001;
-        }
-        return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
-      };
-
       Vec3.prototype.hash = function() {
         return 1 * this.x + 12 * this.y + 123 * this.z;
       };
@@ -100,12 +93,8 @@
 
       Vec3.prototype.cross = function(v) {
         var vx, vy, vz, x, y, z;
-        x = this.x;
-        y = this.y;
-        z = this.z;
-        vx = v.x;
-        vy = v.y;
-        vz = v.z;
+        x = this.x(y = this.y(z = this.z));
+        vx = v.x(vy = v.y(vz = v.z));
         this.x = y * vz - z * vy;
         this.y = z * vx - x * vz;
         this.z = x * vy - y * vx;
@@ -160,13 +149,8 @@
 
       Vec3.prototype.transformQuat = function(q) {
         var iw, ix, iy, iz, qw, qx, qy, qz, x, y, z;
-        x = this.x;
-        y = this.y;
-        z = this.z;
-        qx = q.x;
-        qy = q.y;
-        qz = q.z;
-        qw = q.w;
+        x = this.x(y = this.y(z = this.z));
+        qx = q.x(qy = q.y(qz = q.z(qw = q.w)));
         ix = qw * x + qy * z - qz * y;
         iy = qw * y + qz * x - qx * z;
         iz = qw * z + qx * y - qy * x;
