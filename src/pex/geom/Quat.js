@@ -79,8 +79,14 @@
 
       Quat.prototype.asMul = function(p, q) {
         var pw, px, py, pz, qw, qx, qy, qz;
-        px = p.x(py = p.y(pz = p.z(pw = p.w)));
-        qx = q.x(qy = q.y(qz = q.z(qw = q.w)));
+        px = p.x;
+        py = p.y;
+        pz = p.z;
+        pw = p.w;
+        qx = q.x;
+        qy = q.y;
+        qz = q.z;
+        qw = q.w;
         this.x = px * qw + pw * qx + py * qz - pz * qy;
         this.y = py * qw + pw * qy + pz * qx - px * qz;
         this.z = pz * qw + pw * qz + px * qy - py * qx;
@@ -211,7 +217,7 @@
       return this
     }
   
-    
+  
   
     Quat.prototype.rotate = function(x, y, z, theta){
       var len = Math.sqrt(x*x + y*y + z*z)

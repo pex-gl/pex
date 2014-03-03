@@ -1,16 +1,13 @@
 define([
-  "pex/geom/hem/HEMesh",
-  "pex/geom/hem/HEVertex",
-  "pex/geom/hem/HEEdge",
-  "pex/geom/hem/HEFace",
-  "pex/geom/Vec3"
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Vec3'
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function HESubdivideTriangles() {
   }
-
-  HEMesh.prototype.subdivideTriangles = function() {
+  HEMesh.prototype.subdivideTriangles = function () {
     this.clearMarking();
     //keep these numbers to iterate only over original faces/edges/vertices
     var numFaces = this.faces.length;
@@ -19,20 +16,18 @@ define([
     var i;
     var edge;
     var edgePoint;
-
     //For each edge, add an edge point - the average of
     //its two original endpoints.
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       edge = this.edges[i];
-      if (edge.marked) continue;
+      if (edge.marked)
+        continue;
       edge.marked = true;
       edge.pair.marked = true;
       this.splitEdge(edge, 0.5);
     }
-
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
-
       var edge1 = face.edge;
       var edge2 = edge1.next.next;
       var edge3 = edge2.next.next;
@@ -42,11 +37,8 @@ define([
       edge3 = edge2.next.next.pair.next;
       this.splitFace(edge3, edge3.next.next);
     }
-
     this.clearMarking();
-
     return this;
   };
-
   return HESubdivideTriangles;
 });

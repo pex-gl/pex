@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
-			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js' ],
+			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js', '!src/lib/*' ],
 			options: { // ignore warnings from coffeescript generated files
 				"-W030": true,
 				"-W093": true,
@@ -62,7 +62,13 @@ module.exports = function(grunt) {
 		},
 		fixmyjs: {
 			fix: {
-				files: [ '<%= jshint.files %>' ]
+				files: [ {
+					expand: true,
+					cwd: 'src/',
+					src: ['**/*.js'],
+					dest: 'src/',
+					ext: '.js'
+				} ]
 			}
 		}
 	});
@@ -74,6 +80,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-coffeelint');
 	grunt.loadNpmTasks('grunt-exec');
+	grunt.loadNpmTasks('grunt-fixmyjs');
 
 	// run task - watch, lint, and convert coffeescripts
 	grunt.registerTask('run', [ 'lint', 'coffee', 'watch' ]);
@@ -85,5 +92,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('docs', [ 'docco' ]);
 
 	// building task
-	grunt.registerTask('build', [ 'lint', 'coffee', 'exec:requirejs' ]);
+	grunt.registerTask('build', [ 'fixmyjs', 'lint', 'coffee', 'requirejs' ]);
 };

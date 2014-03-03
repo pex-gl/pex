@@ -26,18 +26,42 @@
       };
 
       Mat4.prototype.set4x4r = function(a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44) {
-        this.a11 = a11(this.a12 = a12(this.a13 = a13(this.a14 = a14)));
-        this.a21 = a21(this.a22 = a22(this.a23 = a23(this.a24 = a24)));
-        this.a31 = a31(this.a32 = a32(this.a33 = a33(this.a34 = a34)));
-        this.a41 = a41(this.a42 = a42(this.a43 = a43(this.a44 = a44)));
+        this.a11 = a11;
+        this.a12 = a12;
+        this.a13 = a13;
+        this.a14 = a14;
+        this.a21 = a21;
+        this.a22 = a22;
+        this.a23 = a23;
+        this.a24 = a24;
+        this.a31 = a31;
+        this.a32 = a32;
+        this.a33 = a33;
+        this.a34 = a34;
+        this.a41 = a41;
+        this.a42 = a42;
+        this.a43 = a43;
+        this.a44 = a44;
         return this;
       };
 
       Mat4.prototype.copy = function(m) {
-        this.a11 = m.a11(this.a12 = m.a12(this.a13 = m.a13(this.a14 = m.a14)));
-        this.a21 = m.a21(this.a22 = m.a22(this.a23 = m.a23(this.a24 = m.a24)));
-        this.a31 = m.a31(this.a32 = m.a32(this.a33 = m.a33(this.a34 = m.a34)));
-        this.a41 = m.a41(this.a42 = m.a42(this.a43 = m.a43(this.a44 = m.a44)));
+        this.a11 = m.a11;
+        this.a12 = m.a12;
+        this.a13 = m.a13;
+        this.a14 = m.a14;
+        this.a21 = m.a21;
+        this.a22 = m.a22;
+        this.a23 = m.a23;
+        this.a24 = m.a24;
+        this.a31 = m.a31;
+        this.a32 = m.a32;
+        this.a33 = m.a33;
+        this.a34 = m.a34;
+        this.a41 = m.a41;
+        this.a42 = m.a42;
+        this.a43 = m.a43;
+        this.a44 = m.a44;
         return this;
       };
 
@@ -57,10 +81,22 @@
 
       Mat4.prototype.mul4x4r = function(b11, b12, b13, b14, b21, b22, b23, b24, b31, b32, b33, b34, b41, b42, b43, b44) {
         var a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44;
-        a11 = this.a11(a12 = this.a12(a13 = this.a13(a14 = this.a14)));
-        a21 = this.a21(a22 = this.a22(a23 = this.a23(a24 = this.a24)));
-        a31 = this.a31(a32 = this.a32(a33 = this.a33(a34 = this.a34)));
-        a41 = this.a41(a42 = this.a42(a43 = this.a43(a44 = this.a44)));
+        a11 = this.a11;
+        a12 = this.a12;
+        a13 = this.a13;
+        a14 = this.a14;
+        a21 = this.a21;
+        a22 = this.a22;
+        a23 = this.a23;
+        a24 = this.a24;
+        a31 = this.a31;
+        a32 = this.a32;
+        a33 = this.a33;
+        a34 = this.a34;
+        a41 = this.a41;
+        a42 = this.a42;
+        a43 = this.a43;
+        a44 = this.a44;
         this.a11 = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
         this.a12 = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
         this.a13 = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
@@ -118,14 +154,38 @@
 
       Mat4.prototype.asMul = function(a, b) {
         var a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44, b11, b12, b13, b14, b21, b22, b23, b24, b31, b32, b33, b34, b41, b42, b43, b44;
-        a11 = a.a11(a12 = a.a12(a13 = a.a13(a14 = a.a14)));
-        a21 = a.a21(a22 = a.a22(a23 = a.a23(a24 = a.a24)));
-        a31 = a.a31(a32 = a.a32(a33 = a.a33(a34 = a.a34)));
-        a41 = a.a41(a42 = a.a42(a43 = a.a43(a44 = a.a44)));
-        b11 = b.a11(b12 = b.a12(b13 = b.a13(b14 = b.a14)));
-        b21 = b.a21(b22 = b.a22(b23 = b.a23(b24 = b.a24)));
-        b31 = b.a31(b32 = b.a32(b33 = b.a33(b34 = b.a34)));
-        b41 = b.a41(b42 = b.a42(b43 = b.a43(b44 = b.a44)));
+        a11 = a.a11;
+        a12 = a.a12;
+        a13 = a.a13;
+        a14 = a.a14;
+        a21 = a.a21;
+        a22 = a.a22;
+        a23 = a.a23;
+        a24 = a.a24;
+        a31 = a.a31;
+        a32 = a.a32;
+        a33 = a.a33;
+        a34 = a.a34;
+        a41 = a.a41;
+        a42 = a.a42;
+        a43 = a.a43;
+        a44 = a.a44;
+        b11 = b.a11;
+        b12 = b.a12;
+        b13 = b.a13;
+        b14 = b.a14;
+        b21 = b.a21;
+        b22 = b.a22;
+        b23 = b.a23;
+        b24 = b.a24;
+        b31 = b.a31;
+        b32 = b.a32;
+        b33 = b.a33;
+        b34 = b.a34;
+        b41 = b.a41;
+        b42 = b.a42;
+        b43 = b.a43;
+        b44 = b.a44;
         this.a11 = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
         this.a12 = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
         this.a13 = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
@@ -156,10 +216,22 @@
 
       Mat4.prototype.invert = function() {
         var a0, a1, a2, a3, a4, a5, b0, b1, b2, b3, b4, b5, invdet, x0, x1, x10, x11, x12, x13, x14, x15, x2, x3, x4, x5, x6, x7, x8, x9;
-        x0 = this.a11(x1 = this.a12(x2 = this.a13(x3 = this.a14)));
-        x4 = this.a21(x5 = this.a22(x6 = this.a23(x7 = this.a24)));
-        x8 = this.a31(x9 = this.a32(x10 = this.a33(x11 = this.a34)));
-        x12 = this.a41(x13 = this.a42(x14 = this.a43(x15 = this.a44)));
+        x0 = this.a11;
+        x1 = this.a12;
+        x2 = this.a13;
+        x3 = this.a14;
+        x4 = this.a21;
+        x5 = this.a22;
+        x6 = this.a23;
+        x7 = this.a24;
+        x8 = this.a31;
+        x9 = this.a32;
+        x10 = this.a33;
+        x11 = this.a34;
+        x12 = this.a41;
+        x13 = this.a42;
+        x14 = this.a43;
+        x15 = this.a44;
         a0 = x0 * x5 - x1 * x4;
         a1 = x0 * x6 - x2 * x4;
         a2 = x0 * x7 - x3 * x4;
@@ -194,14 +266,38 @@
 
       Mat4.prototype.transpose = function() {
         var a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44;
-        a11 = this.a11(a12 = this.a12(a13 = this.a13(a14 = this.a14)));
-        a21 = this.a21(a22 = this.a22(a23 = this.a23(a24 = this.a24)));
-        a31 = this.a31(a32 = this.a32(a33 = this.a33(a34 = this.a34)));
-        a41 = this.a41(a42 = this.a42(a43 = this.a43(a44 = this.a44)));
-        this.a11 = a11(this.a12 = a21(this.a13 = a31(this.a14 = a41)));
-        this.a21 = a12(this.a22 = a22(this.a23 = a32(this.a24 = a42)));
-        this.a31 = a13(this.a32 = a23(this.a33 = a33(this.a34 = a43)));
-        this.a41 = a14(this.a42 = a24(this.a43 = a34(this.a44 = a44)));
+        a11 = this.a11;
+        a12 = this.a12;
+        a13 = this.a13;
+        a14 = this.a14;
+        a21 = this.a21;
+        a22 = this.a22;
+        a23 = this.a23;
+        a24 = this.a24;
+        a31 = this.a31;
+        a32 = this.a32;
+        a33 = this.a33;
+        a34 = this.a34;
+        a41 = this.a41;
+        a42 = this.a42;
+        a43 = this.a43;
+        a44 = this.a44;
+        this.a11 = a11;
+        this.a12 = a21;
+        this.a13 = a31;
+        this.a14 = a41;
+        this.a21 = a12;
+        this.a22 = a22;
+        this.a23 = a32;
+        this.a24 = a42;
+        this.a31 = a13;
+        this.a32 = a23;
+        this.a33 = a33;
+        this.a34 = a43;
+        this.a41 = a14;
+        this.a42 = a24;
+        this.a43 = a34;
+        this.a44 = a44;
         return this;
       };
 

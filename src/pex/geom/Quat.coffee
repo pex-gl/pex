@@ -59,8 +59,14 @@ define (require) ->
       this
 
     asMul: (p, q) ->
-      px = p.x py = p.y pz = p.z pw = p.w
-      qx = q.x qy = q.y qz = q.z qw = q.w
+      px = p.x
+      py = p.y
+      pz = p.z
+      pw = p.w
+      qx = q.x
+      qy = q.y
+      qz = q.z
+      qw = q.w
 
       @x  = px * qw + pw * qx + py * qz - pz * qy
       @y  = py * qw + pw * qy + pz * qx - px * qz
@@ -187,7 +193,7 @@ Quat ( x, y, z, w )
     return this
   }
 
-  
+
 
   Quat.prototype.rotate = function(x, y, z, theta){
     var len = Math.sqrt(x*x + y*y + z*z)
