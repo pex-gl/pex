@@ -3,11 +3,11 @@ define (require) ->
 
   class Arcball
     constructor: (window, camera, distance) ->
-      @distance = distance || 2;
-      @minDistance = distance/2 || 0.3;
-      @maxDistance = distance*2 || 5;
-      @camera = camera;
-      @window = window;
+      @distance = distance || 2
+      @minDistance = distance/2 || 0.3
+      @maxDistance = distance*2 || 5
+      @camera = camera
+      @window = window
       @radius = Math.min(window.width/2, window.height/2) * 2
       @center = Vec2.create(window.width/2, window.height/2)
       @currRot = Quat.create()
@@ -65,9 +65,9 @@ define (require) ->
     updateCamera: () ->
       #Based on [apply-and-arcball-rotation-to-a-camera](http://forum.libcinder.org/topic/apply-and-arcball-rotation-to-a-camera) on Cinder Forum.
       q = @currRot.clone()
-      q.w *= -1;
+      q.w *= -1
 
-      target = @target || Vec3.create(0, 0, 0);
+      target = @target || Vec3.create(0, 0, 0)
       offset = Vec3.create(0, 0, @distance).transformQuat(q)
       eye = Vec3.create().asSub(target, offset)
       up = Vec3.create(0, 1, 0).transformQuat(q)
@@ -77,7 +77,7 @@ define (require) ->
       @allowZooming = false
 
     setDistance: (distance) ->
-      @distance = distance || 2;
-      @minDistance = distance/2 || 0.3;
-      @maxDistance = distance*2 || 5;
+      @distance = distance || 2
+      @minDistance = distance/2 || 0.3
+      @maxDistance = distance*2 || 5
       @updateCamera()

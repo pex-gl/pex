@@ -32,6 +32,9 @@ pex.sys.Window.create
       if hits.length > 0
         console.log(hits[0])
         @pointer.position = hits[0]
+        null
+
+    null
 
   draw: () ->
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
@@ -39,3 +42,5 @@ pex.sys.Window.create
 
     @mesh.draw(@camera)
     @pointer.draw(@camera)
+
+    null

@@ -13,7 +13,6 @@
         var parentHeight, _ref;
         if (this.oldViewport) {
           throw 'Viewport.bind: Already bound.';
-          return;
         }
         this.oldViewport = this.gl.getParameter(this.gl.VIEWPORT);
         this.oldScissorBox = this.gl.getParameter(this.gl.SCISSOR_BOX);

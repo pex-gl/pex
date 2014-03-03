@@ -567,13 +567,6 @@ define("../tools/include/inject", function(){});
         return new Vec3(x, y, z);
       };
 
-      Vec3.prototype.equals = function(v, tolerance) {
-        if (tolerance == null) {
-          tolerance = 0.0000001;
-        }
-        return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
-      };
-
       Vec3.prototype.hash = function() {
         return 1 * this.x + 12 * this.y + 123 * this.z;
       };
@@ -1135,22 +1128,10 @@ define("../tools/include/inject", function(){});
       };
 
       Mat4.prototype.fromArray = function(a) {
-        this.a11 = a[0];
-        this.a21 = a[1];
-        this.a31 = a[2];
-        this.a41 = a[3];
-        this.a12 = a[4];
-        this.a22 = a[5];
-        this.a32 = a[6];
-        this.a42 = a[7];
-        this.a13 = a[8];
-        this.a23 = a[9];
-        this.a33 = a[10];
-        this.a43 = a[11];
-        this.a14 = a[12];
-        this.a24 = a[13];
-        this.a34 = a[14];
-        this.a44 = a[15];
+        this.a11 = a[0](this.a21 = a[1](this.a31 = a[2](this.a41 = a[3])));
+        this.a12 = a[4](this.a22 = a[5](this.a32 = a[6](this.a42 = a[7])));
+        this.a13 = a[8](this.a23 = a[9](this.a33 = a[10](this.a43 = a[11])));
+        this.a14 = a[12](this.a24 = a[13](this.a34 = a[14](this.a44 = a[15])));
         return this;
       };
 
@@ -1208,7 +1189,7 @@ define("../tools/include/inject", function(){});
       };
 
       Quat.prototype.clone = function() {
-        return new Quat(this.x, this.y, this.z);
+        return new Quat(this.x, this.y, this.z, this.w);
       };
 
       Quat.prototype.dup = function() {
@@ -1223,18 +1204,6 @@ define("../tools/include/inject", function(){});
         this.y = s * v.y;
         this.z = s * v.z;
         this.w = Math.cos(a / 180 * Math.PI);
-        return this;
-      };
-
-      Quat.prototype.clone = function() {
-        return new Quat(this.x, this.y, this.z, this.w);
-      };
-
-      Quat.prototype.copy = function(q) {
-        this.x = q.x;
-        this.y = q.y;
-        this.z = q.z;
-        this.w = q.w;
         return this;
       };
 
@@ -1278,10 +1247,7 @@ define("../tools/include/inject", function(){});
 
       Quat.prototype.mul4 = function(x, y, z, w) {
         var aw, ax, ay, az;
-        ax = this.x;
-        ay = this.y;
-        az = this.z;
-        aw = this.w;
+        ax = this.x(ay = this.y(az = this.z(aw = this.w)));
         this.x = w * ax + x * aw + y * az - z * ay;
         this.y = w * ay + y * aw + z * ax - x * az;
         this.z = w * az + z * aw + x * ay - y * ax;
@@ -1335,102 +1301,102 @@ define("../tools/include/inject", function(){});
     //`x, y, z` - axis vector *{ Number }*
     //`w` - rotation (in radians) *{ Number }*
     function Quat(x, y, z, w) {
-      this.x = x; this.y = y; this.z = z; this.w = w;
+      this.x = x this.y = y this.z = z this.w = w
     }
   
     Quat.identity = function(){
-        return new Quat(0, 0, 0, 1);
+        return new Quat(0, 0, 0, 1)
     }
   
     Quat.prototype.set = function(x, y, z, w) {
-      this.x = x; this.y = y; this.z = z; this.w = w;
-      return this;
-    };
+      this.x = x this.y = y this.z = z this.w = w
+      return this
+    }
   
     Quat.prototype.setQuat = function(q) {
-      this.x = q.x; this.y = q.y; this.z = q.z; this.w = q.w;
-      return this;
-    };
+      this.x = q.x this.y = q.y this.z = q.z this.w = q.w
+      return this
+    }
   
     Quat.prototype.reset = function(){
-      return this.set(0, 0, 0, 1);
-    };
+      return this.set(0, 0, 0, 1)
+    }
   
     Quat.prototype.length = function(){
-      var x = this.x, y = this.y, z = this.z, w = this.w;
-      return Math.sqrt(x*x + y*y + z*z + w*w);
+      var x = this.x, y = this.y, z = this.z, w = this.w
+      return Math.sqrt(x*x + y*y + z*z + w*w)
     }
   
     Quat.prototype.dot = function(b){
-      return this.x * b.x + this.y * b.y + this.z * b.z + this.w * b.w;
+      return this.x * b.x + this.y * b.y + this.z * b.z + this.w * b.w
     }
   
     Quat.prototype.mul2 = function(a, b){
       var ax = a.x, ay = a.y, az = a.z, aw = a.w
-      ,   bx = b.x, by = b.y, bz = b.z, bw = b.w;
+      ,   bx = b.x, by = b.y, bz = b.z, bw = b.w
   
-      this.x  = bw * ax + bx * aw + ay * bz - by * az;
-      this.y  = bw * ay + by * aw + az * bx - bz * ax;
-      this.z  = bw * az + bz * aw + ax * by - bx * ay;
-      this.w  = bw * aw - bx * ax - ay * by - bz * az;
+      this.x  = bw * ax + bx * aw + ay * bz - by * az
+      this.y  = bw * ay + by * aw + az * bx - bz * ax
+      this.z  = bw * az + bz * aw + ax * by - bx * ay
+      this.w  = bw * aw - bx * ax - ay * by - bz * az
   
   
-      return this;
+      return this
     }
   
     Quat.prototype.mul = function(q){
-      return this.mul2(this, q);
+      return this.mul2(this, q)
     }
   
     Quat.prototype.mulled = function(q){
-      return this.dup().mul2(this, q);
+      return this.dup().mul2(this, q)
     }
   
     Quat.prototype.mul4 = function(x, y, z, w){
-      var ax = this.x, ay = this.y, az = this.z, aw = this.w;
+      var ax = this.x, ay = this.y, az = this.z, aw = this.w
   
-      this.x = w*ax + x*aw + y*az - z*ay;
-      this.y = w*ay + y*aw + z*ax - x*az;
-      this.z = w*az + z*aw + x*ay - y*ax;
-      this.w = w*aw - x*ax - y*ay - z*az;
+      this.x = w*ax + x*aw + y*az - z*ay
+      this.y = w*ay + y*aw + z*ax - x*az
+      this.z = w*az + z*aw + x*ay - y*ax
+      this.w = w*aw - x*ax - y*ay - z*az
   
-      return this;
+      return this
     }
   
-    
+  
   
     Quat.prototype.rotate = function(x, y, z, theta){
       var len = Math.sqrt(x*x + y*y + z*z)
   
       if(len > kEpsilon){
           var t2  = theta / 2
-          ,   st2 = Math.sin(t2);
+          ,   st2 = Math.sin(t2)
           this.mul4((x / len) * st2,
                     (y / len) * st2,
                     (z / len) * st2,
-                    Math.cos(t2));
+                    Math.cos(t2))
       }
   
-      return this;
+      return this
     }
   
     Quat.prototype.mulVec3 = function(v) {
   
-          var x = v.x, y = v.y, z = v.z;
-          var qx = this.x, qy = this.y, qz = this.z, qw = this.w;
+          var x = v.x, y = v.y, z = v.z
+          var qx = this.x, qy = this.y, qz = this.z, qw = this.w
   
               // calculate quat * vec
               ix = qw * x + qy * z - qz * y,
               iy = qw * y + qz * x - qx * z,
               iz = qw * z + qx * y - qy * x,
-              iw = -qx * x - qy * y - qz * z;
+              iw = -qx * x - qy * y - qz * z
   
           // calculate result * inverse quat
-          var dest = v.dup();
-          dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
-          dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
-          dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
-          return dest;
+          var dest = v.dup()
+          dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy
+          dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz
+          dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx
+          return dest
   
     }
   
@@ -1446,29 +1412,29 @@ define("../tools/include/inject", function(){});
       ,   xz = this.x * zs
       ,   yy = this.y * ys
       ,   yz = this.y * zs
-      ,   zz = this.z * zs;
+      ,   zz = this.z * zs
   
       return new Mat4().set4x4r(
           1 - (yy+zz), xy - wz,      xz + wy,     0,
           xy + wz,     1 - (xx+zz ), yz - wx,     0,
           xz - wy,     yz + wx,      1 - (xx+yy), 0,
           0,           0,            0,           1
-      );
+      )
   
   //    return new Mat4().set4x4r(
   //        1 - (yy+zz), xy + wz,      xz - wy,     0,
   //        xy - wz,     1 - (xx+zz ), yz + wx,     0,
   //        xz + wy,     yz - wx,      1 - (xx+yy), 0,
   //        0,           0,            0,           1
-  //    );
+  //    )
     }
   
     Quat.prototype.dup = function(){
-      return new Quat(this.x, this.y, this.z, this.w);
+      return new Quat(this.x, this.y, this.z, this.w)
     }
   
     Quat.fromRotationAxis = function(a, x, y, z) {
-      return Quat.identity().rotate(x, y, z, a);
+      return Quat.identity().rotate(x, y, z, a)
     }
    */
 
@@ -1625,302 +1591,287 @@ define("../tools/include/inject", function(){});
  * @param {number=} overflow
  * @param {number=} startdenom
  */
-
-define('lib/seedrandom',[], function() { //added by Marcin Ignac
-
-(function (pool, math, width, chunks, significance, overflow, startdenom) {
-
-//
-// seedrandom()
-// This is the seedrandom function described above.
-//
-math['seedrandom'] = function seedrandom(seed, use_entropy) {
-  var key = [];
-  var arc4;
-
-  // Flatten the seed string or build one from local entropy if needed.
-  seed = mixkey(flatten(
-    use_entropy ? [seed, pool] :
-    arguments.length ? seed :
-    [new Date().getTime(), pool, window], 3), key);
-
-  // Use the seed to initialize an ARC4 generator.
-  arc4 = new ARC4(key);
-
-  // Mix the randomness into accumulated entropy.
-  mixkey(arc4.S, pool);
-
-  // Override Math.random
-
-  // This function returns a random double in [0, 1) that contains
-  // randomness in every bit of the mantissa of the IEEE 754 value.
-
-  math['random'] = function random() {  // Closure to return a random double:
-    var n = arc4.g(chunks);             // Start with a numerator n < 2 ^ 48
-    var d = startdenom;                 //   and denominator d = 2 ^ 48.
-    var x = 0;                          //   and no 'extra last byte'.
-    while (n < significance) {          // Fill up all significant digits by
-      n = (n + x) * width;              //   shifting numerator and
-      d *= width;                       //   denominator and generating a
-      x = arc4.g(1);                    //   new least-significant-byte.
+define('lib/seedrandom',[], function () {
+  //added by Marcin Ignac
+  (function (pool, math, width, chunks, significance, overflow, startdenom) {
+    //
+    // seedrandom()
+    // This is the seedrandom function described above.
+    //
+    math.seedrandom = function seedrandom(seed, use_entropy) {
+      var key = [];
+      var arc4;
+      // Flatten the seed string or build one from local entropy if needed.
+      seed = mixkey(flatten(use_entropy ? [
+        seed,
+        pool
+      ] : arguments.length ? seed : [
+        new Date().getTime(),
+        pool,
+        window
+      ], 3), key);
+      // Use the seed to initialize an ARC4 generator.
+      arc4 = new ARC4(key);
+      // Mix the randomness into accumulated entropy.
+      mixkey(arc4.S, pool);
+      // Override Math.random
+      // This function returns a random double in [0, 1) that contains
+      // randomness in every bit of the mantissa of the IEEE 754 value.
+      math.random = function random() {
+        // Closure to return a random double:
+        var n = arc4.g(chunks);
+        // Start with a numerator n < 2 ^ 48
+        var d = startdenom;
+        //   and denominator d = 2 ^ 48.
+        var x = 0;
+        //   and no 'extra last byte'.
+        while (n < significance) {
+          // Fill up all significant digits by
+          n = (n + x) * width;
+          //   shifting numerator and
+          d *= width;
+          //   denominator and generating a
+          x = arc4.g(1);  //   new least-significant-byte.
+        }
+        while (n >= overflow) {
+          // To avoid rounding up, before adding
+          n /= 2;
+          //   last byte, shift everything
+          d /= 2;
+          //   right using integer math until
+          x >>>= 1;  //   we have exactly the desired bits.
+        }
+        return (n + x) / d;  // Form the number within [0, 1).
+      };
+      // Return the seed that was used
+      return seed;
+    };
+    //
+    // ARC4
+    //
+    // An ARC4 implementation.  The constructor takes a key in the form of
+    // an array of at most (width) integers that should be 0 <= x < (width).
+    //
+    // The g(count) method returns a pseudorandom integer that concatenates
+    // the next (count) outputs from ARC4.  Its return value is a number x
+    // that is in the range 0 <= x < (width ^ count).
+    //
+    /** @constructor */
+    function ARC4(key) {
+      var t, u, me = this, keylen = key.length;
+      var i = 0, j = me.i = me.j = me.m = 0;
+      me.S = [];
+      me.c = [];
+      // The empty key [] is treated as [0].
+      if (!keylen) {
+        key = [keylen++];
+      }
+      // Set up S using the standard key scheduling algorithm.
+      while (i < width) {
+        me.S[i] = i++;
+      }
+      for (i = 0; i < width; i++) {
+        t = me.S[i];
+        j = lowbits(j + t + key[i % keylen]);
+        u = me.S[j];
+        me.S[i] = u;
+        me.S[j] = t;
+      }
+      // The "g" method returns the next (count) outputs as one number.
+      me.g = function getnext(count) {
+        var s = me.S;
+        var i = lowbits(me.i + 1);
+        var t = s[i];
+        var j = lowbits(me.j + t);
+        var u = s[j];
+        s[i] = u;
+        s[j] = t;
+        var r = s[lowbits(t + u)];
+        while (--count) {
+          i = lowbits(i + 1);
+          t = s[i];
+          j = lowbits(j + t);
+          u = s[j];
+          s[i] = u;
+          s[j] = t;
+          r = r * width + s[lowbits(t + u)];
+        }
+        me.i = i;
+        me.j = j;
+        return r;
+      };
+      // For robust unpredictability discard an initial batch of values.
+      // See http://www.rsa.com/rsalabs/node.asp?id=2009
+      me.g(width);
     }
-    while (n >= overflow) {             // To avoid rounding up, before adding
-      n /= 2;                           //   last byte, shift everything
-      d /= 2;                           //   right using integer math until
-      x >>>= 1;                         //   we have exactly the desired bits.
-    }
-    return (n + x) / d;                 // Form the number within [0, 1).
-  };
-
-  // Return the seed that was used
-  return seed;
-};
-
-//
-// ARC4
-//
-// An ARC4 implementation.  The constructor takes a key in the form of
-// an array of at most (width) integers that should be 0 <= x < (width).
-//
-// The g(count) method returns a pseudorandom integer that concatenates
-// the next (count) outputs from ARC4.  Its return value is a number x
-// that is in the range 0 <= x < (width ^ count).
-//
-/** @constructor */
-function ARC4(key) {
-  var t, u, me = this, keylen = key.length;
-  var i = 0, j = me.i = me.j = me.m = 0;
-  me.S = [];
-  me.c = [];
-
-  // The empty key [] is treated as [0].
-  if (!keylen) { key = [keylen++]; }
-
-  // Set up S using the standard key scheduling algorithm.
-  while (i < width) { me.S[i] = i++; }
-  for (i = 0; i < width; i++) {
-    t = me.S[i];
-    j = lowbits(j + t + key[i % keylen]);
-    u = me.S[j];
-    me.S[i] = u;
-    me.S[j] = t;
-  }
-
-  // The "g" method returns the next (count) outputs as one number.
-  me.g = function getnext(count) {
-    var s = me.S;
-    var i = lowbits(me.i + 1); var t = s[i];
-    var j = lowbits(me.j + t); var u = s[j];
-    s[i] = u;
-    s[j] = t;
-    var r = s[lowbits(t + u)];
-    while (--count) {
-      i = lowbits(i + 1); t = s[i];
-      j = lowbits(j + t); u = s[j];
-      s[i] = u;
-      s[j] = t;
-      r = r * width + s[lowbits(t + u)];
-    }
-    me.i = i;
-    me.j = j;
-    return r;
-  };
-  // For robust unpredictability discard an initial batch of values.
-  // See http://www.rsa.com/rsalabs/node.asp?id=2009
-  me.g(width);
-}
-
-//
-// flatten()
-// Converts an object tree to nested arrays of strings.
-//
-/** @param {Object=} result
+    //
+    // flatten()
+    // Converts an object tree to nested arrays of strings.
+    //
+    /** @param {Object=} result
   * @param {string=} prop
   * @param {string=} typ */
-function flatten(obj, depth, result, prop, typ) {
-  result = [];
-  typ = typeof(obj);
-  if (depth && typ == 'object') {
-    for (prop in obj) {
-      if (prop.indexOf('S') < 5) {    // Avoid FF3 bug (local/sessionStorage)
-        try { result.push(flatten(obj[prop], depth - 1)); } catch (e) {}
+    function flatten(obj, depth, result, prop, typ) {
+      result = [];
+      typ = typeof obj;
+      if (depth && typ == 'object') {
+        for (prop in obj) {
+          if (prop.indexOf('S') < 5) {
+            // Avoid FF3 bug (local/sessionStorage)
+            try {
+              result.push(flatten(obj[prop], depth - 1));
+            } catch (e) {
+            }
+          }
+        }
       }
+      return result.length ? result : obj + (typ != 'string' ? '\0' : '');
     }
-  }
-  return (result.length ? result : obj + (typ != 'string' ? '\0' : ''));
-}
-
-//
-// mixkey()
-// Mixes a string seed into a key that is an array of integers, and
-// returns a shortened string seed that is equivalent to the result key.
-//
-/** @param {number=} smear
+    //
+    // mixkey()
+    // Mixes a string seed into a key that is an array of integers, and
+    // returns a shortened string seed that is equivalent to the result key.
+    //
+    /** @param {number=} smear
   * @param {number=} j */
-function mixkey(seed, key, smear, j) {
-  seed += '';                         // Ensure the seed is a string
-  smear = 0;
-  for (j = 0; j < seed.length; j++) {
-    key[lowbits(j)] =
-      lowbits((smear ^= key[lowbits(j)] * 19) + seed.charCodeAt(j));
-  }
-  seed = '';
-  for (j in key) { seed += String.fromCharCode(key[j]); }
-  return seed;
-}
-
-//
-// lowbits()
-// A quick "n mod width" for width a power of 2.
-//
-function lowbits(n) { return n & (width - 1); }
-
-//
-// The following constants are related to IEEE 754 limits.
-//
-startdenom = math.pow(width, chunks);
-significance = math.pow(2, significance);
-overflow = significance * 2;
-
-//
-// When seedrandom.js is loaded, we immediately mix a few bits
-// from the built-in RNG into the entropy pool.  Because we do
-// not want to intefere with determinstic PRNG state later,
-// seedrandom will not call math.random on its own again after
-// initialization.
-//
-mixkey(math.random(), pool);
-
-// End anonymous scope, and pass initial values.
-})(
-  [],   // pool: entropy pool starts empty
-  Math, // math: package containing random, pow, and seedrandom
-  256,  // width: each RC4 output is 0 <= x < 256
-  6,    // chunks: at least six RC4 outputs for each double
-  52    // significance: there are 52 significant digits in a double
-);
-
-
+    function mixkey(seed, key, smear, j) {
+      seed += '';
+      // Ensure the seed is a string
+      smear = 0;
+      for (j = 0; j < seed.length; j++) {
+        key[lowbits(j)] = lowbits((smear ^= key[lowbits(j)] * 19) + seed.charCodeAt(j));
+      }
+      seed = '';
+      for (j in key) {
+        seed += String.fromCharCode(key[j]);
+      }
+      return seed;
+    }
+    //
+    // lowbits()
+    // A quick "n mod width" for width a power of 2.
+    //
+    function lowbits(n) {
+      return n & width - 1;
+    }
+    //
+    // The following constants are related to IEEE 754 limits.
+    //
+    startdenom = math.pow(width, chunks);
+    significance = math.pow(2, significance);
+    overflow = significance * 2;
+    //
+    // When seedrandom.js is loaded, we immediately mix a few bits
+    // from the built-in RNG into the entropy pool.  Because we do
+    // not want to intefere with determinstic PRNG state later,
+    // seedrandom will not call math.random on its own again after
+    // initialization.
+    //
+    mixkey(math.random(), pool);  // End anonymous scope, and pass initial values.
+  }([], Math, 256, 6, 52));
 });
-
-define('pex/utils/MathUtils',['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pex/geom/Mat4', 'pex/geom/Quat'], 
-  function(seedrandom, Vec2, Vec3, Vec4, Mat4, Quat) {
+define('pex/utils/MathUtils',[
+  'lib/seedrandom',
+  'pex/geom/Vec2',
+  'pex/geom/Vec3',
+  'pex/geom/Vec4',
+  'pex/geom/Mat4',
+  'pex/geom/Quat'
+], function (seedrandom, Vec2, Vec3, Vec4, Mat4, Quat) {
   function MathUtils() {
   }
-
-  MathUtils.seed = function(s) {
+  MathUtils.seed = function (s) {
     Math.seedrandom(s);
-  }
-
-  MathUtils.randomFloat = function(min, max) {
-    if (typeof(max) == 'undefined') {
+  };
+  MathUtils.randomFloat = function (min, max) {
+    if (typeof max == 'undefined') {
       min = 1;
     }
-    if (typeof(max) == 'undefined') {
+    if (typeof max == 'undefined') {
       max = min;
       min = 0;
     }
     return min + (max - min) * Math.random();
-  }
-
-  MathUtils.randomInt = function(min, max) {
+  };
+  MathUtils.randomInt = function (min, max) {
     return Math.floor(MathUtils.randomFloat(min, max));
-  }
-
-  MathUtils.randomVec3 = function(r) {
+  };
+  MathUtils.randomVec3 = function (r) {
     r = r || 0.5;
     var x = Math.random() - 0.5;
     var y = Math.random() - 0.5;
     var z = Math.random() - 0.5;
     return Vec3.create(x * r, y * r, z * r);
-  }
-
-  MathUtils.randomVec3InBoundingBox = function(bbox) {
+  };
+  MathUtils.randomVec3InBoundingBox = function (bbox) {
     var x = bbox.min.x + Math.random() * (bbox.max.x - bbox.min.x);
     var y = bbox.min.y + Math.random() * (bbox.max.y - bbox.min.y);
     var z = bbox.min.z + Math.random() * (bbox.max.z - bbox.min.z);
     return Vec3.create(x, y, z);
-  }
-
-  MathUtils.randomVec2InRect = function(rect) {
+  };
+  MathUtils.randomVec2InRect = function (rect) {
     return Vec2.create(rect.x + Math.random() * rect.width, rect.y + Math.random() * rect.height);
-  }
-
-  MathUtils.randomChance = function(probability) {
+  };
+  MathUtils.randomChance = function (probability) {
     return Math.random() <= probability;
-  }
-
-  MathUtils.randomElement = function(list) {
+  };
+  MathUtils.randomElement = function (list) {
     return list[Math.floor(Math.random() * list.length)];
-  }
-
-  MathUtils.mix = function(a, b, t) {
+  };
+  MathUtils.mix = function (a, b, t) {
     return a + (b - a) * t;
-  }
-
-  MathUtils.map = function(value, oldMin, oldMax, newMin, newMax) {
-    return newMin + (value - oldMin)/(oldMax - oldMin) * (newMax - newMin);
-  }
-
-  MathUtils.clamp = function(value, min, max) {
+  };
+  MathUtils.map = function (value, oldMin, oldMax, newMin, newMax) {
+    return newMin + (value - oldMin) / (oldMax - oldMin) * (newMax - newMin);
+  };
+  MathUtils.clamp = function (value, min, max) {
     return Math.max(min, Math.min(value, max));
-  }
-
+  };
   var temporaryVec1 = {};
-
-  MathUtils.getTempVec2 = function(name) {
+  MathUtils.getTempVec2 = function (name) {
     var result = temporaryVec2[name];
     if (!result) {
       result = temporaryVec2[name] = Vec2.create();
     }
     result.set(0, 0, 0);
     return result;
-  }
-
+  };
   var temporaryVec3 = {};
-
-  MathUtils.getTempVec3 = function(name) {
+  MathUtils.getTempVec3 = function (name) {
     var result = temporaryVec3[name];
     if (!result) {
       result = temporaryVec3[name] = Vec3.create();
     }
     result.set(0, 0, 0);
     return result;
-  }
-
+  };
   var temporaryVec4 = {};
-
-  MathUtils.getTempVec4 = function(name) {
+  MathUtils.getTempVec4 = function (name) {
     var result = temporaryVec4[name];
     if (!result) {
       result = temporaryVec4[name] = Vec4.create();
     }
     result.set(0, 0, 0);
     return result;
-  }
-
+  };
   var temporaryMat4 = {};
-
-  MathUtils.getTempMat4 = function(name) {
+  MathUtils.getTempMat4 = function (name) {
     var result = temporaryMat4[name];
     if (!result) {
       result = temporaryMat4[name] = Mat4.create();
     }
     result.identity();
     return result;
-  }
-
+  };
   var temporaryQuat = {};
-
-  MathUtils.getTempQuat = function(name) {
+  MathUtils.getTempQuat = function (name) {
     var result = temporaryQuat[name];
     if (!result) {
       result = temporaryQuat[name] = Quat.create();
     }
     result.identity();
     return result;
-  }
-
+  };
   return MathUtils;
 });
 (function() {
@@ -2229,11 +2180,9 @@ define('pex/utils/MathUtils',['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'
             return count[f.c]++;
           };
         })(this));
-        return this.normals.forEach((function(_this) {
-          return function(n, i) {
-            return n.scale(1 / count[i]);
-          };
-        })(this));
+        return this.normals.forEach(function(n, i) {
+          return n.scale(1 / count[i]);
+        });
       };
 
       return Geometry;
@@ -2701,15 +2650,25 @@ define('pex/utils/MathUtils',['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3'
 
 }).call(this);
 
-define('pex/geom/FacePolygon',[], function() {
+define('pex/geom/FacePolygon',[], function () {
   function FacePolygon(vertexIndexList) {
     this.numVertices = vertexIndexList.length;
-    var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-    for(var i=0; i<vertexIndexList.length; i++) {
+    var indices = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j'
+      ];
+    for (var i = 0; i < vertexIndexList.length; i++) {
       this[indices[i]] = vertexIndexList[i];
     }
   }
-
   return FacePolygon;
 });
 (function() {
@@ -2751,7 +2710,7 @@ define('pex/geom/FacePolygon',[], function() {
 
 }).call(this);
 
-define('pex/geom/hem/HEEdge',[], function() {
+define('pex/geom/hem/HEEdge',[], function () {
   function HEEdge(vert, pair, face, next) {
     this.vert = vert;
     this.pair = pair;
@@ -2759,115 +2718,97 @@ define('pex/geom/hem/HEEdge',[], function() {
     this.next = next;
     this.selected = 0;
   }
-
-  HEEdge.prototype.findPrev = function() {
+  HEEdge.prototype.findPrev = function () {
     var edge = this;
-    while(edge.next != this) {
+    while (edge.next != this) {
       edge = edge.next;
     }
     return edge;
-  }
+  };
   return HEEdge;
 });
-
-define('pex/geom/hem/HEVertex',['pex/geom/Vec3'], function(Vec3) {
+define('pex/geom/hem/HEVertex',['pex/geom/Vec3'], function (Vec3) {
   function HEVertex(x, y, z, edge) {
     this.position = Vec3.create(x, y, z);
     this.edge = edge;
     this.selected = 0;
   }
-
-  HEVertex.prototype.getNormal = function() {
+  HEVertex.prototype.getNormal = function () {
     var faces = [];
-
     var edge = this.edge;
     do {
       faces.push(edge.face);
       edge = edge.pair.next;
     } while (edge != this.edge);
-
     var n = Vec3.create(0, 0, 0);
-    for(var i in faces) {
+    for (var i in faces) {
       n.add(faces[i].getNormal());
     }
     n.normalize();
-
     return n;
-  }
-
-  HEVertex.prototype.forEachFace = function(callback) {
+  };
+  HEVertex.prototype.forEachFace = function (callback) {
     var faceEdge = this.edge;
     var face = faceEdge.face;
     do {
       callback(face);
       faceEdge = faceEdge.pair.next;
       face = faceEdge.face;
-    } while(faceEdge != this.edge);
-  }
-
-  HEVertex.prototype.forEachEdge = function(callback) {
+    } while (faceEdge != this.edge);
+  };
+  HEVertex.prototype.forEachEdge = function (callback) {
     var faceEdge = this.edge;
     do {
       callback(faceEdge);
       faceEdge = faceEdge.pair.next;
-    } while(faceEdge != this.edge);
-  }
-
-  HEVertex.prototype.clearCaches = function() {
+    } while (faceEdge != this.edge);
+  };
+  HEVertex.prototype.clearCaches = function () {
     this.edgesCache = null;
-  }
-
+  };
   var edgeVec3 = Vec3.create();
-  HEVertex.prototype.forEachEdgeWithin = function(r, callback) {
+  HEVertex.prototype.forEachEdgeWithin = function (r, callback) {
     if (this.edgesCache) {
       this.edgesCache.forEach(callback);
       return;
     }
-
     var edges = [this.edge];
     var visited = 0;
     var r2 = r * r;
-
-    while(visited < edges.length) {
+    while (visited < edges.length) {
       var startEdge = edges[visited++];
       var faceEdge = startEdge;
       do {
         edgeVec3.asSub(this.position, faceEdge.next.vert.position);
         var dist = edgeVec3.lengthSquared();
-        if ((edges.indexOf(faceEdge.next) == -1) && (dist < r2)) {
+        if (edges.indexOf(faceEdge.next) == -1 && dist < r2) {
           edges.push(faceEdge.next);
         }
         faceEdge = faceEdge.pair.next;
-      } while(faceEdge != startEdge);
+      } while (faceEdge != startEdge);
     }
-
-    edges.shift(); //remove self
-
-    edges.forEach(callback); //iterate with external function
-
+    edges.shift();
+    //remove self
+    edges.forEach(callback);
+    //iterate with external function
     this.edgesCache = edges;
-  }
-
-
-  HEVertex.prototype.getNeighbors = function(radius) {
+  };
+  HEVertex.prototype.getNeighbors = function (radius) {
     var neighbors = [];
-    this.forEachEdge(function(edge) {
+    this.forEachEdge(function (edge) {
       neighbors.push(edge.next.vert);
-    })
+    });
     return neighbors;
-  }
-
+  };
   return HEVertex;
 });
-
-define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
+define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function (Vec3) {
   function HEFace(edge) {
     this.edge = edge;
     this.selected = 0;
     this.normal = null;
   }
-
-  HEFace.prototype.getNormal = function() {
+  HEFace.prototype.getNormal = function () {
     if (!this.normal) {
       this.normal = Vec3.create();
     }
@@ -2876,16 +2817,13 @@ define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
     var c = this.edge.next.next.vert.position;
     var ab = HEFace.prototype.getNormal.ab = HEFace.prototype.getNormal.ab || Vec3.create();
     var ac = HEFace.prototype.getNormal.ac = HEFace.prototype.getNormal.ac || Vec3.create();
-
     ab.asSub(b, a);
     ac.asSub(c, a);
     this.normal.asCross(ab, ac).normalize();
-
     return this.normal;
-  }
-
+  };
   //calculates the centroid of the face
-  HEFace.prototype.getCenter = function() {
+  HEFace.prototype.getCenter = function () {
     if (!this.center) {
       this.center = Vec3.create();
     }
@@ -2897,12 +2835,10 @@ define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
       vertexCount++;
       edge = edge.next;
     } while (edge != this.edge);
-
-    this.center.scale(1/vertexCount);
+    this.center.scale(1 / vertexCount);
     return this.center;
-  }
-
-  HEFace.prototype.getAllVertices = function() {
+  };
+  HEFace.prototype.getAllVertices = function () {
     var vertices = [];
     var edge = this.edge;
     do {
@@ -2910,107 +2846,86 @@ define('pex/geom/hem/HEFace',['pex/geom/Vec3'], function(Vec3) {
       edge = edge.next;
     } while (edge != this.edge);
     return vertices;
-  }
-
-  HEFace.prototype.edgePairLoop = function(callback) {
+  };
+  HEFace.prototype.edgePairLoop = function (callback) {
     var edge = this.edge;
     do {
       callback(edge, edge.next);
       edge = edge.next;
-    } while(edge != this.edge);
-
-  }
-
+    } while (edge != this.edge);
+  };
   return HEFace;
 });
-
-define('pex/geom/BoundingBox',['pex/geom/Vec3'], function(Vec3) {
+define('pex/geom/BoundingBox',['pex/geom/Vec3'], function (Vec3) {
   function BoundingBox(min, max) {
     this.min = min;
     this.max = max;
   }
-
-  BoundingBox.fromPositionSize = function(pos, size) {
-    return new BoundingBox(
-      Vec3.create(pos.x - size.x/2, pos.y - size.y/2, pos.z - size.z/2),
-      Vec3.create(pos.x + size.x/2, pos.y + size.y/2, pos.z + size.z/2)
-    );
-  }
-
-  BoundingBox.fromPoints = function(points) {
+  BoundingBox.fromPositionSize = function (pos, size) {
+    return new BoundingBox(Vec3.create(pos.x - size.x / 2, pos.y - size.y / 2, pos.z - size.z / 2), Vec3.create(pos.x + size.x / 2, pos.y + size.y / 2, pos.z + size.z / 2));
+  };
+  BoundingBox.fromPoints = function (points) {
     var bbox = new BoundingBox(points[0].clone(), points[0].clone());
     points.forEach(bbox.addPoint.bind(bbox));
     return bbox;
-  }
-
-  BoundingBox.prototype.isEmpty = function() {
-    if (!this.min || !this.max) return true;
-    else return false;
-  }
-
-  BoundingBox.prototype.addPoint = function(p) {
+  };
+  BoundingBox.prototype.isEmpty = function () {
+    if (!this.min || !this.max)
+      return true;
+    else
+      return false;
+  };
+  BoundingBox.prototype.addPoint = function (p) {
     if (this.isEmpty()) {
       this.min = p.clone();
       this.max = p.clone();
     }
-
-    if (p.x < this.min.x) this.min.x = p.x;
-    if (p.y < this.min.y) this.min.y = p.y;
-    if (p.z < this.min.z) this.min.z = p.z;
-    if (p.x > this.max.x) this.max.x = p.x;
-    if (p.y > this.max.y) this.max.y = p.y;
-    if (p.z > this.max.z) this.max.z = p.z;
-  }
-
-  BoundingBox.prototype.getSize = function() {
-    return Vec3.create(
-     (this.max.x - this.min.x),
-     (this.max.y - this.min.y),
-     (this.max.z - this.min.z)
-    );
-  }
-
-  BoundingBox.prototype.getCenter = function(out) {
-    return Vec3.create(
-     this.min.x + (this.max.x - this.min.x)/2,
-     this.min.y + (this.max.y - this.min.y)/2,
-     this.min.z + (this.max.z - this.min.z)/2
-    );
-  }
-
+    if (p.x < this.min.x)
+      this.min.x = p.x;
+    if (p.y < this.min.y)
+      this.min.y = p.y;
+    if (p.z < this.min.z)
+      this.min.z = p.z;
+    if (p.x > this.max.x)
+      this.max.x = p.x;
+    if (p.y > this.max.y)
+      this.max.y = p.y;
+    if (p.z > this.max.z)
+      this.max.z = p.z;
+  };
+  BoundingBox.prototype.getSize = function () {
+    return Vec3.create(this.max.x - this.min.x, this.max.y - this.min.y, this.max.z - this.min.z);
+  };
+  BoundingBox.prototype.getCenter = function (out) {
+    return Vec3.create(this.min.x + (this.max.x - this.min.x) / 2, this.min.y + (this.max.y - this.min.y) / 2, this.min.z + (this.max.z - this.min.z) / 2);
+  };
   return BoundingBox;
 });
-define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
+define('pex/geom/Octree',['pex/geom/Vec3'], function (Vec3) {
   //position is bottom left corner of the cell
   function Octree(position, size, accuracy) {
     this.maxDistance = Math.max(size.x, Math.max(size.y, size.z));
-    this.accuracy = (typeof(accuracy) !== 'undefined') ? accuracy : this.maxDistance / 1000;
+    this.accuracy = typeof accuracy !== 'undefined' ? accuracy : this.maxDistance / 1000;
     this.root = new Octree.Cell(this, position, size, 0);
   }
-
-  Octree.fromBoundingBox = function(bbox) {
+  Octree.fromBoundingBox = function (bbox) {
     return new Octree(bbox.min.clone(), bbox.getSize().clone());
-  }
-
+  };
   Octree.MaxLevel = 8;
-
   //p = {x, y, z}
-  Octree.prototype.add = function(p) {
+  Octree.prototype.add = function (p) {
     this.root.add(p);
-  }
-
+  };
   //check if the point was already added to the octreee
-  Octree.prototype.has = function(p) {
+  Octree.prototype.has = function (p) {
     return this.root.has(p);
-  }
-
-  Octree.prototype.findNearestPoint = function(p, options) {
+  };
+  Octree.prototype.findNearestPoint = function (p, options) {
     options = options || {};
     return this.root.findNearestPoint(p, options);
-  }
-
-  Octree.prototype.getAllCellsAtLevel = function(cell, level, result) {
-    if (typeof(level) == 'undefined') {
+  };
+  Octree.prototype.getAllCellsAtLevel = function (cell, level, result) {
+    if (typeof level == 'undefined') {
       level = cell;
       cell = this.root;
     }
@@ -3019,40 +2934,36 @@ define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
       if (cell.points.length > 0) {
         result.push(cell);
       }
-      return result
-    }
-    else {
-      cell.children.forEach(function(child) {
+      return result;
+    } else {
+      cell.children.forEach(function (child) {
         this.getAllCellsAtLevel(child, level, result);
-      }.bind(this))
-      return result
+      }.bind(this));
+      return result;
     }
-  }
-
-  Octree.Cell = function(tree, position, size, level) {
+  };
+  Octree.Cell = function (tree, position, size, level) {
     this.tree = tree;
     this.position = position;
     this.size = size;
     this.level = level;
     this.points = [];
     this.children = [];
-  }
-
-  Octree.Cell.prototype.has = function(p) {
-    if (!this.contains(p)) return null;
-
+  };
+  Octree.Cell.prototype.has = function (p) {
+    if (!this.contains(p))
+      return null;
     if (this.children.length > 0) {
-      for(var i=0; i<this.children.length; i++) {
+      for (var i = 0; i < this.children.length; i++) {
         var duplicate = this.children[i].has(p);
         if (duplicate) {
           return duplicate;
         }
       }
       return null;
-    }
-    else {
+    } else {
       var minDistSqrt = this.tree.accuracy * this.tree.accuracy;
-      for(var i=0; i<this.points.length; i++) {
+      for (var i = 0; i < this.points.length; i++) {
         var o = this.points[i];
         var distSq = p.squareDistance(o);
         if (distSq <= minDistSqrt) {
@@ -3061,88 +2972,75 @@ define('pex/geom/Octree',['pex/geom/Vec3'], function(Vec3) {
       }
       return null;
     }
-  }
-
-  Octree.Cell.prototype.add = function(p) {
+  };
+  Octree.Cell.prototype.add = function (p) {
     this.points.push(p);
-
     if (this.children.length > 0) {
       this.addToChildren(p);
-    }
-    else {
+    } else {
       if (this.points.length > 1 && this.level < Octree.MaxLevel) {
         this.split();
       }
     }
-  }
-
-  Octree.Cell.prototype.addToChildren = function(p) {
-    for(var i=0; i<this.children.length; i++) {
+  };
+  Octree.Cell.prototype.addToChildren = function (p) {
+    for (var i = 0; i < this.children.length; i++) {
       if (this.children[i].contains(p)) {
         this.children[i].add(p);
         break;
       }
     }
-  }
-
-  Octree.Cell.prototype.contains = function(p) {
-    return p.x >= this.position.x - this.tree.accuracy
-        && p.y >= this.position.y - this.tree.accuracy
-        && p.z >= this.position.z - this.tree.accuracy
-        && p.x <= this.position.x + this.size.x + this.tree.accuracy
-        && p.y <= this.position.y + this.size.y + this.tree.accuracy
-        && p.z <= this.position.z + this.size.z + this.tree.accuracy;
-  }
-
+  };
+  Octree.Cell.prototype.contains = function (p) {
+    return p.x >= this.position.x - this.tree.accuracy && p.y >= this.position.y - this.tree.accuracy && p.z >= this.position.z - this.tree.accuracy && p.x <= this.position.x + this.size.x + this.tree.accuracy && p.y <= this.position.y + this.size.y + this.tree.accuracy && p.z <= this.position.z + this.size.z + this.tree.accuracy;
+  };
   // 1 2 3 4
   // 5 6 7 8
-  Octree.Cell.prototype.split = function() {
+  Octree.Cell.prototype.split = function () {
     var x = this.position.x;
     var y = this.position.y;
     var z = this.position.z;
-    var w2 = this.size.x/2;
-    var h2 = this.size.y/2;
-    var d2 = this.size.z/2;
-
+    var w2 = this.size.x / 2;
+    var h2 = this.size.y / 2;
+    var d2 = this.size.z / 2;
     this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z), Vec3.create(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z), Vec3.create( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y, z + d2), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y, z + d2), Vec3.create(w2, h2, d2), this.level + 1));
     this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z), Vec3.create(w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z), Vec3.create( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
-    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z + d2), Vec3.create( w2, h2, d2), this.level + 1));
-
-    for(var i=0; i<this.points.length; i++) {
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x, y + h2, z + d2), Vec3.create(w2, h2, d2), this.level + 1));
+    this.children.push(new Octree.Cell(this.tree, Vec3.create(x + w2, y + h2, z + d2), Vec3.create(w2, h2, d2), this.level + 1));
+    for (var i = 0; i < this.points.length; i++) {
       this.addToChildren(this.points[i]);
     }
-  }
-
-  Octree.Cell.prototype.findNearestPoint = function(p, options) {
+  };
+  Octree.Cell.prototype.findNearestPoint = function (p, options) {
     var nearest = null;
     if (this.children.length > 0) {
-      for(var i=0; i<this.children.length; i++) {
+      for (var i = 0; i < this.children.length; i++) {
         var child = this.children[i];
         if (child.points.length > 0 && child.contains(p)) {
           nearest = child.findNearestPoint(p, options);
-          if (nearest) break;
+          if (nearest)
+            break;
         }
       }
     }
     if (!nearest && this.points.length > 0) {
       var minDistSq = this.tree.maxDistance * this.tree.maxDistance;
-      for(var i=0; i<this.points.length; i++) {
+      for (var i = 0; i < this.points.length; i++) {
         var distSq = this.points[i].squareDistance(p);
         if (distSq <= minDistSq) {
-          if (distSq == 0 && options.notSelf) continue;
+          if (distSq == 0 && options.notSelf)
+            continue;
           minDistSq = distSq;
           nearest = this.points[i];
         }
       }
     }
     return nearest;
-  }
-
+  };
   return Octree;
 });
 //Half-Edge mesh data structure
@@ -3155,30 +3053,30 @@ define('pex/geom/hem/HEMesh',[
   'pex/geom/hem/HEFace',
   'pex/geom/BoundingBox',
   'pex/geom/Octree'
-],
-function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
+], function (Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   function HEMesh() {
-    this.vertices = new Array();
-    this.faces = new Array();
-    this.edges = new Array();
+    this.vertices = [];
+    this.faces = [];
+    this.edges = [];
   }
-
-  HEMesh.prototype.fixDuplicatedVertices = function(debug) {
-    var bbox = BoundingBox.fromPoints(this.vertices.map(function(v) { return v.position; }));
+  HEMesh.prototype.fixDuplicatedVertices = function (debug) {
+    var bbox = BoundingBox.fromPoints(this.vertices.map(function (v) {
+        return v.position;
+      }));
     var octree = Octree.fromBoundingBox(bbox);
-    for(var i=0; i<this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++) {
       var v = this.vertices[i];
       var duplicate = octree.has(v.position);
       if (!duplicate) {
         v.position.vertex = v;
         octree.add(v.position);
-      }
-      else {
-        if (debug) console.log('HEMesh duplicated vert', v)
+      } else {
+        if (debug)
+          console.log('HEMesh duplicated vert', v);
         this.vertices.splice(i, 1);
         i--;
         var duplicateVertex = duplicate.vertex;
-        for(var j=0; j<this.edges.length; j++) {
+        for (var j = 0; j < this.edges.length; j++) {
           if (this.edges[j].vert == v) {
             this.edges[j].vert = duplicateVertex;
           }
@@ -3186,47 +3084,45 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       }
     }
     return this;
-  }
-
-  HEMesh.prototype.faceHash = function(f) {
+  };
+  HEMesh.prototype.faceHash = function (f) {
     var vertices = f.getAllVertices();
-    var indices = vertices.map(function(v) {
-      return this.vertices.indexOf(v);
-    }.bind(this));
+    var indices = vertices.map(function (v) {
+        return this.vertices.indexOf(v);
+      }.bind(this));
     indices = indices.sort();
     var hash = indices.join('_');
     if (indices[0] == indices[1] || indices[1] == indices[2]) {
       console.log(hash);
     }
     return hash;
-  }
-
-  HEMesh.prototype.edgeHash = function(e) {
+  };
+  HEMesh.prototype.edgeHash = function (e) {
     var i = this.vertices.indexOf(e.vert);
     var j = this.vertices.indexOf(e.next.vert);
-    var hash = i + "_" + j;
+    var hash = i + '_' + j;
     return hash;
-  }
-
-  HEMesh.prototype.fixDuplicatedEdges = function(debug) {
+  };
+  HEMesh.prototype.fixDuplicatedEdges = function (debug) {
     var uniques = [];
-    for(var i=0; i<this.edges.length; i++) {
+    for (var i = 0; i < this.edges.length; i++) {
       var edge = this.edges[i];
       var hash = this.edgeHash(edge);
       var duplicateIndex = uniques.indexOf(hash);
-      var duplicate = (duplicateIndex !== -1);
+      var duplicate = duplicateIndex !== -1;
       if (!duplicate) {
         uniques.push(hash);
-      }
-      else {
-        if (debug) console.log('HEMesh duplicated edge', hash)
+      } else {
+        if (debug)
+          console.log('HEMesh duplicated edge', hash);
         var duplicateEdge = this.edges[duplicateIndex];
         this.edges.splice(i, 1);
         i--;
-        this.vertices.forEach(function(v) {
-          if (v.edge == edge) v.edge = duplicateEdge;
+        this.vertices.forEach(function (v) {
+          if (v.edge == edge)
+            v.edge = duplicateEdge;
         });
-        this.faces.forEach(function(f) {
+        this.faces.forEach(function (f) {
           if (f.edge == edge) {
             f.edge = duplicateEdge;
             f.edge.face = f;
@@ -3234,45 +3130,42 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         });
       }
     }
-  }
-
-  HEMesh.prototype.fixVertexEdges = function() {
-    this.vertices.forEach(function(v) {
+  };
+  HEMesh.prototype.fixVertexEdges = function () {
+    this.vertices.forEach(function (v) {
       v.edge = null;
     });
-    for(var i in this.edges) {
+    for (var i in this.edges) {
       var edge = this.edges[i];
       edge.vert.edge = edge;
     }
     return this;
-  }
-
+  };
   var pairs = 0;
-  HEMesh.prototype.fixEdgePairs = function() {
-    for(var i=0; i<this.edges.length; i++) {
+  HEMesh.prototype.fixEdgePairs = function () {
+    for (var i = 0; i < this.edges.length; i++) {
       this.edges[i].pair = null;
     }
     var numPairs = 0;
     var hash = {};
-    for(var i=0; i<this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++) {
       this.vertices[i].index = i;
     }
-    for(var i=0; i<this.edges.length; i++) {
+    for (var i = 0; i < this.edges.length; i++) {
       var edge = this.edges[i];
-      var edgeHash = edge.vert.index + "," + edge.next.vert.index;
-      var pairEdgeHash = edge.next.vert.index + "," + edge.vert.index;
+      var edgeHash = edge.vert.index + ',' + edge.next.vert.index;
+      var pairEdgeHash = edge.next.vert.index + ',' + edge.vert.index;
       hash[edgeHash] = edge;
       if (hash[pairEdgeHash]) {
         edge.pair = hash[pairEdgeHash];
         edge.pair.pair = edge;
       }
     }
-    for(var i=0; i<this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++) {
       this.vertices[i].index = -1;
     }
     return this;
-  }
-
+  };
   // HEMesh.prototype.getEdgeBetween = function(a, b) {
   //       for(var i in this.edges) {
   //         var edge = this.edges[i];
@@ -3282,68 +3175,56 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   //       }
   //       return null;
   //   }
-
-  HEMesh.prototype.check = function() {
-    for(var i in this.vertices) {
+  HEMesh.prototype.check = function () {
+    for (var i in this.vertices) {
       if (this.vertices[i].edge == null) {
-        console.log("Missing vertex edge at ", i);
-      }
-      else if (this.vertices[i] != this.vertices[i].edge.vert) {
-        console.log("Edge doesn't point to it's vertex at ", i);
+        console.log('Missing vertex edge at ', i);
+      } else if (this.vertices[i] != this.vertices[i].edge.vert) {
+        console.log('Edge doesn\'t point to it\'s vertex at ', i);
       }
     }
-
-    for(var i in this.faces) {
+    for (var i in this.faces) {
       if (this.faces[i].edge == null) {
-        console.log("Missing faces edge at ", i);
+        console.log('Missing faces edge at ', i);
+      } else if (this.faces[i] != this.faces[i].edge.face) {
+        console.log('Edge doesn\'t point to it\'s face at ', i);
       }
-      else if (this.faces[i] != this.faces[i].edge.face) {
-        console.log("Edge doesn't point to it's face at ", i);
-      }
-
       if (this.edges.indexOf(this.faces[i].edge) === -1) {
-        console.log("Invalid face edge at ", i);
+        console.log('Invalid face edge at ', i);
       }
     }
-
-    for(var i in this.edges) {
+    for (var i in this.edges) {
       var edge = this.edges[i];
       var e = edge;
       var watchDog = 0;
-
       if (edge.next == edge) {
-        console.log("Edge refers to itself", i);
+        console.log('Edge refers to itself', i);
       }
       if (edge.next.vert == edge.vert) {
-        console.log("Edge corner loop", i);
+        console.log('Edge corner loop', i);
+      } else if (edge.pair == null) {
+        console.log('Edge doesn\'t have it\'s pair', i);
+      } else if (edge.pair.pair != edge) {
+        console.log('Edge pair doesn\'t match', i, this.edges.indexOf(edge), this.edges.indexOf(edge.pair), this.edges.indexOf(edge.pair.pair));
       }
-      else if (edge.pair == null) {
-        console.log("Edge doesn't have it's pair", i);
-      }
-      else if (edge.pair.pair != edge) {
-        console.log("Edge pair doesn't match", i, this.edges.indexOf(edge), this.edges.indexOf(edge.pair), this.edges.indexOf(edge.pair.pair));
-      }
-
       do {
         if (++watchDog > 100) {
-          console.log("Edge watchDog break at", i, " . Wrong edge loop pointers?");
+          console.log('Edge watchDog break at', i, ' . Wrong edge loop pointers?');
           break;
         }
         if (watchDog > 6) {
-          console.log("Warning! Face with " + watchDog + " vertices");
+          console.log('Warning! Face with ' + watchDog + ' vertices');
         }
         if (e.next == null) {
-          console.log("Missing edge next at ", i, ". Open loop.");
+          console.log('Missing edge next at ', i, '. Open loop.');
           break;
         }
         e = e.next;
-      } while(e != edge)
+      } while (e != edge);
     }
-
     return this;
   };
-
-  HEMesh.prototype.splitVertex = function(vertex, newVertexPos, startEdge, endEdge) {
+  HEMesh.prototype.splitVertex = function (vertex, newVertexPos, startEdge, endEdge) {
     var newVertex = new HEVertex(newVertexPos.x, newVertexPos.y, newVertexPos.z);
     this.vertices.push(newVertex);
     if (startEdge != null && startEdge == endEdge) {
@@ -3356,7 +3237,6 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       e2.face = e.face;
       this.edges.push(e2);
       newVertex.edge = e2;
-
       //opposite edge
       var o = startEdge.pair;
       var o2 = new HEEdge();
@@ -3365,109 +3245,82 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       o.next = o2;
       o2.face = o.face;
       this.edges.push(o2);
-
       o2.pair = e;
       e.pair = o2;
-
       e2.pair = o;
       o.pair = e2;
-
       return e2;
-    }
-    else if (startEdge == null && endEdge == null) {
+    } else if (startEdge == null && endEdge == null) {
       var newEdge1 = new HEEdge();
       var newEdge2 = new HEEdge();
-
       var edge = vertex.edge;
       var prevEdge = edge.findPrev();
-
       newEdge1.vert = vertex;
       newEdge2.vert = newVertex;
       newEdge1.face = edge.face;
       newEdge2.face = edge.face;
-
       newEdge1.next = newEdge2;
       newEdge2.next = edge;
-
       newEdge1.pair = newEdge2;
       newEdge2.pair = newEdge1;
-
       vertex.edge = newEdge1;
       prevEdge.next = newEdge1;
-
       newVertex.edge = newEdge2;
-
       this.edges.push(newEdge1);
       this.edges.push(newEdge2);
-
       return newEdge1;
     }
   };
-
-  HEMesh.prototype.splitFace = function(vert1Edge, vert2Edge) {
+  HEMesh.prototype.splitFace = function (vert1Edge, vert2Edge) {
     var vert1EdgeNext = vert1Edge.next;
     var vert2EdgeNext = vert2Edge.next;
     var vert1EdgePrev = vert1Edge.findPrev();
     var vert2EdgePrev = vert2Edge.findPrev();
     var oldFace = vert1Edge.face;
-
     var splitEdge1 = new HEEdge();
     var splitEdge2 = new HEEdge();
     this.edges.push(splitEdge1);
     this.edges.push(splitEdge2);
-
     splitEdge1.pair = splitEdge2;
     splitEdge2.pair = splitEdge1;
-
     splitEdge1.vert = vert2Edge.vert;
     splitEdge2.vert = vert1Edge.vert;
-
     splitEdge1.next = vert1Edge;
     vert2EdgePrev.next = splitEdge1;
-
     splitEdge2.next = vert2Edge;
     vert1EdgePrev.next = splitEdge2;
-
     splitEdge1.face = vert1Edge.face;
-
     var newFace = new HEFace(splitEdge2);
     this.faces.push(newFace);
-
     var tmpEdge = splitEdge2;
     do {
       tmpEdge.face = newFace;
       tmpEdge = tmpEdge.next;
-    } while(tmpEdge != splitEdge2);
-
+    } while (tmpEdge != splitEdge2);
     //just ot make sure we don't point to one of the splitten vertices
     oldFace.edge = vert1Edge;
-
-    if (oldFace.color) newFace.color = oldFace.color;
-
+    if (oldFace.color)
+      newFace.color = oldFace.color;
     return newFace;
   };
-
-  HEMesh.prototype.splitEdge = function(edge, ratio) {
+  HEMesh.prototype.splitEdge = function (edge, ratio) {
     ratio = ratio || 0.5;
-
     //newVertPos = v + ratio * (nv - v)
     //newVertPos = add3(v, scale3(ratio, sub3(nv, v)))
     //newVertPos = nv.clone().sub(v).scale(ratio).add(v);
-    var newVertPos = Vec3.create()
-      .asSub(edge.next.vert.position, edge.vert.position)
-      .scale(ratio)
-      .add(edge.vert.position);
-
+    var newVertPos = Vec3.create().asSub(edge.next.vert.position, edge.vert.position).scale(ratio).add(edge.vert.position);
     return this.splitVertex(edge.vert, newVertPos, edge, edge);
   };
-
-  HEMesh.prototype.splitFaceAtPoint = function(face, newPoint) {
+  HEMesh.prototype.splitFaceAtPoint = function (face, newPoint) {
     var vert = face.edge.vert;
     var edge = face.edge;
-    vert.edge = edge; //to make sure we split the right face
-    var newEdge = this.splitVertex(vert, newPoint); //new edges will be added before 'edge'
+    vert.edge = edge;
+    //to make sure we split the right face
+    var newEdge = this.splitVertex(vert, newPoint);
+    //new edges will be added before 'edge'
     var from = newEdge.next;
-    var to = from.next.next; //next corner afther the old first
+    var to = from.next.next;
+    //next corner afther the old first
     //split the face from the new vertex to the next corner
     //and move one corner further
     var i = 0;
@@ -3476,199 +3329,184 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       from = to.findPrev();
       to = from.next.next;
     } while (to != newEdge);
-
     return newEdge.next;
   };
-
   return HEMesh;
 });
-
-define('pex/utils/ArrayUtils',[], function() {
+define('pex/utils/ArrayUtils',[], function () {
   function ArrayUtils() {
   }
-
-  ArrayUtils.range = function(start, end) {
+  ArrayUtils.range = function (start, end) {
     var result = [];
-    for(var i=start; i<end; i++) {
+    for (var i = start; i < end; i++) {
       result.push(i);
     }
     return result;
-  }
-
-  ArrayUtils.shuffled = function(list) {
+  };
+  ArrayUtils.shuffled = function (list) {
     var newList = ArrayUtils.range(0, list.length);
-    for(var i=0; i<newList.length; i++) {
+    var i;
+    for (i = 0; i < newList.length; i++) {
       var j = Math.floor(Math.random() * newList.length);
       var tmp = newList[i];
       newList[i] = newList[j];
       newList[j] = tmp;
     }
-    for(var i=0; i<newList.length; i++) {
+    for (i = 0; i < newList.length; i++) {
       newList[i] = list[newList[i]];
     }
     return newList;
-  }
-
-  ArrayUtils.first = function(list, n) {
+  };
+  ArrayUtils.first = function (list, n) {
     n = n || 1;
     return list.slice(0, n);
-  }
-
+  };
   return ArrayUtils;
 });
-
-define('pex/geom/hem/HESelection',['pex/geom/hem/HEMesh', 'pex/utils/ArrayUtils'], function(HEMesh, ArrayUtils) {
-
-  function selected(o) { return o.selected; }
-
+define('pex/geom/hem/HESelection',[
+  'pex/geom/hem/HEMesh',
+  'pex/utils/ArrayUtils'
+], function (HEMesh, ArrayUtils) {
+  function selected(o) {
+    return o.selected;
+  }
   function HESelection() {
   }
-
-  HEMesh.prototype.clearVerticesSelection = function() {
-    for(var i=0; i<this.vertices.length; i++) {
+  HEMesh.prototype.clearVerticesSelection = function () {
+    for (var i = 0; i < this.vertices.length; i++) {
       this.vertices[i].selected = false;
     }
     return this;
   };
-
-  HEMesh.prototype.clearEdgeSelection = function() {
-    for(var i=0; i<this.edges.length; i++) {
+  HEMesh.prototype.clearEdgeSelection = function () {
+    for (var i = 0; i < this.edges.length; i++) {
       this.edges[i].selected = false;
     }
     return this;
   };
-
-  HEMesh.prototype.clearFaceSelection = function() {
-    for(var i=0; i<this.faces.length; i++) {
+  HEMesh.prototype.clearFaceSelection = function () {
+    for (var i = 0; i < this.faces.length; i++) {
       this.faces[i].selected = false;
     }
     return this;
   };
-
-  HEMesh.prototype.clearSelection = function() {
+  HEMesh.prototype.clearSelection = function () {
     this.clearVerticesSelection();
     this.clearEdgeSelection();
     this.clearFaceSelection();
     return this;
   };
-
   //repeat until number is satified or there is no vertices left...
-  HEMesh.prototype.selectRandomVertices = function(count) {
-    count = (count === undefined) ? this.vertices.length/2 : count;
+  HEMesh.prototype.selectRandomVertices = function (count) {
+    count = count === undefined ? this.vertices.length / 2 : count;
     count = Math.min(count, this.vertices.length);
-    if (count <= 1) count = Math.floor(count * this.vertices.length);
-
+    if (count <= 1)
+      count = Math.floor(count * this.vertices.length);
     var vertices = this.vertices;
     this.clearSelection();
-
-    function selectVertex(i) { vertices[i].selected = true; }
-
+    function selectVertex(i) {
+      vertices[i].selected = true;
+    }
     var indexList = ArrayUtils.range(0, this.vertices.length);
     indexList = ArrayUtils.shuffled(indexList);
     indexList = ArrayUtils.first(indexList, count);
     indexList.forEach(selectVertex);
-
     return this;
   };
-
   //repeat until number is satified or there is no vertices left...
-  HEMesh.prototype.selectRandomFaces = function(count) {
-    count = (count === undefined) ? this.faces.length/2 : count;
+  HEMesh.prototype.selectRandomFaces = function (count) {
+    count = count === undefined ? this.faces.length / 2 : count;
     count = Math.min(count, this.faces.length);
-    if (count < 1) count = Math.floor(count * this.faces.length);
-
+    if (count < 1)
+      count = Math.floor(count * this.faces.length);
     var faces = this.faces;
     this.clearSelection();
-
-    function selectFace(i) { faces[i].selected = true; }
-
+    function selectFace(i) {
+      faces[i].selected = true;
+    }
     var indexList = ArrayUtils.range(0, this.faces.length);
     indexList = ArrayUtils.shuffled(indexList);
     indexList = ArrayUtils.first(indexList, count);
     indexList.forEach(selectFace);
-
     return this;
   };
-
-  HEMesh.prototype.selectAllFaces = function() {
-    function selectFace(f) { f.selected = true; }
+  HEMesh.prototype.selectAllFaces = function () {
+    function selectFace(f) {
+      f.selected = true;
+    }
     this.faces.forEach(selectFace);
     return this;
   };
-
-  HEMesh.prototype.selectFace = function(face) {
+  HEMesh.prototype.selectFace = function (face) {
     face.selected = true;
     return this;
-  }
-
-  HEMesh.prototype.expandVerticesSelectionToFaces = function() {
-    this.vertices.filter(selected).forEach(function(vertex) {
-      vertex.forEachFace(function(face) {
+  };
+  HEMesh.prototype.expandVerticesSelectionToFaces = function () {
+    this.vertices.filter(selected).forEach(function (vertex) {
+      vertex.forEachFace(function (face) {
         face.selected = true;
       });
     });
     return this;
   };
-
-  HEMesh.prototype.expandFaceSelection = function() {
+  HEMesh.prototype.expandFaceSelection = function () {
     var neighborsToSelect = [];
-    this.getSelectedFaces().forEach(function(face) {
-      face.getNeighborFaces().forEach(function(neighborFace) {
-        if (neighborsToSelect.indexOf(neighborFace) == -1) neighborsToSelect.push(neighborFace);
+    this.getSelectedFaces().forEach(function (face) {
+      face.getNeighborFaces().forEach(function (neighborFace) {
+        if (neighborsToSelect.indexOf(neighborFace) == -1)
+          neighborsToSelect.push(neighborFace);
       });
     });
-    function selectFace(face) { face.selected = true; }
+    function selectFace(face) {
+      face.selected = true;
+    }
     neighborsToSelect.forEach(selectFace);
     return this;
   };
-
-  HEMesh.prototype.getSelectedVertices = function() {
+  HEMesh.prototype.getSelectedVertices = function () {
     return this.vertices.filter(selected);
   };
-
-  HEMesh.prototype.getSelectedFaces = function() {
+  HEMesh.prototype.getSelectedFaces = function () {
     return this.faces.filter(selected);
   };
-
-  HEMesh.prototype.hasSelection = function() {
+  HEMesh.prototype.hasSelection = function () {
     var selectedVertexCount = this.vertices.filter(selected).length;
     var selectedEdgesCount = this.edges.filter(selected).length;
     var selectedFacesCount = this.faces.filter(selected).length;
-
     return selectedVertexCount + selectedEdgesCount + selectedFacesCount > 0;
   };
-
-  HEMesh.prototype.selectVerticesBy = function(filter) {
-    this.vertices.filter(filter).forEach(function(vert) { vert.selected = true; });
+  HEMesh.prototype.selectVerticesBy = function (filter) {
+    this.vertices.filter(filter).forEach(function (vert) {
+      vert.selected = true;
+    });
     return this;
-  }
-
-  HEMesh.prototype.selectEdgesBy = function(filter) {
-    this.edges.filter(filter).forEach(function(v) { edge.selected = true; });
+  };
+  HEMesh.prototype.selectEdgesBy = function (filter) {
+    this.edges.filter(filter).forEach(function (v) {
+      edge.selected = true;
+    });
     return this;
-  }
-
-  HEMesh.prototype.selectFacesBy = function(filter) {
-    this.faces.filter(filter).forEach(function(face) { face.selected = true; });
+  };
+  HEMesh.prototype.selectFacesBy = function (filter) {
+    this.faces.filter(filter).forEach(function (face) {
+      face.selected = true;
+    });
     return this;
-  }
-
+  };
   return HESelection;
 });
-
-define('pex/geom/hem/HEMarking',['pex/geom/hem/HEMesh'], function(HEMesh) {
+define('pex/geom/hem/HEMarking',['pex/geom/hem/HEMesh'], function (HEMesh) {
   function HEMarking() {
   }
-
-  function removeMark(o) { o.marked = false; }
-
-  HEMesh.prototype.clearMarking = function() {
+  function removeMark(o) {
+    o.marked = false;
+  }
+  HEMesh.prototype.clearMarking = function () {
     this.vertices.forEach(removeMark);
     this.edges.forEach(removeMark);
     this.faces.forEach(removeMark);
     return this;
   };
-
   return HEMarking;
 });
 define('pex/geom/hem/HEGeometryConverter',[
@@ -3684,32 +3522,43 @@ define('pex/geom/hem/HEGeometryConverter',[
   'pex/geom/Edge',
   'pex/geom/gen/LineBuilder',
   'pex/color/Color'
-],
-function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder, Color)  {
+], function (Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HEFace, Edge, LineBuilder, Color) {
   function HEGeometryConverter() {
   }
-
-  HEMesh.prototype.fromGeometry = function(geom) {
+  HEMesh.prototype.fromGeometry = function (geom) {
     this.vertices.length = 0;
     this.faces.length = 0;
     this.edges.length = 0;
-
     var positions = geom.vertices;
-
-    for(var i=0; i<positions.length; i++) {
+    for (var i = 0; i < positions.length; i++) {
       var pos = positions[i];
       this.vertices.push(new HEVertex(pos.x, pos.y, pos.z));
     }
-
-    var indices = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-    var newEdges = [null, null, null, null, null];
+    var indices = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j'
+      ];
+    var newEdges = [
+        null,
+        null,
+        null,
+        null,
+        null
+      ];
     var numEdges = 3;
     if (geom.faces && geom.faces.length > 0) {
-      for(var i=0; i<geom.faces.length; i++) {
+      for (var i = 0; i < geom.faces.length; i++) {
         var f = geom.faces[i];
         var newFace = new HEFace();
         this.faces.push(newFace);
-
         if (f instanceof Face3) {
           numEdges = 3;
         }
@@ -3719,40 +3568,36 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
         if (f instanceof FacePolygon) {
           numEdges = f.numVertices;
         }
-
-        for(var j=0; j<numEdges; j++) {
+        for (var j = 0; j < numEdges; j++) {
           newEdges[j] = new HEEdge();
           this.edges.push(newEdges[j]);
           var vertexIndex = f[indices[j]];
           newEdges[j].vert = this.vertices[vertexIndex];
           newEdges[j].face = newFace;
         }
-        for(var k=0; k<numEdges; k++) {
-          newEdges[k].next = newEdges[(k+1) % numEdges];
+        for (var k = 0; k < numEdges; k++) {
+          newEdges[k].next = newEdges[(k + 1) % numEdges];
         }
-
         newFace.edge = newEdges[0];
       }
-    }
-    else {
-      for(var i=0; i<geom.vertices.length; i+=3) {
+    } else {
+      for (var i = 0; i < geom.vertices.length; i += 3) {
         var newFace = new HEFace();
         this.faces.push(newFace);
         var numEdges = 3;
-        for(var j=0; j<numEdges; j++) {
+        for (var j = 0; j < numEdges; j++) {
           newEdges[j] = new HEEdge();
           this.edges.push(newEdges[j]);
           var vertexIndex = i + j;
           newEdges[j].vert = this.vertices[vertexIndex];
           newEdges[j].face = newFace;
         }
-        for(var k=0; k<numEdges; k++) {
-          newEdges[k].next = newEdges[(k+1) % numEdges];
+        for (var k = 0; k < numEdges; k++) {
+          newEdges[k].next = newEdges[(k + 1) % numEdges];
         }
         newFace.edge = newEdges[0];
       }
     }
-
     this.fixDuplicatedVertices();
     this.fixDuplicatedEdges();
     this.fixVertexEdges();
@@ -3760,149 +3605,174 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     this.check();
     return this;
   };
-
-  HEMesh.prototype.toFlatGeometry = function(geometry, selectedOnly) {
-    selectedOnly = (typeof(selectedOnly) === 'undefined') ? false : selectedOnly;
+  HEMesh.prototype.toFlatGeometry = function (geometry, selectedOnly) {
+    selectedOnly = typeof selectedOnly === 'undefined' ? false : selectedOnly;
     var numVertices = 0;
     var faces = this.faces;
     if (selectedOnly) {
       faces = this.getSelectedFaces();
     }
-
     var hasFaceColors = false;
-
-    faces.forEach(function(f) {
+    faces.forEach(function (f) {
       var faceVertexCount = f.getAllVertices().length;
-      if (faceVertexCount == 3) numVertices += 3;
-      else if (faceVertexCount == 4) numVertices += 4;
-      if (f.color) hasFaceColors = true;
+      if (faceVertexCount == 3)
+        numVertices += 3;
+      else if (faceVertexCount == 4)
+        numVertices += 4;
+      if (f.color)
+        hasFaceColors = true;
     });
-
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors, faces:true})
+      geometry = new Geometry({
+        vertices: true,
+        normals: true,
+        colors: hasFaceColors,
+        faces: true
+      });
     }
-
     var positions = geometry.vertices;
     var normals = geometry.normals;
     var colors = geometry.colors;
-
     if (!normals) {
       geometry.addAttrib('normals', 'normal');
       normals = geometry.normals;
     }
-
     if (!colors && hasFaceColors) {
       geometry.addAttrib('colors', 'color');
       colors = geometry.colors;
     }
-
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
-    if (geometry.colors) geometry.colors.dirty = true;
+    if (geometry.colors)
+      geometry.colors.dirty = true;
     geometry.faces.dirty = true;
-    geometry.faces.length = []
-
+    geometry.faces.length = [];
     var vertexIndex = 0;
     //var face4Swizzle = [0, 1, 3, 3, 1, 2];
-    var face4Swizzle = [0, 1, 2, 3];
-
-    for(var i in faces) {
+    var face4Swizzle = [
+        0,
+        1,
+        2,
+        3
+      ];
+    for (var i in faces) {
       var face = faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
-          else positions[vertexIndex+j].copy(faceVertices[j].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
-          else normals[vertexIndex+j].copy(faceNormal);
+        for (var j = 0; j < 3; j++) {
+          if (!positions[vertexIndex + j])
+            positions[vertexIndex + j] = faceVertices[j].position.clone();
+          else
+            positions[vertexIndex + j].copy(faceVertices[j].position);
+          if (!normals[vertexIndex + j])
+            normals[vertexIndex + j] = faceNormal.clone();
+          else
+            normals[vertexIndex + j].copy(faceNormal);
           if (hasFaceColors) {
             var c = face.color || Color.White;
-            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
-            else colors[vertexIndex+j].copy(c);
+            if (!colors[vertexIndex + j])
+              colors[vertexIndex + j] = c.clone();
+            else
+              colors[vertexIndex + j].copy(c);
           }
         }
-        geometry.faces.push(new Face3(vertexIndex, vertexIndex+1, vertexIndex+2))
+        geometry.faces.push(new Face3(vertexIndex, vertexIndex + 1, vertexIndex + 2));
         vertexIndex += 3;
-      }
-      else if (faceVertices.length == 4) {
-        for(var j=0; j<4; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
-          else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
-          else normals[vertexIndex+j].copy(faceNormal);
+      } else if (faceVertices.length == 4) {
+        for (var j = 0; j < 4; j++) {
+          if (!positions[vertexIndex + j])
+            positions[vertexIndex + j] = faceVertices[face4Swizzle[j]].position.clone();
+          else
+            positions[vertexIndex + j].copy(faceVertices[face4Swizzle[j]].position);
+          if (!normals[vertexIndex + j])
+            normals[vertexIndex + j] = faceNormal.clone();
+          else
+            normals[vertexIndex + j].copy(faceNormal);
           if (hasFaceColors) {
             var c = face.color || Color.White;
-            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
-            else colors[vertexIndex+j].copy(c);
+            if (!colors[vertexIndex + j])
+              colors[vertexIndex + j] = c.clone();
+            else
+              colors[vertexIndex + j].copy(c);
           }
         }
-        geometry.faces.push(new Face4(vertexIndex, vertexIndex+1, vertexIndex+2, vertexIndex+3))
+        geometry.faces.push(new Face4(vertexIndex, vertexIndex + 1, vertexIndex + 2, vertexIndex + 3));
         vertexIndex += 4;
+      } else {
+        console.log('HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:' + faceVertices.length);
       }
-      else {
-        console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-      }
-      positions.length = vertexIndex; //truncs excess of data
-      normals.length = vertexIndex; //truncs excess of data
+      positions.length = vertexIndex;
+      //truncs excess of data
+      normals.length = vertexIndex;  //truncs excess of data
     }
     return geometry;
   };
-
-  HEMesh.prototype.toSmoothGeometry = function(geometry) {
+  HEMesh.prototype.toSmoothGeometry = function (geometry) {
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true})
+      geometry = new Geometry({
+        vertices: true,
+        normals: true
+      });
     }
-
     var positions = geometry.vertices;
     var normals = geometry.normals;
-
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
-    geometry.faces.length = []
-
+    geometry.faces.length = [];
     var vertexIndex = 0;
-    var face4Swizzle = [0, 1, 3, 3, 1, 2];
-
-    for(var i in this.faces) {
+    var face4Swizzle = [
+        0,
+        1,
+        3,
+        3,
+        1,
+        2
+      ];
+    for (var i in this.faces) {
       var face = this.faces[i];
       var faceVertices = face.getAllVertices();
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
-        for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
-          else positions[vertexIndex+j].copy(faceVertices[j].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[j].getNormal();
-          else normals[vertexIndex+j].copy(faceVertices[j].getNormal());
+        for (var j = 0; j < 3; j++) {
+          if (!positions[vertexIndex + j])
+            positions[vertexIndex + j] = faceVertices[j].position.clone();
+          else
+            positions[vertexIndex + j].copy(faceVertices[j].position);
+          if (!normals[vertexIndex + j])
+            normals[vertexIndex + j] = faceVertices[j].getNormal();
+          else
+            normals[vertexIndex + j].copy(faceVertices[j].getNormal());
         }
         vertexIndex += 3;
-      }
-      else if (faceVertices.length == 4) {
-        for(var j=0; j<6; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
-          else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[face4Swizzle[j]].getNormal();
-          else normals[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].getNormal());
+      } else if (faceVertices.length == 4) {
+        for (var j = 0; j < 6; j++) {
+          if (!positions[vertexIndex + j])
+            positions[vertexIndex + j] = faceVertices[face4Swizzle[j]].position.clone();
+          else
+            positions[vertexIndex + j].copy(faceVertices[face4Swizzle[j]].position);
+          if (!normals[vertexIndex + j])
+            normals[vertexIndex + j] = faceVertices[face4Swizzle[j]].getNormal();
+          else
+            normals[vertexIndex + j].copy(faceVertices[face4Swizzle[j]].getNormal());
         }
         vertexIndex += 6;
+      } else {
+        console.log('HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:' + faceVertices.length);
       }
-      else {
-        console.log("HEGeometryConverter.thisToFlatGeometry: Unsupported face vertex count:" + faceVertices.length);
-      }
-      positions.length = vertexIndex; //truncs excess of data
-      normals.length = vertexIndex; //truncs excess of data
+      positions.length = vertexIndex;
+      //truncs excess of data
+      normals.length = vertexIndex;  //truncs excess of data
     }
     return geometry;
-  }
-
-  HEMesh.prototype.toEdgesGeometry = function(offset, normalOffset) {
-    offset = (offset !== undefined) ? offset : 0.1;
-    normalOffset = (normalOffset !== undefined) ? normalOffset : 0.001;
+  };
+  HEMesh.prototype.toEdgesGeometry = function (offset, normalOffset) {
+    offset = offset !== undefined ? offset : 0.1;
+    normalOffset = normalOffset !== undefined ? normalOffset : 0.001;
     var lineBuilder = new LineBuilder();
-
     var a = Vec3.create();
     var b = Vec3.create();
-    this.edges.forEach(function(e) {
+    this.edges.forEach(function (e) {
       var center = e.face.getCenter();
       var offsetNormal = e.face.getNormal().dup().scale(normalOffset);
       a.asSub(center, e.vert.position).normalize().scale(offset).add(e.vert.position).add(offsetNormal);
@@ -3911,34 +3781,27 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
     return lineBuilder;
   };
-
   return HEGeometryConverter;
 });
-
 define('pex/geom/hem/HEExtrude',[
   'pex/geom/hem/HEMesh',
   'pex/geom/hem/HEVertex',
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Vec3'
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function Extrude() {
   }
-
-  HEMesh.prototype.extrude = function(height, direction) {
+  HEMesh.prototype.extrude = function (height, direction) {
     height = height || 0.1;
     var numFaces = this.faces.length;
-
     var self = this;
     var faces = this.faces;
     var selectedFaces = this.getSelectedFaces();
     if (selectedFaces.length > 0) {
       faces = selectedFaces;
     }
-
-    faces.forEach(function(face, i) {
+    faces.forEach(function (face, i) {
       var normal = direction || face.getNormal();
       var edge = face.edge;
       var lastEdge = edge.findPrev();
@@ -3946,24 +3809,22 @@ define('pex/geom/hem/HEExtrude',[
       var prevNewEdge = null;
       var center = face.getCenter();
       var newEdges = [];
-
       //we split all the corners within the face effectively adding new internal vertices
       do {
         //var newVertexPos = edgeToSplit.vert.added(normal.scaled(height));
         var newVertexPos = normal.clone().scale(height).add(edgeToSplit.vert.position);
-
-        edgeToSplit.vert.edge = edgeToSplit; //TODO: fix that, making sure we split the right face
+        edgeToSplit.vert.edge = edgeToSplit;
+        //TODO: fix that, making sure we split the right face
         var newEdge = self.splitVertex(edgeToSplit.vert, newVertexPos);
         newEdges.push(newEdge);
         if (edgeToSplit == lastEdge) {
           break;
         }
         edgeToSplit = edgeToSplit.next;
-      } while(edgeToSplit != edge);
-
+      } while (edgeToSplit != edge);
       //go through all new corners and cut out faces from them
-      var prevCornerEdge = newEdges[newEdges.length-1].next;
-      for(var i=0; i<newEdges.length; i++) {
+      var prevCornerEdge = newEdges[newEdges.length - 1].next;
+      for (var i = 0; i < newEdges.length; i++) {
         //we remember what's the next edge pointing to a new corner as
         //this might change when we add new face
         var tmp = newEdges[i].next;
@@ -3971,13 +3832,10 @@ define('pex/geom/hem/HEExtrude',[
         prevCornerEdge = tmp;
       }
     });
-
     return this;
-  }
-
+  };
   return Extrude;
 });
-
 //Catmull-Clark subdivision for half-edge meshes
 //Based on http://en.wikipedia.org/wiki/Catmull–Clark_subdivision_surface
 //Modified to follow Doo-Sabin scheme for new vertices 1/n*F + 1/n*R + (n-2)/n*v
@@ -3988,62 +3846,55 @@ define('pex/geom/hem/HECatmullClark',[
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Vec3'
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function CatmullClark() {
   }
-
   //Catmull Clark subdivision
   //Edges and vertices support 'sharp' property. If set to true, they won't be smoothened out
-  HEMesh.prototype.catmullClark = function() {
+  HEMesh.prototype.catmullClark = function () {
     this.clearMarking();
-
     //keep these numbers to iterate only over original faces/edges/vertices
     var numFaces = this.faces.length;
     var numEdges = this.edges.length;
     var numVertices = this.vertices.length;
     var i;
-
     //For each face, add a face point - the centroid of all original
     //points for the respective face
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       this.faces[i].facePoint = this.faces[i].getCenter();
     }
-
     //For each edge, add an edge point - the average of
     //the two neighbouring face points and its two original endpoints.
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       var edge = this.edges[i];
-      if (edge.edgePoint != null) continue;
+      if (edge.edgePoint != null)
+        continue;
       var edgePoint = Vec3.create();
       edgePoint.add(edge.vert.position);
       edgePoint.add(edge.next.vert.position);
-
       if (edge.sharp) {
-        edgePoint.scale(1/2);
-      }
-      else {
+        edgePoint.scale(1 / 2);
+      } else {
         edgePoint.add(edge.face.facePoint);
         edgePoint.add(edge.pair.face.facePoint);
-        edgePoint.scale(1/4);
+        edgePoint.scale(1 / 4);
       }
-
       edge.edgePoint = edgePoint;
       edge.pair.edgePoint = edge.edgePoint;
     }
-
-    for(i=0; i<numVertices; i++) {
+    for (i = 0; i < numVertices; i++) {
       var vertex = this.vertices[i];
       var faceEdge = vertex.edge;
       var face = faceEdge.face;
-      var F = Vec3.create(); //average facePoint of neighbor faces
-      var R = Vec3.create(); //average edgePoint of neighbor edges
+      var F = Vec3.create();
+      //average facePoint of neighbor faces
+      var R = Vec3.create();
+      //average edgePoint of neighbor edges
       var sharpEdges = [];
-      var n = 0; //num faces/edges
+      var n = 0;
+      //num faces/edges
       var numSharpEdges = 0;
       var newVert;
-
       do {
         F.add(face.facePoint);
         R.add(faceEdge.edgePoint);
@@ -4051,40 +3902,38 @@ define('pex/geom/hem/HECatmullClark',[
           sharpEdges.push(faceEdge);
           numSharpEdges++;
         }
-        ++n
+        ++n;
         faceEdge = faceEdge.pair.next;
         face = faceEdge.face;
-      } while(faceEdge != vertex.edge);
-
+      } while (faceEdge != vertex.edge);
       if (!vertex.sharp && numSharpEdges < 2) {
-        F.scale(1/n);
-        R.scale(1/n);
+        F.scale(1 / n);
+        R.scale(1 / n);
         newVert = Vec3.create().asAdd(F, R);
         var scaledVertex = vertex.position.clone().scale(n - 2);
-        newVert.add(scaledVertex).scale(1/n);
-      }
-      else if (!vertex.sharp && numSharpEdges == 2) {
+        newVert.add(scaledVertex).scale(1 / n);
+      } else if (!vertex.sharp && numSharpEdges == 2) {
         newVert = Vec3.create();
-        for(var j=0; j<2; j++) {
-          if (sharpEdges[j].vert == vertex) newVert.add(sharpEdges[j].next.vert.position.dup().scale(1/8));
-          else newVert.add(sharpEdges[j].findPrev().vert.position.dup().scale(1/8));
+        for (var j = 0; j < 2; j++) {
+          if (sharpEdges[j].vert == vertex)
+            newVert.add(sharpEdges[j].next.vert.position.dup().scale(1 / 8));
+          else
+            newVert.add(sharpEdges[j].findPrev().vert.position.dup().scale(1 / 8));
         }
-        newVert.add(vertex.position.dup().scale(3/4));
-      }
-      else {
+        newVert.add(vertex.position.dup().scale(3 / 4));
+      } else {
         //else do nothing
         newVert = vertex.position;
       }
-
       //we can't simply duplicate vertex and make operations on it
       //as dup() returns Vec3 not HEVertex
       vertex.position.copy(newVert);
     }
-
     var numEdges = this.edges.length;
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       var edge = this.edges[i];
-      if (edge.marked) continue;
+      if (edge.marked)
+        continue;
       edge.marked = true;
       edge.pair.marked = true;
       var edgePoint = edge.edgePoint;
@@ -4097,86 +3946,64 @@ define('pex/geom/hem/HECatmullClark',[
       }
       edge.edgePointVertex = newEdge.next.vert;
     }
-
     //var selectedOnly = this.hasSelection();
-
     var numFaces = this.faces.length;
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
-
       //if (selectedOnly && !face.selected) continue;
-
       var vert = face.edge.next.vert;
       var edge = face.edge.next;
-      vert.edge = edge; //to make sure we split the right face
+      vert.edge = edge;
+      //to make sure we split the right face
       var newEdge = this.splitVertex(vert, face.facePoint);
-
       var nextEdge = newEdge.next.next.next.next;
       do {
         var newFace = this.splitFace(newEdge.next, nextEdge);
         //if (selectedOnly && face.selected) newFace.selected = true;
         nextEdge = nextEdge.next.next;
       } while (nextEdge != newEdge && nextEdge.next != newEdge);
-
       delete face.faceVertex;
     }
-
     this.clearMarking();
-
     return this;
-  }
-
+  };
   HEMesh.prototype.subdivide = HEMesh.prototype.catmullClark;
-
   return CatmullClark;
 });
-
 define('pex/geom/hem/HETriangulate',[
   'pex/geom/hem/HEMesh',
   'pex/geom/hem/HEVertex',
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Vec3'
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function HETriangulate() {
   }
-
-  HEMesh.prototype.triangulate = function() {
+  HEMesh.prototype.triangulate = function () {
     var numFaces = this.faces.length;
-
-
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
       var vertices = face.getAllVertices();
-
-      while(vertices.length > 3) {
+      while (vertices.length > 3) {
         var firstEdge = face.edge;
         face = this.splitFace(firstEdge, firstEdge.next.next);
         vertices = face.getAllVertices();
       }
     }
-
     return this;
   };
-
   return HETriangulate;
 });
-
 define('pex/geom/hem/HESubdivideTriangles',[
-  "pex/geom/hem/HEMesh",
-  "pex/geom/hem/HEVertex",
-  "pex/geom/hem/HEEdge",
-  "pex/geom/hem/HEFace",
-  "pex/geom/Vec3"
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HEVertex',
+  'pex/geom/hem/HEEdge',
+  'pex/geom/hem/HEFace',
+  'pex/geom/Vec3'
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function HESubdivideTriangles() {
   }
-
-  HEMesh.prototype.subdivideTriangles = function() {
+  HEMesh.prototype.subdivideTriangles = function () {
     this.clearMarking();
     //keep these numbers to iterate only over original faces/edges/vertices
     var numFaces = this.faces.length;
@@ -4185,20 +4012,18 @@ define('pex/geom/hem/HESubdivideTriangles',[
     var i;
     var edge;
     var edgePoint;
-
     //For each edge, add an edge point - the average of
     //its two original endpoints.
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       edge = this.edges[i];
-      if (edge.marked) continue;
+      if (edge.marked)
+        continue;
       edge.marked = true;
       edge.pair.marked = true;
       this.splitEdge(edge, 0.5);
     }
-
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
-
       var edge1 = face.edge;
       var edge2 = edge1.next.next;
       var edge3 = edge2.next.next;
@@ -4208,78 +4033,60 @@ define('pex/geom/hem/HESubdivideTriangles',[
       edge3 = edge2.next.next.pair.next;
       this.splitFace(edge3, edge3.next.next);
     }
-
     this.clearMarking();
-
     return this;
   };
-
   return HESubdivideTriangles;
 });
-
 define('pex/geom/hem/HESubdivideFaceCenter',[
   'pex/geom/hem/HEMesh',
   'pex/geom/hem/HEVertex',
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Vec3'
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function HESubdivideFaceCenter() {
   }
-
-  HEMesh.prototype.subdivideFaceCenter = function() {
-    var numFaces = this.faces.length;
+  HEMesh.prototype.subdivideFaceCenter = function () {
     var edgesToSelect = [];
-
     var faces = this.faces;
     var selectedFaces = this.getSelectedFaces();
     if (selectedFaces.length > 0) {
       faces = selectedFaces;
     }
-
-    faces.forEach(function(face, i) {
+    faces.forEach(function (face) {
       var newEdge = this.splitFaceAtPoint(face, face.getCenter());
       edgesToSelect.push(newEdge);
     }.bind(this));
-
     this.clearSelection();
-    edgesToSelect.forEach(function(edge) {
+    edgesToSelect.forEach(function (edge) {
       edge.vert.selected = true;
-    })
-
+    });
     return this;
   };
-
   return HESubdivideFaceCenter;
 });
-
-define('pex/geom/hem/HEPull',['pex/geom/hem/HEMesh'], function(HEMesh) {
-
+define('pex/geom/hem/HEPull',['pex/geom/hem/HEMesh'], function (HEMesh) {
   function HEPull() {
   }
-
-  HEMesh.prototype.pull = function(amount, radius, variation) {
+  HEMesh.prototype.pull = function (amount, radius, variation) {
     variation = variation || 0;
     var cache = [];
-    this.getSelectedVertices().forEach(function(vertex, i) {
+    this.getSelectedVertices().forEach(function (vertex, i) {
       var a = amount - amount * (Math.random() * variation);
       var n = vertex.getNormal();
       cache[i] = n.dup().scale(a).add(vertex.position);
-    })
-    this.getSelectedVertices().map(function(vertex, i) {
+    });
+    this.getSelectedVertices().map(function (vertex, i) {
       vertex.position.x = cache[i].x;
       vertex.position.y = cache[i].y;
       vertex.position.z = cache[i].z;
       return cache[i];
     });
     return this;
-  }
-
+  };
   return HEPull;
 });
-
 //Doo-Sabin subdivision as desribed in WIRE AND COLUMN MODELING
 //http://repository.tamu.edu/bitstream/handle/1969.1/548/etd-tamu-2004A-VIZA-mandal-1.pdf
 define('pex/geom/hem/HEDooSabin',[
@@ -4288,44 +4095,38 @@ define('pex/geom/hem/HEDooSabin',[
   'pex/geom/hem/HEEdge',
   'pex/geom/hem/HEFace',
   'pex/geom/Vec3'
-  ],
-  function(HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
-
+], function (HEMesh, HEVertex, HEEdge, HEFace, Vec3) {
   function HEDooSabin() {
-
   }
-
-  HEMesh.prototype.smoothDooSabin = function(depth) {
-    if (depth) this.depth = depth;
-
+  HEMesh.prototype.smoothDooSabin = function (depth) {
+    if (depth)
+      this.depth = depth;
     this.clearMarking();
     //keep these numbers to iterate only over original faces/edges/vertices
     var numFaces = this.faces.length;
     var numEdges = this.edges.length;
     var numVertices = this.vertices.length;
     var i;
-
     //For each face, add a face point - the centroid of all original
     //points for the respective face
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       this.faces[i].facePoint = this.faces[i].getCenter();
     }
-
     //For each edge, add an edge point - the average of
     //the two neighbouring face points and its two original endpoints.
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       var edge = this.edges[i];
-      if (edge.edgePoint != null) continue;
-      if (!edge.vert.position) console.log(edge.vert);
+      if (edge.edgePoint != null)
+        continue;
+      if (!edge.vert.position)
+        console.log(edge.vert);
       var edgePoint = edge.vert.position.dup();
       edgePoint.add(edge.next.vert.position);
-      edgePoint.scale(1/2);
+      edgePoint.scale(1 / 2);
       edge.edgePoint = edgePoint;
       edge.pair.edgePoint = edge.edgePoint;
     }
-
-
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
       var edge = face.edge;
       //loop through face edges and add one point for each vertex
@@ -4335,23 +4136,19 @@ define('pex/geom/hem/HEDooSabin',[
         newVert.add(face.facePoint);
         newVert.add(edge.edgePoint);
         newVert.add(edge.findPrev().edgePoint);
-        newVert.scale(1/4);
-
+        newVert.scale(1 / 4);
         if (this.depth) {
           var tmp = newVert.dup().sub(vert);
           tmp.normalize();
           tmp.scale(this.depth);
           newVert = vert.dup().add(tmp);
         }
-
         edge.edgeFacePoint = new HEVertex(newVert.x, newVert.y, newVert.z);
         this.vertices.push(edge.edgeFacePoint);
-
         edge = edge.next;
       } while (edge != face.edge);
     }
-
-    for(i=0; i<numFaces; i++) {
+    for (i = 0; i < numFaces; i++) {
       var face = this.faces[i];
       var edge = face.edge;
       //loop through faces and new face in the middle of the old one
@@ -4363,21 +4160,18 @@ define('pex/geom/hem/HEDooSabin',[
         this.edges.push(newEdge);
         edge = edge.next;
       } while (edge != face.edge);
-
-      for(var j=0; j<newEdges.length; j++) {
-        newEdges[j].next = newEdges[(j+1) % newEdges.length];
+      for (var j = 0; j < newEdges.length; j++) {
+        newEdges[j].next = newEdges[(j + 1) % newEdges.length];
       }
       face.edge = newEdges[0];
     }
-
     var edgeFaces = 0;
-    for(i=0; i<numEdges; i++) {
+    for (i = 0; i < numEdges; i++) {
       var edge = this.edges[i];
-      if (edge.marked) continue;
-
+      if (edge.marked)
+        continue;
       edge.marked = true;
       edge.pair.marked = true;
-
       var a = edge.edgeFacePoint;
       var b = edge.next.edgeFacePoint;
       var c = edge.pair.edgeFacePoint;
@@ -4391,7 +4185,6 @@ define('pex/geom/hem/HEDooSabin',[
       ed.next = ec;
       ec.next = eb;
       eb.next = ea;
-
       var edgeFace = new HEFace(ea);
       ea.face = eb.face = ec.face = ed.face = edgeFace;
       this.faces.push(edgeFace);
@@ -4400,82 +4193,64 @@ define('pex/geom/hem/HEDooSabin',[
       this.edges.push(eb);
       this.edges.push(ec);
       this.edges.push(ed);
-
       ea.face = edgeFace;
       ed.face = edgeFace;
       ec.face = edgeFace;
       eb.face = edgeFace;
-
       edgeFaces++;
     }
-
-    for(var i=0; i<numVertices; i++) {
+    for (var i = 0; i < numVertices; i++) {
       var vertex = this.vertices[i];
       var edge = vertex.edge;
       var prev = null;
       var first = null;
-
       var vertexFace = new HEFace();
       this.faces.push(vertexFace);
       do {
         var newEdge = new HEEdge(edge.edgeFacePoint);
         newEdge.face = vertexFace;
         this.edges.push(newEdge);
-
         if (!first) {
           first = newEdge;
           vertexFace.edge = newEdge;
         }
-
         //clock counter-wise order
-        if (prev) newEdge.next = prev;
-
+        if (prev)
+          newEdge.next = prev;
         prev = newEdge;
-
         edge = edge.pair.next;
-      } while(edge != vertex.edge)
-
+      } while (edge != vertex.edge);
       //close the loop
       first.next = prev;
     }
-
     //remove old edges
     this.vertices.splice(0, numVertices);
     this.edges.splice(0, numEdges);
     this.fixDuplicatedVertices();
     this.fixVertexEdges();
     this.fixEdgePairs();
-
     this.check();
-
     return this;
-  }
-
+  };
   return HEDooSabin;
 });
-
-define(
-  'pex/geom/hem',[
-    'pex/geom/hem/HEMesh',
-    'pex/geom/hem/HESelection',
-    'pex/geom/hem/HEMarking',
-    'pex/geom/hem/HEGeometryConverter',
-    'pex/geom/hem/HEExtrude',
-    'pex/geom/hem/HECatmullClark',
-    'pex/geom/hem/HETriangulate',
-    'pex/geom/hem/HESubdivideTriangles',
-    'pex/geom/hem/HESubdivideFaceCenter',
-    'pex/geom/hem/HEPull',
-    'pex/geom/hem/HEDooSabin',
-  ],
-  function(HEMesh, HESelection, HEMarking, HEGeometryConverter, HEExtrude, HECatmullClark, HETriangulate,
-    HESubdivideTriangles, HESubdivideFaceCenter, HEPull, HEDooSabin) {
-    return function() {
-      return new HEMesh();
-    }
-  }
-);
-
+define('pex/geom/hem',[
+  'pex/geom/hem/HEMesh',
+  'pex/geom/hem/HESelection',
+  'pex/geom/hem/HEMarking',
+  'pex/geom/hem/HEGeometryConverter',
+  'pex/geom/hem/HEExtrude',
+  'pex/geom/hem/HECatmullClark',
+  'pex/geom/hem/HETriangulate',
+  'pex/geom/hem/HESubdivideTriangles',
+  'pex/geom/hem/HESubdivideFaceCenter',
+  'pex/geom/hem/HEPull',
+  'pex/geom/hem/HEDooSabin'
+], function (HEMesh, HESelection, HEMarking, HEGeometryConverter, HEExtrude, HECatmullClark, HETriangulate, HESubdivideTriangles, HESubdivideFaceCenter, HEPull, HEDooSabin) {
+  return function () {
+    return new HEMesh();
+  };
+});
 (function() {
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -4702,111 +4477,91 @@ define(
 
 }).call(this);
 
-define('pex/geom/Rect',[], function() {
+define('pex/geom/Rect',[], function () {
   function Rect(x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
   }
-
-  Rect.prototype.set = function(x, y, width, height) {
+  Rect.prototype.set = function (x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-  }
-
-  Rect.prototype.contains = function(point) {
-    return (point.x >= this.x && point.x <= this.x + this.width && point.y >= this.y && point.y <= this.y + this.height);
-  }
-
+  };
+  Rect.prototype.contains = function (point) {
+    return point.x >= this.x && point.x <= this.x + this.width && point.y >= this.y && point.y <= this.y + this.height;
+  };
   return Rect;
 });
-define('pex/geom/Triangle2D',['pex/geom/Line2D'], function(Line2D) {
+define('pex/geom/Triangle2D',['pex/geom/Line2D'], function (Line2D) {
   function sign(a, b, c) {
     return (a.x - c.x) * (b.y - c.y) - (b.x - c.x) * (a.y - c.y);
   }
-
   function Triangle2D(a, b, c) {
     this.a = a;
     this.b = b;
     this.c = c;
   }
-
   //http://stackoverflow.com/a/2049593
   //doesn't properly handle points on the edge of the triangle
-  Triangle2D.prototype.contains = function(p) {
+  Triangle2D.prototype.contains = function (p) {
     var signAB = sign(this.a, this.b, p) < 0;
     var signBC = sign(this.b, this.c, p) < 0;
     var signCA = sign(this.c, this.a, p) < 0;
-
-    return (signAB == signBC) && (signBC == signCA);
-  }
-
+    return signAB == signBC && signBC == signCA;
+  };
   return Triangle2D;
 });
-
-
-
-define('pex/geom/Polygon2D',['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2D, Vec2) {
-
+define('pex/geom/Polygon2D',[
+  'pex/geom/Line2D',
+  'pex/geom/Vec2'
+], function (Line2D, Vec2) {
   //Based on http://www.mathopenref.com/coordpolygonarea.html
   //and http://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
   //`vertices` - should be counter-clockwise
   function signedPolygon2DArea(vertices) {
     var sum = 0;
     var n = vertices.length;
-
-    for(var i=0; i<n; i++) {
+    for (var i = 0; i < n; i++) {
       var v = vertices[i];
-      var nv = vertices[(i+1) % n];
+      var nv = vertices[(i + 1) % n];
       sum += v.x * nv.y - v.y * nv.x;
     }
-
     return sum * 0.5;
   }
-
   function Polygon2D(vertices) {
     this.vertices = vertices || [];
     this.center = Vec2.create();
   }
-
-  Polygon2D.prototype.getArea = function() {
+  Polygon2D.prototype.getArea = function () {
     return Math.abs(signedPolygon2DArea(this.vertices));
-  }
-
-  Polygon2D.prototype.isClockwise = function() {
+  };
+  Polygon2D.prototype.isClockwise = function () {
     return signedPolygon2DArea(this.vertices) > 0;
-  }
-
-  Polygon2D.prototype.flipVertexOrder = function() {
+  };
+  Polygon2D.prototype.flipVertexOrder = function () {
     this.vertices.reverse();
-  }
-
-  Polygon2D.prototype.getCenter = function() {
+  };
+  Polygon2D.prototype.getCenter = function () {
     this.center.x = 0;
     this.center.y = 0;
-    for(var i=0; i<this.vertices.length; i++) {
+    for (var i = 0; i < this.vertices.length; i++) {
       this.center.x += this.vertices[i].x;
       this.center.y += this.vertices[i].y;
     }
-
     this.center.x /= this.vertices.length;
     this.center.y /= this.vertices.length;
-
     return this.center;
-  }
-
-  Polygon2D.prototype.clip = function(clippingShape) {
+  };
+  Polygon2D.prototype.clip = function (clippingShape) {
     var clippedVertices = [];
     var vertices = this.vertices;
-
     var numClippingEdges = clippingPolygon2D.vertices.length;
-
-    for(var i=0; i<numClippingEdges; i++) {
-      var clippingEdge = new Line2D(clippingPolygon2D.vertices[i], clippingPolygon2D.vertices[(i+1)%numClippingEdges]);
-      for(var j=0; j<vertices.length; j++) {
+    for (var i = 0; i < numClippingEdges; i++) {
+      var clippingEdge = new Line2D(clippingPolygon2D.vertices[i], clippingPolygon2D.vertices[(i + 1) % numClippingEdges]);
+      for (var j = 0; j < vertices.length; j++) {
         var start = vertices[(j - 1 + vertices.length) % vertices.length];
         var end = vertices[j];
         var isStartInside = clippingEdge.isPointOnTheLeftSide(start);
@@ -4815,34 +4570,28 @@ define('pex/geom/Polygon2D',['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2
         if (isStartInside && isEndInside) {
           clippedVertices.push(end);
           prevStart = end;
-        }
-        else if (isStartInside && !isEndInside) {
+        } else if (isStartInside && !isEndInside) {
           intersection = clippingEdge.intersect(new Line2D(start, end));
-          clippedVertices.push( intersection );
-        }
-        else if (!isStartInside && !isEndInside) {
+          clippedVertices.push(intersection);
+        } else if (!isStartInside && !isEndInside) {
           //do nothing
           prevStart = null;
-        }
-        else if (!isStartInside && isEndInside) {
+        } else if (!isStartInside && isEndInside) {
           var intersection = clippingEdge.intersect(new Line2D(start, end));
-          clippedVertices.push( intersection );
-          clippedVertices.push( end );
+          clippedVertices.push(intersection);
+          clippedVertices.push(end);
         }
       }
       vertices = clippedVertices;
       clippedVertices = [];
     }
-
     return new Polygon2D(vertices);
-  }
-
-  Polygon2D.prototype.clipToLine = function(clippingLine) {
+  };
+  Polygon2D.prototype.clipToLine = function (clippingLine) {
     var clippedVertices = [];
     var vertices = this.vertices;
-
     var clippingEdge = clippingLine;
-    for(var j=0; j<vertices.length; j++) {
+    for (var j = 0; j < vertices.length; j++) {
       var start = vertices[(j - 1 + vertices.length) % vertices.length];
       var end = vertices[j];
       var isStartInside = clippingEdge.isPointOnTheLeftSide(start);
@@ -4851,32 +4600,26 @@ define('pex/geom/Polygon2D',['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2
       if (isStartInside && isEndInside) {
         clippedVertices.push(end);
         prevStart = end;
-      }
-      else if (isStartInside && !isEndInside) {
+      } else if (isStartInside && !isEndInside) {
         intersection = clippingEdge.intersect(new Line2D(start, end));
-        clippedVertices.push( intersection );
-      }
-      else if (!isStartInside && !isEndInside) {
+        clippedVertices.push(intersection);
+      } else if (!isStartInside && !isEndInside) {
         //do nothing
         prevStart = null;
-      }
-      else if (!isStartInside && isEndInside) {
+      } else if (!isStartInside && isEndInside) {
         var intersection = clippingEdge.intersect(new Line2D(start, end));
-        clippedVertices.push( intersection );
-        clippedVertices.push( end );
+        clippedVertices.push(intersection);
+        clippedVertices.push(end);
       }
     }
     vertices = clippedVertices;
-
     return new Polygon2D(vertices);
-  }
-
+  };
   return Polygon2D;
 });
 //Camtull-Rom spline implementation  
 //Inspired by code from [Tween.js][1]
 //[1]: http://sole.github.com/tween.js/examples/05_spline.html
-
 //## Example use 
 //
 //     var points = [ 
@@ -4889,11 +4632,8 @@ define('pex/geom/Polygon2D',['pex/geom/Line2D', 'pex/geom/Vec2'], function(Line2
 //     var spline = new Spline3D(points);
 //
 //     spline.getPointAt(0.25);
-
 //## Reference
-
-define('pex/geom/Spline3D',['pex/geom/Vec3'], function(Vec3) {
-
+define('pex/geom/Spline3D',['pex/geom/Vec3'], function (Vec3) {
   //### Spline3D ( points, [ loop ] )
   //`points` - *{ Array of Vec3 }* = [ ]  
   //`loop` - is the spline a connected loop? *{ Boolean }* = false
@@ -4903,162 +4643,135 @@ define('pex/geom/Spline3D',['pex/geom/Vec3'], function(Vec3) {
     this.loop = loop || false;
     this.samplesCount = 100;
   }
-
   //### getPoint ( t )
   //Gets position based on t-value.
   //It is fast, but resulting points will not be evenly distributed.
   //
   //`t` - *{ Number } <0, 1>*
-  Spline3D.prototype.getPoint = function ( t ) {
+  Spline3D.prototype.getPoint = function (t) {
     if (this.loop) {
-      t = (t + 1 ) % 1;
-    }
-    else {
+      t = (t + 1) % 1;
+    } else {
       t = Math.max(0, Math.min(t, 1));
     }
-
     var points = this.points;
     var len = this.loop ? points.length : points.length - 1;
     var point = t * len;
-    var intPoint = Math.floor( point );
+    var intPoint = Math.floor(point);
     var weight = point - intPoint;
-
     var c0, c1, c2, c3;
     if (this.loop) {
-      c0 = (intPoint - 1 + points.length ) % points.length;
+      c0 = (intPoint - 1 + points.length) % points.length;
       c1 = intPoint % points.length;
-      c2 = (intPoint + 1 ) % points.length;
-      c3 = (intPoint + 2 ) % points.length;
-    }
-    else {
+      c2 = (intPoint + 1) % points.length;
+      c3 = (intPoint + 2) % points.length;
+    } else {
       c0 = intPoint == 0 ? intPoint : intPoint - 1;
       c1 = intPoint;
       c2 = intPoint > points.length - 2 ? intPoint : intPoint + 1;
       c3 = intPoint > points.length - 3 ? intPoint : intPoint + 2;
     }
-
     var vec = new Vec3();
-    vec.x = this.interpolate( points[ c0 ].x, points[ c1 ].x, points[ c2 ].x, points[ c3 ].x, weight );
-    vec.y = this.interpolate( points[ c0 ].y, points[ c1 ].y, points[ c2 ].y, points[ c3 ].y, weight );
-    vec.z = this.interpolate( points[ c0 ].z, points[ c1 ].z, points[ c2 ].z, points[ c3 ].z, weight );
-
+    vec.x = this.interpolate(points[c0].x, points[c1].x, points[c2].x, points[c3].x, weight);
+    vec.y = this.interpolate(points[c0].y, points[c1].y, points[c2].y, points[c3].y, weight);
+    vec.z = this.interpolate(points[c0].z, points[c1].z, points[c2].z, points[c3].z, weight);
     return vec;
-  }
-
+  };
   //### addPoint ( p )
   //Adds point to the spline
   //
   //`p` - point to be added *{ Vec3 }* 
-  Spline3D.prototype.addPoint = function ( p ) {
+  Spline3D.prototype.addPoint = function (p) {
     this.dirtyLength = true;
-    this.points.push(p)
-  }
-
+    this.points.push(p);
+  };
   //### getPointAt ( d )
   //Gets position based on d-th of total length of the curve.
   //Precise but might be slow at the first use due to need to precalculate length.
   //
   //`d` - *{ Number } <0, 1>*
-  Spline3D.prototype.getPointAt = function ( d ) {
+  Spline3D.prototype.getPointAt = function (d) {
     if (this.loop) {
-      d = (d + 1 ) % 1;
-    }
-    else {
+      d = (d + 1) % 1;
+    } else {
       d = Math.max(0, Math.min(d, 1));
     }
-
     if (this.dirtyLength) {
       this.precalculateLength();
     }
-
     //TODO: try binary search
     var k = 0;
-    for(var i=0; i<this.accumulatedLengthRatios.length; i++) {
+    for (var i = 0; i < this.accumulatedLengthRatios.length; i++) {
       if (this.accumulatedLengthRatios[i] >= d) {
         k = this.accumulatedRatios[i];
         break;
       }
     }
-
     return this.getPoint(k);
-  }
-
+  };
   //### getPointAtIndex ( i )
   //Returns position of i-th point forming the curve
   //
   //`i` - *{ Number } <0, Spline3D.points.length)*
-  Spline3D.prototype.getPointAtIndex = function ( i ) {
+  Spline3D.prototype.getPointAtIndex = function (i) {
     if (i < this.points.length) {
       return this.points[i];
-    }
-    else {
+    } else {
       return null;
     }
-  }
-
+  };
   //### getNumPoints ( )
   //Return number of base points in the spline
-  Spline3D.prototype.getNumPoints = function() {
+  Spline3D.prototype.getNumPoints = function () {
     return this.points.length;
-  }
-
+  };
   //### getLength ( )
   //Returns the total length of the spline.
-  Spline3D.prototype.getLength = function() {
+  Spline3D.prototype.getLength = function () {
     if (this.dirtyLength) {
       this.precalculateLength();
     }
     return this.length;
-  }
-
+  };
   //### precalculateLength ( )
   //Goes through all the segments of the curve and calculates total length and
   //the ratio of each segment.
-  Spline3D.prototype.precalculateLength = function() {
-    var step = 1/this.samplesCount;
+  Spline3D.prototype.precalculateLength = function () {
+    var step = 1 / this.samplesCount;
     var k = 0;
     var totalLength = 0;
     this.accumulatedRatios = [];
     this.accumulatedLengthRatios = [];
     this.accumulatedLengths = [];
-
     var point;
     var prevPoint;
-    for(var i=0; i<this.samplesCount; i++) {
+    for (var i = 0; i < this.samplesCount; i++) {
       prevPoint = point;
       point = this.getPoint(k);
-
       if (i > 0) {
         var len = point.dup().sub(prevPoint).length();
         totalLength += len;
       }
-
       this.accumulatedRatios.push(k);
-      this.accumulatedLengths.push(totalLength)
-
+      this.accumulatedLengths.push(totalLength);
       k += step;
     }
-
-    for(var i=0; i<this.samplesCount; i++) {
+    for (var i = 0; i < this.samplesCount; i++) {
       this.accumulatedLengthRatios.push(this.accumulatedLengths[i] / totalLength);
     }
-
     this.length = totalLength;
     this.dirtyLength = false;
-  }
-
+  };
   //### close ( )
   //Closes the spline. It will form a loop now.
-  Spline3D.prototype.close = function( ) {
+  Spline3D.prototype.close = function () {
     this.loop = true;
-  }
-
+  };
   //### isClosed ( )
   //Returns true if spline is closed (forms a loop) *{ Boolean }*
-  Spline3D.prototype.isClosed = function() {
+  Spline3D.prototype.isClosed = function () {
     return this.loop;
-  }
-
+  };
   //### interpolate ( p0, p1, p2, p3, t)
   //Helper function to calculate Catmul-Rom spline equation  
   //
@@ -5067,213 +4780,178 @@ define('pex/geom/Spline3D',['pex/geom/Vec3'], function(Vec3) {
   //`p2` - next value *{ Number }*  
   //`p3` - next next value *{ Number }*  
   //`t` - parametric distance between p1 and p2 *{ Number } <0, 1>*
-  Spline3D.prototype.interpolate = function(p0, p1, p2, p3, t) {
-    var v0 = ( p2 - p0 ) * 0.5;
-    var v1 = ( p3 - p1 ) * 0.5;
+  Spline3D.prototype.interpolate = function (p0, p1, p2, p3, t) {
+    var v0 = (p2 - p0) * 0.5;
+    var v1 = (p3 - p1) * 0.5;
     var t2 = t * t;
     var t3 = t * t2;
-    return ( 2 * p1 - 2 * p2 + v0 + v1 ) * t3 + ( - 3 * p1 + 3 * p2 - 2 * v0 - v1 ) * t2 + v0 * t + p1;
-  }
-
+    return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+  };
   return Spline3D;
 });
 //A ray.  
 //
 //Consists of the starting point *origin* and the *direction* vector.  
 //Used for collision detection.
-define('pex/geom/Ray',['pex/geom/Vec3'], function(Vec3) {
-
+define('pex/geom/Ray',['pex/geom/Vec3'], function (Vec3) {
   //### Ray ( )
   function Ray(origin, direction) {
     this.origin = origin || new Vec3(0, 0, 0);
-    this.direction = direction || new Vec3(0, 0, 1)
+    this.direction = direction || new Vec3(0, 0, 1);
   }
-
   //http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
-  Ray.prototype.hitTestSphere = function(pos, r) {
+  Ray.prototype.hitTestSphere = function (pos, r) {
     var hits = [];
-
     var d = this.direction;
     var o = this.origin;
     var osp = o.dup().sub(pos);
-
     var A = d.dot(d);
     if (A == 0) {
       return hits;
     }
-
     var B = 2 * osp.dot(d);
     var C = osp.dot(osp) - r * r;
-    var sq = Math.sqrt(B*B - 4*A*C);
-
+    var sq = Math.sqrt(B * B - 4 * A * C);
     if (isNaN(sq)) {
-      return hits
+      return hits;
     }
-
     var t0 = (-B - sq) / (2 * A);
     var t1 = (-B + sq) / (2 * A);
-
     hits.push(o.dup().add(d.dup().scale(t0)));
     if (t0 != t1) {
       hits.push(o.dup().add(d.dup().scale(t1)));
     }
-
     return hits;
-  }
-
+  };
   //http://www.cs.princeton.edu/courses/archive/fall00/cs426/lectures/raycast/sld017.htm
   //http://cgafaq.info/wiki/Ray_Plane_Intersection
-  Ray.prototype.hitTestPlane = function(pos, normal) {
+  Ray.prototype.hitTestPlane = function (pos, normal) {
     if (this.direction.dot(normal) == 0) {
       return [];
     }
-
     var t = normal.dup().scale(-1).dot(this.origin.dup().sub(pos)) / this.direction.dot(normal);
-
     return [this.origin.dup().add(this.direction.dup().scale(t))];
-  }
-
-
-  Ray.prototype.hitTestBoundingBox = function(bbox) {
+  };
+  Ray.prototype.hitTestBoundingBox = function (bbox) {
     var hits = [];
     var self = this;
     function testFace(pos, size, normal, u, v) {
-      var faceHits = self.hitTestPlane(pos, normal)
+      var faceHits = self.hitTestPlane(pos, normal);
       if (faceHits.length > 0) {
         var hit = faceHits[0];
-        if (hit[u] > pos[u] - size[u]/2 && hit[u] < pos[u] + size[u]/2 &&
-          hit[v] > pos[v] - size[v]/2 && hit[v] < pos[v] + size[v]/2) {
+        if (hit[u] > pos[u] - size[u] / 2 && hit[u] < pos[u] + size[u] / 2 && hit[v] > pos[v] - size[v] / 2 && hit[v] < pos[v] + size[v] / 2) {
           hits.push(hit);
         }
       }
     }
-
     var bboxCenter = bbox.getCenter();
     var bboxSize = bbox.getSize();
-    testFace(bboxCenter.dup().add(new Vec3(0, 0, bboxSize.z/2)), bboxSize, new Vec3(0, 0, 1), 'x', 'y');
-    testFace(bboxCenter.dup().add(new Vec3(0, 0, -bboxSize.z/2)), bboxSize, new Vec3(0, 0, -1), 'x', 'y');
-    testFace(bboxCenter.dup().add(new Vec3(bboxSize.x/2, 0, 0)), bboxSize, new Vec3(1, 0, 0), 'y', 'z');
-    testFace(bboxCenter.dup().add(new Vec3(-bboxSize.x/2, 0, 0)), bboxSize, new Vec3(-1, 0, 0), 'y', 'z');
-    testFace(bboxCenter.dup().add(new Vec3(0, bboxSize.y/2, 0)), bboxSize, new Vec3(0, 1, 0), 'x', 'z');
-    testFace(bboxCenter.dup().add(new Vec3(0, -bboxSize.y/2, 0)), bboxSize, new Vec3(0, -1, 0), 'x', 'z');
-
-    hits.forEach(function(hit) {
+    testFace(bboxCenter.dup().add(new Vec3(0, 0, bboxSize.z / 2)), bboxSize, new Vec3(0, 0, 1), 'x', 'y');
+    testFace(bboxCenter.dup().add(new Vec3(0, 0, -bboxSize.z / 2)), bboxSize, new Vec3(0, 0, -1), 'x', 'y');
+    testFace(bboxCenter.dup().add(new Vec3(bboxSize.x / 2, 0, 0)), bboxSize, new Vec3(1, 0, 0), 'y', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(-bboxSize.x / 2, 0, 0)), bboxSize, new Vec3(-1, 0, 0), 'y', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(0, bboxSize.y / 2, 0)), bboxSize, new Vec3(0, 1, 0), 'x', 'z');
+    testFace(bboxCenter.dup().add(new Vec3(0, -bboxSize.y / 2, 0)), bboxSize, new Vec3(0, -1, 0), 'x', 'z');
+    hits.forEach(function (hit) {
       hit._distance = hit.distance(self.origin);
     });
-
-    hits.sort(function(a, b) {
-      return (a._distance - b._distance);
+    hits.sort(function (a, b) {
+      return a._distance - b._distance;
     });
-
-    hits.forEach(function(hit) {
+    hits.forEach(function (hit) {
       delete hit._distance;
     });
-
     if (hits.length > 0) {
       hits = [hits[0]];
     }
     return hits;
-  }
-
+  };
   return Ray;
 });
-define(
-  'pex/geom',[
-    'pex/geom/Vec2',
-    'pex/geom/Vec3',
-    'pex/geom/Vec4',
-    'pex/geom/Mat4',
-    'pex/geom/Quat',
-    'pex/geom/Geometry',
-    'pex/geom/GeometryOperations',
-    'pex/geom/gen',
-    'pex/geom/Edge',
-    'pex/geom/Face3',
-    'pex/geom/Face4',
-    'pex/geom/FacePolygon',
-    'pex/geom/Line2D',
-    'pex/geom/Rect',
-    'pex/geom/Triangle2D',
-    'pex/geom/Polygon2D',
-    'pex/geom/hem',
-    'pex/geom/BoundingBox',
-    'pex/geom/Octree',
-    'pex/geom/Spline3D',
-    'pex/geom/Ray'
-  ],
-  function(Vec2, Vec3, Vec4, Mat4, Quat, Geometry, GeometryOperations, gen,
-    Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem,
-    BoundingBox, Octree, Spline3D, Ray) {
-    return {
-      Vec2 : Vec2,
-      Vec3 : Vec3,
-      Vec4 : Vec4,
-      Mat4 : Mat4,
-      Quat : Quat,
-      Geometry : Geometry,
-      GeometryOperations : GeometryOperations,
-      gen : gen,
-      Edge : Edge,
-      Face3 : Face3,
-      Face4 : Face4,
-      FacePolygon : FacePolygon,
-      Line2D : Line2D,
-      Rect : Rect,
-      Triangle2D : Triangle2D,
-      Polygon2D : Polygon2D,
-      hem : hem,
-      BoundingBox : BoundingBox,
-      Octree : Octree,
-      Spline3D: Spline3D,
-      Ray : Ray
-    };
-  }
-);
-
-
-
-define('pex/utils/Log',[], function() {
+define('pex/geom',[
+  'pex/geom/Vec2',
+  'pex/geom/Vec3',
+  'pex/geom/Vec4',
+  'pex/geom/Mat4',
+  'pex/geom/Quat',
+  'pex/geom/Geometry',
+  'pex/geom/GeometryOperations',
+  'pex/geom/gen',
+  'pex/geom/Edge',
+  'pex/geom/Face3',
+  'pex/geom/Face4',
+  'pex/geom/FacePolygon',
+  'pex/geom/Line2D',
+  'pex/geom/Rect',
+  'pex/geom/Triangle2D',
+  'pex/geom/Polygon2D',
+  'pex/geom/hem',
+  'pex/geom/BoundingBox',
+  'pex/geom/Octree',
+  'pex/geom/Spline3D',
+  'pex/geom/Ray'
+], function (Vec2, Vec3, Vec4, Mat4, Quat, Geometry, GeometryOperations, gen, Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem, BoundingBox, Octree, Spline3D, Ray) {
+  return {
+    Vec2: Vec2,
+    Vec3: Vec3,
+    Vec4: Vec4,
+    Mat4: Mat4,
+    Quat: Quat,
+    Geometry: Geometry,
+    GeometryOperations: GeometryOperations,
+    gen: gen,
+    Edge: Edge,
+    Face3: Face3,
+    Face4: Face4,
+    FacePolygon: FacePolygon,
+    Line2D: Line2D,
+    Rect: Rect,
+    Triangle2D: Triangle2D,
+    Polygon2D: Polygon2D,
+    hem: hem,
+    BoundingBox: BoundingBox,
+    Octree: Octree,
+    Spline3D: Spline3D,
+    Ray: Ray
+  };
+});
+define('pex/utils/Log',[], function () {
   function Log() {
   }
-
-  Log.message = function(msg) {
+  Log.message = function (msg) {
     if (console !== undefined) {
       console.log(msg);
     }
-  }
-
-  Log.error = function(msg) {
+  };
+  Log.error = function (msg) {
     if (console !== undefined) {
       console.log('ERROR: ' + msg);
     }
-  }
-
+  };
   return Log;
 });
-
-define('pex/utils/Time',['pex/utils/Log'], function(Log) {
+define('pex/utils/Time',['pex/utils/Log'], function (Log) {
   var Time = {
-    now: 0,
-    prev: 0,
-    delta: 0,
-    seconds: 0,
-    frameNumber: 0,
-    fpsFrames: 0,
-    fpsTime: 0,
-    fps: 0,
-    fpsFrequency: 3,
-    paused: false,
-    verbose: false
-  }
-
-  Time.update = function(delta) {
-    if (Time.paused) return;
-
-    if (Time.prev == 0) {
+      now: 0,
+      prev: 0,
+      delta: 0,
+      seconds: 0,
+      frameNumber: 0,
+      fpsFrames: 0,
+      fpsTime: 0,
+      fps: 0,
+      fpsFrequency: 3,
+      paused: false,
+      verbose: false
+    };
+  Time.update = function (delta) {
+    if (Time.paused)
+      return;
+    if (Time.prev === 0) {
       Time.prev = Date.now();
     }
     Time.now = Date.now();
-    Time.delta = (delta !== undefined) ? delta : (Time.now - Time.prev)/1000;
+    Time.delta = delta !== undefined ? delta : (Time.now - Time.prev) / 1000;
     //More than 1s = probably switched back from another window so we have big jump now
     if (Time.delta > 1) {
       Time.delta = 0;
@@ -5287,96 +4965,87 @@ define('pex/utils/Time',['pex/utils/Log'], function(Log) {
       Time.fps = Time.fpsFrames / Time.fpsTime;
       Time.fpsTime = 0;
       Time.fpsFrames = 0;
-      if (this.verbose) Log.message('FPS: ' + Time.fps);
+      if (this.verbose)
+        Log.message('FPS: ' + Time.fps);
     }
     return Time.seconds;
-  }
-
+  };
   var startOfMeasuredTime = 0;
-  Time.startMeasuringTime = function() {
+  Time.startMeasuringTime = function () {
     startOfMeasuredTime = Date.now();
-  }
-
-  Time.stopMeasuringTime = function(msg) {
+  };
+  Time.stopMeasuringTime = function (msg) {
     var now = Date.now();
-
-    var seconds = (now - startOfMeasuredTime)/1000;
-
+    var seconds = (now - startOfMeasuredTime) / 1000;
     if (msg) {
-      Log.message(msg + seconds)
+      Log.message(msg + seconds);
     }
     return seconds;
-  }
-
-  Time.pause = function() {
+  };
+  Time.pause = function () {
     Time.paused = true;
-  }
-
-  Time.togglePause = function() {
+  };
+  Time.togglePause = function () {
     Time.paused = !Time.paused;
-  }
-
+  };
   return Time;
 });
-
-define('pex/utils/ObjectUtils',[], function() {
+define('pex/utils/ObjectUtils',[], function () {
   function ObjectUtils() {
   }
-
-  ObjectUtils.mergeObjects = function(a, b) {
-    var result = { };
+  ObjectUtils.mergeObjects = function (a, b) {
+    var result = {}, prop;
     if (a) {
-      for(var prop in a) {
+      for (prop in a) {
         result[prop] = a[prop];
       }
     }
     if (b) {
-      for(var prop in b) {
+      for (prop in b) {
         result[prop] = b[prop];
       }
     }
     return result;
   };
-
-  ObjectUtils.property = function(prop, value) {
-    return function(object) {
+  ObjectUtils.property = function (prop, value) {
+    return function (object) {
       if (value !== undefined) {
         object[prop] = value;
         return object;
-      }
-      else {
+      } else {
         return object[prop];
       }
     };
   };
-
   return ObjectUtils;
 });
-
-define('pex/sys/Platform',[], function() {
-  var isPlask = (typeof window === 'undefined') && (typeof process === 'object');
-  var isBrowser = (typeof window === 'object') && (typeof document === 'object');
-  var isEjecta = (typeof ejecta === 'object') && (typeof ejecta.include === 'function');
+define('pex/sys/Platform',[], function () {
+  var isPlask = typeof window === 'undefined' && typeof process === 'object';
+  var isBrowser = typeof window === 'object' && typeof document === 'object';
+  var isEjecta = typeof ejecta === 'object' && typeof ejecta.include === 'function';
   return {
-    isPlask : isPlask,
-    isBrowser : isBrowser,
-    isEjecta : isEjecta
-  }
+    isPlask: isPlask,
+    isBrowser: isBrowser,
+    isEjecta: isEjecta
+  };
 });
-define('pex/sys/Node',['pex/sys/Platform'], function(Platform) {
-  var include = (typeof pexNodeRequire === 'function') ? pexNodeRequire : require;
-
+define('pex/sys/Node',['pex/sys/Platform'], function (Platform) {
+  var include = typeof pexNodeRequire === 'function' ? pexNodeRequire : require;
   return {
-    plask : Platform.isPlask ? include('plask') : {},
-    fs : Platform.isPlask ? include('fs') : {},
-    path : Platform.isPlask ? include('path') : {}
-  }
+    plask: Platform.isPlask ? include('plask') : {},
+    fs: Platform.isPlask ? include('fs') : {},
+    path: Platform.isPlask ? include('path') : {}
+  };
 });
-define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node, Platform) {
-  var PlaskIO = (function() {
-    function IO() {}
-
-    IO.loadTextFile = function(file, callback) {
+define('pex/sys/IO',[
+  'pex/utils/Log',
+  'pex/sys/Node',
+  'pex/sys/Platform'
+], function (Log, Node, Platform) {
+  var PlaskIO = function () {
+    function IO() {
+    }
+    IO.loadTextFile = function (file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
       if (!Node.fs.existsSync(fullPath)) {
         if (callback) {
@@ -5387,13 +5056,11 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
       if (callback) {
         callback(data);
       }
-    }
-
-    IO.getWorkingDirectory = function() {
+    };
+    IO.getWorkingDirectory = function () {
       return Node.path.dirname(module.parent.filename);
-    }
-
-    IO.loadImageData = function(gl, texture, target, file, callback) {
+    };
+    IO.loadImageData = function (gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(texture.target, texture.handle);
@@ -5402,10 +5069,9 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
       if (callback) {
         callback(canvas);
       }
-    }
-
-    IO.watchTextFile = function(file, callback) {
-      Node.fs.watch(file, {}, function(event, fileName) {
+    };
+    IO.watchTextFile = function (file, callback) {
+      Node.fs.watch(file, {}, function (event, fileName) {
         if (event == 'change') {
           var data = Node.fs.readFileSync(file, 'utf8');
           if (callback) {
@@ -5413,215 +5079,174 @@ define('pex/sys/IO',['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], funct
           }
         }
       });
-    }
-
-    IO.saveTextFile = function(file, data) {
+    };
+    IO.saveTextFile = function (file, data) {
       Node.fs.writeFileSync(file, data);
-    }
-
+    };
     return IO;
-  });
-
-  var WebIO = (function() {
-    function IO() {}
-
-    IO.getWorkingDirectory = function() {
-      return '';
+  };
+  var WebIO = function () {
+    function IO() {
     }
-
-    IO.loadTextFile = function(url, callback) {
+    IO.getWorkingDirectory = function () {
+      return '';
+    };
+    IO.loadTextFile = function (url, callback) {
       var request = new XMLHttpRequest();
       request.open('GET', url, true);
       request.onreadystatechange = function (e) {
         if (request.readyState == 4) {
-          if(request.status == 200) {
-             if (callback) {
-               callback(request.responseText);
-             }
-          }
-          else {
-             Log.error('WebIO.loadTextFile error : ' + request.statusText);
+          if (request.status == 200) {
+            if (callback) {
+              callback(request.responseText);
+            }
+          } else {
+            Log.error('WebIO.loadTextFile error : ' + request.statusText);
           }
         }
       };
       request.send(null);
-    }
-
-    IO.loadImageData = function(gl, texture, target, url, callback) {
+    };
+    IO.loadImageData = function (gl, texture, target, url, callback) {
       var image = new Image();
-      image.onload = function() {
+      image.onload = function () {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(texture.target, texture.handle);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texImage2D(
-          target, 0, gl.RGBA, gl.RGBA,
-          gl.UNSIGNED_BYTE, image
-        );
+        gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
         if (callback) {
           callback(image);
         }
-      }
+      };
       image.src = url;
-    }
-
-    IO.watchTextFile = function() {
+    };
+    IO.watchTextFile = function () {
       console.log('Warning: WebIO.watch is not implemented!');
-    }
-
-    IO.saveTextFile = function(url, data, callback) {
+    };
+    IO.saveTextFile = function (url, data, callback) {
       var request = new XMLHttpRequest();
       request.open('POST', url, true);
       request.onreadystatechange = function (e) {
         if (request.readyState == 4) {
-          if(request.status == 200) {
-             if (callback) {
-               callback(request.responseText, request);
-             }
-          }
-          else {
-             Log.error('WebIO.saveTextFile error : ' + request.statusText);
+          if (request.status == 200) {
+            if (callback) {
+              callback(request.responseText, request);
+            }
+          } else {
+            Log.error('WebIO.saveTextFile error : ' + request.statusText);
           }
         }
       };
-      request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-      request.send('data='+encodeURIComponent(data));
-    }
-
+      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      request.send('data=' + encodeURIComponent(data));
+    };
     return IO;
-  });
-
+  };
   if (typeof window !== 'undefined') {
     return WebIO();
-  }
-  else {
+  } else {
     return PlaskIO();
   }
 });
-
-define('pex/sys/Require',['pex/sys/Platform'], function(Platform) {
+define('pex/sys/Require',['pex/sys/Platform'], function (Platform) {
   var requireFunc;
   var defineFunc;
-
   function captureRequireJS() {
-    var config = (typeof PexGlobalConfig === 'object') ? PexGlobalConfig : null;
-
+    var config = typeof PexGlobalConfig === 'object' ? PexGlobalConfig : null;
     if (Platform.isPlask) {
       //we can't just use require by default as it might have been overwritten by almond in this context
       if (config && config.nodeRequire) {
         requireFunc = config.nodeRequire('requirejs');
-      }
-      else {
+      } else {
         requireFunc = require('requirejs');
       }
       defineFunc = requireFunc.define;
-    }
-    else if (config && config.originalRequire) {
+    } else if (config && config.originalRequire) {
       requireFunc = config.originalRequire;
       defineFunc = config.originalDefine;
-    }
-    else {
+    } else {
       requireFunc = require;
       defineFunc = define;
     }
-
-    requireFunc.config({
-      map : {
-          '*' : config.libPathsMap
-      }
-    });
-
-    config.definedModules.forEach(function(moduleEntry) {
-      defineFunc(moduleEntry.name, [], function() { return moduleEntry.module });
+    requireFunc.config({ map: { '*': config.libPathsMap } });
+    config.definedModules.forEach(function (moduleEntry) {
+      defineFunc(moduleEntry.name, [], function () {
+        return moduleEntry.module;
+      });
     });
   }
-
   function Require(deps, callback) {
     if (!requireFunc && !defineFunc) {
       captureRequireJS();
     }
-
     requireFunc(deps, callback);
   }
-
   return Require;
 });
-define('pex/gl/Context',[], function() {
+define('pex/gl/Context',[], function () {
   function Context(gl) {
     this.gl = gl;
   }
-
   Context.currentContext = new Context(null);
-
   return Context;
 });
-define('pex/sys/EjectaPolyfills',['pex/sys/Platform'], function(Platform) {
+define('pex/sys/EjectaPolyfills',['pex/sys/Platform'], function (Platform) {
   if (!Platform.isEjecta) {
     return {};
   }
-
-  HTMLElement.prototype.setAttribute = function(name, value) {
-    if (!this.attributes) this.attributes = {};
+  HTMLElement.prototype.setAttribute = function (name, value) {
+    if (!this.attributes)
+      this.attributes = {};
     this.attributes[name] = value;
-  }
-
-  HTMLElement.prototype.getAttribute = function(name, value) {
-    if (!this.attributes) return null;
+  };
+  HTMLElement.prototype.getAttribute = function (name, value) {
+    if (!this.attributes)
+      return null;
     return this.attributes[name];
-  }
-
-  HTMLElement.prototype.addEventListener = function(name, callback, useCapture) {
+  };
+  HTMLElement.prototype.addEventListener = function (name, callback, useCapture) {
     console.log('HTMLElement.prototype.addEventListener', name);
     if (name == 'load') {
-      this.onload = function(e) {
+      this.onload = function (e) {
         callback({
-          type : 'load',
-          currentTarget : this, 
-          srcElement : this
+          type: 'load',
+          currentTarget: this,
+          srcElement: this
         });
-      }
-    }
-    else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
+      };
+    } else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
       document.addEventListener(name, callback, useCapture);
     }
-  }
-
-  HTMLElement.prototype.removeEventListener = function(name, callback, useCapture) {
+  };
+  HTMLElement.prototype.removeEventListener = function (name, callback, useCapture) {
     if (name == 'load') {
       this.onload = null;
-    }
-    else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
+    } else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
       document.removeEventListener(name, callback);
     }
-  }
-
+  };
   return {};
 });
-define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, EjectaPolyfills) {
+define('pex/sys/BrowserWindow',[
+  'pex/sys/Platform',
+  'pex/sys/EjectaPolyfills'
+], function (Platform, EjectaPolyfills) {
   var requestAnimFrameFps = 60;
-
   if (Platform.isBrowser) {
-    window.requestAnimFrame = (function() {
-      return  window.requestAnimationFrame       ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame    ||
-              window.oRequestAnimationFrame      ||
-              window.msRequestAnimationFrame     ||
-              function(/* function */ callback, /* DOMElement */ element){
-                window.setTimeout(callback, 1000 / requestAnimFrameFps);
-              };
-    })();
+    window.requestAnimFrame = function () {
+      return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
+        window.setTimeout(callback, 1000 / requestAnimFrameFps);
+      };
+    }();
   }
-
   var eventListeners = [];
-
   function fireEvent(eventType, event) {
-    for(var i=0; i<eventListeners.length; i++) {
+    for (var i = 0; i < eventListeners.length; i++) {
       if (eventListeners[i].eventType == eventType) {
         eventListeners[i].handler(event);
       }
     }
   }
-
   function registerEvents(canvas) {
     makeMouseDownHandler(canvas);
     makeMouseUpHandler(canvas);
@@ -5633,9 +5258,8 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
     makeTouchMoveHandler(canvas);
     makeKeyDownHandler(canvas);
   }
-
   function makeMouseDownHandler(canvas) {
-    canvas.addEventListener('mousedown', function(e) {
+    canvas.addEventListener('mousedown', function (e) {
       fireEvent('leftMouseDown', {
         x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
         y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
@@ -5643,34 +5267,32 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
-
   function makeMouseUpHandler(canvas) {
-    canvas.addEventListener('mouseup', function(e) {
+    canvas.addEventListener('mouseup', function (e) {
       fireEvent('leftMouseUp', {
         x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
         y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
-      })
-    })
+      });
+    });
   }
-
   function makeMouseDraggedHandler(canvas) {
     var down = false;
     var px = 0;
     var py = 0;
-    canvas.addEventListener('mousedown', function(e) {
+    canvas.addEventListener('mousedown', function (e) {
       down = true;
       px = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
       py = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
     });
-    canvas.addEventListener('mouseup', function(e) {
+    canvas.addEventListener('mouseup', function (e) {
       down = false;
     });
-    canvas.addEventListener('mousemove', function(e) {
+    canvas.addEventListener('mousemove', function (e) {
       if (down) {
         var x = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio;
         var y = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio;
@@ -5686,11 +5308,10 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
         px = x;
         py = y;
       }
-    })
+    });
   }
-
   function makeMouseMovedHandler(canvas) {
-    canvas.addEventListener('mousemove', function(e) {
+    canvas.addEventListener('mousemove', function (e) {
       fireEvent('mouseMoved', {
         x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * window.devicePixelRatio,
         y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * window.devicePixelRatio,
@@ -5698,42 +5319,39 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
-
   function makeScrollWheelHandler(canvas) {
-    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel'
-    document.addEventListener(mousewheelevt, function(e) {
+    var mousewheelevt = /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel';
+    document.addEventListener(mousewheelevt, function (e) {
       fireEvent('scrollWheel', {
         x: (e.offsetX || e.layerX) * window.devicePixelRatio,
         y: (e.offsetY || e.layerY) * window.devicePixelRatio,
-        dy: e.wheelDelta/10 || -e.detail/10,
+        dy: e.wheelDelta / 10 || -e.detail / 10,
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
       });
     });
   }
-
   var lastTouch = null;
   function makeTouchDownHandler(canvas) {
-    canvas.addEventListener('touchstart', function(e) {
+    canvas.addEventListener('touchstart', function (e) {
       lastTouch = {
-        clientX : (e.touches[0].clientX) * window.devicePixelRatio,
-        clientY : (e.touches[0].clientY) * window.devicePixelRatio
+        clientX: e.touches[0].clientX * window.devicePixelRatio,
+        clientY: e.touches[0].clientY * window.devicePixelRatio
       };
       fireEvent('leftMouseDown', {
-        x: (e.touches[0].clientX) * window.devicePixelRatio,
-        y: (e.touches[0].clientY) * window.devicePixelRatio,
+        x: e.touches[0].clientX * window.devicePixelRatio,
+        y: e.touches[0].clientY * window.devicePixelRatio,
         option: false,
         shift: false,
         control: false
       });
-    })
+    });
   }
-
   function makeTouchUpHandler(canvas) {
-    canvas.addEventListener('touchend', function(e) {
+    canvas.addEventListener('touchend', function (e) {
       fireEvent('leftMouseUp', {
         x: lastTouch ? lastTouch.clientX : 0,
         y: lastTouch ? lastTouch.clientY : 0,
@@ -5742,29 +5360,27 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
         control: false
       });
       lastTouch = null;
-    })
+    });
   }
-
-   function makeTouchMoveHandler(canvas) {
-    canvas.addEventListener('touchmove', function(e) {
+  function makeTouchMoveHandler(canvas) {
+    canvas.addEventListener('touchmove', function (e) {
       lastTouch = {
-        clientX : (e.touches[0].clientX) * window.devicePixelRatio,
-        clientY : (e.touches[0].clientY) * window.devicePixelRatio
+        clientX: e.touches[0].clientX * window.devicePixelRatio,
+        clientY: e.touches[0].clientY * window.devicePixelRatio
       };
       fireEvent('mouseDragged', {
-        x: (e.touches[0].clientX) * window.devicePixelRatio,
-        y: (e.touches[0].clientY) * window.devicePixelRatio,
+        x: e.touches[0].clientX * window.devicePixelRatio,
+        y: e.touches[0].clientY * window.devicePixelRatio,
         option: false,
         shift: false,
         control: false
       });
-    })
+    });
   }
-
   function makeKeyDownHandler(canvas) {
     var timeout = 0;
-    window.addEventListener('keydown', function(e) {
-      timeout = setTimeout(function() {
+    window.addEventListener('keydown', function (e) {
+      timeout = setTimeout(function () {
         fireEvent('keyDown', {
           str: '',
           keyCode: e.keyCode,
@@ -5772,9 +5388,9 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
           shift: e.shiftKey,
           control: e.ctrlKey
         }, 1);
-      })
-    })
-    window.addEventListener('keypress', function(e) {
+      });
+    });
+    window.addEventListener('keypress', function (e) {
       if (timeout) {
         clearTimeout(timeout);
         timeout = 0;
@@ -5786,36 +5402,29 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
-
   function simpleWindow(obj) {
     var canvas = obj.settings.canvas;
-
     if (obj.settings.fullscreen) {
-       obj.settings.width = window.innerWidth;
-       obj.settings.height = window.innerHeight;
+      obj.settings.width = window.innerWidth;
+      obj.settings.height = window.innerHeight;
     }
-
     if (!canvas) {
       canvas = document.getElementById('canvas');
-    }
-    else if (obj.settings.width && obj.settings.height) {
+    } else if (obj.settings.width && obj.settings.height) {
       canvas.width = obj.settings.width;
       canvas.height = obj.settings.height;
-    }
-    else {
+    } else {
       obj.settings.width = canvas.width;
       obj.settings.height = canvas.height;
     }
-
     if (!canvas) {
       canvas = document.createElement('canvas');
       canvas.width = obj.settings.width;
       canvas.height = obj.settings.height;
     }
-
-    if (Platform.isEjecta && (window.devicePixelRatio == 2)) {
+    if (Platform.isEjecta && window.devicePixelRatio == 2) {
       canvas.width = obj.settings.width * 2;
       canvas.height = obj.settings.height * 2;
       canvas.style.width = obj.settings.width;
@@ -5823,94 +5432,75 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
       obj.settings.width *= 2;
       obj.settings.height *= 2;
     }
-
     obj.width = obj.settings.width;
     obj.height = obj.settings.height;
     obj.canvas = canvas;
-
     canvas.style.backgroundColor = '#000000';
-
     function go() {
-      if (obj.stencil === undefined) obj.stencil = false;
+      if (obj.stencil === undefined)
+        obj.stencil = false;
       if (obj.settings.fullscreen) {
         document.body.style.margin = '0';
         document.body.style.padding = '0';
         document.body.style.overflow = 'hidden';
       }
-
       var gl = null;
       var ctx = null;
-
       if (obj.settings.type == '3d') {
         try {
-          gl = canvas.getContext('experimental-webgl', {antialias: true}); //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
-        }
-        catch(err){
+          gl = canvas.getContext('experimental-webgl', { antialias: true });  //, {antialias: true, premultipliedAlpha : true, stencil: obj.settings.stencil}
+        } catch (err) {
           console.error(err.message);
           return;
         }
-        if (gl == null) {
-          throw 'No WebGL context is available.'
+        if (gl === null) {
+          throw 'No WebGL context is available.';
         }
-      }
-      else if (obj.settings.type == '2d') {
+      } else if (obj.settings.type == '2d') {
         ctx = canvas.getContext('2d');
       }
-
-      obj.framerate = function(fps) {
+      obj.framerate = function (fps) {
         requestAnimFrameFps = fps;
-      }
-
-      obj.on = function(eventType, handler) {
-        eventListeners.push({eventType:eventType, handler:handler});
-      }
-
+      };
+      obj.on = function (eventType, handler) {
+        eventListeners.push({
+          eventType: eventType,
+          handler: handler
+        });
+      };
       registerEvents(canvas);
-
-      obj.dispose = function() {
+      obj.dispose = function () {
         obj.__disposed = true;
-      }
-
+      };
       obj.gl = gl;
       obj.ctx = ctx;
       obj.init();
-
       function drawloop() {
         if (!obj.__disposed) {
           obj.draw();
           requestAnimFrame(drawloop);
         }
       }
-
       requestAnimFrame(drawloop);
     }
-
     if (!canvas.parentNode) {
       if (document.body) {
         document.body.appendChild(canvas);
         go();
-      }
-      else {
-        window.addEventListener('load', function() {
+      } else {
+        window.addEventListener('load', function () {
           document.body.appendChild(canvas);
           go();
         }, false);
       }
-    }
-    else {
+    } else {
       go();
     }
-
     return obj;
   }
-
-  var BrowserWindow = {
-    simpleWindow : simpleWindow
-  }
-
+  var BrowserWindow = { simpleWindow: simpleWindow };
   return BrowserWindow;
 });
-
 // (c) Dean McNamee <dean@gmail.com>, 2012.
 //
 // https://github.com/deanm/css-color-parser-js
@@ -5932,194 +5522,1025 @@ define('pex/sys/BrowserWindow',['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], 
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-
 //wrapped with AMD by Marcin Ignac on 2013-05-31
-
-define('lib/csscolorparser',[], function() {
-
-// http://www.w3.org/TR/css3-color/
-var kCSSColorTable = {
-  "transparent": [0,0,0,0], "aliceblue": [240,248,255,1],
-  "antiquewhite": [250,235,215,1], "aqua": [0,255,255,1],
-  "aquamarine": [127,255,212,1], "azure": [240,255,255,1],
-  "beige": [245,245,220,1], "bisque": [255,228,196,1],
-  "black": [0,0,0,1], "blanchedalmond": [255,235,205,1],
-  "blue": [0,0,255,1], "blueviolet": [138,43,226,1],
-  "brown": [165,42,42,1], "burlywood": [222,184,135,1],
-  "cadetblue": [95,158,160,1], "chartreuse": [127,255,0,1],
-  "chocolate": [210,105,30,1], "coral": [255,127,80,1],
-  "cornflowerblue": [100,149,237,1], "cornsilk": [255,248,220,1],
-  "crimson": [220,20,60,1], "cyan": [0,255,255,1],
-  "darkblue": [0,0,139,1], "darkcyan": [0,139,139,1],
-  "darkgoldenrod": [184,134,11,1], "darkgray": [169,169,169,1],
-  "darkgreen": [0,100,0,1], "darkgrey": [169,169,169,1],
-  "darkkhaki": [189,183,107,1], "darkmagenta": [139,0,139,1],
-  "darkolivegreen": [85,107,47,1], "darkorange": [255,140,0,1],
-  "darkorchid": [153,50,204,1], "darkred": [139,0,0,1],
-  "darksalmon": [233,150,122,1], "darkseagreen": [143,188,143,1],
-  "darkslateblue": [72,61,139,1], "darkslategray": [47,79,79,1],
-  "darkslategrey": [47,79,79,1], "darkturquoise": [0,206,209,1],
-  "darkviolet": [148,0,211,1], "deeppink": [255,20,147,1],
-  "deepskyblue": [0,191,255,1], "dimgray": [105,105,105,1],
-  "dimgrey": [105,105,105,1], "dodgerblue": [30,144,255,1],
-  "firebrick": [178,34,34,1], "floralwhite": [255,250,240,1],
-  "forestgreen": [34,139,34,1], "fuchsia": [255,0,255,1],
-  "gainsboro": [220,220,220,1], "ghostwhite": [248,248,255,1],
-  "gold": [255,215,0,1], "goldenrod": [218,165,32,1],
-  "gray": [128,128,128,1], "green": [0,128,0,1],
-  "greenyellow": [173,255,47,1], "grey": [128,128,128,1],
-  "honeydew": [240,255,240,1], "hotpink": [255,105,180,1],
-  "indianred": [205,92,92,1], "indigo": [75,0,130,1],
-  "ivory": [255,255,240,1], "khaki": [240,230,140,1],
-  "lavender": [230,230,250,1], "lavenderblush": [255,240,245,1],
-  "lawngreen": [124,252,0,1], "lemonchiffon": [255,250,205,1],
-  "lightblue": [173,216,230,1], "lightcoral": [240,128,128,1],
-  "lightcyan": [224,255,255,1], "lightgoldenrodyellow": [250,250,210,1],
-  "lightgray": [211,211,211,1], "lightgreen": [144,238,144,1],
-  "lightgrey": [211,211,211,1], "lightpink": [255,182,193,1],
-  "lightsalmon": [255,160,122,1], "lightseagreen": [32,178,170,1],
-  "lightskyblue": [135,206,250,1], "lightslategray": [119,136,153,1],
-  "lightslategrey": [119,136,153,1], "lightsteelblue": [176,196,222,1],
-  "lightyellow": [255,255,224,1], "lime": [0,255,0,1],
-  "limegreen": [50,205,50,1], "linen": [250,240,230,1],
-  "magenta": [255,0,255,1], "maroon": [128,0,0,1],
-  "mediumaquamarine": [102,205,170,1], "mediumblue": [0,0,205,1],
-  "mediumorchid": [186,85,211,1], "mediumpurple": [147,112,219,1],
-  "mediumseagreen": [60,179,113,1], "mediumslateblue": [123,104,238,1],
-  "mediumspringgreen": [0,250,154,1], "mediumturquoise": [72,209,204,1],
-  "mediumvioletred": [199,21,133,1], "midnightblue": [25,25,112,1],
-  "mintcream": [245,255,250,1], "mistyrose": [255,228,225,1],
-  "moccasin": [255,228,181,1], "navajowhite": [255,222,173,1],
-  "navy": [0,0,128,1], "oldlace": [253,245,230,1],
-  "olive": [128,128,0,1], "olivedrab": [107,142,35,1],
-  "orange": [255,165,0,1], "orangered": [255,69,0,1],
-  "orchid": [218,112,214,1], "palegoldenrod": [238,232,170,1],
-  "palegreen": [152,251,152,1], "paleturquoise": [175,238,238,1],
-  "palevioletred": [219,112,147,1], "papayawhip": [255,239,213,1],
-  "peachpuff": [255,218,185,1], "peru": [205,133,63,1],
-  "pink": [255,192,203,1], "plum": [221,160,221,1],
-  "powderblue": [176,224,230,1], "purple": [128,0,128,1],
-  "red": [255,0,0,1], "rosybrown": [188,143,143,1],
-  "royalblue": [65,105,225,1], "saddlebrown": [139,69,19,1],
-  "salmon": [250,128,114,1], "sandybrown": [244,164,96,1],
-  "seagreen": [46,139,87,1], "seashell": [255,245,238,1],
-  "sienna": [160,82,45,1], "silver": [192,192,192,1],
-  "skyblue": [135,206,235,1], "slateblue": [106,90,205,1],
-  "slategray": [112,128,144,1], "slategrey": [112,128,144,1],
-  "snow": [255,250,250,1], "springgreen": [0,255,127,1],
-  "steelblue": [70,130,180,1], "tan": [210,180,140,1],
-  "teal": [0,128,128,1], "thistle": [216,191,216,1],
-  "tomato": [255,99,71,1], "turquoise": [64,224,208,1],
-  "violet": [238,130,238,1], "wheat": [245,222,179,1],
-  "white": [255,255,255,1], "whitesmoke": [245,245,245,1],
-  "yellow": [255,255,0,1], "yellowgreen": [154,205,50,1]}
-
-function clamp_css_byte(i) {  // Clamp to integer 0 .. 255.
-  i = Math.round(i);  // Seems to be what Chrome does (vs truncation).
-  return i < 0 ? 0 : i > 255 ? 255 : i;
-}
-
-function clamp_css_float(f) {  // Clamp to float 0.0 .. 1.0.
-  return f < 0 ? 0 : f > 1 ? 1 : f;
-}
-
-function parse_css_int(str) {  // int or percentage.
-  if (str[str.length - 1] === '%')
-    return clamp_css_byte(parseFloat(str) / 100 * 255);
-  return clamp_css_byte(parseInt(str));
-}
-
-function parse_css_float(str) {  // float or percentage.
-  if (str[str.length - 1] === '%')
-    return clamp_css_float(parseFloat(str) / 100);
-  return clamp_css_float(parseFloat(str));
-}
-
-function css_hue_to_rgb(m1, m2, h) {
-  if (h < 0) h += 1;
-  else if (h > 1) h -= 1;
-
-  if (h * 6 < 1) return m1 + (m2 - m1) * h * 6;
-  if (h * 2 < 1) return m2;
-  if (h * 3 < 2) return m1 + (m2 - m1) * (2/3 - h) * 6;
-  return m1;
-}
-
-function parseCSSColor(css_str) {
-  // Remove all whitespace, not compliant, but should just be more accepting.
-  var str = css_str.replace(/ /g, '').toLowerCase();
-
-  // Color keywords (and transparent) lookup.
-  if (str in kCSSColorTable) return kCSSColorTable[str].slice();  // dup.
-
-  // #abc and #abc123 syntax.
-  if (str[0] === '#') {
-    if (str.length === 4) {
-      var iv = parseInt(str.substr(1), 16);  // TODO(deanm): Stricter parsing.
-      if (!(iv >= 0 && iv <= 0xfff)) return null;  // Covers NaN.
-      return [((iv & 0xf00) >> 4) | ((iv & 0xf00) >> 8),
-              (iv & 0xf0) | ((iv & 0xf0) >> 4),
-              (iv & 0xf) | ((iv & 0xf) << 4),
-              1];
-    } else if (str.length === 7) {
-      var iv = parseInt(str.substr(1), 16);  // TODO(deanm): Stricter parsing.
-      if (!(iv >= 0 && iv <= 0xffffff)) return null;  // Covers NaN.
-      return [(iv & 0xff0000) >> 16,
-              (iv & 0xff00) >> 8,
-              iv & 0xff,
-              1];
-    }
-
-    return null;
+define('lib/csscolorparser',[], function () {
+  // http://www.w3.org/TR/css3-color/
+  var kCSSColorTable = {
+      'transparent': [
+        0,
+        0,
+        0,
+        0
+      ],
+      'aliceblue': [
+        240,
+        248,
+        255,
+        1
+      ],
+      'antiquewhite': [
+        250,
+        235,
+        215,
+        1
+      ],
+      'aqua': [
+        0,
+        255,
+        255,
+        1
+      ],
+      'aquamarine': [
+        127,
+        255,
+        212,
+        1
+      ],
+      'azure': [
+        240,
+        255,
+        255,
+        1
+      ],
+      'beige': [
+        245,
+        245,
+        220,
+        1
+      ],
+      'bisque': [
+        255,
+        228,
+        196,
+        1
+      ],
+      'black': [
+        0,
+        0,
+        0,
+        1
+      ],
+      'blanchedalmond': [
+        255,
+        235,
+        205,
+        1
+      ],
+      'blue': [
+        0,
+        0,
+        255,
+        1
+      ],
+      'blueviolet': [
+        138,
+        43,
+        226,
+        1
+      ],
+      'brown': [
+        165,
+        42,
+        42,
+        1
+      ],
+      'burlywood': [
+        222,
+        184,
+        135,
+        1
+      ],
+      'cadetblue': [
+        95,
+        158,
+        160,
+        1
+      ],
+      'chartreuse': [
+        127,
+        255,
+        0,
+        1
+      ],
+      'chocolate': [
+        210,
+        105,
+        30,
+        1
+      ],
+      'coral': [
+        255,
+        127,
+        80,
+        1
+      ],
+      'cornflowerblue': [
+        100,
+        149,
+        237,
+        1
+      ],
+      'cornsilk': [
+        255,
+        248,
+        220,
+        1
+      ],
+      'crimson': [
+        220,
+        20,
+        60,
+        1
+      ],
+      'cyan': [
+        0,
+        255,
+        255,
+        1
+      ],
+      'darkblue': [
+        0,
+        0,
+        139,
+        1
+      ],
+      'darkcyan': [
+        0,
+        139,
+        139,
+        1
+      ],
+      'darkgoldenrod': [
+        184,
+        134,
+        11,
+        1
+      ],
+      'darkgray': [
+        169,
+        169,
+        169,
+        1
+      ],
+      'darkgreen': [
+        0,
+        100,
+        0,
+        1
+      ],
+      'darkgrey': [
+        169,
+        169,
+        169,
+        1
+      ],
+      'darkkhaki': [
+        189,
+        183,
+        107,
+        1
+      ],
+      'darkmagenta': [
+        139,
+        0,
+        139,
+        1
+      ],
+      'darkolivegreen': [
+        85,
+        107,
+        47,
+        1
+      ],
+      'darkorange': [
+        255,
+        140,
+        0,
+        1
+      ],
+      'darkorchid': [
+        153,
+        50,
+        204,
+        1
+      ],
+      'darkred': [
+        139,
+        0,
+        0,
+        1
+      ],
+      'darksalmon': [
+        233,
+        150,
+        122,
+        1
+      ],
+      'darkseagreen': [
+        143,
+        188,
+        143,
+        1
+      ],
+      'darkslateblue': [
+        72,
+        61,
+        139,
+        1
+      ],
+      'darkslategray': [
+        47,
+        79,
+        79,
+        1
+      ],
+      'darkslategrey': [
+        47,
+        79,
+        79,
+        1
+      ],
+      'darkturquoise': [
+        0,
+        206,
+        209,
+        1
+      ],
+      'darkviolet': [
+        148,
+        0,
+        211,
+        1
+      ],
+      'deeppink': [
+        255,
+        20,
+        147,
+        1
+      ],
+      'deepskyblue': [
+        0,
+        191,
+        255,
+        1
+      ],
+      'dimgray': [
+        105,
+        105,
+        105,
+        1
+      ],
+      'dimgrey': [
+        105,
+        105,
+        105,
+        1
+      ],
+      'dodgerblue': [
+        30,
+        144,
+        255,
+        1
+      ],
+      'firebrick': [
+        178,
+        34,
+        34,
+        1
+      ],
+      'floralwhite': [
+        255,
+        250,
+        240,
+        1
+      ],
+      'forestgreen': [
+        34,
+        139,
+        34,
+        1
+      ],
+      'fuchsia': [
+        255,
+        0,
+        255,
+        1
+      ],
+      'gainsboro': [
+        220,
+        220,
+        220,
+        1
+      ],
+      'ghostwhite': [
+        248,
+        248,
+        255,
+        1
+      ],
+      'gold': [
+        255,
+        215,
+        0,
+        1
+      ],
+      'goldenrod': [
+        218,
+        165,
+        32,
+        1
+      ],
+      'gray': [
+        128,
+        128,
+        128,
+        1
+      ],
+      'green': [
+        0,
+        128,
+        0,
+        1
+      ],
+      'greenyellow': [
+        173,
+        255,
+        47,
+        1
+      ],
+      'grey': [
+        128,
+        128,
+        128,
+        1
+      ],
+      'honeydew': [
+        240,
+        255,
+        240,
+        1
+      ],
+      'hotpink': [
+        255,
+        105,
+        180,
+        1
+      ],
+      'indianred': [
+        205,
+        92,
+        92,
+        1
+      ],
+      'indigo': [
+        75,
+        0,
+        130,
+        1
+      ],
+      'ivory': [
+        255,
+        255,
+        240,
+        1
+      ],
+      'khaki': [
+        240,
+        230,
+        140,
+        1
+      ],
+      'lavender': [
+        230,
+        230,
+        250,
+        1
+      ],
+      'lavenderblush': [
+        255,
+        240,
+        245,
+        1
+      ],
+      'lawngreen': [
+        124,
+        252,
+        0,
+        1
+      ],
+      'lemonchiffon': [
+        255,
+        250,
+        205,
+        1
+      ],
+      'lightblue': [
+        173,
+        216,
+        230,
+        1
+      ],
+      'lightcoral': [
+        240,
+        128,
+        128,
+        1
+      ],
+      'lightcyan': [
+        224,
+        255,
+        255,
+        1
+      ],
+      'lightgoldenrodyellow': [
+        250,
+        250,
+        210,
+        1
+      ],
+      'lightgray': [
+        211,
+        211,
+        211,
+        1
+      ],
+      'lightgreen': [
+        144,
+        238,
+        144,
+        1
+      ],
+      'lightgrey': [
+        211,
+        211,
+        211,
+        1
+      ],
+      'lightpink': [
+        255,
+        182,
+        193,
+        1
+      ],
+      'lightsalmon': [
+        255,
+        160,
+        122,
+        1
+      ],
+      'lightseagreen': [
+        32,
+        178,
+        170,
+        1
+      ],
+      'lightskyblue': [
+        135,
+        206,
+        250,
+        1
+      ],
+      'lightslategray': [
+        119,
+        136,
+        153,
+        1
+      ],
+      'lightslategrey': [
+        119,
+        136,
+        153,
+        1
+      ],
+      'lightsteelblue': [
+        176,
+        196,
+        222,
+        1
+      ],
+      'lightyellow': [
+        255,
+        255,
+        224,
+        1
+      ],
+      'lime': [
+        0,
+        255,
+        0,
+        1
+      ],
+      'limegreen': [
+        50,
+        205,
+        50,
+        1
+      ],
+      'linen': [
+        250,
+        240,
+        230,
+        1
+      ],
+      'magenta': [
+        255,
+        0,
+        255,
+        1
+      ],
+      'maroon': [
+        128,
+        0,
+        0,
+        1
+      ],
+      'mediumaquamarine': [
+        102,
+        205,
+        170,
+        1
+      ],
+      'mediumblue': [
+        0,
+        0,
+        205,
+        1
+      ],
+      'mediumorchid': [
+        186,
+        85,
+        211,
+        1
+      ],
+      'mediumpurple': [
+        147,
+        112,
+        219,
+        1
+      ],
+      'mediumseagreen': [
+        60,
+        179,
+        113,
+        1
+      ],
+      'mediumslateblue': [
+        123,
+        104,
+        238,
+        1
+      ],
+      'mediumspringgreen': [
+        0,
+        250,
+        154,
+        1
+      ],
+      'mediumturquoise': [
+        72,
+        209,
+        204,
+        1
+      ],
+      'mediumvioletred': [
+        199,
+        21,
+        133,
+        1
+      ],
+      'midnightblue': [
+        25,
+        25,
+        112,
+        1
+      ],
+      'mintcream': [
+        245,
+        255,
+        250,
+        1
+      ],
+      'mistyrose': [
+        255,
+        228,
+        225,
+        1
+      ],
+      'moccasin': [
+        255,
+        228,
+        181,
+        1
+      ],
+      'navajowhite': [
+        255,
+        222,
+        173,
+        1
+      ],
+      'navy': [
+        0,
+        0,
+        128,
+        1
+      ],
+      'oldlace': [
+        253,
+        245,
+        230,
+        1
+      ],
+      'olive': [
+        128,
+        128,
+        0,
+        1
+      ],
+      'olivedrab': [
+        107,
+        142,
+        35,
+        1
+      ],
+      'orange': [
+        255,
+        165,
+        0,
+        1
+      ],
+      'orangered': [
+        255,
+        69,
+        0,
+        1
+      ],
+      'orchid': [
+        218,
+        112,
+        214,
+        1
+      ],
+      'palegoldenrod': [
+        238,
+        232,
+        170,
+        1
+      ],
+      'palegreen': [
+        152,
+        251,
+        152,
+        1
+      ],
+      'paleturquoise': [
+        175,
+        238,
+        238,
+        1
+      ],
+      'palevioletred': [
+        219,
+        112,
+        147,
+        1
+      ],
+      'papayawhip': [
+        255,
+        239,
+        213,
+        1
+      ],
+      'peachpuff': [
+        255,
+        218,
+        185,
+        1
+      ],
+      'peru': [
+        205,
+        133,
+        63,
+        1
+      ],
+      'pink': [
+        255,
+        192,
+        203,
+        1
+      ],
+      'plum': [
+        221,
+        160,
+        221,
+        1
+      ],
+      'powderblue': [
+        176,
+        224,
+        230,
+        1
+      ],
+      'purple': [
+        128,
+        0,
+        128,
+        1
+      ],
+      'red': [
+        255,
+        0,
+        0,
+        1
+      ],
+      'rosybrown': [
+        188,
+        143,
+        143,
+        1
+      ],
+      'royalblue': [
+        65,
+        105,
+        225,
+        1
+      ],
+      'saddlebrown': [
+        139,
+        69,
+        19,
+        1
+      ],
+      'salmon': [
+        250,
+        128,
+        114,
+        1
+      ],
+      'sandybrown': [
+        244,
+        164,
+        96,
+        1
+      ],
+      'seagreen': [
+        46,
+        139,
+        87,
+        1
+      ],
+      'seashell': [
+        255,
+        245,
+        238,
+        1
+      ],
+      'sienna': [
+        160,
+        82,
+        45,
+        1
+      ],
+      'silver': [
+        192,
+        192,
+        192,
+        1
+      ],
+      'skyblue': [
+        135,
+        206,
+        235,
+        1
+      ],
+      'slateblue': [
+        106,
+        90,
+        205,
+        1
+      ],
+      'slategray': [
+        112,
+        128,
+        144,
+        1
+      ],
+      'slategrey': [
+        112,
+        128,
+        144,
+        1
+      ],
+      'snow': [
+        255,
+        250,
+        250,
+        1
+      ],
+      'springgreen': [
+        0,
+        255,
+        127,
+        1
+      ],
+      'steelblue': [
+        70,
+        130,
+        180,
+        1
+      ],
+      'tan': [
+        210,
+        180,
+        140,
+        1
+      ],
+      'teal': [
+        0,
+        128,
+        128,
+        1
+      ],
+      'thistle': [
+        216,
+        191,
+        216,
+        1
+      ],
+      'tomato': [
+        255,
+        99,
+        71,
+        1
+      ],
+      'turquoise': [
+        64,
+        224,
+        208,
+        1
+      ],
+      'violet': [
+        238,
+        130,
+        238,
+        1
+      ],
+      'wheat': [
+        245,
+        222,
+        179,
+        1
+      ],
+      'white': [
+        255,
+        255,
+        255,
+        1
+      ],
+      'whitesmoke': [
+        245,
+        245,
+        245,
+        1
+      ],
+      'yellow': [
+        255,
+        255,
+        0,
+        1
+      ],
+      'yellowgreen': [
+        154,
+        205,
+        50,
+        1
+      ]
+    };
+  function clamp_css_byte(i) {
+    // Clamp to integer 0 .. 255.
+    i = Math.round(i);
+    // Seems to be what Chrome does (vs truncation).
+    return i < 0 ? 0 : i > 255 ? 255 : i;
   }
-
-  var op = str.indexOf('('), ep = str.indexOf(')');
-  if (op !== -1 && ep + 1 === str.length) {
-    var fname = str.substr(0, op);
-    var params = str.substr(op+1, ep-(op+1)).split(',');
-    var alpha = 1;  // To allow case fallthrough.
-    switch (fname) {
+  function clamp_css_float(f) {
+    // Clamp to float 0.0 .. 1.0.
+    return f < 0 ? 0 : f > 1 ? 1 : f;
+  }
+  function parse_css_int(str) {
+    // int or percentage.
+    if (str[str.length - 1] === '%')
+      return clamp_css_byte(parseFloat(str) / 100 * 255);
+    return clamp_css_byte(parseInt(str));
+  }
+  function parse_css_float(str) {
+    // float or percentage.
+    if (str[str.length - 1] === '%')
+      return clamp_css_float(parseFloat(str) / 100);
+    return clamp_css_float(parseFloat(str));
+  }
+  function css_hue_to_rgb(m1, m2, h) {
+    if (h < 0)
+      h += 1;
+    else if (h > 1)
+      h -= 1;
+    if (h * 6 < 1)
+      return m1 + (m2 - m1) * h * 6;
+    if (h * 2 < 1)
+      return m2;
+    if (h * 3 < 2)
+      return m1 + (m2 - m1) * (2 / 3 - h) * 6;
+    return m1;
+  }
+  function parseCSSColor(css_str) {
+    // Remove all whitespace, not compliant, but should just be more accepting.
+    var str = css_str.replace(/ /g, '').toLowerCase();
+    // Color keywords (and transparent) lookup.
+    if (str in kCSSColorTable)
+      return kCSSColorTable[str].slice();
+    // dup.
+    // #abc and #abc123 syntax.
+    if (str[0] === '#') {
+      if (str.length === 4) {
+        var iv = parseInt(str.substr(1), 16);
+        // TODO(deanm): Stricter parsing.
+        if (!(iv >= 0 && iv <= 4095))
+          return null;
+        // Covers NaN.
+        return [
+          (iv & 3840) >> 4 | (iv & 3840) >> 8,
+          iv & 240 | (iv & 240) >> 4,
+          iv & 15 | (iv & 15) << 4,
+          1
+        ];
+      } else if (str.length === 7) {
+        var iv = parseInt(str.substr(1), 16);
+        // TODO(deanm): Stricter parsing.
+        if (!(iv >= 0 && iv <= 16777215))
+          return null;
+        // Covers NaN.
+        return [
+          (iv & 16711680) >> 16,
+          (iv & 65280) >> 8,
+          iv & 255,
+          1
+        ];
+      }
+      return null;
+    }
+    var op = str.indexOf('('), ep = str.indexOf(')');
+    if (op !== -1 && ep + 1 === str.length) {
+      var fname = str.substr(0, op);
+      var params = str.substr(op + 1, ep - (op + 1)).split(',');
+      var alpha = 1;
+      // To allow case fallthrough.
+      switch (fname) {
       case 'rgba':
-        if (params.length !== 4) return null;
+        if (params.length !== 4)
+          return null;
         alpha = parse_css_float(params.pop());
-        // Fall through.
+      // Fall through.
       case 'rgb':
-        if (params.length !== 3) return null;
-        return [parse_css_int(params[0]),
-                parse_css_int(params[1]),
-                parse_css_int(params[2]),
-                alpha];
+        if (params.length !== 3)
+          return null;
+        return [
+          parse_css_int(params[0]),
+          parse_css_int(params[1]),
+          parse_css_int(params[2]),
+          alpha
+        ];
       case 'hsla':
-        if (params.length !== 4) return null;
+        if (params.length !== 4)
+          return null;
         alpha = parse_css_float(params.pop());
-        // Fall through.
+      // Fall through.
       case 'hsl':
-        if (params.length !== 3) return null;
-        var h = (((parseFloat(params[0]) % 360) + 360) % 360) / 360;  // 0 .. 1
+        if (params.length !== 3)
+          return null;
+        var h = (parseFloat(params[0]) % 360 + 360) % 360 / 360;
+        // 0 .. 1
         // NOTE(deanm): According to the CSS spec s/l should only be
         // percentages, but we don't bother and let float or percentage.
         var s = parse_css_float(params[1]);
         var l = parse_css_float(params[2]);
         var m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s;
         var m1 = l * 2 - m2;
-        return [clamp_css_byte(css_hue_to_rgb(m1, m2, h+1/3) * 255),
-                clamp_css_byte(css_hue_to_rgb(m1, m2, h) * 255),
-                clamp_css_byte(css_hue_to_rgb(m1, m2, h-1/3) * 255),
-                alpha];
+        return [
+          clamp_css_byte(css_hue_to_rgb(m1, m2, h + 1 / 3) * 255),
+          clamp_css_byte(css_hue_to_rgb(m1, m2, h) * 255),
+          clamp_css_byte(css_hue_to_rgb(m1, m2, h - 1 / 3) * 255),
+          alpha
+        ];
       default:
         return null;
+      }
     }
+    return null;
   }
-
-  return null;
-}
-
-if (typeof(exports) !== "undefined")
-try { exports.parseCSSColor = parseCSSColor } catch(e) { }
-
-return {
-  parseCSSColor : parseCSSColor
-}
+  if (typeof exports !== 'undefined')
+    try {
+      exports.parseCSSColor = parseCSSColor;
+    } catch (e) {
+    }
+  return { parseCSSColor: parseCSSColor };
 });
 // (c) Dean McNamee <dean@gmail.com>, 2012.
 //
@@ -6142,623 +6563,516 @@ return {
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
-
 //wrapped with AMD by Marcin Ignac on 2013-05-31
-
-define('lib/omgcanvas',['pex/sys/Node', 'lib/csscolorparser'], function(Node, csscolorparser) {
-
-var plask = Node.plask;
-var parseCSSColor = csscolorparser.parseCSSColor;
-
-// NOTE(deanm): Although in Chrome for DOM styles it seems to return a string
-// of the form rgb() or rgba() always, for <canvas> it seems to return #123123
-// syntax except for when there is a non opaque alpha.
-function colorToCSSColorString(c) {
-  if (c[3] === 1)
-    return '#' + (1<<24 | c[0]<<16 | c[1]<<8 | c[2]).toString(16).substr(1);
-  // TODO(deanm): Should we limit the alpha's precision (toPrecision()) ?
-  return 'rgba(' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + c[3] + ')';
-}
-
-function CanvasContext(skcanvas) {
-  // Each CanvasRenderingContext2D rendering context maintains a stack of
-  // drawing states. Drawing states consist of:
-  //
-  // - The current transformation matrix.
-  // - The current clipping region.
-  // - The current values of the following attributes: strokeStyle, fillStyle,
-  //   globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, lineDashOffset,
-  //   shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor,
-  //   globalCompositeOperation, font, textAlign, textBaseline, direction,
-  //   imageSmoothingEnabled.
-  // - The current dash list.
-
-  var upaint = new plask.SkPaint();  // Utility paint for internal use.
-
-  var paint = new plask.SkPaint();  // Track top paint element of state_stack.
-  paint.setAntiAlias(true);
-  paint.setStrokeWidth(1);  // Skia defaults to 0?
-  paint.setStrokeMiter(10);  // Skia defaults to 4.
-
-  var state_stack = [{paint: paint,
-                      lineWidth: 1,
-                      lineCap: 'butt',
-                      lineJoin: 'miter',
-                      miterLimit: 10,
-                      lineDash: [ ],
-                      lineDashOffset: 0,
-                      strokeColor: [0, 0, 0, 1],
-                      strokeStyle: colorToCSSColorString([0, 0, 0, 1]),
-                      fillColor: [0, 0, 0, 1],
-                      fillStyle: colorToCSSColorString([0, 0, 0, 1])}];
-  var state = state_stack[0];  // Track top element of state_stack.
-
-  var path = new plask.SkPath;
-
-  return {
-    canvas: skcanvas,  // Back pointer, hopefully enough for width/height/etc.
-
-    // void save();
-    save: function() {
-      paint = new plask.SkPaint(paint);  // Dup top.
-      state = {paint: paint,
-               lineWidth: state.lineWidth,
-               lineCap: state.lineCap,
-               lineJoin: state.lineJoin,
-               miterLimit: state.miterLimit,
-               lineDash: state.lineDash,  // Read only, no dup().
-               lineDashOffset: state.lineDashOffset,
-               strokeColor: state.strokeColor,  // Read only, no dup().
-               strokeStyle: state.strokeStyle,
-               fillColor: state.fillColor,      // Read only, no dup().
-               fillStyle: state.fillStyle};
-      state_stack.push(state);
-      skcanvas.save();  // Matrix and clip.
-    },
-
-    // void restore();
-    restore: function() {
-      if (state_stack.length > 1) {
-        state_stack.pop();
-        state = state_stack[state_stack.length - 1];
-        paint = state.paint;
-        skcanvas.restore();  // Matrix and clip.
-      }
-    },
-
-    // [Custom] attribute custom strokeStyle;
-    get strokeStyle() { return state.strokeStyle; },
-    set strokeStyle(v) {
-      var c = parseCSSColor(v);
-      if (c !== null) {
-        state.strokeColor = c;
-        // Seems to be what browers do for css style properties.
-        state.strokeStyle = colorToCSSColorString(c);
-      }
-    },
-
-    // [Custom] attribute custom fillStyle;
-    get fillStyle() { return state.fillStyle; },
-    set fillStyle(v) {
-      var c = parseCSSColor(v);
-      if (c !== null) {
-        state.fillColor = c;
-        // Seems to be what browers do for css style properties.
-        state.fillStyle = colorToCSSColorString(c);
-      }
-    },
-
-    // attribute float lineWidth;
-    get lineWidth() { return state.lineWidth; },
-    set lineWidth(v) {
-      if ((typeof v) === 'string') v = parseFloat(v);
-
-      // NOTE(deanm): From the spec:
-      //   On setting, zero, negative, infinite, and NaN values must be ignored
-      if (v > 0 && isFinite(v)) {
-        state.lineWidth = v;
-        paint.setStrokeWidth(v);
-      }
-    },
-
-    // [TreatNullAs=NullString] attribute DOMString lineCap;
-    // NOTE(deanm): Spec defaults to "butt".
-    get lineCap() { return state.lineCap; },
-    set lineCap(v) {
-      var cap = null;
-
-      // TODO(deanm): Case insensitive or any trimming?
-      switch (v) {
-        case 'butt': cap = paint.kButtCap; break;
-        case 'round': cap = paint.kRoundCap; break;
-        case 'square': cap = paint.kSquareCap; break;
-        default: return;
-      }
-
-      state.lineCap = v;
-      paint.setStrokeCap(cap);
-    },
-
-    // [TreatNullAs=NullString] attribute DOMString lineJoin;
-    // NOTE(deanm): Spec defaults to "miter".
-    get lineJoin() { return state.lineJoin; },
-    set lineJoin(v) {
-      var join = null;
-
-      // TODO(deanm): Case insensitive or any trimming?
-      switch (v) {
-        case 'round': join = paint.kRoundJoin; break;
-        case 'bevel': join = paint.kBevelJoin; break;
-        case 'miter': join = paint.kMiterJoin; break;
-        default: return;
-      }
-
-      state.lineJoin = v;
-      paint.setStrokeJoin(join);
-    },
-
-    // attribute float miterLimit;
-    get miterLimit() { return state.miterLimit; },
-    set miterLimit(v) {
-      // NOTE(deanm): From the spec:
-      //   On setting, zero, negative, infinite, and NaN values must be ignored
-      if (v > 0 && isFinite(v)) {
-        state.miterLimit = v;
-        paint.setStrokeMiter(v);
-      }
-    },
-
-    // void setLineDash(in sequence<float> dash);
-    // NOTE(deanm): From the spec:
-    //   Each CanvasDrawingStyles object has a dash list, which is either empty
-    //   or consists of an even number of non-negative numbers. Initially, the
-    //   dash list must be empty.
+define('lib/omgcanvas',[
+  'pex/sys/Node',
+  'lib/csscolorparser'
+], function (Node, csscolorparser) {
+  var plask = Node.plask;
+  var parseCSSColor = csscolorparser.parseCSSColor;
+  // NOTE(deanm): Although in Chrome for DOM styles it seems to return a string
+  // of the form rgb() or rgba() always, for <canvas> it seems to return #123123
+  // syntax except for when there is a non opaque alpha.
+  function colorToCSSColorString(c) {
+    if (c[3] === 1)
+      return '#' + (1 << 24 | c[0] << 16 | c[1] << 8 | c[2]).toString(16).substr(1);
+    // TODO(deanm): Should we limit the alpha's precision (toPrecision()) ?
+    return 'rgba(' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + c[3] + ')';
+  }
+  function CanvasContext(skcanvas) {
+    // Each CanvasRenderingContext2D rendering context maintains a stack of
+    // drawing states. Drawing states consist of:
     //
-    //   When the setLineDash() method is invoked, it must run the following
-    //   steps:
-    //
-    //   Let a be the argument.
-    //
-    //   If any value in a is not finite (e.g. an Infinity or a NaN value), or
-    //   if any value is negative (less than zero), then abort these steps
-    //   (without throwing an exception; user agents could show a message on a
-    //   developer console, though, as that would be helpful for debugging).
-    //
-    //   If the number of elements in a is odd, then let a be the
-    //   concatentation of two copies of a.
-    //
-    //   Let the object's dash list be a.
-    setLineDash: function(arr) {
-      // Chrome will ignore most invalid arguments, but not no argument.
-      if (arguments.length === 0) throw new TypeError('Not enough arguments');
-
-      // Chrome seems to clear the dash list on a non-array argument.
-      if (!Array.isArray(arr)) arr = [ ];
-
-      for (var i = 0, il = arr.length; i < il; ++i) {
-        if (arr[i] < 0 || !isFinite(arr[i])) return;
-      }
-
-      if (arr.length & 1) arr = arr.concat(arr);
-
-      state.lineDash = arr;
-
-      // TODO(deanm): Can we optimize to call setDashPathEffect less?
-      if (arr.length === 0) {
-        paint.clearPathEffect();
-      } else {
-        paint.setDashPathEffect(state.lineDash, state.lineDashOffset);
-      }
-    },
-
-    // sequence<float> getLineDash();
-    getLineDash: function() {
-      return state.lineDash.slice();  // dup.
-    },
-
-    // attribute float lineDashOffset;
-    get lineDashOffset() { return state.lineDashOffset; },
-    set lineDashOffset(v) {
-      if ((typeof v) === 'string') v = parseFloat(v);
-
-      // NOTE(deanm): From the spec:
-      //   On setting, infinite and NaN values must be ignored
-      if (isFinite(v)) {
-        state.lineDashOffset = v;
+    // - The current transformation matrix.
+    // - The current clipping region.
+    // - The current values of the following attributes: strokeStyle, fillStyle,
+    //   globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, lineDashOffset,
+    //   shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor,
+    //   globalCompositeOperation, font, textAlign, textBaseline, direction,
+    //   imageSmoothingEnabled.
+    // - The current dash list.
+    var upaint = new plask.SkPaint();
+    // Utility paint for internal use.
+    var paint = new plask.SkPaint();
+    // Track top paint element of state_stack.
+    paint.setAntiAlias(true);
+    paint.setStrokeWidth(1);
+    // Skia defaults to 0?
+    paint.setStrokeMiter(10);
+    // Skia defaults to 4.
+    var state_stack = [{
+          paint: paint,
+          lineWidth: 1,
+          lineCap: 'butt',
+          lineJoin: 'miter',
+          miterLimit: 10,
+          lineDash: [],
+          lineDashOffset: 0,
+          strokeColor: [
+            0,
+            0,
+            0,
+            1
+          ],
+          strokeStyle: colorToCSSColorString([
+            0,
+            0,
+            0,
+            1
+          ]),
+          fillColor: [
+            0,
+            0,
+            0,
+            1
+          ],
+          fillStyle: colorToCSSColorString([
+            0,
+            0,
+            0,
+            1
+          ])
+        }];
+    var state = state_stack[0];
+    // Track top element of state_stack.
+    var path = new plask.SkPath();
+    return {
+      canvas: skcanvas,
+      save: function () {
+        paint = new plask.SkPaint(paint);
+        // Dup top.
+        state = {
+          paint: paint,
+          lineWidth: state.lineWidth,
+          lineCap: state.lineCap,
+          lineJoin: state.lineJoin,
+          miterLimit: state.miterLimit,
+          lineDash: state.lineDash,
+          lineDashOffset: state.lineDashOffset,
+          strokeColor: state.strokeColor,
+          strokeStyle: state.strokeStyle,
+          fillColor: state.fillColor,
+          fillStyle: state.fillStyle
+        };
+        state_stack.push(state);
+        skcanvas.save();  // Matrix and clip.
+      },
+      restore: function () {
+        if (state_stack.length > 1) {
+          state_stack.pop();
+          state = state_stack[state_stack.length - 1];
+          paint = state.paint;
+          skcanvas.restore();  // Matrix and clip.
+        }
+      },
+      get strokeStyle() {
+        return state.strokeStyle;
+      },
+      set strokeStyle(v) {
+        var c = parseCSSColor(v);
+        if (c !== null) {
+          state.strokeColor = c;
+          // Seems to be what browers do for css style properties.
+          state.strokeStyle = colorToCSSColorString(c);
+        }
+      },
+      get fillStyle() {
+        return state.fillStyle;
+      },
+      set fillStyle(v) {
+        var c = parseCSSColor(v);
+        if (c !== null) {
+          state.fillColor = c;
+          // Seems to be what browers do for css style properties.
+          state.fillStyle = colorToCSSColorString(c);
+        }
+      },
+      get lineWidth() {
+        return state.lineWidth;
+      },
+      set lineWidth(v) {
+        if (typeof v === 'string')
+          v = parseFloat(v);
+        // NOTE(deanm): From the spec:
+        //   On setting, zero, negative, infinite, and NaN values must be ignored
+        if (v > 0 && isFinite(v)) {
+          state.lineWidth = v;
+          paint.setStrokeWidth(v);
+        }
+      },
+      get lineCap() {
+        return state.lineCap;
+      },
+      set lineCap(v) {
+        var cap = null;
+        // TODO(deanm): Case insensitive or any trimming?
+        switch (v) {
+        case 'butt':
+          cap = paint.kButtCap;
+          break;
+        case 'round':
+          cap = paint.kRoundCap;
+          break;
+        case 'square':
+          cap = paint.kSquareCap;
+          break;
+        default:
+          return;
+        }
+        state.lineCap = v;
+        paint.setStrokeCap(cap);
+      },
+      get lineJoin() {
+        return state.lineJoin;
+      },
+      set lineJoin(v) {
+        var join = null;
+        // TODO(deanm): Case insensitive or any trimming?
+        switch (v) {
+        case 'round':
+          join = paint.kRoundJoin;
+          break;
+        case 'bevel':
+          join = paint.kBevelJoin;
+          break;
+        case 'miter':
+          join = paint.kMiterJoin;
+          break;
+        default:
+          return;
+        }
+        state.lineJoin = v;
+        paint.setStrokeJoin(join);
+      },
+      get miterLimit() {
+        return state.miterLimit;
+      },
+      set miterLimit(v) {
+        // NOTE(deanm): From the spec:
+        //   On setting, zero, negative, infinite, and NaN values must be ignored
+        if (v > 0 && isFinite(v)) {
+          state.miterLimit = v;
+          paint.setStrokeMiter(v);
+        }
+      },
+      setLineDash: function (arr) {
+        // Chrome will ignore most invalid arguments, but not no argument.
+        if (arguments.length === 0)
+          throw new TypeError('Not enough arguments');
+        // Chrome seems to clear the dash list on a non-array argument.
+        if (!Array.isArray(arr))
+          arr = [];
+        for (var i = 0, il = arr.length; i < il; ++i) {
+          if (arr[i] < 0 || !isFinite(arr[i]))
+            return;
+        }
+        if (arr.length & 1)
+          arr = arr.concat(arr);
+        state.lineDash = arr;
         // TODO(deanm): Can we optimize to call setDashPathEffect less?
-        if (state.lineDash.length === 0) {
+        if (arr.length === 0) {
           paint.clearPathEffect();
         } else {
           paint.setDashPathEffect(state.lineDash, state.lineDashOffset);
         }
-      }
-    },
-
-    // void setLineWidth(in [Optional=DefaultIsUndefined] float width);
-    setLineWidth: function(v) { this.lineWidth = v; },
-    // void setLineCap(in [Optional=DefaultIsUndefined] DOMString cap);
-    setLineCap: function(v) { this.lineCap = v; },
-    // void setLineJoin(in [Optional=DefaultIsUndefined] DOMString join);
-    setLineJoin: function(v) { this.lineJoin = v; },
-    // void setMiterLimit(in [Optional=DefaultIsUndefined] float limit);
-    setMiterLimit: function(v) { this.miterLimit = v; },
-
-    // void clearRect(in [Optional=DefaultIsUndefined] float x,
-    //                in [Optional=DefaultIsUndefined] float y,
-    //                in [Optional=DefaultIsUndefined] float width,
-    //                in [Optional=DefaultIsUndefined] float height);
-    clearRect: function(x, y, w, h) {
-      upaint.setXfermodeMode(upaint.kClearMode);
-      skcanvas.drawRect(upaint, x, y, x+w, y+h);
-    },
-
-    // void fillRect(in [Optional=DefaultIsUndefined] float x,
-    //               in [Optional=DefaultIsUndefined] float y,
-    //               in [Optional=DefaultIsUndefined] float width,
-    //               in [Optional=DefaultIsUndefined] float height);
-    fillRect: function(x, y, w, h) {
-      // TODO(deanm): Avoid the save/restore.
-      this.save();
-      paint.setFill();
-      var c = state.fillColor;
-      paint.setColor(c[0], c[1], c[2], (c[3] * 255) >> 0);
-      skcanvas.drawRect(paint, x, y, x+w, y+h);
-      this.restore();
-    },
-
-    // void strokeRect(in [Optional=DefaultIsUndefined] float x,
-    //                 in [Optional=DefaultIsUndefined] float y,
-    //                 in [Optional=DefaultIsUndefined] float width,
-    //                 in [Optional=DefaultIsUndefined] float height,
-    //                 in [Optional] float lineWidth);
-    // NOTE(deanm): I don't see lineWidth in the current spec.
-    strokeRect: function(x, y, w, h) {
-      // TODO(deanm): Avoid the save/restore.
-      this.save();
-      paint.setStroke();
-      var c = state.strokeColor;
-      paint.setColor(c[0], c[1], c[2], (c[3] * 255) >> 0);
-      skcanvas.drawRect(paint, x, y, x+w, y+h);
-      this.restore();
-    },
-
-    // void beginPath();
-    beginPath: function() {
-      path.rewind();  // TODO(deanm): reset vs rewind.
-    },
-
-    // void closePath();
-    closePath: function() {
-      path.close();
-    },
-
-    // void moveTo(in [Optional=DefaultIsUndefined] float x,
-    //             in [Optional=DefaultIsUndefined] float y);
-    moveTo: function(x, y) {
-      path.moveTo(x, y);
-    },
-
-    // void lineTo(in [Optional=DefaultIsUndefined] float x,
-    //             in [Optional=DefaultIsUndefined] float y);
-    lineTo: function(x, y) {
-      path.lineTo(x, y);
-    },
-
-    // void rect(in [Optional=DefaultIsUndefined] float x,
-    //           in [Optional=DefaultIsUndefined] float y,
-    //           in [Optional=DefaultIsUndefined] float width,
-    //           in [Optional=DefaultIsUndefined] float height);
-    rect: function(x, y, w, h) {
-      path.addRect(x, y, x+w, y+h);
-    },
-
-    // void arcTo(in [Optional=DefaultIsUndefined] float x1,
-    //            in [Optional=DefaultIsUndefined] float y1,
-    //            in [Optional=DefaultIsUndefined] float x2,
-    //            in [Optional=DefaultIsUndefined] float y2,
-    //            in [Optional=DefaultIsUndefined] float radius)
-    //     raises (DOMException);
-    arcTo: function(x1, y1, x2, y2, radius) {
-      path.arct(x1, y1, x2, y2, radius);
-    },
-
-    // void arc(in [Optional=DefaultIsUndefined] float x,
-    //          in [Optional=DefaultIsUndefined] float y,
-    //          in [Optional=DefaultIsUndefined] float radius,
-    //          in [Optional=DefaultIsUndefined] float startAngle,
-    //          in [Optional=DefaultIsUndefined] float endAngle,
-    //          in [Optional=DefaultIsUndefined] boolean anticlockwise)
-    //     raises (DOMException);
-    arc: function(x, y, radius, startAngle, endAngle, anticlockwise) {
-      var sweep = endAngle - startAngle;
-      var start_deg = startAngle * 180 / plask.kPI;
-      var sweep_deg = sweep * 180 / plask.kPI;
-
-      // See Path::addArc in
-      // http://trac.webkit.org/browser/trunk/Source/WebCore/platform/graphics/skia/PathSkia.cpp
-      if (sweep_deg >= 360 || sweep_deg <= -360) {  // Circle.
-        path.arcTo(x-radius, y-radius, x+radius, y+radius, start_deg, 0);
-        path.addOval(x-radius, y-radius, x+radius, y+radius, anticlockwise);
-        path.arcTo(x-radius, y-radius, x+radius, y+radius,
-                   start_deg+sweep_deg, 0, true);
-      } else {
-        if (anticlockwise && sweep_deg > 0) sweep_deg -= 360;
-        if (!anticlockwise && sweep_deg < 0) sweep_deg += 360;
-        path.arcTo(x-radius, y-radius, x+radius, y+radius,
-                   start_deg, sweep_deg);
-      }
-    },
-
-    // void quadraticCurveTo(in [Optional=DefaultIsUndefined] float cpx,
-    //                       in [Optional=DefaultIsUndefined] float cpy,
-    //                       in [Optional=DefaultIsUndefined] float x,
-    //                       in [Optional=DefaultIsUndefined] float y);
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-      path.quadTo(cpx, cpy, x, y);
-    },
-
-    // void bezierCurveTo(in [Optional=DefaultIsUndefined] float cp1x,
-    //                    in [Optional=DefaultIsUndefined] float cp1y,
-    //                    in [Optional=DefaultIsUndefined] float cp2x,
-    //                    in [Optional=DefaultIsUndefined] float cp2y,
-    //                    in [Optional=DefaultIsUndefined] float x,
-    //                    in [Optional=DefaultIsUndefined] float y);
-    bezierCurveTo: function(cpx1, cp1y, cp2x, cp2y, x, y) {
-      path.cubicTo(cpx1, cp1y, cp2x, cp2y, x, y);
-    },
-
-    // void fill();
-    fill: function() {
-      // TODO(deanm): Avoid the save/restore.
-      this.save();
-      paint.setFill();
-      var c = state.fillColor;
-      paint.setColor(c[0], c[1], c[2], (c[3] * 255) >> 0);
-      skcanvas.drawPath(paint, path);
-      this.restore();
-    },
-
-    // void stroke();
-    stroke: function() {
-      // TODO(deanm): Avoid the save/restore.
-      this.save();
-      paint.setStroke();
-      var c = state.strokeColor;
-      paint.setColor(c[0], c[1], c[2], (c[3] * 255) >> 0);
-      skcanvas.drawPath(paint, path);
-      this.restore();
-    },
-
-    // void clip();
-    clip: function() {
-      skcanvas.clipPath(path);
-    },
-
-    // void scale(in [Optional=DefaultIsUndefined] float sx,
-    //            in [Optional=DefaultIsUndefined] float sy);
-    scale: function(sx, sy) {
-      skcanvas.scale(sx, sy);
-    },
-
-    // void rotate(in [Optional=DefaultIsUndefined] float angle);
-    rotate: function(angle) {
-      skcanvas.rotate(angle * 180 / plask.kPI);
-    },
-
-    // void translate(in [Optional=DefaultIsUndefined] float tx,
-    //                in [Optional=DefaultIsUndefined] float ty);
-    translate: function(tx, ty) {
-      skcanvas.translate(tx, ty);
-    },
-
-    // void transform(in [Optional=DefaultIsUndefined] float m11,
-    //                in [Optional=DefaultIsUndefined] float m12,
-    //                in [Optional=DefaultIsUndefined] float m21,
-    //                in [Optional=DefaultIsUndefined] float m22,
-    //                in [Optional=DefaultIsUndefined] float dx,
-    //                in [Optional=DefaultIsUndefined] float dy);
-    transform: function(m11, m12, m21, m22, dx, dy) {
-      skcanvas.concatMatrix(m11, m21, dx,
-                            m12, m22, dy,
-                              0,   0,  1);
-    },
-    // void setTransform(in [Optional=DefaultIsUndefined] float m11,
-    //                   in [Optional=DefaultIsUndefined] float m12,
-    //                   in [Optional=DefaultIsUndefined] float m21,
-    //                   in [Optional=DefaultIsUndefined] float m22,
-    //                   in [Optional=DefaultIsUndefined] float dx,
-    //                   in [Optional=DefaultIsUndefined] float dy);
-    setTransform: function(m11, m12, m21, m22, dx, dy) {
-      skcanvas.setMatrix(m11, m21, dx,
-                         m12, m22, dy,
-                           0,   0,  1);
-    },
-
-    // NOTE(deanm): The pixel access is not going to be a particularly great
-    // implementation.  But actually even what the browsers do isn't very good,
-    // which is why Plask's canvas works different (and BGRA ordering).
-
-    // ImageData createImageData(in ImageData? imagedata)
-    //     raises (DOMException);
-    // ImageData createImageData(in float sw, in float sh)
-    //     raises (DOMException);
-    createImageData: function(sw, sh) {
-      if (arguments.length === 1) {
-        sh = sw.height; sw = sw.width;
-      }
-
-      // TODO(deanm): Switch to Uint8ClampedArray.
-      var data = new Uint8Array(sw * sh * 4);
-
-      // TODO(deanm): Hopefully there doesn't need to be an ImageData type.
-      return {width: sw, height: sh, data: data};
-    },
-
-    // ImageData getImageData(in [Optional=DefaultIsUndefined] float sx,
-    //                        in [Optional=DefaultIsUndefined] float sy,
-    //                        in [Optional=DefaultIsUndefined] float sw,
-    //                        in [Optional=DefaultIsUndefined] float sh)
-    //     raises(DOMException);
-    getImageData: function(sx, sy, sw, sh) {
-      var w = skcanvas.width, h = skcanvas.height;
-      var id = this.createImageData(sw, sh);
-      var data = id.data;
-      for (var dy = 0; dy < sh; ++dy) {  // Copy and swizzle.
-        var dsl = (dy * sw) << 2;
-        var csl = ((sy + dy) * w + sx) << 2;
-        for (var dx = 0; dx < sw; ++dx) {
-          var b = skcanvas[csl++], g = skcanvas[csl++], r = skcanvas[csl++]
-              a = skcanvas[csl++];
-          var unpremultiply = a === 0 ? 0 : 255/a;  // Have to unpremultiply.
-          data[dsl++] = (r * unpremultiply) >> 0;
-          data[dsl++] = (g * unpremultiply) >> 0;
-          data[dsl++] = (b * unpremultiply) >> 0;
-          data[dsl++] = a;
+      },
+      getLineDash: function () {
+        return state.lineDash.slice();  // dup.
+      },
+      get lineDashOffset() {
+        return state.lineDashOffset;
+      },
+      set lineDashOffset(v) {
+        if (typeof v === 'string')
+          v = parseFloat(v);
+        // NOTE(deanm): From the spec:
+        //   On setting, infinite and NaN values must be ignored
+        if (isFinite(v)) {
+          state.lineDashOffset = v;
+          // TODO(deanm): Can we optimize to call setDashPathEffect less?
+          if (state.lineDash.length === 0) {
+            paint.clearPathEffect();
+          } else {
+            paint.setDashPathEffect(state.lineDash, state.lineDashOffset);
+          }
+        }
+      },
+      setLineWidth: function (v) {
+        this.lineWidth = v;
+      },
+      setLineCap: function (v) {
+        this.lineCap = v;
+      },
+      setLineJoin: function (v) {
+        this.lineJoin = v;
+      },
+      setMiterLimit: function (v) {
+        this.miterLimit = v;
+      },
+      clearRect: function (x, y, w, h) {
+        upaint.setXfermodeMode(upaint.kClearMode);
+        skcanvas.drawRect(upaint, x, y, x + w, y + h);
+      },
+      fillRect: function (x, y, w, h) {
+        // TODO(deanm): Avoid the save/restore.
+        this.save();
+        paint.setFill();
+        var c = state.fillColor;
+        paint.setColor(c[0], c[1], c[2], c[3] * 255 >> 0);
+        skcanvas.drawRect(paint, x, y, x + w, y + h);
+        this.restore();
+      },
+      strokeRect: function (x, y, w, h) {
+        // TODO(deanm): Avoid the save/restore.
+        this.save();
+        paint.setStroke();
+        var c = state.strokeColor;
+        paint.setColor(c[0], c[1], c[2], c[3] * 255 >> 0);
+        skcanvas.drawRect(paint, x, y, x + w, y + h);
+        this.restore();
+      },
+      beginPath: function () {
+        path.rewind();  // TODO(deanm): reset vs rewind.
+      },
+      closePath: function () {
+        path.close();
+      },
+      moveTo: function (x, y) {
+        path.moveTo(x, y);
+      },
+      lineTo: function (x, y) {
+        path.lineTo(x, y);
+      },
+      rect: function (x, y, w, h) {
+        path.addRect(x, y, x + w, y + h);
+      },
+      arcTo: function (x1, y1, x2, y2, radius) {
+        path.arct(x1, y1, x2, y2, radius);
+      },
+      arc: function (x, y, radius, startAngle, endAngle, anticlockwise) {
+        var sweep = endAngle - startAngle;
+        var start_deg = startAngle * 180 / plask.kPI;
+        var sweep_deg = sweep * 180 / plask.kPI;
+        // See Path::addArc in
+        // http://trac.webkit.org/browser/trunk/Source/WebCore/platform/graphics/skia/PathSkia.cpp
+        if (sweep_deg >= 360 || sweep_deg <= -360) {
+          // Circle.
+          path.arcTo(x - radius, y - radius, x + radius, y + radius, start_deg, 0);
+          path.addOval(x - radius, y - radius, x + radius, y + radius, anticlockwise);
+          path.arcTo(x - radius, y - radius, x + radius, y + radius, start_deg + sweep_deg, 0, true);
+        } else {
+          if (anticlockwise && sweep_deg > 0)
+            sweep_deg -= 360;
+          if (!anticlockwise && sweep_deg < 0)
+            sweep_deg += 360;
+          path.arcTo(x - radius, y - radius, x + radius, y + radius, start_deg, sweep_deg);
+        }
+      },
+      quadraticCurveTo: function (cpx, cpy, x, y) {
+        path.quadTo(cpx, cpy, x, y);
+      },
+      bezierCurveTo: function (cpx1, cp1y, cp2x, cp2y, x, y) {
+        path.cubicTo(cpx1, cp1y, cp2x, cp2y, x, y);
+      },
+      fill: function () {
+        // TODO(deanm): Avoid the save/restore.
+        this.save();
+        paint.setFill();
+        var c = state.fillColor;
+        paint.setColor(c[0], c[1], c[2], c[3] * 255 >> 0);
+        skcanvas.drawPath(paint, path);
+        this.restore();
+      },
+      stroke: function () {
+        // TODO(deanm): Avoid the save/restore.
+        this.save();
+        paint.setStroke();
+        var c = state.strokeColor;
+        paint.setColor(c[0], c[1], c[2], c[3] * 255 >> 0);
+        skcanvas.drawPath(paint, path);
+        this.restore();
+      },
+      clip: function () {
+        skcanvas.clipPath(path);
+      },
+      scale: function (sx, sy) {
+        skcanvas.scale(sx, sy);
+      },
+      rotate: function (angle) {
+        skcanvas.rotate(angle * 180 / plask.kPI);
+      },
+      translate: function (tx, ty) {
+        skcanvas.translate(tx, ty);
+      },
+      transform: function (m11, m12, m21, m22, dx, dy) {
+        skcanvas.concatMatrix(m11, m21, dx, m12, m22, dy, 0, 0, 1);
+      },
+      setTransform: function (m11, m12, m21, m22, dx, dy) {
+        skcanvas.setMatrix(m11, m21, dx, m12, m22, dy, 0, 0, 1);
+      },
+      createImageData: function (sw, sh) {
+        if (arguments.length === 1) {
+          sh = sw.height;
+          sw = sw.width;
+        }
+        // TODO(deanm): Switch to Uint8ClampedArray.
+        var data = new Uint8Array(sw * sh * 4);
+        // TODO(deanm): Hopefully there doesn't need to be an ImageData type.
+        return {
+          width: sw,
+          height: sh,
+          data: data
+        };
+      },
+      getImageData: function (sx, sy, sw, sh) {
+        var w = skcanvas.width, h = skcanvas.height;
+        var id = this.createImageData(sw, sh);
+        var data = id.data;
+        for (var dy = 0; dy < sh; ++dy) {
+          // Copy and swizzle.
+          var dsl = dy * sw << 2;
+          var csl = (sy + dy) * w + sx << 2;
+          for (var dx = 0; dx < sw; ++dx) {
+            var b = skcanvas[csl++], g = skcanvas[csl++], r = skcanvas[csl++];
+            a = skcanvas[csl++];
+            var unpremultiply = a === 0 ? 0 : 255 / a;
+            // Have to unpremultiply.
+            data[dsl++] = r * unpremultiply >> 0;
+            data[dsl++] = g * unpremultiply >> 0;
+            data[dsl++] = b * unpremultiply >> 0;
+            data[dsl++] = a;
+          }
+        }
+        return id;
+      },
+      putImageData: function (imagedata, sx, sy) {
+        // TODO(deanm): Support dirty, although it is only an optimization.
+        var w = skcanvas.width, h = skcanvas.height;
+        var sw = imagedata.width, sh = imagedata.height;
+        var data = imagedata.data;
+        for (var dy = 0; dy < sh; ++dy) {
+          // Copy and swizzle.
+          var dsl = dy * sw << 2;
+          var csl = (sy + dy) * w + sx << 2;
+          for (var dx = 0; dx < sw; ++dx) {
+            var r = data[dsl++], g = data[dsl++];
+            b = data[dsl++], a = data[dsl++];
+            var fa = a / 255;
+            // Have to premultiply.
+            skcanvas[csl++] = b * fa >> 0;
+            skcanvas[csl++] = g * fa >> 0;
+            skcanvas[csl++] = r * fa >> 0;
+            skcanvas[csl++] = a;
+          }
         }
       }
-
-      return id;
-    },
-
-    // void putImageData(in ImageData? imagedata, in float dx, in float dy)
-    //     raises(DOMException);
-    // void putImageData(in ImageData? imagedata, in float dx, in float dy,
-    //                   in float dirtyX, in float dirtyY,
-    //                   in float dirtyWidth, in float dirtyHeight)
-    //     raises(DOMException);
-    putImageData: function(imagedata, sx, sy) {
-      // TODO(deanm): Support dirty, although it is only an optimization.
-      var w = skcanvas.width, h = skcanvas.height;
-      var sw = imagedata.width, sh = imagedata.height;
-      var data = imagedata.data;
-      for (var dy = 0; dy < sh; ++dy) {  // Copy and swizzle.
-        var dsl = (dy * sw) << 2;
-        var csl = ((sy + dy) * w + sx) << 2;
-        for (var dx = 0; dx < sw; ++dx) {
-          var r = data[dsl++], g = data[dsl++]; b = data[dsl++],
-              a = data[dsl++];
-          var fa = a / 255;  // Have to premultiply.
-          skcanvas[csl++] = (b * fa) >> 0;
-          skcanvas[csl++] = (g * fa) >> 0;
-          skcanvas[csl++] = (r * fa) >> 0;
-          skcanvas[csl++] = a;
-        }
-      }
-    },
-  };
-}
-
-if (typeof(exports) !== "undefined")
-exports.CanvasContext = CanvasContext;
-
-// TODO(deanm): These are the parts of the interface unfinished.
-
-// 
-// attribute float globalAlpha;
-// [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
-// 
-// CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
-//                                     in [Optional=DefaultIsUndefined] float y0,
-//                                     in [Optional=DefaultIsUndefined] float x1,
-//                                     in [Optional=DefaultIsUndefined] float y1)
-//     raises (DOMException);
-// CanvasGradient createRadialGradient(in [Optional=DefaultIsUndefined] float x0,
-//                                     in [Optional=DefaultIsUndefined] float y0,
-//                                     in [Optional=DefaultIsUndefined] float r0,
-//                                     in [Optional=DefaultIsUndefined] float x1,
-//                                     in [Optional=DefaultIsUndefined] float y1,
-//                                     in [Optional=DefaultIsUndefined] float r1)
-//     raises (DOMException);
-// 
-// 
-// attribute float shadowOffsetX;
-// attribute float shadowOffsetY;
-// attribute float shadowBlur;
-// [TreatNullAs=NullString] attribute DOMString shadowColor;
-//
-// // FIXME: These attributes should also be implemented for V8.
-// #if !(defined(V8_BINDING) && V8_BINDING)
-// [Custom] attribute Array webkitLineDash;
-// attribute float webkitLineDashOffset;
-// #endif
-// 
-// 
-// boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
-//                       in [Optional=DefaultIsUndefined] float y);
-// 
-// // text
-// attribute DOMString font;
-// attribute DOMString textAlign;
-// attribute DOMString textBaseline;
-// 
-// TextMetrics measureText(in [Optional=DefaultIsUndefined] DOMString text);
-// 
-// // other
-// 
-// void setAlpha(in [Optional=DefaultIsUndefined] float alpha);
-// void setCompositeOperation(in [Optional=DefaultIsUndefined] DOMString compositeOperation);
-// 
-// void clearShadow();
-// 
-// void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
-// void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
-// 
-// void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-// void setStrokeColor(in float grayLevel, in [Optional] float alpha);
-// void setStrokeColor(in float r, in float g, in float b, in float a);
-// void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
-// 
-// void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-// void setFillColor(in float grayLevel, in [Optional] float alpha);
-// void setFillColor(in float r, in float g, in float b, in float a);
-// void setFillColor(in float c, in float m, in float y, in float k, in float a);
-// 
-// void drawImage(in HTMLImageElement? image, in float x, in float y)
-//     raises (DOMException);
-// void drawImage(in HTMLImageElement? image, in float x, in float y, in float width, in float height)
-//     raises (DOMException);
-// void drawImage(in HTMLImageElement? image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-//     raises (DOMException);
-// void drawImage(in HTMLCanvasElement? canvas, in float x, in float y)
-//     raises (DOMException);
-// void drawImage(in HTMLCanvasElement? canvas, in float x, in float y, in float width, in float height)
-//     raises (DOMException);
-// void drawImage(in HTMLCanvasElement? canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-//     raises (DOMException);
-// #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-// void drawImage(in HTMLVideoElement? video, in float x, in float y)
-//     raises (DOMException);
-// void drawImage(in HTMLVideoElement? video, in float x, in float y, in float width, in float height)
-//     raises (DOMException);
-// void drawImage(in HTMLVideoElement? video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-//     raises (DOMException);
-// #endif
-// 
-// void drawImageFromRect(in HTMLImageElement image,
-//                        in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
-//                        in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
-//                        in [Optional] DOMString compositeOperation);
-// 
-// void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
-// void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
-// void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
-// void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
-// 
-// void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy)
-//     raises(DOMException);
-// void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
-//     raises(DOMException);
-// 
-// CanvasPattern createPattern(in HTMLCanvasElement? canvas, in [TreatNullAs=NullString] DOMString repetitionType)
-//     raises (DOMException);
-// CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
-//     raises (DOMException);
-
-  return {
-    CanvasContext : CanvasContext
+    };
   }
-})
-;
+  if (typeof exports !== 'undefined')
+    exports.CanvasContext = CanvasContext;
+  // TODO(deanm): These are the parts of the interface unfinished.
+  // 
+  // attribute float globalAlpha;
+  // [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
+  // 
+  // CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
+  //                                     in [Optional=DefaultIsUndefined] float y0,
+  //                                     in [Optional=DefaultIsUndefined] float x1,
+  //                                     in [Optional=DefaultIsUndefined] float y1)
+  //     raises (DOMException);
+  // CanvasGradient createRadialGradient(in [Optional=DefaultIsUndefined] float x0,
+  //                                     in [Optional=DefaultIsUndefined] float y0,
+  //                                     in [Optional=DefaultIsUndefined] float r0,
+  //                                     in [Optional=DefaultIsUndefined] float x1,
+  //                                     in [Optional=DefaultIsUndefined] float y1,
+  //                                     in [Optional=DefaultIsUndefined] float r1)
+  //     raises (DOMException);
+  // 
+  // 
+  // attribute float shadowOffsetX;
+  // attribute float shadowOffsetY;
+  // attribute float shadowBlur;
+  // [TreatNullAs=NullString] attribute DOMString shadowColor;
+  //
+  // // FIXME: These attributes should also be implemented for V8.
+  // #if !(defined(V8_BINDING) && V8_BINDING)
+  // [Custom] attribute Array webkitLineDash;
+  // attribute float webkitLineDashOffset;
+  // #endif
+  // 
+  // 
+  // boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
+  //                       in [Optional=DefaultIsUndefined] float y);
+  // 
+  // // text
+  // attribute DOMString font;
+  // attribute DOMString textAlign;
+  // attribute DOMString textBaseline;
+  // 
+  // TextMetrics measureText(in [Optional=DefaultIsUndefined] DOMString text);
+  // 
+  // // other
+  // 
+  // void setAlpha(in [Optional=DefaultIsUndefined] float alpha);
+  // void setCompositeOperation(in [Optional=DefaultIsUndefined] DOMString compositeOperation);
+  // 
+  // void clearShadow();
+  // 
+  // void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+  // void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+  // 
+  // void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
+  // void setStrokeColor(in float grayLevel, in [Optional] float alpha);
+  // void setStrokeColor(in float r, in float g, in float b, in float a);
+  // void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
+  // 
+  // void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
+  // void setFillColor(in float grayLevel, in [Optional] float alpha);
+  // void setFillColor(in float r, in float g, in float b, in float a);
+  // void setFillColor(in float c, in float m, in float y, in float k, in float a);
+  // 
+  // void drawImage(in HTMLImageElement? image, in float x, in float y)
+  //     raises (DOMException);
+  // void drawImage(in HTMLImageElement? image, in float x, in float y, in float width, in float height)
+  //     raises (DOMException);
+  // void drawImage(in HTMLImageElement? image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+  //     raises (DOMException);
+  // void drawImage(in HTMLCanvasElement? canvas, in float x, in float y)
+  //     raises (DOMException);
+  // void drawImage(in HTMLCanvasElement? canvas, in float x, in float y, in float width, in float height)
+  //     raises (DOMException);
+  // void drawImage(in HTMLCanvasElement? canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+  //     raises (DOMException);
+  // #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+  // void drawImage(in HTMLVideoElement? video, in float x, in float y)
+  //     raises (DOMException);
+  // void drawImage(in HTMLVideoElement? video, in float x, in float y, in float width, in float height)
+  //     raises (DOMException);
+  // void drawImage(in HTMLVideoElement? video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+  //     raises (DOMException);
+  // #endif
+  // 
+  // void drawImageFromRect(in HTMLImageElement image,
+  //                        in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
+  //                        in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
+  //                        in [Optional] DOMString compositeOperation);
+  // 
+  // void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
+  // void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
+  // void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
+  // void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
+  // 
+  // void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy)
+  //     raises(DOMException);
+  // void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+  //     raises(DOMException);
+  // 
+  // CanvasPattern createPattern(in HTMLCanvasElement? canvas, in [TreatNullAs=NullString] DOMString repetitionType)
+  //     raises (DOMException);
+  // CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
+  //     raises (DOMException);
+  return { CanvasContext: CanvasContext };
+});
 (function() {
   define('pex/sys/Window',['require','pex/sys/Platform','pex/sys/Node','pex/gl/Context','pex/sys/BrowserWindow','pex/utils/ObjectUtils','pex/utils/Time','lib/omgcanvas'],function(require) {
     var BrowserWindow, Context, Node, ObjectUtils, Platform, Time, Window, omgcanvas;
@@ -6820,25 +7134,21 @@ exports.CanvasContext = CanvasContext;
 }).call(this);
 
 //Module wrapper for sys classes.
-define(
-  'pex/sys',[
-    'pex/sys/IO',
-    'pex/sys/Node',
-    'pex/sys/Require',
-    'pex/sys/Platform',
-    'pex/sys/Window'
-  ],
-  function(IO, Node, Require, Platform, Window) {
-    return {
-      IO : IO,
-      Node : Node,
-      Require : Require,
-      Platform : Platform,
-      Window : Window
-    };
-  }
-);
-
+define('pex/sys',[
+  'pex/sys/IO',
+  'pex/sys/Node',
+  'pex/sys/Require',
+  'pex/sys/Platform',
+  'pex/sys/Window'
+], function (IO, Node, Require, Platform, Window) {
+  return {
+    IO: IO,
+    Node: Node,
+    Require: Require,
+    Platform: Platform,
+    Window: Window
+  };
+});
 (function() {
   define('pex/utils/ObjReader',['require','pex/sys','pex/geom'],function(require) {
     var Face3, Face4, Geometry, IO, ObjReader, Vec2, Vec3, _ref;
@@ -6864,21 +7174,21 @@ define(
       lines.forEach(function(line) {
         var a, b, c, d, matches, u, v, x, y, z;
         matches = null;
-        if (matches = line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        if (matches === line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
           return geom.vertices.push(new Vec3(x, y, z));
-        } else if (matches = line.match(/vt\s+([^\s]+)\s+([^\s]+)/)) {
+        } else if (matches === line.match(/vt\s+([^\s]+)\s+([^\s]+)/)) {
           u = parseFloat(matches[1]);
           v = parseFloat(matches[2]);
           return geom.texCoords.push(new Vec2(u, v));
-        } else if (matches = line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        } else if (matches === line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
           return geom.normals.push(new Vec3(x, y, z));
-        } else if (matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -6905,7 +7215,7 @@ define(
           }
           geom.faces.push(new Face3(a, b, c));
           return geom.faces.push(new Face3(a, c, d));
-        } else if (matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -7011,121 +7321,111 @@ define(
 
 }).call(this);
 
-define('pex/utils/MovieRecorder',["pex/utils/Time", "pex/sys/IO", "pex/gl/Context", "pex/sys/Node"], function(Time, IO, Context, Node) {
+define('pex/utils/MovieRecorder',[
+  'pex/utils/Time',
+  'pex/sys/IO',
+  'pex/gl/Context',
+  'pex/sys/Node'
+], function (Time, IO, Context, Node) {
   function MovieRecorder(path) {
     this.fps = 30;
-    this.path = IO.getWorkingDirectory() + "/" + path;
+    this.path = IO.getWorkingDirectory() + '/' + path;
     this.recordingPath = this.path;
     this.recording = false;
     this.frameNum = 0;
     this.totalTime = 0;
   }
-
-  MovieRecorder.prototype.start = function() {
+  MovieRecorder.prototype.start = function () {
     this.recording = true;
     this.frameNum = 0;
     this.totalTime = Time.seconds;
-
-    var path = this.path + "/" + this.getDateStr();
-    console.log("Starting recording to " + path);
+    var path = this.path + '/' + this.getDateStr();
+    console.log('Starting recording to ' + path);
     this.recordingPath = path;
-
     this.preparePath();
   };
-
-  MovieRecorder.prototype.getDateStr = function() {
+  MovieRecorder.prototype.getDateStr = function () {
     var d = new Date();
-    var dateStr = "";
+    var dateStr = '';
     dateStr += d.getFullYear();
-    dateStr += ((d.getMonth() < 9) ? "0" : "") +  (d.getMonth() + 1);
-    dateStr += ((d.getDate() < 10) ? "0" : "") +  (d.getDate());
-    dateStr += "-";
-    dateStr += ((d.getHours() < 10) ? "0" : "") +  (d.getHours());
-    dateStr += ((d.getMinutes() < 10) ? "0" : "") +  (d.getMinutes());
-    dateStr += ((d.getSeconds() < 10) ? "0" : "") +  (d.getSeconds());
+    dateStr += (d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1);
+    dateStr += (d.getDate() < 10 ? '0' : '') + d.getDate();
+    dateStr += '-';
+    dateStr += (d.getHours() < 10 ? '0' : '') + d.getHours();
+    dateStr += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+    dateStr += (d.getSeconds() < 10 ? '0' : '') + d.getSeconds();
     return dateStr;
   };
-
-  MovieRecorder.prototype.preparePath = function() {
+  MovieRecorder.prototype.preparePath = function () {
     if (!Node.path.existsSync(this.path)) {
       console.log(this.path);
-      Node.fs.mkdirSync(this.path, 0755);
+      Node.fs.mkdirSync(this.path, 493);
     }
-    Node.fs.mkdirSync(this.recordingPath, 0755);
+    Node.fs.mkdirSync(this.recordingPath, 493);
   };
-
-  MovieRecorder.prototype.getFramePath = function(frameNum) {
-    var frameStr = "" + frameNum;
+  MovieRecorder.prototype.getFramePath = function (frameNum) {
+    var frameStr = '' + frameNum;
     var frameNumLen = 6;
-    while(frameStr.length < frameNumLen) {
-      frameStr = "0" + frameStr;
+    while (frameStr.length < frameNumLen) {
+      frameStr = '0' + frameStr;
     }
-    return this.recordingPath + "/" + frameStr + ".png";
+    return this.recordingPath + '/' + frameStr + '.png';
   };
-
-  MovieRecorder.prototype.stop = function() {
+  MovieRecorder.prototype.stop = function () {
     this.recording = false;
   };
-
-  MovieRecorder.prototype.isRecording = function() {
+  MovieRecorder.prototype.isRecording = function () {
     return this.recording;
   };
-
-  MovieRecorder.prototype.update = function() {
+  MovieRecorder.prototype.update = function () {
     //if (!this.recording) return;
-    Time.delta = 1/30;
-    this.totalTime += 1/30;
+    Time.delta = 1 / 30;
+    this.totalTime += 1 / 30;
     Time.seconds = this.totalTime;
-
-    if (this.recording) console.log(this.totalTime);
+    if (this.recording)
+      console.log(this.totalTime);
   };
-
-  MovieRecorder.prototype.capture = function() {
-    if (!this.recording) return;
-
+  MovieRecorder.prototype.capture = function () {
+    if (!this.recording)
+      return;
     var frameFileName = this.getFramePath(this.frameNum++);
     var gl = Context.currentContext.gl;
     if (this.frameNum >= 0) {
       gl.writeImage('png', frameFileName);
     }
   };
-
   return MovieRecorder;
 });
 //Module wrapper for utility classes.
-define(
-  'pex/utils',[
-    'pex/utils/Log',
-    'pex/utils/Time',
-    'pex/utils/ObjectUtils',
-    'pex/utils/MathUtils',
-    'pex/utils/ArrayUtils',
-    'pex/utils/ObjReader',
-    'pex/utils/ObjWriter',
-    'pex/utils/MovieRecorder'
-  ],
-  function(Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter, MovieRecorder) {
-    return {
-      Log : Log,
-      Time : Time,
-      ObjectUtils : ObjectUtils,
-      MathUtils : MathUtils,
-      ArrayUtils : ArrayUtils,
-      ObjReader : ObjReader,
-      ObjWriter : ObjWriter,
-      MovieRecorder : MovieRecorder
-    };
-  }
-);
-
+define('pex/utils',[
+  'pex/utils/Log',
+  'pex/utils/Time',
+  'pex/utils/ObjectUtils',
+  'pex/utils/MathUtils',
+  'pex/utils/ArrayUtils',
+  'pex/utils/ObjReader',
+  'pex/utils/ObjWriter',
+  'pex/utils/MovieRecorder'
+], function (Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter, MovieRecorder) {
+  return {
+    Log: Log,
+    Time: Time,
+    ObjectUtils: ObjectUtils,
+    MathUtils: MathUtils,
+    ArrayUtils: ArrayUtils,
+    ObjReader: ObjReader,
+    ObjWriter: ObjWriter,
+    MovieRecorder: MovieRecorder
+  };
+});
 (function() {
   define('pex/gl/Program',['require','pex/gl/Context','pex/sys/IO','pex/utils/Log'],function(require) {
     var Context, IO, Log, Program, kFragmentShaderPrefix, kVertexShaderPrefix;
     Context = require('pex/gl/Context');
     IO = require('pex/sys/IO');
     Log = require('pex/utils/Log');
-    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float;\n' + '#endif\n' + '#define VERT\n';
-    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float;\n' + '#else\n' + '  precision mediump float;\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
+    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float\n' + '#endif\n' + '#define VERT\n';
+    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float\n' + '#else\n' + '  precision mediump float\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
     return Program = (function() {
       Program.currentProgram = null;
 
@@ -7251,19 +7551,15 @@ define(
         switch (type) {
           case gl.BOOL:
           case gl.INT:
-            setterFun = (function(_this) {
-              return function(value) {
-                return gl.uniform1i(location, value);
-              };
-            })(this);
+            setterFun = function(value) {
+              return gl.uniform1i(location, value);
+            };
             break;
           case gl.SAMPLER_2D:
           case gl.SAMPLER_CUBE:
-            setterFun = (function(_this) {
-              return function(value) {
-                return gl.uniform1i(location, value);
-              };
-            })(this);
+            setterFun = function(value) {
+              return gl.uniform1i(location, value);
+            };
             break;
           case gl.FLOAT:
             setterFun = function(value) {
@@ -7330,16 +7626,9 @@ define(
 }).call(this);
 
 //Module wrapper for color classes.
-define(
-  'pex/color',[
-    'pex/color/Color'
-  ],
-  function(Color) {
-    return {
-      Color : Color
-    };
-  }
-);
+define('pex/color',['pex/color/Color'], function (Color) {
+  return { Color: Color };
+});
 (function() {
   define('pex/gl/Buffer',['require','pex/gl/Context','pex/geom','pex/color'],function(require) {
     var Buffer, Color, Context, Edge, Face3, Face4, FacePolygon, Vec2, Vec3, Vec4, _ref;
@@ -7795,151 +8084,125 @@ define(
 
 }).call(this);
 
-define('pex/gl/Texture',['pex/gl/Context'], function(Context) {
+define('pex/gl/Texture',['pex/gl/Context'], function (Context) {
   function Texture(target) {
     if (target) {
       this.init(target);
     }
   }
-
   Texture.RGBA32F = 34836;
-
-  Texture.prototype.init = function(target) {
+  Texture.prototype.init = function (target) {
     this.gl = Context.currentContext.gl;
     this.target = target;
     this.handle = this.gl.createTexture();
-  }
-
+  };
   //### bind ( unit )
   //Binds the texture to the current GL context.
   //`unit` - texture unit in which to place the texture *{ Number/Int }* = 0
-  Texture.prototype.bind = function(unit) {
+  Texture.prototype.bind = function (unit) {
     unit = unit ? unit : 0;
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
-    this.gl.bindTexture(this.target,  this.handle);
-  }
-
+    this.gl.bindTexture(this.target, this.handle);
+  };
   return Texture;
 });
-define('pex/gl/Texture2D',['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Context, IO) {
-
+define('pex/gl/Texture2D',[
+  'pex/gl/Texture',
+  'pex/gl/Context',
+  'pex/sys/IO'
+], function (Texture, Context, IO) {
   function Texture2D() {
     this.gl = Context.currentContext.gl;
     Texture.call(this, this.gl.TEXTURE_2D);
   }
-
   Texture2D.prototype = Object.create(Texture.prototype);
-
-  Texture2D.create = function(w, h, options) {
+  Texture2D.create = function (w, h, options) {
     options = options || {};
     var texture = new Texture2D();
     texture.bind();
-
     var gl = texture.gl;
-
     var isWebGL = gl.getExtension ? true : false;
-    var internalFloatFormat = isWebGL ? gl.RGBA : 0x8814 /*RGBA32F_ARB*/;
-
-    if (options.bpp == 32) gl.texImage2D(gl.TEXTURE_2D, 0, internalFloatFormat, w, h, 0, gl.RGBA, gl.FLOAT, null);
-    else gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    var internalFloatFormat = isWebGL ? gl.RGBA : 34836;
+    if (options.bpp == 32)
+      gl.texImage2D(gl.TEXTURE_2D, 0, internalFloatFormat, w, h, 0, gl.RGBA, gl.FLOAT, null);
+    else
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.bindTexture(gl.TEXTURE_2D, null);
-
     texture.width = w;
     texture.height = h;
     texture.target = gl.TEXTURE_2D;
-
     return texture;
-  }
-
-  Texture2D.prototype.bind = function(unit) {
+  };
+  Texture2D.prototype.bind = function (unit) {
     unit = unit ? unit : 0;
-
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
-    this.gl.bindTexture(this.gl.TEXTURE_2D,  this.handle);
-  }
-
-  Texture2D.genNoise = function(w, h) {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.handle);
+  };
+  Texture2D.genNoise = function (w, h) {
     w = w || 256;
     h = h || 256;
-
     var gl = Context.currentContext.gl;
-
     var texture = new Texture2D();
     texture.bind();
-
-    var b = new ArrayBuffer(w*h);
+    var b = new ArrayBuffer(w * h);
     var pixels = new Uint8Array(b);
-    for(var y=0; y<h; y++) {
-      for(var x=0; x<w; x++) {
-        pixels[y*w + x] = Math.floor(Math.random()*255);
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        pixels[y * w + x] = Math.floor(Math.random() * 255);
       }
     }
-    gl.texImage2D(
-      gl.TEXTURE_2D, 0, gl.LUMINANCE, w, h, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, pixels
-    );
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, w, h, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, pixels);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.bindTexture(gl.TEXTURE_2D, null);
-
     texture.width = w;
     texture.height = h;
     return texture;
-  }
-
-  Texture2D.genNoiseRGBA = function(w, h) {
+  };
+  Texture2D.genNoiseRGBA = function (w, h) {
     w = w || 256;
     h = h || 256;
-
     var gl = Context.currentContext.gl;
-
     var handle = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, handle);
-
-    var b = new ArrayBuffer(w*h*4);
+    var b = new ArrayBuffer(w * h * 4);
     var pixels = new Uint8Array(b);
-    for(var y=0; y<h; y++) {
-      for(var x=0; x<w; x++) {
-        pixels[(y*w + x)*4+0] = Math.floor(255 * Math.random());
-        pixels[(y*w + x)*4+1] = Math.floor(255 * Math.random());
-        pixels[(y*w + x)*4+2] = Math.floor(255 * Math.random());
-        pixels[(y*w + x)*4+3] = Math.floor(255 * Math.random());
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        pixels[(y * w + x) * 4 + 0] = Math.floor(255 * Math.random());
+        pixels[(y * w + x) * 4 + 1] = Math.floor(255 * Math.random());
+        pixels[(y * w + x) * 4 + 2] = Math.floor(255 * Math.random());
+        pixels[(y * w + x) * 4 + 3] = Math.floor(255 * Math.random());
       }
     }
-    gl.texImage2D(
-      gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels
-    );
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.bindTexture(gl.TEXTURE_2D, null);
-
     var texture = new Texture2D();
     texture.handle = handle;
     texture.width = w;
     texture.height = h;
     texture.target = gl.TEXTURE_2D;
     texture.gl = gl;
-
     return texture;
-  }
-
-  Texture2D.load = function(src, callback) {
+  };
+  Texture2D.load = function (src, callback) {
     var gl = Context.currentContext.gl;
-
     var texture = new Texture2D();
     texture.handle = gl.createTexture();
     texture.target = gl.TEXTURE_2D;
     texture.gl = gl;
-
-    IO.loadImageData(gl, texture, texture.target, src, function(image) {
+    IO.loadImageData(gl, texture, texture.target, src, function (image) {
       if (!image) {
         texture.dispose();
         var noise = Texture2D.getNoise();
@@ -7947,7 +8210,6 @@ define('pex/gl/Texture2D',['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], func
         texture.width = noise.width;
         texture.height = noise.height;
       }
-
       gl.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -7955,44 +8217,40 @@ define('pex/gl/Texture2D',['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], func
       gl.bindTexture(texture.target, null);
       texture.width = image.width;
       texture.height = image.height;
-
-      if (callback) callback(texture);
+      if (callback)
+        callback(texture);
     });
-
     return texture;
-  }
-
-  Texture2D.prototype.dispose = function() {
+  };
+  Texture2D.prototype.dispose = function () {
     if (this.handle) {
       this.gl.deleteTexture(this.handle);
       this.handle = null;
     }
-  }
-
+  };
   return Texture2D;
 });
-define('pex/gl/RenderTarget',['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
+define('pex/gl/RenderTarget',[
+  'pex/gl/Context',
+  'pex/gl/Texture2D'
+], function (Context, Texture2D) {
   function RenderTarget(width, height, options) {
     var gl = this.gl = Context.currentContext.gl;
     this.width = width;
     this.height = height;
     this.oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-
     this.handle = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
-
     this.colorAttachements = [];
-
     if (options && options.depth) {
       var oldRenderBufferBinding = gl.getParameter(gl.RENDERBUFFER_BINDING);
       var depthBuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-      gl.getError(); //reset error
-
+      gl.getError();
+      //reset error
       if (gl.DEPTH_COMPONENT24) {
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, this.width, this.height);
       }
-
       if (gl.getError() || !gl.DEPTH_COMPONENT24) {
         //24 bit depth buffer might be not available, trying with 16
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, this.width, this.height);
@@ -8001,95 +8259,77 @@ define('pex/gl/RenderTarget',['pex/gl/Context', 'pex/gl/Texture2D'], function(Co
       this.depthBuffer = depthBuffer;
       gl.bindRenderbuffer(gl.RENDERBUFFER, oldRenderBufferBinding);
     }
-
     var texture = Texture2D.create(width, height, options);
     texture.bind();
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + this.colorAttachements.length, texture.target, texture.handle, 0);
     this.colorAttachements.push(texture);
-
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.oldBinding);
     this.oldBinding = null;
   }
-
-  RenderTarget.prototype.bind = function() {
+  RenderTarget.prototype.bind = function () {
     var gl = this.gl;
     this.oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
-  }
-
-  RenderTarget.prototype.bindAndClear = function(){
+  };
+  RenderTarget.prototype.bindAndClear = function () {
     var gl = this.gl;
-
     this.bind();
-
     gl.clearColor(0, 0, 0, 1);
-
     if (this.depthBuffer)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     else
       gl.clear(gl.COLOR_BUFFER_BIT);
-  }
-
-  RenderTarget.prototype.unbind = function(){
+  };
+  RenderTarget.prototype.unbind = function () {
     var gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.oldBinding);
     this.oldBinding = null;
-  }
-
-  RenderTarget.prototype.getColorAttachement = function(index) {
+  };
+  RenderTarget.prototype.getColorAttachement = function (index) {
     index = index || 0;
     return this.colorAttachements[index];
-  }
-
+  };
   return RenderTarget;
 });
-define('pex/materials/Material',['pex/gl/Context'], function(Context) {
-
+define('pex/materials/Material',['pex/gl/Context'], function (Context) {
   function Material(program, uniforms) {
     this.gl = Context.currentContext.gl;
     this.program = program;
     this.uniforms = uniforms || {};
-    this.prevUniforms = {}
+    this.prevUniforms = {};
   }
-
-  Material.prototype.use = function() {
+  Material.prototype.use = function () {
     this.program.use();
     var numTextures = 0;
-    for(var name in this.uniforms) {
+    for (var name in this.uniforms) {
       if (this.program.uniforms[name]) {
-        if (this.program.uniforms[name].type == this.gl.SAMPLER_2D
-        ||  this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
+        if (this.program.uniforms[name].type == this.gl.SAMPLER_2D || this.program.uniforms[name].type == this.gl.SAMPLER_CUBE) {
           this.gl.activeTexture(this.gl.TEXTURE0 + numTextures);
-
           if (this.uniforms[name].width > 0 && this.uniforms[name].height > 0) {
             this.gl.bindTexture(this.uniforms[name].target, this.uniforms[name].handle);
-            this.program.uniforms[name]( numTextures );
+            this.program.uniforms[name](numTextures);
           }
-
           numTextures++;
-        }
-        else {
+        } else {
           var newValue = this.uniforms[name];
           var oldValue = this.prevUniforms[name];
           var newHash = null;
-          if (oldValue != null) {
+          if (oldValue !== null) {
             if (newValue.hash) {
-              newHash = newValue.hash()
+              newHash = newValue.hash();
               if (newHash == oldValue) {
                 continue;
               }
-            }
-            else if (newValue == oldValue) {
+            } else if (newValue == oldValue) {
               continue;
             }
           }
-          this.program.uniforms[name]( this.uniforms[name] );
-          this.prevUniforms[name] = newHash ? newHash : newValue
+          this.program.uniforms[name](this.uniforms[name]);
+          this.prevUniforms[name] = newHash ? newHash : newValue;
         }
       }
     }
-  }
-
+  };
   return Material;
 });
 /**
@@ -8101,407 +8341,317 @@ define('pex/materials/Material',['pex/gl/Context'], function(Context) {
 /*global require: false, XMLHttpRequest: false, ActiveXObject: false,
   define: false, window: false, process: false, Packages: false,
   java: false, location: false */
-
 (function () {
-    var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
-        xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
-        bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
-        hasLocation = typeof location !== 'undefined' && location.href,
-        defaultProtocol = hasLocation && location.protocol && location.protocol.replace(/\:/, ''),
-        defaultHostName = hasLocation && location.hostname,
-        defaultPort = hasLocation && (location.port || undefined),
-        buildMap = [];
-
-    define('lib/text',[],function () {
-        var text, get, fs;
-
-        if (typeof window !== "undefined" && window.navigator && window.document) {
-            get = function (url, callback) {
-                var xhr = text.createXhr();
-                xhr.open('GET', url, true);
-                xhr.onreadystatechange = function (evt) {
-                    //Do not explicitly handle errors, those should be
-                    //visible via console output in the browser.
-                    if (xhr.readyState === 4) {
-                        callback(xhr.responseText);
-                    }
-                };
-                xhr.send(null);
-            };
-        } else if (typeof process !== "undefined" &&
-                 process.versions &&
-                 !!process.versions.node) {
-            //Using special require.nodeRequire, something added by r.js.
-            fs = require.nodeRequire('fs');
-
-            get = function (url, callback) {
-                callback(fs.readFileSync(url, 'utf8'));
-            };
-        } else if (typeof Packages !== 'undefined') {
-            //Why Java, why is this so awkward?
-            get = function (url, callback) {
-                var encoding = "utf-8",
-                    file = new java.io.File(url),
-                    lineSeparator = java.lang.System.getProperty("line.separator"),
-                    input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
-                    stringBuffer, line,
-                    content = '';
-                try {
-                    stringBuffer = new java.lang.StringBuffer();
-                    line = input.readLine();
-
-                    // Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
-                    // http://www.unicode.org/faq/utf_bom.html
-
-                    // Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
-                    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
-                    if (line && line.length() && line.charAt(0) === 0xfeff) {
-                        // Eat the BOM, since we've already found the encoding on this file,
-                        // and we plan to concatenating this buffer with others; the BOM should
-                        // only appear at the top of a file.
-                        line = line.substring(1);
-                    }
-
-                    stringBuffer.append(line);
-
-                    while ((line = input.readLine()) !== null) {
-                        stringBuffer.append(lineSeparator);
-                        stringBuffer.append(line);
-                    }
-                    //Make sure we return a JavaScript string and not a Java string.
-                    content = String(stringBuffer.toString()); //String
-                } finally {
-                    input.close();
-                }
-                callback(content);
-            };
-        }
-
-        text = {
-            version: '1.0.2',
-
-            strip: function (content) {
-                //Strips <?xml ...?> declarations so that external SVG and XML
-                //documents can be added to a document without worry. Also, if the string
-                //is an HTML document, only the part inside the body tag is returned.
-                if (content) {
-                    content = content.replace(xmlRegExp, "");
-                    var matches = content.match(bodyRegExp);
-                    if (matches) {
-                        content = matches[1];
-                    }
-                } else {
-                    content = "";
-                }
-                return content;
-            },
-
-            jsEscape: function (content) {
-                return content.replace(/(['\\])/g, '\\$1')
-                    .replace(/[\f]/g, "\\f")
-                    .replace(/[\b]/g, "\\b")
-                    .replace(/[\n]/g, "\\n")
-                    .replace(/[\t]/g, "\\t")
-                    .replace(/[\r]/g, "\\r");
-            },
-
-            createXhr: function () {
-                //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
-                var xhr, i, progId;
-                if (typeof XMLHttpRequest !== "undefined") {
-                    return new XMLHttpRequest();
-                } else {
-                    for (i = 0; i < 3; i++) {
-                        progId = progIds[i];
-                        try {
-                            xhr = new ActiveXObject(progId);
-                        } catch (e) {}
-
-                        if (xhr) {
-                            progIds = [progId];  // so faster next time
-                            break;
-                        }
-                    }
-                }
-
-                if (!xhr) {
-                    throw new Error("createXhr(): XMLHttpRequest not available");
-                }
-
-                return xhr;
-            },
-
-            get: get,
-
-            /**
-             * Parses a resource name into its component parts. Resource names
-             * look like: module/name.ext!strip, where the !strip part is
-             * optional.
-             * @param {String} name the resource name
-             * @returns {Object} with properties "moduleName", "ext" and "strip"
-             * where strip is a boolean.
-             */
-            parseName: function (name) {
-                var strip = false, index = name.indexOf("."),
-                    modName = name.substring(0, index),
-                    ext = name.substring(index + 1, name.length);
-
-                index = ext.indexOf("!");
-                if (index !== -1) {
-                    //Pull off the strip arg.
-                    strip = ext.substring(index + 1, ext.length);
-                    strip = strip === "strip";
-                    ext = ext.substring(0, index);
-                }
-
-                return {
-                    moduleName: modName,
-                    ext: ext,
-                    strip: strip
-                };
-            },
-
-            xdRegExp: /^((\w+)\:)?\/\/([^\/\\]+)/,
-
-            /**
-             * Is an URL on another domain. Only works for browser use, returns
-             * false in non-browser environments. Only used to know if an
-             * optimized .js version of a text resource should be loaded
-             * instead.
-             * @param {String} url
-             * @returns Boolean
-             */
-            useXhr: function (url, protocol, hostname, port) {
-                var match = text.xdRegExp.exec(url),
-                    uProtocol, uHostName, uPort;
-                if (!match) {
-                    return true;
-                }
-                uProtocol = match[2];
-                uHostName = match[3];
-
-                uHostName = uHostName.split(':');
-                uPort = uHostName[1];
-                uHostName = uHostName[0];
-
-                return (!uProtocol || uProtocol === protocol) &&
-                       (!uHostName || uHostName === hostname) &&
-                       ((!uPort && !uHostName) || uPort === port);
-            },
-
-            finishLoad: function (name, strip, content, onLoad, config) {
-                content = strip ? text.strip(content) : content;
-                if (config.isBuild) {
-                    buildMap[name] = content;
-                }
-                onLoad(content);
-            },
-
-            load: function (name, req, onLoad, config) {
-                //Name has format: some.module.filext!strip
-                //The strip part is optional.
-                //if strip is present, then that means only get the string contents
-                //inside a body tag in an HTML string. For XML/SVG content it means
-                //removing the <?xml ...?> declarations so the content can be inserted
-                //into the current doc without problems.
-
-                // Do not bother with the work if a build and text will
-                // not be inlined.
-                if (config.isBuild && !config.inlineText) {
-                    onLoad();
-                    return;
-                }
-
-                var parsed = text.parseName(name),
-                    nonStripName = parsed.moduleName + '.' + parsed.ext,
-                    url = req.toUrl(nonStripName),
-                    useXhr = (config && config.text && config.text.useXhr) ||
-                             text.useXhr;
-
-                //Load the text. Use XHR if possible and in a browser.
-                if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
-                    text.get(url, function (content) {
-                        text.finishLoad(name, parsed.strip, content, onLoad, config);
-                    });
-                } else {
-                    //Need to fetch the resource across domains. Assume
-                    //the resource has been optimized into a JS module. Fetch
-                    //by the module name + extension, but do not include the
-                    //!strip part to avoid file system issues.
-                    req([nonStripName], function (content) {
-                        text.finishLoad(parsed.moduleName + '.' + parsed.ext,
-                                        parsed.strip, content, onLoad, config);
-                    });
-                }
-            },
-
-            write: function (pluginName, moduleName, write, config) {
-                if (moduleName in buildMap) {
-                    var content = text.jsEscape(buildMap[moduleName]);
-                    write.asModule(pluginName + "!" + moduleName,
-                                   "define(function () { return '" +
-                                       content +
-                                   "';});\n");
-                }
-            },
-
-            writeFile: function (pluginName, moduleName, req, write, config) {
-                var parsed = text.parseName(moduleName),
-                    nonStripName = parsed.moduleName + '.' + parsed.ext,
-                    //Use a '.js' file name so that it indicates it is a
-                    //script that can be loaded across domains.
-                    fileName = req.toUrl(parsed.moduleName + '.' +
-                                         parsed.ext) + '.js';
-
-                //Leverage own load() method to load plugin value, but only
-                //write out values that do not have the strip argument,
-                //to avoid any potential issues with ! in file names.
-                text.load(nonStripName, req, function (value) {
-                    //Use own write() method to construct full module value.
-                    //But need to create shell that translates writeFile's
-                    //write() to the right interface.
-                    var textWrite = function (contents) {
-                        return write(fileName, contents);
-                    };
-                    textWrite.asModule = function (moduleName, contents) {
-                        return write.asModule(moduleName, fileName, contents);
-                    };
-
-                    text.write(pluginName, nonStripName, textWrite, config);
-                }, config);
-            }
+  var progIds = [
+      'Msxml2.XMLHTTP',
+      'Microsoft.XMLHTTP',
+      'Msxml2.XMLHTTP.4.0'
+    ], xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im, bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im, hasLocation = typeof location !== 'undefined' && location.href, defaultProtocol = hasLocation && location.protocol && location.protocol.replace(/\:/, ''), defaultHostName = hasLocation && location.hostname, defaultPort = hasLocation && (location.port || undefined), buildMap = [];
+  define('lib/text',[],function () {
+    var text, get, fs;
+    if (typeof window !== 'undefined' && window.navigator && window.document) {
+      get = function (url, callback) {
+        var xhr = text.createXhr();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function (evt) {
+          //Do not explicitly handle errors, those should be
+          //visible via console output in the browser.
+          if (xhr.readyState === 4) {
+            callback(xhr.responseText);
+          }
         };
-
-        return text;
-    });
+        xhr.send(null);
+      };
+    } else if (typeof process !== 'undefined' && process.versions && !!process.versions.node) {
+      //Using special require.nodeRequire, something added by r.js.
+      fs = require.nodeRequire('fs');
+      get = function (url, callback) {
+        callback(fs.readFileSync(url, 'utf8'));
+      };
+    } else if (typeof Packages !== 'undefined') {
+      //Why Java, why is this so awkward?
+      get = function (url, callback) {
+        var encoding = 'utf-8', file = new java.io.File(url), lineSeparator = java.lang.System.getProperty('line.separator'), input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)), stringBuffer, line, content = '';
+        try {
+          stringBuffer = new java.lang.StringBuffer();
+          line = input.readLine();
+          // Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
+          // http://www.unicode.org/faq/utf_bom.html
+          // Note that when we use utf-8, the BOM should appear as "EF BB BF", but it doesn't due to this bug in the JDK:
+          // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058
+          if (line && line.length() && line.charAt(0) === 65279) {
+            // Eat the BOM, since we've already found the encoding on this file,
+            // and we plan to concatenating this buffer with others; the BOM should
+            // only appear at the top of a file.
+            line = line.substring(1);
+          }
+          stringBuffer.append(line);
+          while ((line = input.readLine()) !== null) {
+            stringBuffer.append(lineSeparator);
+            stringBuffer.append(line);
+          }
+          //Make sure we return a JavaScript string and not a Java string.
+          content = String(stringBuffer.toString());  //String
+        } finally {
+          input.close();
+        }
+        callback(content);
+      };
+    }
+    text = {
+      version: '1.0.2',
+      strip: function (content) {
+        //Strips <?xml ...?> declarations so that external SVG and XML
+        //documents can be added to a document without worry. Also, if the string
+        //is an HTML document, only the part inside the body tag is returned.
+        if (content) {
+          content = content.replace(xmlRegExp, '');
+          var matches = content.match(bodyRegExp);
+          if (matches) {
+            content = matches[1];
+          }
+        } else {
+          content = '';
+        }
+        return content;
+      },
+      jsEscape: function (content) {
+        return content.replace(/(['\\])/g, '\\$1').replace(/[\f]/g, '\\f').replace(/[\b]/g, '\\b').replace(/[\n]/g, '\\n').replace(/[\t]/g, '\\t').replace(/[\r]/g, '\\r');
+      },
+      createXhr: function () {
+        //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
+        var xhr, i, progId;
+        if (typeof XMLHttpRequest !== 'undefined') {
+          return new XMLHttpRequest();
+        } else {
+          for (i = 0; i < 3; i++) {
+            progId = progIds[i];
+            try {
+              xhr = new ActiveXObject(progId);
+            } catch (e) {
+            }
+            if (xhr) {
+              progIds = [progId];
+              // so faster next time
+              break;
+            }
+          }
+        }
+        if (!xhr) {
+          throw new Error('createXhr(): XMLHttpRequest not available');
+        }
+        return xhr;
+      },
+      get: get,
+      parseName: function (name) {
+        var strip = false, index = name.indexOf('.'), modName = name.substring(0, index), ext = name.substring(index + 1, name.length);
+        index = ext.indexOf('!');
+        if (index !== -1) {
+          //Pull off the strip arg.
+          strip = ext.substring(index + 1, ext.length);
+          strip = strip === 'strip';
+          ext = ext.substring(0, index);
+        }
+        return {
+          moduleName: modName,
+          ext: ext,
+          strip: strip
+        };
+      },
+      xdRegExp: /^((\w+)\:)?\/\/([^\/\\]+)/,
+      useXhr: function (url, protocol, hostname, port) {
+        var match = text.xdRegExp.exec(url), uProtocol, uHostName, uPort;
+        if (!match) {
+          return true;
+        }
+        uProtocol = match[2];
+        uHostName = match[3];
+        uHostName = uHostName.split(':');
+        uPort = uHostName[1];
+        uHostName = uHostName[0];
+        return (!uProtocol || uProtocol === protocol) && (!uHostName || uHostName === hostname) && (!uPort && !uHostName || uPort === port);
+      },
+      finishLoad: function (name, strip, content, onLoad, config) {
+        content = strip ? text.strip(content) : content;
+        if (config.isBuild) {
+          buildMap[name] = content;
+        }
+        onLoad(content);
+      },
+      load: function (name, req, onLoad, config) {
+        //Name has format: some.module.filext!strip
+        //The strip part is optional.
+        //if strip is present, then that means only get the string contents
+        //inside a body tag in an HTML string. For XML/SVG content it means
+        //removing the <?xml ...?> declarations so the content can be inserted
+        //into the current doc without problems.
+        // Do not bother with the work if a build and text will
+        // not be inlined.
+        if (config.isBuild && !config.inlineText) {
+          onLoad();
+          return;
+        }
+        var parsed = text.parseName(name), nonStripName = parsed.moduleName + '.' + parsed.ext, url = req.toUrl(nonStripName), useXhr = config && config.text && config.text.useXhr || text.useXhr;
+        //Load the text. Use XHR if possible and in a browser.
+        if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
+          text.get(url, function (content) {
+            text.finishLoad(name, parsed.strip, content, onLoad, config);
+          });
+        } else {
+          //Need to fetch the resource across domains. Assume
+          //the resource has been optimized into a JS module. Fetch
+          //by the module name + extension, but do not include the
+          //!strip part to avoid file system issues.
+          req([nonStripName], function (content) {
+            text.finishLoad(parsed.moduleName + '.' + parsed.ext, parsed.strip, content, onLoad, config);
+          });
+        }
+      },
+      write: function (pluginName, moduleName, write, config) {
+        if (moduleName in buildMap) {
+          var content = text.jsEscape(buildMap[moduleName]);
+          write.asModule(pluginName + '!' + moduleName, 'define(function () { return \'' + content + '\';});\n');
+        }
+      },
+      writeFile: function (pluginName, moduleName, req, write, config) {
+        var parsed = text.parseName(moduleName), nonStripName = parsed.moduleName + '.' + parsed.ext,
+          //Use a '.js' file name so that it indicates it is a
+          //script that can be loaded across domains.
+          fileName = req.toUrl(parsed.moduleName + '.' + parsed.ext) + '.js';
+        //Leverage own load() method to load plugin value, but only
+        //write out values that do not have the strip argument,
+        //to avoid any potential issues with ! in file names.
+        text.load(nonStripName, req, function (value) {
+          //Use own write() method to construct full module value.
+          //But need to create shell that translates writeFile's
+          //write() to the right interface.
+          var textWrite = function (contents) {
+            return write(fileName, contents);
+          };
+          textWrite.asModule = function (moduleName, contents) {
+            return write.asModule(moduleName, fileName, contents);
+          };
+          text.write(pluginName, nonStripName, textWrite, config);
+        }, config);
+      }
+    };
+    return text;
+  });
 }());
 
 define('lib/text!pex/gl/ScreenImage.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nuniform vec2 screenSize;\nuniform vec2 pixelPosition;\nuniform vec2 pixelSize;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  float tx = position.x * 0.5 + 0.5; //-1 -> 0, 1 -> 1\n  float ty = -position.y * 0.5 + 0.5; //-1 -> 1, 1 -> 0\n  //(x + 0)/sw * 2 - 1, (x + w)/sw * 2 - 1\n  float x = (pixelPosition.x + pixelSize.x * tx)/screenSize.x * 2.0 - 1.0;  //0 -> -1, 1 -> 1\n  //1.0 - (y + h)/sh * 2, 1.0 - (y + h)/sh * 2\n  float y = 1.0 - (pixelPosition.y + pixelSize.y * ty)/screenSize.y * 2.0;  //0 -> 1, 1 -> -1\n  gl_Position = vec4(x, y, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D image;\nuniform float alpha;\n\nvoid main() {\n  gl_FragColor = texture2D(image, vTexCoord);\n  gl_FragColor.a *= alpha;\n}\n\n#endif';});
 
 define('pex/gl/ScreenImage',[
-  'pex/geom/Vec2', 'pex/gl/Context',
-  'pex/gl/Program', 'pex/materials/Material', 'pex/geom/Face3', 'pex/geom/Geometry', 'pex/gl/Mesh',
-  'lib/text!pex/gl/ScreenImage.glsl'],
-  function(Vec2, Context, Program, Material, Face3, Geometry, Mesh, ScreenImageGLSL) {
+  'pex/geom/Vec2',
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/materials/Material',
+  'pex/geom/Face3',
+  'pex/geom/Geometry',
+  'pex/gl/Mesh',
+  'lib/text!pex/gl/ScreenImage.glsl'
+], function (Vec2, Context, Program, Material, Face3, Geometry, Mesh, ScreenImageGLSL) {
   function ScreenImage(image, x, y, w, h, screenWidth, screenHeight) {
-    x = (x !== undefined) ? x : 0;
-    y = (y !== undefined) ? y : 0;
-    w = (w !== undefined) ? w : 1;
-    h = (h !== undefined) ? h : 1;
-
-    screenWidth = (screenWidth !== undefined) ? screenWidth : 1;
-    screenHeight = (screenHeight !== undefined) ? screenHeight : 1;
-
+    x = x !== undefined ? x : 0;
+    y = y !== undefined ? y : 0;
+    w = w !== undefined ? w : 1;
+    h = h !== undefined ? h : 1;
+    screenWidth = screenWidth !== undefined ? screenWidth : 1;
+    screenHeight = screenHeight !== undefined ? screenHeight : 1;
     this.image = image;
-
     var program = new Program(ScreenImageGLSL);
-
     var uniforms = {
-      screenSize : Vec2.create(screenWidth, screenHeight),
-      pixelPosition : Vec2.create(x, y),
-      pixelSize : Vec2.create(w, h),
-      alpha : 1.0
-    };
-
-    if (image) uniforms.image = image;
-
+        screenSize: Vec2.create(screenWidth, screenHeight),
+        pixelPosition: Vec2.create(x, y),
+        pixelSize: Vec2.create(w, h),
+        alpha: 1
+      };
+    if (image)
+      uniforms.image = image;
     var material = new Material(program, uniforms);
-
     var vertices = [
-      new Vec2(-1,  1),
-      new Vec2( 1,  1),
-      new Vec2( 1, -1),
-      new Vec2(-1, -1)
-    ];
-
+        new Vec2(-1, 1),
+        new Vec2(1, 1),
+        new Vec2(1, -1),
+        new Vec2(-1, -1)
+      ];
     var texCoords = [
-      new Vec2(0, 1),
-      new Vec2(1, 1),
-      new Vec2(1, 0),
-      new Vec2(0, 0)
-    ];
-
-    var geometry = new Geometry({vertices:vertices, texCoords:texCoords});
-
+        new Vec2(0, 1),
+        new Vec2(1, 1),
+        new Vec2(1, 0),
+        new Vec2(0, 0)
+      ];
+    var geometry = new Geometry({
+        vertices: vertices,
+        texCoords: texCoords
+      });
     // 0----1  0,1   1,1
     // | \  |      u
     // |  \ |      v
     // 3----2  0,0   0,1
     geometry.faces.push(new Face3(0, 2, 1));
     geometry.faces.push(new Face3(0, 3, 2));
-
     this.mesh = new Mesh(geometry, material);
   }
-
-  ScreenImage.prototype.setAlpha = function(alpha) {
+  ScreenImage.prototype.setAlpha = function (alpha) {
     this.mesh.material.uniforms.alpha = alpha;
-  }
-
-  ScreenImage.prototype.setPosition = function(position) {
-  this.mesh.material.uniforms.pixelPosition = position;
-  }
-
-  ScreenImage.prototype.setSize = function(size) {
+  };
+  ScreenImage.prototype.setPosition = function (position) {
+    this.mesh.material.uniforms.pixelPosition = position;
+  };
+  ScreenImage.prototype.setSize = function (size) {
     this.mesh.material.uniforms.pixelSize = size;
-  }
-
-  ScreenImage.prototype.setWindowSize = function(size) {
+  };
+  ScreenImage.prototype.setWindowSize = function (size) {
     this.mesh.material.uniforms.windowSize = size;
-  }
-
-  ScreenImage.prototype.setBounds = function(bounds) {
+  };
+  ScreenImage.prototype.setBounds = function (bounds) {
     this.mesh.material.uniforms.pixelPosition.x = bounds.x;
     this.mesh.material.uniforms.pixelPosition.y = bounds.y;
     this.mesh.material.uniforms.pixelSize.x = bounds.width;
     this.mesh.material.uniforms.pixelSize.y = bounds.height;
-  }
-
-  ScreenImage.prototype.setImage = function(image) {
+  };
+  ScreenImage.prototype.setImage = function (image) {
     this.image = image;
     this.mesh.material.uniforms.image = image;
-  }
-
-  ScreenImage.prototype.draw = function(image, program) {
+  };
+  ScreenImage.prototype.draw = function (image, program) {
     var oldImage = null;
     if (image) {
       oldImage = this.mesh.material.uniforms.image;
       this.mesh.material.uniforms.image = image;
     }
-
     var oldProgram = null;
     if (program) {
       oldProgram = this.mesh.getProgram();
       this.mesh.setProgram(program);
     }
     this.mesh.draw();
-
     if (oldProgram) {
       this.mesh.setProgram(oldProgram);
     }
     if (oldImage) {
       this.mesh.material.uniforms.image = oldImage;
     }
-  }
-
+  };
   return ScreenImage;
 });
 //Cube texture.
-
 //## Example use
 //     var envMap = TextureCube.load("image_####.jpg");
 //     envMap.bind();
-
 //## Reference
-define('pex/gl/TextureCube',['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], function(Texture, Context, IO) {
-
+define('pex/gl/TextureCube',[
+  'pex/gl/Texture',
+  'pex/gl/Context',
+  'pex/sys/IO'
+], function (Texture, Context, IO) {
   //### TextureCube ( )
   //Does nothing, use *load()* method instead.
   function TextureCube() {
     this.init(Context.currentContext.gl.TEXTURE_CUBE_MAP);
   }
-
   TextureCube.prototype = new Texture();
-
   //### load ( src )
   //Load texture from file (in Plask) or url (in the web browser).
   //
@@ -8514,45 +8664,44 @@ define('pex/gl/TextureCube',['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], 
   //
   //*Note: In Plask the texture is ready immediately, in the web browser it's
   //first black until the file is loaded and texture can be populated with the image data.*
-  TextureCube.load = function(src) {
+  TextureCube.load = function (src) {
     var gl = Context.currentContext.gl;
-
     var texture = new TextureCube();
-
     var cubeMapTargets = [
-      gl.TEXTURE_CUBE_MAP_POSITIVE_X, 'posx',
-      gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 'negx',
-      gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 'posy',
-      gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 'negy',
-      gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 'posz',
-      gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 'negz'
-    ];
-
+        gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+        'posx',
+        gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+        'negx',
+        gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+        'posy',
+        gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        'negy',
+        gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+        'posz',
+        gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+        'negz'
+      ];
     gl.bindTexture(texture.target, texture.handle);
     gl.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(texture.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    for (var i=0; i<cubeMapTargets.length; i += 2) {
-      IO.loadImageData(gl, texture, cubeMapTargets[i], src.replace("####", cubeMapTargets[i+1]), function(image) {
+    for (var i = 0; i < cubeMapTargets.length; i += 2) {
+      IO.loadImageData(gl, texture, cubeMapTargets[i], src.replace('####', cubeMapTargets[i + 1]), function (image) {
         texture.width = image.width;
         texture.height = image.height;
       });
     }
-
     return texture;
-  }
-
+  };
   //### dispose ( )
   //Frees the texture data.
-  TextureCube.prototype.dispose = function() {
+  TextureCube.prototype.dispose = function () {
     if (this.handle) {
       this.gl.deleteTexture(this.handle);
       this.handle = null;
     }
-  }
-
+  };
   return TextureCube;
 });
 (function() {
@@ -8570,7 +8719,6 @@ define('pex/gl/TextureCube',['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], 
         var parentHeight, _ref;
         if (this.oldViewport) {
           throw 'Viewport.bind: Already bound.';
-          return;
         }
         this.oldViewport = this.gl.getParameter(this.gl.VIEWPORT);
         this.oldScissorBox = this.gl.getParameter(this.gl.SCISSOR_BOX);
@@ -8598,34 +8746,31 @@ define('pex/gl/TextureCube',['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], 
 }).call(this);
 
 //Module wrapper for gl classes.
-define(
-  'pex/gl',[
-    'pex/gl/Context',
-    'pex/gl/Program',
-    'pex/gl/Mesh',
-    'pex/gl/Texture2D',
-    'pex/gl/RenderTarget',
-    'pex/gl/ScreenImage',
-    'pex/gl/Buffer',
-    'pex/gl/RenderableGeometry',
-    'pex/gl/TextureCube',
-    'pex/gl/Viewport'
-  ],
-  function(Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage, Buffer, RenderableGeometry, TextureCube, Viewport) {
-    return {
-      Context : Context,
-      Program : Program,
-      Mesh : Mesh,
-      Texture2D : Texture2D,
-      RenderTarget : RenderTarget,
-      ScreenImage : ScreenImage,
-      Buffer : Buffer,
-      RenderableGeometry : RenderableGeometry,
-      TextureCube: TextureCube,
-      Viewport: Viewport
-    };
-  }
-);
+define('pex/gl',[
+  'pex/gl/Context',
+  'pex/gl/Program',
+  'pex/gl/Mesh',
+  'pex/gl/Texture2D',
+  'pex/gl/RenderTarget',
+  'pex/gl/ScreenImage',
+  'pex/gl/Buffer',
+  'pex/gl/RenderableGeometry',
+  'pex/gl/TextureCube',
+  'pex/gl/Viewport'
+], function (Context, Program, Mesh, Texture2D, RenderTarget, ScreenImage, Buffer, RenderableGeometry, TextureCube, Viewport) {
+  return {
+    Context: Context,
+    Program: Program,
+    Mesh: Mesh,
+    Texture2D: Texture2D,
+    RenderTarget: RenderTarget,
+    ScreenImage: ScreenImage,
+    Buffer: Buffer,
+    RenderableGeometry: RenderableGeometry,
+    TextureCube: TextureCube,
+    Viewport: Viewport
+  };
+});
 
 define('lib/text!pex/materials/SolidColor.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform vec4 color;\nuniform bool premultiplied;\n\nvoid main() {\n  gl_FragColor = color;\n  if (premultiplied) {\n    gl_FragColor.rgb *= color.a;\n  }\n}\n\n#endif\n';});
 
@@ -8636,25 +8781,19 @@ define('pex/materials/SolidColor',[
   'pex/color/Color',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/SolidColor.glsl'
-  ], function(Material, Context, Program, Color, ObjectUtils, SolidColorGLSL) {
-
+], function (Material, Context, Program, Color, ObjectUtils, SolidColorGLSL) {
   function SolidColor(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(SolidColorGLSL);
-
     var defaults = {
-     color : Color.create(1, 1, 1, 1),
-     pointSize : 1,
-     premultiplied : 0
-    };
-
+        color: Color.create(1, 1, 1, 1),
+        pointSize: 1,
+        premultiplied: 0
+      };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   SolidColor.prototype = Object.create(Material.prototype);
-
   return SolidColor;
 });
 
@@ -8666,23 +8805,15 @@ define('pex/materials/ShowNormals',[
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/ShowNormals.glsl'
-  ], function(Material, Context, Program, ObjectUtils, ShowNormalGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, ShowNormalGLSL) {
   function ShowNormals(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowNormalGLSL);
-
-    var defaults = {
-      pointSize : 1
-    };
-
+    var defaults = { pointSize: 1 };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   ShowNormals.prototype = Object.create(Material.prototype);
-
   return ShowNormals;
 });
 
@@ -8695,22 +8826,15 @@ define('pex/materials/Textured',[
   'pex/geom/Vec4',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/Textured.glsl'
-  ], function(Material, Context, Program, Vec4, ObjectUtils, TexturedGLSL) {
-
+], function (Material, Context, Program, Vec4, ObjectUtils, TexturedGLSL) {
   function Textured(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(TexturedGLSL);
-
-    var defaults = {
-    };
-
+    var defaults = {};
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   Textured.prototype = Object.create(Material.prototype);
-
   return Textured;
 });
 
@@ -8722,23 +8846,15 @@ define('pex/materials/ShowTexCoords',[
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/ShowTexCoords.glsl'
-  ], function(Material, Context, Program, ObjectUtils, ShowTexCoordGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, ShowTexCoordGLSL) {
   function ShowTexCoords(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowTexCoordGLSL);
-
-    var defaults = {
-      pointSize : 1
-    };
-
+    var defaults = { pointSize: 1 };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   ShowTexCoords.prototype = Object.create(Material.prototype);
-
   return ShowTexCoords;
 });
 
@@ -8751,26 +8867,20 @@ define('pex/materials/ShowDepth',[
   'pex/utils/ObjectUtils',
   'pex/color/Color',
   'lib/text!pex/materials/ShowDepth.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Color, ShowDepthGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, Color, ShowDepthGLSL) {
   function ShowDepth(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowDepthGLSL);
-
     var defaults = {
-      near: 0,
-      far: 10,
-      nearColor: Color.create(0, 0, 0, 1),
-      farColor: Color.create(1, 1, 1, 1)
-    };
-
+        near: 0,
+        far: 10,
+        nearColor: Color.create(0, 0, 0, 1),
+        farColor: Color.create(1, 1, 1, 1)
+      };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   ShowDepth.prototype = Object.create(Material.prototype);
-
   return ShowDepth;
 });
 
@@ -8782,23 +8892,15 @@ define('pex/materials/ShowColors',[
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/ShowColors.glsl'
-  ], function(Material, Context, Program, ObjectUtils, ShowColorsGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, ShowColorsGLSL) {
   function ShowColors(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowColorsGLSL);
-
-    var defaults = {
-      pointSize : 1
-    };
-
+    var defaults = { pointSize: 1 };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   ShowColors.prototype = Object.create(Material.prototype);
-
   return ShowColors;
 });
 
@@ -8810,23 +8912,15 @@ define('pex/materials/ShowPositions',[
   'pex/gl/Program',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/ShowPositions.glsl'
-  ], function(Material, Context, Program, ObjectUtils, ShowPositionsGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, ShowPositionsGLSL) {
   function ShowPositions(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowPositionsGLSL);
-
-    var defaults = {
-      pointSize : 1
-    };
-
+    var defaults = { pointSize: 1 };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   ShowPositions.prototype = Object.create(Material.prototype);
-
   return ShowPositions;
 });
 
@@ -8837,22 +8931,18 @@ define('pex/materials/PackDepth',[
   'pex/gl/Program',
   'pex/materials/Material',
   'pex/utils/ObjectUtils',
-  'lib/text!pex/materials/PackDepth.glsl'],
-  function(Context, Program, Material, ObjectUtils, PackDepthGLSL) {
+  'lib/text!pex/materials/PackDepth.glsl'
+], function (Context, Program, Material, ObjectUtils, PackDepthGLSL) {
   function PackDepthMaterial(uniforms) {
-      this.gl = Context.currentContext.gl;
-      this.program = new Program(PackDepthGLSL);
-
-      var defaults = {
+    this.gl = Context.currentContext.gl;
+    this.program = new Program(PackDepthGLSL);
+    var defaults = {
         near: 0.1,
         far: 100
       };
-
-      this.uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    this.uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
   }
-
   PackDepthMaterial.prototype = new Material();
-
   return PackDepthMaterial;
 });
 
@@ -8866,27 +8956,21 @@ define('pex/materials/Diffuse',[
   'pex/geom/Vec3',
   'pex/color/Color',
   'lib/text!pex/materials/Diffuse.glsl'
-  ], function(Material, Context, Program, ObjectUtils, Vec3, Color, DiffuseGLSL) {
-
+], function (Material, Context, Program, ObjectUtils, Vec3, Color, DiffuseGLSL) {
   function Diffuse(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(DiffuseGLSL);
-
     var defaults = {
-      wrap: 1,
-      pointSize : 1,
-      lightPos : Vec3.create(10, 20, 30),
-      ambientColor : Color.create(0, 0, 0, 1),
-      diffuseColor : Color.create(1, 1, 1, 1)
-    };
-
+        wrap: 1,
+        pointSize: 1,
+        lightPos: Vec3.create(10, 20, 30),
+        ambientColor: Color.create(0, 0, 0, 1),
+        diffuseColor: Color.create(1, 1, 1, 1)
+      };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   Diffuse.prototype = Object.create(Material.prototype);
-
   return Diffuse;
 });
 
@@ -8899,19 +8983,14 @@ define('pex/materials/Test',[
   'pex/color/Color',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/Test.glsl'
-  ], function(Material, Context, Program, Color, ObjectUtils, TestGLSL) {
-
+], function (Material, Context, Program, Color, ObjectUtils, TestGLSL) {
   function Test() {
     this.gl = Context.currentContext.gl;
     var program = new Program(TestGLSL);
-
-    var uniforms = {}
-
+    var uniforms = {};
     Material.call(this, program, uniforms);
   }
-
   Test.prototype = Object.create(Material.prototype);
-
   return Test;
 });
 
@@ -8968,60 +9047,50 @@ define('pex/materials/PointSpriteTextured',[
   'pex/geom/Vec4',
   'pex/utils/ObjectUtils',
   'lib/text!pex/materials/PointSpriteTextured.glsl'
-  ], function(Material, Context, Program, Vec4, ObjectUtils, PointSpriteTexturedGLSL) {
-
+], function (Material, Context, Program, Vec4, ObjectUtils, PointSpriteTexturedGLSL) {
   function PointSpriteTextured(uniforms) {
     this.gl = Context.currentContext.gl;
     var program = new Program(PointSpriteTexturedGLSL);
-
     var defaults = {
-      pointSize : 1,
-      alpha: 1
-    };
-
+        pointSize: 1,
+        alpha: 1
+      };
     var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
-
     Material.call(this, program, uniforms);
   }
-
   PointSpriteTextured.prototype = Object.create(Material.prototype);
-
   return PointSpriteTextured;
 });
 //Module wrapper for materials classes.
-define(
-  'pex/materials',[
-    'pex/materials/SolidColor',
-    'pex/materials/ShowNormals',
-    'pex/materials/Textured',
-    'pex/materials/ShowTexCoords',
-    'pex/materials/ShowDepth',
-    'pex/materials/ShowColors',
-    'pex/materials/ShowPositions',
-    'pex/materials/PackDepth',
-    'pex/materials/Diffuse',
-    'pex/materials/Test',
-    'pex/materials/BlinnPhong',
-    'pex/materials/PointSpriteTextured',
-  ],
-  function(SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, ShowPositions, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
-    return {
-      SolidColor : SolidColor,
-      ShowNormals : ShowNormals,
-      Textured : Textured,
-      ShowTexCoords : ShowTexCoords,
-      ShowDepth : ShowDepth,
-      ShowColors : ShowColors,
-      ShowPositions : ShowPositions,
-      PackDepth : PackDepth,
-      Diffuse : Diffuse,
-      Test : Test,
-      BlinnPhong : BlinnPhong,
-      PointSpriteTextured : PointSpriteTextured
-    };
-  }
-);
-
+define('pex/materials',[
+  'pex/materials/SolidColor',
+  'pex/materials/ShowNormals',
+  'pex/materials/Textured',
+  'pex/materials/ShowTexCoords',
+  'pex/materials/ShowDepth',
+  'pex/materials/ShowColors',
+  'pex/materials/ShowPositions',
+  'pex/materials/PackDepth',
+  'pex/materials/Diffuse',
+  'pex/materials/Test',
+  'pex/materials/BlinnPhong',
+  'pex/materials/PointSpriteTextured'
+], function (SolidColor, ShowNormals, Textured, ShowTexCoords, ShowDepth, ShowColors, ShowPositions, PackDepth, Diffuse, Test, BlinnPhong, PointSpriteTextured) {
+  return {
+    SolidColor: SolidColor,
+    ShowNormals: ShowNormals,
+    Textured: Textured,
+    ShowTexCoords: ShowTexCoords,
+    ShowDepth: ShowDepth,
+    ShowColors: ShowColors,
+    ShowPositions: ShowPositions,
+    PackDepth: PackDepth,
+    Diffuse: Diffuse,
+    Test: Test,
+    BlinnPhong: BlinnPhong,
+    PointSpriteTextured: PointSpriteTextured
+  };
+});
 (function() {
   define('pex/scene/PerspectiveCamera',['require','pex/geom'],function(require) {
     var Mat4, PerspectiveCamera, Ray, Vec2, Vec3, Vec4, _ref;
@@ -9542,62 +9611,54 @@ define(
 
 }).call(this);
 
-define(
-  'pex/scene',[
-    'pex/scene/PerspectiveCamera',
-    'pex/scene/OrthographicCamera',
-    'pex/scene/Arcball',
-    'pex/scene/Scene'
-  ],
-  function(PerspectiveCamera, OrthographicCamera, Arcball, Scene) {
-    return {
-      PerspectiveCamera : PerspectiveCamera,
-      OrthographicCamera : OrthographicCamera,
-      Arcball : Arcball,
-      Scene : Scene
-    };
-  }
-);
-
-define('pex/fx/FXResourceMgr',[], function() {
-
+define('pex/scene',[
+  'pex/scene/PerspectiveCamera',
+  'pex/scene/OrthographicCamera',
+  'pex/scene/Arcball',
+  'pex/scene/Scene'
+], function (PerspectiveCamera, OrthographicCamera, Arcball, Scene) {
+  return {
+    PerspectiveCamera: PerspectiveCamera,
+    OrthographicCamera: OrthographicCamera,
+    Arcball: Arcball,
+    Scene: Scene
+  };
+});
+define('pex/fx/FXResourceMgr',[], function () {
   function FXResourceMgr() {
     this.cache = [];
   }
-
-  FXResourceMgr.prototype.getResource = function(type, properties) {
+  FXResourceMgr.prototype.getResource = function (type, properties) {
     properties = properties || {};
-    for(var i=0; i<this.cache.length; i++) {
+    for (var i = 0; i < this.cache.length; i++) {
       var res = this.cache[i];
       if (res.type == type && !res.used) {
         var areTheSame = true;
-        for(var propName in properties) {
+        for (var propName in properties) {
           if (properties[propName] != res.properties[propName]) {
             areTheSame = false;
           }
         }
-        if (areTheSame) return res;
+        if (areTheSame)
+          return res;
       }
     }
     return null;
-  }
-
-  FXResourceMgr.prototype.addResource = function(type, obj, properties) {
+  };
+  FXResourceMgr.prototype.addResource = function (type, obj, properties) {
     var res = {
-      type : type,
-      obj : obj,
-      properties : properties
-    };
+        type: type,
+        obj: obj,
+        properties: properties
+      };
     this.cache.push(res);
     return res;
-  }
-
-  FXResourceMgr.prototype.markAllAsNotUsed = function() {
-    for(var i=0; i<this.cache.length; i++) {
+  };
+  FXResourceMgr.prototype.markAllAsNotUsed = function () {
+    for (var i = 0; i < this.cache.length; i++) {
       this.cache[i].used = false;
     }
-  }
-
+  };
   return FXResourceMgr;
 });
 define('pex/fx/FXStage',[
@@ -9608,41 +9669,48 @@ define('pex/fx/FXStage',[
   'pex/gl/Program',
   'pex/gl/Texture2D',
   'pex/geom/Vec2'
-  ],
-  function(Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D, Vec2) {
+], function (Context, FXResourceMgr, ScreenImage, RenderTarget, Program, Texture2D, Vec2) {
   var FXStageCount = 0;
   function FXStage(source, resourceMgr, fullscreenQuad) {
     this.id = FXStageCount++;
-    console.log("FXStage+ " + FXStageCount)
+    console.log('FXStage+ ' + FXStageCount);
     this.gl = Context.currentContext.gl;
     this.source = source || null;
     this.resourceMgr = resourceMgr || new FXResourceMgr();
     this.fullscreenQuad = fullscreenQuad || new ScreenImage();
     this.defaultBPP = 8;
   }
-
-  FXStage.prototype.reset = function() {
+  FXStage.prototype.reset = function () {
     this.resourceMgr.markAllAsNotUsed();
-  }
-
-  FXStage.prototype.getOutputSize = function(width, height, verbose) {
+  };
+  FXStage.prototype.getOutputSize = function (width, height, verbose) {
     if (width && height) {
-      return { width: width, height: height };
-    }
-    else if (this.source) {
-      return { width: this.source.width, height: this.source.height };
-    }
-    else {
+      return {
+        width: width,
+        height: height
+      };
+    } else if (this.source) {
+      return {
+        width: this.source.width,
+        height: this.source.height
+      };
+    } else {
       var viewport = this.gl.getParameter(this.gl.VIEWPORT);
-      return { width: viewport[2], height: viewport[3] };
+      return {
+        width: viewport[2],
+        height: viewport[3]
+      };
     }
-  }
-
-  FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
+  };
+  FXStage.prototype.getRenderTarget = function (w, h, depth, bpp) {
     depth = depth || false;
     bpp = bpp || this.defaultBPP;
-
-    var resProps = {w:w, h:h, depth:depth, bpp:bpp};
+    var resProps = {
+        w: w,
+        h: h,
+        depth: depth,
+        bpp: bpp
+      };
     var res = this.resourceMgr.getResource('RenderTarget', resProps);
     if (!res) {
       var renderTarget = new RenderTarget(w, h, resProps);
@@ -9650,9 +9718,8 @@ define('pex/fx/FXStage',[
     }
     res.used = true;
     return res.obj;
-  }
-
-  FXStage.prototype.getFXStage = function(name) {
+  };
+  FXStage.prototype.getFXStage = function (name) {
     var resProps = {};
     var res = this.resourceMgr.getResource('FXStage', resProps);
     if (!res) {
@@ -9661,20 +9728,18 @@ define('pex/fx/FXStage',[
     }
     res.used = true;
     return res.obj;
-  }
-
-  FXStage.prototype.asFXStage = function(source, name) {
+  };
+  FXStage.prototype.asFXStage = function (source, name) {
     var stage = this.getFXStage(name);
     stage.source = source;
     stage.name = name + '_' + stage.id;
     return stage;
-  }
-
-  FXStage.prototype.getShader = function(code) {
+  };
+  FXStage.prototype.getShader = function (code) {
     if (code.indexOf('.glsl') == code.length - 5) {
       throw 'FXStage.getShader - loading files not supported yet.';
     }
-    var resProps = {code: code};
+    var resProps = { code: code };
     var res = this.resourceMgr.getResource('Program', resProps);
     if (!res) {
       var program = new Program(code);
@@ -9682,141 +9747,130 @@ define('pex/fx/FXStage',[
     }
     res.used = true;
     return res.obj;
-  }
-
-  FXStage.prototype.getSourceTexture = function(source) {
+  };
+  FXStage.prototype.getSourceTexture = function (source) {
     if (source) {
       if (source.source) {
         if (source.source.getColorAttachement) {
           return source.source.getColorAttachement(0);
-        }
-        else return source.source;
-      }
-      else if (source.getColorAttachement) {
+        } else
+          return source.source;
+      } else if (source.getColorAttachement) {
         return source.getColorAttachement(0);
-      }
-      else return source;
-    }
-    else if (this.source) {
+      } else
+        return source;
+    } else if (this.source) {
       if (this.source.getColorAttachement) {
         return this.source.getColorAttachement(0);
-      }
-      else return this.source;
-    }
-    else throw 'FXStage.getSourceTexture() No source texture!';
-  }
-
-  FXStage.prototype.drawFullScreenQuad = function(width, height, image, program) {
+      } else
+        return this.source;
+    } else
+      throw 'FXStage.getSourceTexture() No source texture!';
+  };
+  FXStage.prototype.drawFullScreenQuad = function (width, height, image, program) {
     this.drawFullScreenQuadAt(0, 0, width, height, image, program);
-  }
-
-  FXStage.prototype.drawFullScreenQuadAt = function(x, y, width, height, image, program) {
+  };
+  FXStage.prototype.drawFullScreenQuadAt = function (x, y, width, height, image, program) {
     var gl = this.gl;
     gl.disable(gl.DEPTH_TEST);
-
     var oldViewport = gl.getParameter(gl.VIEWPORT);
     gl.viewport(x, y, width, height);
     this.fullscreenQuad.draw(image, program);
     gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
-  }
-
-  FXStage.prototype.getImage = function(path) {
-    var resProps = {path: path};
+  };
+  FXStage.prototype.getImage = function (path) {
+    var resProps = { path: path };
     var res = this.resourceMgr.getResource('Image', resProps);
     if (!res) {
       var image = Texture2D.load(path);
       res = this.resourceMgr.addResource('Image', image, resProps);
     }
-    res.used = false; //can be shared so no need for locking
+    res.used = false;
+    //can be shared so no need for locking
     return res.obj;
-  }
-
-  FXStage.prototype.getFullScreenQuad = function() {
+  };
+  FXStage.prototype.getFullScreenQuad = function () {
     return this.fullscreenQuad;
-  }
-
-
+  };
   return FXStage;
 });
-define('pex/fx/Render',['pex/fx/FXStage'], function(FXStage) {
-  FXStage.prototype.render = function(options) {
+define('pex/fx/Render',['pex/fx/FXStage'], function (FXStage) {
+  FXStage.prototype.render = function (options) {
     var gl = this.gl;
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var oldViewport = gl.getParameter(gl.VIEWPORT);
     gl.viewport(0, 0, outputSize.width, outputSize.height);
-
     rt.bindAndClear();
     if (options.drawFunc) {
       options.drawFunc();
     }
     rt.unbind();
     gl.viewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
-
     return this.asFXStage(rt, 'render');
-  }
+  };
 });
-define('pex/fx/Blit',['pex/fx/FXStage', 'pex/gl/ScreenImage', 'pex/geom/Vec2'], function(FXStage, ScreenImage, Vec2) {
-  FXStage.prototype.blit = function(options) {
+define('pex/fx/Blit',[
+  'pex/fx/FXStage',
+  'pex/gl/ScreenImage',
+  'pex/geom/Vec2'
+], function (FXStage, ScreenImage, Vec2) {
+  FXStage.prototype.blit = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
-
     var x = options.x || 0;
     var y = options.y || 0;
-
     this.drawFullScreenQuadAt(x, y, outputSize.width, outputSize.height, this.getSourceTexture());
-
     return this;
-  }
+  };
 });
 
 define('lib/text!pex/fx/Downsample2.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n  vec4 color = vec4(0.0);\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  0.0));\n  gl_FragColor = color / 4.0;\n}\n\n#endif';});
 
-define('pex/fx/Downsample2',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample2.glsl', 'pex/geom/Vec2'], function(FXStage, Downsample2GLSL, Vec2) {
-  FXStage.prototype.downsample2 = function(options) {
+define('pex/fx/Downsample2',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Downsample2.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, Downsample2GLSL, Vec2) {
+  FXStage.prototype.downsample2 = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
     outputSize.width /= 2;
     outputSize.height /= 2;
-
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var source = this.getSourceTexture();
-
     var program = this.getShader(Downsample2GLSL);
     program.use();
     program.uniforms.imageSize(Vec2.create(source.width, source.height));
     rt.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
     rt.unbind();
-
     return this.asFXStage(rt, 'downsample2');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Downsample4.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n  vec4 color = vec4(0.0);\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y * -2.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y * -1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y *  0.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -2.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x * -1.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  0.0, texel.y *  1.0));\n  color += texture2D(image, vTexCoord + vec2(texel.x *  1.0, texel.y *  1.0));\n  gl_FragColor = color / 16.0;\n}\n\n#endif';});
 
-define('pex/fx/Downsample4',['pex/fx/FXStage', 'lib/text!pex/fx/Downsample4.glsl', 'pex/geom/Vec2'], function(FXStage, Downsample4GLSL, Vec2) {
-  FXStage.prototype.downsample4 = function(options) {
+define('pex/fx/Downsample4',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Downsample4.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, Downsample4GLSL, Vec2) {
+  FXStage.prototype.downsample4 = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height, true);
     outputSize.width /= 4;
     outputSize.height /= 4;
-
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var source = this.getSourceTexture();
-
     var program = this.getShader(Downsample4GLSL);
     program.use();
     program.uniforms.imageSize(Vec2.create(source.width, source.height));
     rt.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
     rt.unbind();
-
     return this.asFXStage(rt, 'downsample4');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Blur3H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 0.50 * texture2D(image, vTexCoord);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
@@ -9824,33 +9878,32 @@ define('lib/text!pex/fx/Blur3H.glsl',[],function () { return '#ifdef VERT\n\natt
 
 define('lib/text!pex/fx/Blur3V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 0.50 * texture2D(image, vTexCoord);\n  color += 0.25 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
 
-define('pex/fx/Blur3',['pex/fx/FXStage', 'lib/text!pex/fx/Blur3H.glsl', 'lib/text!pex/fx/Blur3V.glsl', 'pex/geom/Vec2'],
-function(FXStage, Blur3HGLSL, Blur3VGLSL, Vec2) {
-  FXStage.prototype.blur3 = function(options) {
+define('pex/fx/Blur3',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Blur3H.glsl',
+  'lib/text!pex/fx/Blur3V.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, Blur3HGLSL, Blur3VGLSL, Vec2) {
+  FXStage.prototype.blur3 = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
-
     var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var source = this.getSourceTexture();
-
     var programH = this.getShader(Blur3HGLSL);
     programH.use();
     programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
     rth.unbind();
-
     var programV = this.getShader(Blur3VGLSL);
     programV.use();
     programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
-
     return this.asFXStage(rtv, 'blur3');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Blur5H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x * -2.0, 0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 6.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  0.0, 0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(texel.x *  2.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
@@ -9858,33 +9911,32 @@ define('lib/text!pex/fx/Blur5H.glsl',[],function () { return '#ifdef VERT\n\natt
 
 define('lib/text!pex/fx/Blur5V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -2.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 6.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  0.0));\n  color += 4.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  color += 1.0/16.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  2.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
 
-define('pex/fx/Blur5',['pex/fx/FXStage', 'lib/text!pex/fx/Blur5H.glsl', 'lib/text!pex/fx/Blur5V.glsl', 'pex/geom/Vec2'],
-function(FXStage, Blur5HGLSL, Blur5VGLSL, Vec2) {
-  FXStage.prototype.blur5 = function(options) {
+define('pex/fx/Blur5',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Blur5H.glsl',
+  'lib/text!pex/fx/Blur5V.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, Blur5HGLSL, Blur5VGLSL, Vec2) {
+  FXStage.prototype.blur5 = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
-
     var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var source = this.getSourceTexture();
-
     var programH = this.getShader(Blur5HGLSL);
     programH.use();
     programH.uniforms.imageSize(Vec2.create(source.width, source.height));
     rth.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
     rth.unbind();
-
     var programV = this.getShader(Blur5VGLSL);
     programV.use();
     programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
-
     return this.asFXStage(rtv, 'blur5');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Blur7H.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -3.0, 0.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -2.0, 0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x * -1.0, 0.0));\n  color += 20.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  0.0, 0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  1.0, 0.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  2.0, 0.0));\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(texel.x *  3.0, 0.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
@@ -9892,17 +9944,18 @@ define('lib/text!pex/fx/Blur7H.glsl',[],function () { return '#ifdef VERT\n\natt
 
 define('lib/text!pex/fx/Blur7V.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D image;\nuniform vec2 imageSize;\n\nvoid main() {\n  vec2 texel = vec2(1.0 / imageSize.x, 1.0 / imageSize.y);\n\n  vec4 color = vec4(0.0);\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -3.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -2.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y * -1.0));\n  color += 20.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  0.0));\n  color += 15.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  1.0));\n  color +=  6.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  2.0));\n  color +=  1.0/64.0 * texture2D(image, vTexCoord + vec2(0.0, texel.y *  3.0));\n  gl_FragColor = color;\n}\n\n#endif\n';});
 
-define('pex/fx/Blur7',['pex/fx/FXStage', 'lib/text!pex/fx/Blur7H.glsl', 'lib/text!pex/fx/Blur7V.glsl', 'pex/geom/Vec2'],
-function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
-  FXStage.prototype.blur7 = function(options) {
+define('pex/fx/Blur7',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Blur7H.glsl',
+  'lib/text!pex/fx/Blur7V.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
+  FXStage.prototype.blur7 = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
-
     var rth = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var rtv = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var source = this.getSourceTexture();
-
     var programH = this.getShader(Blur7HGLSL);
     programH.use();
     programH.uniforms.imageSize(Vec2.create(source.width, source.height));
@@ -9910,123 +9963,111 @@ function(FXStage, Blur7HGLSL, Blur7VGLSL, Vec2) {
     source.bind();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
     rth.unbind();
-
     var programV = this.getShader(Blur7VGLSL);
     programV.use();
     programV.uniforms.imageSize(Vec2.create(source.width, source.height));
     rtv.bindAndClear();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachement(0), programV);
     rtv.unbind();
-
     return this.asFXStage(rtv, 'blur7');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Add.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform sampler2D tex1;\nuniform float scale;\n\nvoid main() {\n  vec4 color = texture2D(tex0, vTexCoord).rgba;\n  vec4 color2 = texture2D(tex1, vTexCoord).rgba;\n\n  //color += scale * color2 * color2.a;\n\n  gl_FragColor = 1.0 - (1.0 - color) * (1.0 - color2 * scale);\n\n  //gl_FragColor.rgba = color + scale * color2;\n  //gl_FragColor.a = 1.0;\n}\n\n#endif';});
 
-define('pex/fx/Add',['pex/fx/FXStage', 'lib/text!pex/fx/Add.glsl'], function(FXStage, AddGLSL) {
-  FXStage.prototype.add = function(source2, options) {
+define('pex/fx/Add',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Add.glsl'
+], function (FXStage, AddGLSL) {
+  FXStage.prototype.add = function (source2, options) {
     options = options || {};
-    scale = (options.scale !== undefined) ? options.scale : 1;
-
+    scale = options.scale !== undefined ? options.scale : 1;
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
-
     rt.bind();
-
     this.getSourceTexture().bind(0);
     this.getSourceTexture(source2).bind(1);
-
     var program = this.getShader(AddGLSL);
     program.use();
-    program.uniforms.tex0( 0 );
-    program.uniforms.tex1( 1 );
-    program.uniforms.scale( scale );
+    program.uniforms.tex0(0);
+    program.uniforms.tex1(1);
+    program.uniforms.scale(scale);
     this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
-
     rt.unbind();
-
     return this.asFXStage(rt, 'add');
-  }
+  };
 });
 
 define('lib/text!pex/fx/Threshold.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform float threshold;\n\nvoid main() {\n  vec3 color = texture2D(tex0, vTexCoord).rgb;\n  float luma = dot(color, vec3(0.299, 0.587, 0.114));\n\n  color = (luma > threshold) ? color : vec3(0.0);\n\n  gl_FragColor.rgb = color;\n  gl_FragColor.a = color.r;\n}\n\n#endif';});
 
-define('pex/fx/Threshold',['pex/fx/FXStage', 'lib/text!pex/fx/Threshold.glsl'], function(FXStage, ThresholdGLSL) {
-  FXStage.prototype.threshold = function(options) {
+define('pex/fx/Threshold',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Threshold.glsl'
+], function (FXStage, ThresholdGLSL) {
+  FXStage.prototype.threshold = function (options) {
     options = options || {};
-    threshold = (options.threshold !== undefined) ? options.threshold : 0.5;
-
+    threshold = options.threshold !== undefined ? options.threshold : 0.5;
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     rt.bind();
-
     this.getSourceTexture().bind();
     var program = this.getShader(ThresholdGLSL);
     program.use();
-    program.uniforms.threshold( threshold );
+    program.uniforms.threshold(threshold);
     this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
     rt.unbind();
-
     return this.asFXStage(rt, 'threshold');
-  }
+  };
 });
-define('pex/fx/Image',['pex/fx/FXStage'], function(FXStage) {
-  FXStage.prototype.image = function(path, options) {
+define('pex/fx/Image',['pex/fx/FXStage'], function (FXStage) {
+  FXStage.prototype.image = function (path, options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
-
     rt.bind();
-
     var image = this.getImage(path);
-
     image.bind();
     this.drawFullScreenQuad(outputSize.width, outputSize.height);
-
     rt.unbind();
-
     return this.asFXStage(rt, 'image');
   };
 });
 
 define('lib/text!pex/fx/Mult.glsl',[],function () { return '#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec2 vTexCoord;\nuniform sampler2D tex0;\nuniform sampler2D tex1;\n\nvoid main() {\n  vec4 color = texture2D(tex0, vTexCoord);\n  vec4 color2 = texture2D(tex1, vTexCoord);\n\n  gl_FragColor = color * color2;\n}\n\n#endif';});
 
-define('pex/fx/Mult',['pex/fx/FXStage', 'lib/text!pex/fx/Mult.glsl'], function(FXStage, MultGLSL) {
-  FXStage.prototype.mult = function(source2, options) {
+define('pex/fx/Mult',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/Mult.glsl'
+], function (FXStage, MultGLSL) {
+  FXStage.prototype.mult = function (source2, options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
-
     rt.bind();
-
     this.getSourceTexture().bind(0);
     this.getSourceTexture(source2).bind(1);
     var program = this.getShader(MultGLSL);
     program.use();
-    program.uniforms.tex0( 0 );
-    program.uniforms.tex1( 1 );
+    program.uniforms.tex0(0);
+    program.uniforms.tex1(1);
     this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
-
     rt.unbind();
-
     return this.asFXStage(rt, 'mult');
-  }
+  };
 });
 
 define('lib/text!pex/fx/SSAO.glsl',[],function () { return '//based on http://blenderartists.org/forum/showthread.php?184102-nicer-and-faster-SSAO and http://www.pasteall.org/12299\n#ifdef VERT\n\nattribute vec2 position;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\n#define PI    3.14159265\n\nvarying vec2 vTexCoord;\n\nuniform sampler2D depthTex;\nuniform vec2 textureSize;\nuniform float near;\nuniform float far;\n\nconst int samples = 5;\nconst int rings = 3;\n\n\nvec2 rand(vec2 coord)\n{\n  float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));\n  float noiseY = (fract(sin(dot(coord, vec2(12.9898,78.233) * 2.0)) * 43758.5453));\n  return vec2(noiseX,noiseY) * 0.004;\n}\n\nfloat unpackDepth(const in vec4 rgba_depth) {\n  const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);\n  float depth = dot(rgba_depth, bit_shift);\n  return depth;\n}\n\nfloat getDepth(vec2 coord) {\n  return unpackDepth(texture2D(depthTex, coord.xy));\n}\n\nfloat readDepth(vec2 coord) {\n  return (getDepth(coord) * far - near)/(far - near);\n}\n\nfloat compareDepths( in float depth1, in float depth2 )\n{\n  float aoCap = 1.0;\n  float aoMultiplier = 100.0;\n  float depthTolerance = 0.0001;\n  float aorange = 1.0;// units in space the AO effect extends to (this gets divided by the camera far range\n  float diff = sqrt(clamp(1.0-(depth1-depth2) / (aorange/(far-near)),0.0,1.0));\n  float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;\n  return ao;\n}\n\nvoid main() {\n  vec2 texCoord = vec2(gl_FragCoord.x / textureSize.x, gl_FragCoord.y / textureSize.y);\n  float depth = readDepth(texCoord);\n\n  //gl_FragColor = vec4(depth, depth ,depth, 1.0);\n  //return;\n\n  float d;\n\n  float aspect = textureSize.x / textureSize.y;\n  vec2 noise = rand(vTexCoord);\n\n  float w = (1.0 / textureSize.x)/clamp(depth,0.05,1.0)+(noise.x*(1.0-noise.x));\n  float h = (1.0 / textureSize.y)/clamp(depth,0.05,1.0)+(noise.y*(1.0-noise.y));\n\n  float pw;\n  float ph;\n\n  float ao = 0.0;\n  float s = 0.0;\n  float fade = 1.0;\n\n  for (int i = 0 ; i < rings; i += 1)\n  {\n    fade *= 0.5;\n    for (int j = 0 ; j < samples*rings; j += 1)\n    {\n      if (j >= samples*i) break;\n      float step = PI * 2.0 / (float(samples) * float(i));\n      pw = (cos(float(j)*step) * float(i) * 0.5);\n      ph = (sin(float(j)*step) * float(i) * 0.5) * aspect;\n      d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));\n      ao += compareDepths(depth,d) * fade;\n      s += 1.0 * fade;\n    }\n  }\n\n  ao /= s;\n  ao *= 1.5;\n  ao = 1.0 - ao;\n\n  if (depth > 0.99) ao += 0.5;\n\n  vec3 black = vec3(0.0, 0.0, 0.0);\n  vec3 treshold = vec3(0.2, 0.2, 0.2);\n\n  gl_FragColor = vec4(texCoord, 0.0, 1.0);\n  //gl_FragColor = vec4(getDepth(texCoord), 0.0, 0.0, 1.0);\n  gl_FragColor = vec4(ao, ao, ao, 1.0);\n}\n\n#endif';});
 
-define('pex/fx/SSAO',['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/Vec2'], function(FXStage, SSAOGLSL, Vec2) {
-  FXStage.prototype.ssao = function(options) {
+define('pex/fx/SSAO',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/SSAO.glsl',
+  'pex/geom/Vec2'
+], function (FXStage, SSAOGLSL, Vec2) {
+  FXStage.prototype.ssao = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
-
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     var depthSource = this.getSourceTexture(options.depthSource);
-
     var program = this.getShader(SSAOGLSL);
     program.use();
     program.uniforms.textureSize(Vec2.create(depthSource.width, depthSource.height));
@@ -10037,21 +10078,21 @@ define('pex/fx/SSAO',['pex/fx/FXStage', 'lib/text!pex/fx/SSAO.glsl', 'pex/geom/V
     depthSource.bind();
     this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
     rt.unbind();
-
     return this.asFXStage(rt, 'ssao');
   };
 });
 
 define('lib/text!pex/fx/FXAA.glsl',[],function () { return '#ifdef VERT\n\nfloat FXAA_SUBPIX_SHIFT = 1.0/4.0;\n\nuniform float rtWidth;\nuniform float rtHeight;\nattribute vec2 position;\nattribute vec2 texCoord;\nvarying vec4 posPos;\n\nvoid main() {\n  gl_Position = vec4(position, 0.0, 1.0);\n\n  vec2 rcpFrame = vec2(1.0/rtWidth, 1.0/rtHeight);\n  posPos.xy = texCoord.xy;\n  posPos.zw = texCoord.xy - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));\n}\n\n#endif\n\n#ifdef FRAG\n\n#define FXAA_REDUCE_MIN   (1.0/ 128.0)\n#define FXAA_REDUCE_MUL   (1.0 / 8.0)\n#define FXAA_SPAN_MAX     8.0\n\nuniform sampler2D tex0;\nvarying vec4 posPos;\nuniform float rtWidth;\nuniform float rtHeight;\n\n\nvec4 applyFXAA(vec2 fragCoord, sampler2D tex)\n{\n    vec4 color;\n    vec2 inverseVP = vec2(1.0 / rtWidth, 1.0 / rtHeight);\n    vec3 rgbNW = texture2D(tex, (fragCoord + vec2(-1.0, -1.0)) * inverseVP).xyz;\n    vec3 rgbNE = texture2D(tex, (fragCoord + vec2(1.0, -1.0)) * inverseVP).xyz;\n    vec3 rgbSW = texture2D(tex, (fragCoord + vec2(-1.0, 1.0)) * inverseVP).xyz;\n    vec3 rgbSE = texture2D(tex, (fragCoord + vec2(1.0, 1.0)) * inverseVP).xyz;\n    vec3 rgbM  = texture2D(tex, fragCoord  * inverseVP).xyz;\n    vec3 luma = vec3(0.299, 0.587, 0.114);\n    float lumaNW = dot(rgbNW, luma);\n    float lumaNE = dot(rgbNE, luma);\n    float lumaSW = dot(rgbSW, luma);\n    float lumaSE = dot(rgbSE, luma);\n    float lumaM  = dot(rgbM,  luma);\n    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n\n    //return texture2D(tex, fragCoord);\n    //return vec4(fragCoord, 0.0, 1.0);\n    //return vec4(rgbM, 1.0);\n\n    vec2 dir;\n    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));\n    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));\n\n    float dirReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) *\n                          (0.25 * FXAA_REDUCE_MUL), FXAA_REDUCE_MIN);\n\n    float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n    dir = min(vec2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),\n              max(vec2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n              dir * rcpDirMin)) * inverseVP;\n\n    vec3 rgbA = 0.5 * (\n        texture2D(tex, fragCoord * inverseVP + dir * (1.0 / 3.0 - 0.5)).xyz +\n        texture2D(tex, fragCoord * inverseVP + dir * (2.0 / 3.0 - 0.5)).xyz);\n    vec3 rgbB = rgbA * 0.5 + 0.25 * (\n        texture2D(tex, fragCoord * inverseVP + dir * -0.5).xyz +\n        texture2D(tex, fragCoord * inverseVP + dir * 0.5).xyz);\n\n    float lumaB = dot(rgbB, luma);\n    if ((lumaB < lumaMin) || (lumaB > lumaMax))\n        color = vec4(rgbA, 1.0);\n    else\n        color = vec4(rgbB, 1.0);\n    return color;\n}\n\nvoid main() {\n  gl_FragColor = applyFXAA(posPos.xy * vec2(rtWidth, rtHeight), tex0);\n}\n\n//#version 120\n/*\nuniform sampler2D tex0;\nvarying vec4 posPos;\nuniform float rtWidth;\nuniform float rtHeight;\nfloat FXAA_SPAN_MAX = 8.0;\nfloat FXAA_REDUCE_MUL = 1.0/8.0;\n\n#define FxaaInt2 ivec2\n#define FxaaFloat2 vec2\n#define FxaaTexLod0(t, p) texture2DLod(t, p, 0.0)\n#define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)\n\nvec3 FxaaPixelShader(\n  vec4 posPos, // Output of FxaaVertexShader interpolated across screen.\n  sampler2D tex, // Input texture.\n  vec2 rcpFrame) // Constant {1.0/frameWidth, 1.0/frameHeight}.\n{\n//---------------------------------------------------------\n    #define FXAA_REDUCE_MIN   (1.0/128.0)\n    //#define FXAA_REDUCE_MUL   (1.0/8.0)\n    //#define FXAA_SPAN_MAX     8.0\n//---------------------------------------------------------\n    vec3 rgbNW = FxaaTexLod0(tex, posPos.zw).xyz;\n    vec3 rgbNE = FxaaTexOff(tex, posPos.zw, FxaaInt2(1,0), rcpFrame.xy).xyz;\n    vec3 rgbSW = FxaaTexOff(tex, posPos.zw, FxaaInt2(0,1), rcpFrame.xy).xyz;\n    vec3 rgbSE = FxaaTexOff(tex, posPos.zw, FxaaInt2(1,1), rcpFrame.xy).xyz;\n    vec3 rgbM  = FxaaTexLod0(tex, posPos.xy).xyz;\n//---------------------------------------------------------\n    vec3 luma = vec3(0.299, 0.587, 0.114);\n    float lumaNW = dot(rgbNW, luma);\n    float lumaNE = dot(rgbNE, luma);\n    float lumaSW = dot(rgbSW, luma);\n    float lumaSE = dot(rgbSE, luma);\n    float lumaM  = dot(rgbM,  luma);\n/*---------------------------------------------------------\n    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));\n    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));\n/*---------------------------------------------------------\n    vec2 dir;\n    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));\n    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));\n/*---------------------------------------------------------\n    float dirReduce = max(\n        (lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),\n        FXAA_REDUCE_MIN);\n    float rcpDirMin = 1.0/(min(abs(dir.x), abs(dir.y)) + dirReduce);\n    dir = min(FxaaFloat2( FXAA_SPAN_MAX,  FXAA_SPAN_MAX),\n          max(FxaaFloat2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),\n          dir * rcpDirMin)) * rcpFrame.xy;\n/*--------------------------------------------------------\n    vec3 rgbA = (1.0/2.0) * (\n        FxaaTexLod0(tex, posPos.xy + dir * (1.0/3.0 - 0.5)).xyz +\n        FxaaTexLod0(tex, posPos.xy + dir * (2.0/3.0 - 0.5)).xyz);\n    vec3 rgbB = rgbA * (1.0/2.0) + (1.0/4.0) * (\n        FxaaTexLod0(tex, posPos.xy + dir * (0.0/3.0 - 0.5)).xyz +\n        FxaaTexLod0(tex, posPos.xy + dir * (3.0/3.0 - 0.5)).xyz);\n    float lumaB = dot(rgbB, luma);\n    if((lumaB < lumaMin) || (lumaB > lumaMax)) return rgbA;\n    return rgbB; }\n\nvec4 PostFX(sampler2D tex, vec2 uv, float time)\n{\n  vec4 c = vec4(0.0);\n  vec2 rcpFrame = vec2(1.0/rt_w, 1.0/rt_h);\n  c.rgb = FxaaPixelShader(posPos, tex, rcpFrame);\n  //c.rgb = 1.0 - texture2D(tex, posPos.xy).rgb;\n  c.a = 1.0;\n  return c;\n}\n\nvoid main()\n{\n  vec2 uv = posPos.xy;\n  gl_FragColor = PostFX(tex0, uv, 0.0);\n}\n\n*/\n\n#endif';});
 
-define('pex/fx/FXAA',['pex/fx/FXStage', 'lib/text!pex/fx/FXAA.glsl'], function(FXStage, FXAAGLSL) {
-  FXStage.prototype.fxaa = function(options) {
+define('pex/fx/FXAA',[
+  'pex/fx/FXStage',
+  'lib/text!pex/fx/FXAA.glsl'
+], function (FXStage, FXAAGLSL) {
+  FXStage.prototype.fxaa = function (options) {
     options = options || {};
-
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
     rt.bind();
-
     var source = this.getSourceTexture();
     source.bind();
     var program = this.getShader(FXAAGLSL);
@@ -10060,80 +10101,72 @@ define('pex/fx/FXAA',['pex/fx/FXStage', 'lib/text!pex/fx/FXAA.glsl'], function(F
     program.uniforms.rtHeight(source.height);
     this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
     rt.unbind();
-
     return this.asFXStage(rt, 'fxaa');
-  }
+  };
 });
-define(
-  'pex/fx',[
-    'pex/fx/FXStage',
-    'pex/fx/Render',
-    'pex/fx/Blit',
-    'pex/fx/Downsample2',
-    'pex/fx/Downsample4',
-    'pex/fx/Blur3',
-    'pex/fx/Blur5',
-    'pex/fx/Blur7',
-    'pex/fx/Add',
-    'pex/fx/Threshold',
-    'pex/fx/Image',
-    'pex/fx/Mult',
-    'pex/fx/SSAO',
-    'pex/fx/FXAA'
-  ],
-  function(FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO, FXAO) {
-    var globalFx;
-    return function() {
-      if (!globalFx) {
-        globalFx = new FXStage();
-      }
-      globalFx.reset();
-      return globalFx;
+define('pex/fx',[
+  'pex/fx/FXStage',
+  'pex/fx/Render',
+  'pex/fx/Blit',
+  'pex/fx/Downsample2',
+  'pex/fx/Downsample4',
+  'pex/fx/Blur3',
+  'pex/fx/Blur5',
+  'pex/fx/Blur7',
+  'pex/fx/Add',
+  'pex/fx/Threshold',
+  'pex/fx/Image',
+  'pex/fx/Mult',
+  'pex/fx/SSAO',
+  'pex/fx/FXAA'
+], function (FXStage, Render, Blit, Downsample2, Downsample4, Blur3, Blur5, Blur7, Add, Threshold, Image, Mult, SSAO, FXAO) {
+  var globalFx;
+  return function () {
+    if (!globalFx) {
+      globalFx = new FXStage();
     }
-  }
-);
-
-  define('pex/gui/SkiaRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
-  var plask = Node.plask
+    globalFx.reset();
+    return globalFx;
+  };
+});
+define('pex/gui/SkiaRenderer',[
+  'pex/sys/Node',
+  'pex/gl/Context',
+  'pex/gl/Texture2D'
+], function (Node, Context, Texture2D) {
+  var plask = Node.plask;
   function SkiaRenderer(width, height) {
     this.gl = Context.currentContext.gl;
     this.tex = Texture2D.create(width, height);
     this.canvas = new plask.SkCanvas.create(width, height);
-
     this.fontPaint = new plask.SkPaint();
     this.fontPaint.setStyle(plask.SkPaint.kFillStyle);
     this.fontPaint.setColor(255, 255, 255, 255);
     this.fontPaint.setTextSize(10);
     this.fontPaint.setFontFamily('Monaco');
     this.fontPaint.setStrokeWidth(0);
-
     this.fontHighlightPaint = new plask.SkPaint();
     this.fontHighlightPaint.setStyle(plask.SkPaint.kFillStyle);
     this.fontHighlightPaint.setColor(100, 100, 100, 255);
     this.fontHighlightPaint.setTextSize(10);
     this.fontHighlightPaint.setFontFamily('Monaco');
     this.fontHighlightPaint.setStrokeWidth(0);
-
     this.panelBgPaint = new plask.SkPaint();
     this.panelBgPaint.setStyle(plask.SkPaint.kFillStyle);
     this.panelBgPaint.setColor(0, 0, 0, 150);
-
     this.controlBgPaint = new plask.SkPaint();
     this.controlBgPaint.setStyle(plask.SkPaint.kFillStyle);
     this.controlBgPaint.setColor(150, 150, 150, 255);
-
     this.controlHighlightPaint = new plask.SkPaint();
     this.controlHighlightPaint.setStyle(plask.SkPaint.kFillStyle);
     this.controlHighlightPaint.setColor(255, 255, 0, 255);
-
     this.controlFeaturePaint = new plask.SkPaint();
     this.controlFeaturePaint.setStyle(plask.SkPaint.kFillStyle);
     this.controlFeaturePaint.setColor(255, 255, 255, 255);
   }
-
-  SkiaRenderer.prototype.isAnyItemDirty = function(items) {
+  SkiaRenderer.prototype.isAnyItemDirty = function (items) {
     var dirty = false;
-    items.forEach(function(item) {
+    items.forEach(function (item) {
       if (item.dirty) {
         item.dirty = false;
         dirty = true;
@@ -10141,52 +10174,48 @@ define(
     });
     return dirty;
   };
-
-  SkiaRenderer.prototype.draw = function(items, scale) {
+  SkiaRenderer.prototype.draw = function (items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
-
     var canvas = this.canvas;
-
-    canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode); //transparent
-
+    canvas.drawColor(0, 0, 0, 0, plask.SkPaint.kClearMode);
+    //transparent
     var dy = 10;
     var dx = 10;
     var w = 160;
-    for(var i=0; i<items.length; i++) {
+    for (var i = 0; i < items.length; i++) {
       var e = items[i];
-
       if (e.px && e.px) {
         dx = e.px;
         dy = e.py;
       }
       var eh = 20 * scale;
-
-      if (e.type == "slider") eh = 20 * scale + 14;
-      if (e.type == "multislider") eh = 18 + e.getValue().length * 20 * scale;
-      if (e.type == "button") eh = 24 * scale;
-      if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
-
+      if (e.type == 'slider')
+        eh = 20 * scale + 14;
+      if (e.type == 'multislider')
+        eh = 18 + e.getValue().length * 20 * scale;
+      if (e.type == 'button')
+        eh = 24 * scale;
+      if (e.type == 'texture2D')
+        eh = 24 + e.texture.height * w / e.texture.width;
+      if (e.type == 'radiolist')
+        eh = 18 + e.items.length * 20 * scale;
       canvas.drawRect(this.panelBgPaint, dx, dy, dx + w, dy + eh - 2);
-
-      if (e.type == "slider") {
+      if (e.type == 'slider') {
         var value = e.getValue();
         canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18, dx + w - 3, dy + eh - 5);
-        canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6)*e.getNormalizedValue(), dy + eh - 5);
+        canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18, dx + 3 + (w - 6) * e.getNormalizedValue(), dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
-      }
-      else if (e.type == "multislider") {
-        for(var j=0; j<e.getValue().length; j++) {
-          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + (j)*20*scale, dx + w - 3, dy + 18 + (j+1)*20*scale - 6);
-          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + (j)*20*scale, dx + 3 + (w - 6)*e.getNormalizedValue(j), dy + 18 + (j+1)*20*scale - 6);
+        canvas.drawText(this.fontPaint, items[i].title + ' : ' + e.getStrValue(), dx + 3, dy + 13);
+      } else if (e.type == 'multislider') {
+        for (var j = 0; j < e.getValue().length; j++) {
+          canvas.drawRect(this.controlBgPaint, dx + 3, dy + 18 + j * 20 * scale, dx + w - 3, dy + 18 + (j + 1) * 20 * scale - 6);
+          canvas.drawRect(this.controlHighlightPaint, dx + 3, dy + 18 + j * 20 * scale, dx + 3 + (w - 6) * e.getNormalizedValue(j), dy + 18 + (j + 1) * 20 * scale - 6);
         }
-        canvas.drawText(this.fontPaint, items[i].title + " : " + e.getStrValue(), dx + 3, dy + 13);
+        canvas.drawText(this.fontPaint, items[i].title + ' : ' + e.getStrValue(), dx + 3, dy + 13);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-      }
-      else if (e.type == "button") {
+      } else if (e.type == 'button') {
         var btnColor = e.active ? this.controlHighlightPaint : this.controlBgPaint;
         var btnFont = e.active ? this.fontHighlightPaint : this.fontPaint;
         canvas.drawRect(btnColor, dx + 3, dy + 3, dx + w - 3, dy + eh - 5);
@@ -10194,74 +10223,67 @@ define(
         if (e.options.color) {
           var c = e.options.color;
           this.controlFeaturePaint.setColor(255 * c.x, 255 * c.y, 255 * c.z, 255);
-          canvas.drawRect(this.controlFeaturePaint,  dx + w - 8, dy + 3, dx + w - 3, dy + eh - 5);
+          canvas.drawRect(this.controlFeaturePaint, dx + w - 8, dy + 3, dx + w - 3, dy + eh - 5);
         }
         canvas.drawText(btnFont, items[i].title, dx + 5, dy + 15);
-      }
-      else if (e.type == "toggle") {
+      } else if (e.type == 'toggle') {
         var on = e.contextObject[e.attributeName];
         var toggleColor = on ? this.controlHighlightPaint : this.controlBgPaint;
         canvas.drawRect(toggleColor, dx + 3, dy + 3, dx + eh - 5, dy + eh - 5);
         e.activeArea.set(dx + 3, dy + 3, eh - 5, eh - 5);
         canvas.drawText(this.fontPaint, items[i].title, dx + 5 + eh - 5, dy + 13);
-      }
-      else if (e.type == "radiolist") {
+      } else if (e.type == 'radiolist') {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         var itemColor = this.controlBgPaint;
         var itemHeight = 20 * scale;
-        for(var j=0; j<e.items.length; j++) {
+        for (var j = 0; j < e.items.length; j++) {
           var item = e.items[j];
-          var on = (e.contextObject[e.attributeName] == item.value);
+          var on = e.contextObject[e.attributeName] == item.value;
           var itemColor = on ? this.controlHighlightPaint : this.controlBgPaint;
-          canvas.drawRect(itemColor, dx + 3, 18 + j*itemHeight + dy + 3, dx + itemHeight - 5, itemHeight + j*itemHeight + dy + 18 - 5);
-          canvas.drawText(this.fontPaint, item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
+          canvas.drawRect(itemColor, dx + 3, 18 + j * itemHeight + dy + 3, dx + itemHeight - 5, itemHeight + j * itemHeight + dy + 18 - 5);
+          canvas.drawText(this.fontPaint, item.name, dx + 5 + itemHeight - 5, 18 + j * itemHeight + dy + 13);
         }
         e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
-      }
-      else if (e.type == "texture2D") {
+      } else if (e.type == 'texture2D') {
         canvas.drawText(this.fontPaint, e.title, dx + 3, dy + 13);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-      }
-      else {
+      } else {
         canvas.drawText(this.fontPaint, items[i].title, dx + 3, dy + 13);
       }
       dy += eh;
     }
-
     this.updateTexture();
-  }
-
-  SkiaRenderer.prototype.getTexture = function() {
+  };
+  SkiaRenderer.prototype.getTexture = function () {
     return this.tex;
-  }
-
-  SkiaRenderer.prototype.updateTexture = function() {
+  };
+  SkiaRenderer.prototype.updateTexture = function () {
     var gl = this.gl;
     this.tex.bind();
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.bindTexture(gl.TEXTURE_2D, null);
-  }
-
-
+  };
   return SkiaRenderer;
 });
-
-define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
+define('pex/gui/HTMLCanvasRenderer',[
+  'pex/sys/Node',
+  'pex/gl/Context',
+  'pex/gl/Texture2D'
+], function (Node, Context, Texture2D) {
   function HTMLCanvasRenderer(width, height) {
     this.gl = Context.currentContext.gl;
-    this.canvas = document.createElement("canvas");
+    this.canvas = document.createElement('canvas');
     this.tex = Texture2D.create(width, height);
     this.canvas.width = width;
     this.canvas.height = height;
-    this.ctx = this.canvas.getContext("2d");
+    this.ctx = this.canvas.getContext('2d');
     this.dirty = true;
   }
-
-  HTMLCanvasRenderer.prototype.isAnyItemDirty = function(items) {
+  HTMLCanvasRenderer.prototype.isAnyItemDirty = function (items) {
     var dirty = false;
-    items.forEach(function(item) {
+    items.forEach(function (item) {
       if (item.dirty) {
         item.dirty = false;
         dirty = true;
@@ -10269,107 +10291,88 @@ define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/T
     });
     return dirty;
   };
-
-  HTMLCanvasRenderer.prototype.draw = function(items, scale) {
+  HTMLCanvasRenderer.prototype.draw = function (items, scale) {
     if (!this.isAnyItemDirty(items)) {
       return;
     }
-
     var ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    ctx.font = "10px Monaco";
-
+    ctx.font = '10px Monaco';
     var dy = 10;
     var dx = 10;
     var w = 160;
-    for(var i=0; i<items.length; i++) {
+    for (var i = 0; i < items.length; i++) {
       var e = items[i];
-
       if (e.px && e.px) {
         dx = e.px;
         dy = e.py;
       }
       var eh = 20 * scale;
-
-      if (e.type == "slider") eh = 20 * scale + 14;
-      if (e.type == "button") eh = 24 * scale;
-      if (e.type == "texture2D") eh = 24 + e.texture.height * w / e.texture.width;
-      if (e.type == "radiolist") eh = 18 + e.items.length * 20 * scale;
-
-      ctx.fillStyle = "rgba(0, 0, 0, 0.56)";
+      if (e.type == 'slider')
+        eh = 20 * scale + 14;
+      if (e.type == 'button')
+        eh = 24 * scale;
+      if (e.type == 'texture2D')
+        eh = 24 + e.texture.height * w / e.texture.width;
+      if (e.type == 'radiolist')
+        eh = 18 + e.items.length * 20 * scale;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.56)';
       ctx.fillRect(dx, dy, w, eh - 2);
-
-      if (e.type == "slider") {
-        ctx.fillStyle = "rgba(150, 150, 150, 1)";
+      if (e.type == 'slider') {
+        ctx.fillStyle = 'rgba(150, 150, 150, 1)';
         ctx.fillRect(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-
-        ctx.fillStyle = "rgba(255, 255, 0, 1)";
-        ctx.fillRect(dx + 3, dy + 18, (w - 3 - 3)*e.getNormalizedValue(), eh - 5 - 18);
-
+        ctx.fillStyle = 'rgba(255, 255, 0, 1)';
+        ctx.fillRect(dx + 3, dy + 18, (w - 3 - 3) * e.getNormalizedValue(), eh - 5 - 18);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillText(items[i].title + " : " + e.getStrValue(), dx + 5, dy + 13);
-      }
-      else if (e.type == "button"){
-        ctx.fillStyle = e.active ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.fillText(items[i].title + ' : ' + e.getStrValue(), dx + 5, dy + 13);
+      } else if (e.type == 'button') {
+        ctx.fillStyle = e.active ? 'rgba(255, 255, 0, 1)' : 'rgba(150, 150, 150, 1)';
         ctx.fillRect(dx + 3, dy + 3, w - 3 - 3, eh - 5 - 3);
-
         e.activeArea.set(dx + 3, dy + 3, w - 3 - 3, eh - 5 - 3);
-
-        ctx.fillStyle = e.active ? "rgba(100, 100, 100, 1)" : "rgba(255, 255, 255, 1)";
+        ctx.fillStyle = e.active ? 'rgba(100, 100, 100, 1)' : 'rgba(255, 255, 255, 1)';
         ctx.fillText(items[i].title, dx + 5, dy + 15);
-         if (e.options.color) {
+        if (e.options.color) {
           var c = e.options.color;
-          ctx.fillStyle = "rgba("+(c.x * 255)+", "+(c.y * 255)+", "+(c.z * 255)+", 1)";
+          ctx.fillStyle = 'rgba(' + c.x * 255 + ', ' + c.y * 255 + ', ' + c.z * 255 + ', 1)';
           ctx.fillRect(dx + w - 8, dy + 3, 5, eh - 5 - 3);
         }
-      }
-      else if (e.type == "toggle"){
+      } else if (e.type == 'toggle') {
         var on = e.contextObject[e.attributeName];
-
-        ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
+        ctx.fillStyle = on ? 'rgba(255, 255, 0, 1)' : 'rgba(150, 150, 150, 1)';
         ctx.fillRect(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
         e.activeArea.set(dx + 3, dy + 3, eh - 5 - 3, eh - 5 - 3);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.fillText(items[i].title, dx + 5 + eh - 5, dy + 12);
-      }
-      else if (e.type == "radiolist") {
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+      } else if (e.type == 'radiolist') {
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.fillText(e.title, dx + 5, dy + 13);
         var itemHeight = 20 * scale;
-        for(var j=0; j<e.items.length; j++) {
+        for (var j = 0; j < e.items.length; j++) {
           var item = e.items[j];
-          var on = (e.contextObject[e.attributeName] == item.value);
-          ctx.fillStyle = on ? "rgba(255, 255, 0, 1)" : "rgba(150, 150, 150, 1)";
-          ctx.fillRect(dx + 3, 18 + j*itemHeight + dy + 3, itemHeight - 5 - 3, itemHeight - 5 - 3);
-          ctx.fillStyle = "rgba(255, 255, 255, 1)";
-          ctx.fillText(item.name, dx + 5 + itemHeight - 5, 18 + j*itemHeight + dy + 13);
+          var on = e.contextObject[e.attributeName] == item.value;
+          ctx.fillStyle = on ? 'rgba(255, 255, 0, 1)' : 'rgba(150, 150, 150, 1)';
+          ctx.fillRect(dx + 3, 18 + j * itemHeight + dy + 3, itemHeight - 5 - 3, itemHeight - 5 - 3);
+          ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+          ctx.fillText(item.name, dx + 5 + itemHeight - 5, 18 + j * itemHeight + dy + 13);
         }
         e.activeArea.set(dx + 3, 18 + dy + 3, itemHeight - 5, e.items.length * itemHeight - 5);
-      }
-      else if (e.type == "texture2D") {
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+      } else if (e.type == 'texture2D') {
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.fillText(items[i].title, dx + 5, dy + 15);
         e.activeArea.set(dx + 3, dy + 18, w - 3 - 3, eh - 5 - 18);
-      }
-      else {
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+      } else {
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.fillText(items[i].title, dx + 5, dy + 13);
       }
-
       dy += eh;
     }
-
     this.updateTexture();
-  }
-
-  HTMLCanvasRenderer.prototype.getTexture = function() {
+  };
+  HTMLCanvasRenderer.prototype.getTexture = function () {
     return this.tex;
-  }
-
-  HTMLCanvasRenderer.prototype.updateTexture = function() {
+  };
+  HTMLCanvasRenderer.prototype.updateTexture = function () {
     var gl = this.gl;
     this.tex.bind();
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -10379,12 +10382,9 @@ define('pex/gui/HTMLCanvasRenderer',['pex/sys/Node', 'pex/gl/Context', 'pex/gl/T
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.bindTexture(gl.TEXTURE_2D, null);
-  }
-
-
+  };
   return HTMLCanvasRenderer;
 });
-
 define('pex/gui/GUI',[
   'pex/gl/Context',
   'pex/gl/ScreenImage',
@@ -10396,39 +10396,33 @@ define('pex/gui/GUI',[
   'pex/sys/Platform',
   'pex/geom/Vec2',
   'pex/gl/Texture2D'
-],
-function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2, Texture2D) {
+], function (Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO, Platform, Vec2, Texture2D) {
   function GUIControl(o) {
-    for(var i in o) {
+    for (var i in o) {
       this[i] = o[i];
     }
   }
-
-  GUIControl.prototype.setPosition = function(x, y) {
+  GUIControl.prototype.setPosition = function (x, y) {
     this.px = x;
     this.py = y;
-  }
-
-  GUIControl.prototype.getNormalizedValue = function(idx) {
-    if (!this.contextObject) return 0;
-
+  };
+  GUIControl.prototype.getNormalizedValue = function (idx) {
+    if (!this.contextObject)
+      return 0;
     var val = this.contextObject[this.attributeName];
-
     var options = this.options;
     if (options && options.min !== undefined && options.max !== undefined) {
       if (this.type == 'multislider') {
         val = (val[idx] - options.min) / (options.max - options.min);
-      }
-      else {
+      } else {
         val = (val - options.min) / (options.max - options.min);
       }
     }
     return val;
-  }
-
-  GUIControl.prototype.setNormalizedValue = function(val, idx) {
-    if (!this.contextObject) return;
-
+  };
+  GUIControl.prototype.setNormalizedValue = function (val, idx) {
+    if (!this.contextObject)
+      return;
     var options = this.options;
     if (options && options.min !== undefined && options.max !== undefined) {
       if (this.type == 'multislider') {
@@ -10438,8 +10432,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
         }
         a[idx] = options.min + val * (options.max - options.min);
         val = a;
-      }
-      else {
+      } else {
         val = options.min + val * (options.max - options.min);
       }
       if (options && options.step) {
@@ -10447,96 +10440,84 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       }
     }
     this.contextObject[this.attributeName] = val;
-  }
-
-  GUIControl.prototype.getValue = function() {
+  };
+  GUIControl.prototype.getValue = function () {
     if (this.type == 'slider') {
       return this.contextObject[this.attributeName];
     }
     if (this.type == 'multislider') {
       return this.contextObject[this.attributeName];
-    }
-    else if (this.type == 'toggle') {
+    } else if (this.type == 'toggle') {
       return this.contextObject[this.attributeName];
-    }
-    else return 0;
-  }
-
-  GUIControl.prototype.getStrValue = function() {
+    } else
+      return 0;
+  };
+  GUIControl.prototype.getStrValue = function () {
     if (this.type == 'slider') {
       var str = '' + this.contextObject[this.attributeName];
       var dotPos = str.indexOf('.') + 1;
-      if (dotPos == 0) return str + '.0';
-      while(str.charAt(dotPos) == '0') {
+      if (dotPos === 0)
+        return str + '.0';
+      while (str.charAt(dotPos) == '0') {
         dotPos++;
       }
-      return str.substr(0, dotPos+2);
-    }
-    else if (this.type == 'toggle') {
+      return str.substr(0, dotPos + 2);
+    } else if (this.type == 'toggle') {
       return this.contextObject[this.attributeName];
-    }
-    else return '';
-  }
-
+    } else
+      return '';
+  };
   function GUI(window, x, y, scale) {
     this.gl = Context.currentContext.gl;
     this.window = window;
-    this.x = (x == undefined) ? 0 : x;
-    this.y = (y == undefined) ? 0 : y;
+    this.x = x === undefined ? 0 : x;
+    this.y = y === undefined ? 0 : y;
     this.mousePos = Vec2.create();
     this.scale = scale || 1;
-
     if (Platform.isPlask) {
       this.renderer = new SkiaRenderer(window.width, window.height);
-    }
-    else if (Platform.isBrowser) {
+    } else if (Platform.isBrowser) {
       this.renderer = new HTMLCanvasRenderer(window.width, window.height);
     }
-    this.screenBounds = new Rect(this.x, this.y, window.width*this.scale, window.height*this.scale);
+    this.screenBounds = new Rect(this.x, this.y, window.width * this.scale, window.height * this.scale);
     this.screenImage = new ScreenImage(this.renderer.getTexture(), this.x, this.y, window.width, window.height, window.width, window.height);
-
     this.items = [];
-
     this.bindEventListeners(window);
   }
-
-  GUI.prototype.bindEventListeners = function(window) {
+  GUI.prototype.bindEventListeners = function (window) {
     var self = this;
-    window.on('leftMouseDown', function(e) {
+    window.on('leftMouseDown', function (e) {
       self.onMouseDown(e);
     });
-
-    window.on('mouseDragged', function(e) {
+    window.on('mouseDragged', function (e) {
       self.onMouseDrag(e);
     });
-
-    window.on('leftMouseUp', function(e) {
+    window.on('leftMouseUp', function (e) {
       self.onMouseUp(e);
     });
-  }
-
-  GUI.prototype.onMouseDown = function(e) {
+  };
+  GUI.prototype.onMouseDown = function (e) {
     this.activeControl = null;
-    this.mousePos.set(e.x/this.scale - this.x, e.y/this.scale - this.y);
-    for(var i=0; i<this.items.length; i++) {
+    this.mousePos.set(e.x / this.scale - this.x, e.y / this.scale - this.y);
+    for (var i = 0; i < this.items.length; i++) {
       if (this.items[i].activeArea.contains(this.mousePos)) {
         this.activeControl = this.items[i];
         this.activeControl.active = true;
         this.activeControl.dirty = true;
         if (this.activeControl.type == 'button') {
           this.activeControl.contextObject[this.activeControl.methodName]();
-        }
-        else if (this.activeControl.type == 'toggle') {
+        } else if (this.activeControl.type == 'toggle') {
           this.activeControl.contextObject[this.activeControl.attributeName] = !this.activeControl.contextObject[this.activeControl.attributeName];
           if (this.activeControl.onchange) {
             this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
           }
-        }
-        else if (this.activeControl.type == 'radiolist') {
+        } else if (this.activeControl.type == 'radiolist') {
           var hitY = this.mousePos.y - this.activeControl.activeArea.y;
-          var hitItemIndex = Math.floor(this.activeControl.items.length * hitY/this.activeControl.activeArea.height);
-          if (hitItemIndex < 0) continue;
-          if (hitItemIndex >= this.activeControl.items.length) continue;
+          var hitItemIndex = Math.floor(this.activeControl.items.length * hitY / this.activeControl.activeArea.height);
+          if (hitItemIndex < 0)
+            continue;
+          if (hitItemIndex >= this.activeControl.items.length)
+            continue;
           this.activeControl.contextObject[this.activeControl.attributeName] = this.activeControl.items[hitItemIndex].value;
           if (this.activeControl.onchange) {
             this.activeControl.onchange(this.activeControl.items[hitItemIndex].value);
@@ -10547,24 +10528,22 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
         break;
       }
     }
-  }
-
-  GUI.prototype.onMouseDrag = function(e) {
+  };
+  GUI.prototype.onMouseDrag = function (e) {
     if (this.activeControl) {
       var aa = this.activeControl.activeArea;
       if (this.activeControl.type == 'slider') {
-        var val = (e.x/this.scale - aa.x) / aa.width;
+        var val = (e.x / this.scale - aa.x) / aa.width;
         val = Math.max(0, Math.min(val, 1));
         this.activeControl.setNormalizedValue(val);
         if (this.activeControl.onchange) {
           this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
         }
         this.activeControl.dirty = true;
-      }
-      else if (this.activeControl.type == 'multislider') {
-        var val = (e.x/this.scale - aa.x) / aa.width;
+      } else if (this.activeControl.type == 'multislider') {
+        var val = (e.x / this.scale - aa.x) / aa.width;
         val = Math.max(0, Math.min(val, 1));
-        var idx = Math.floor(this.activeControl.getValue().length * (e.y/this.scale - aa.y) / aa.height);
+        var idx = Math.floor(this.activeControl.getValue().length * (e.y / this.scale - aa.y) / aa.height);
         this.activeControl.setNormalizedValue(val, idx);
         if (this.activeControl.onchange) {
           this.activeControl.onchange(this.activeControl.contextObject[this.activeControl.attributeName]);
@@ -10573,130 +10552,114 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       }
       e.handled = true;
     }
-  }
-
-  GUI.prototype.onMouseUp = function(e) {
+  };
+  GUI.prototype.onMouseUp = function (e) {
     if (this.activeControl) {
       this.activeControl.active = false;
       this.activeControl.dirty = true;
       this.activeControl = null;
     }
-  }
-
-  GUI.prototype.addLabel = function(title) {
-    var ctrl = new GUIControl(
-      { type: 'label', title: title, dirty : true,activeArea: new Rect(0, 0, 0, 0), setTitle: function(title) { this.title = title; this.dirty = true; } }
-    );
+  };
+  GUI.prototype.addLabel = function (title) {
+    var ctrl = new GUIControl({
+        type: 'label',
+        title: title,
+        dirty: true,
+        activeArea: new Rect(0, 0, 0, 0),
+        setTitle: function (title) {
+          this.title = title;
+          this.dirty = true;
+        }
+      });
     this.items.push(ctrl);
     return ctrl;
-  }
-
-  GUI.prototype.addParam = function(title, contextObject, attributeName, options, onchange) {
+  };
+  GUI.prototype.addParam = function (title, contextObject, attributeName, options, onchange) {
     options = options || {};
     if (contextObject[attributeName] instanceof Array) {
-      var ctrl = new GUIControl(
-        {
+      var ctrl = new GUIControl({
           type: 'multislider',
           title: title,
           contextObject: contextObject,
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange,
-          dirty : true
-        }
-      );
+          onchange: onchange,
+          dirty: true
+        });
       this.items.push(ctrl);
       return ctrl;
-    }
-    else if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
-      var ctrl = new GUIControl(
-        {
+    } else if (contextObject[attributeName] === false || contextObject[attributeName] === true) {
+      var ctrl = new GUIControl({
           type: 'toggle',
           title: title,
           contextObject: contextObject,
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange,
-          dirty : true
-        }
-      );
+          onchange: onchange,
+          dirty: true
+        });
       this.items.push(ctrl);
       return ctrl;
-    }
-    else {
-      var ctrl = new GUIControl(
-        {
+    } else {
+      var ctrl = new GUIControl({
           type: 'slider',
           title: title,
           contextObject: contextObject,
           attributeName: attributeName,
           activeArea: new Rect(0, 0, 0, 0),
           options: options,
-          onchange : onchange,
-          dirty : true
-        }
-      );
+          onchange: onchange,
+          dirty: true
+        });
       this.items.push(ctrl);
       return ctrl;
     }
-  }
-
-  GUI.prototype.addButton = function(title, contextObject, methodName, options) {
-    var ctrl = new GUIControl(
-      {
+  };
+  GUI.prototype.addButton = function (title, contextObject, methodName, options) {
+    var ctrl = new GUIControl({
         type: 'button',
         title: title,
         contextObject: contextObject,
         methodName: methodName,
         activeArea: new Rect(0, 0, 0, 0),
-        dirty : true,
-        options : options || {}
-      }
-    );
+        dirty: true,
+        options: options || {}
+      });
     this.items.push(ctrl);
     return ctrl;
-  }
-
-  GUI.prototype.addRadioList = function(title, contextObject, attributeName, items, onchange) {
-    var ctrl = new GUIControl(
-      {
+  };
+  GUI.prototype.addRadioList = function (title, contextObject, attributeName, items, onchange) {
+    var ctrl = new GUIControl({
         type: 'radiolist',
         title: title,
         contextObject: contextObject,
         attributeName: attributeName,
         activeArea: new Rect(0, 0, 0, 0),
         items: items,
-        onchange : onchange,
-        dirty : true
-      }
-    );
+        onchange: onchange,
+        dirty: true
+      });
     this.items.push(ctrl);
     return ctrl;
-  }
-
-  GUI.prototype.addTexture2D = function(title, texture) {
-    var ctrl = new GUIControl(
-      {
+  };
+  GUI.prototype.addTexture2D = function (title, texture) {
+    var ctrl = new GUIControl({
         type: 'texture2D',
         title: title,
         texture: texture,
         activeArea: new Rect(0, 0, 0, 0),
-        dirty : true
-      }
-    );
+        dirty: true
+      });
     this.items.push(ctrl);
     return ctrl;
-  }
-
-  GUI.prototype.dispose = function() {
-    //TODO: delete texture object
-  }
-
+  };
+  GUI.prototype.dispose = function () {
+  };
   var frame = 0;
-  GUI.prototype.draw = function() {
-    if (this.items.length == 0) {
+  GUI.prototype.draw = function () {
+    if (this.items.length === 0) {
       return;
     }
     this.renderer.draw(this.items, this.scale);
@@ -10707,13 +10670,12 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
     this.drawTextures();
-  }
-
-  GUI.prototype.drawTextures = function() {
-    for(var i=0; i<this.items.length; i++) {
+  };
+  GUI.prototype.drawTextures = function () {
+    for (var i = 0; i < this.items.length; i++) {
       var item = this.items[i];
       if (item.type == 'texture2D') {
-        var bounds = new Rect(item.activeArea.x*this.scale, item.activeArea.y*this.scale, item.activeArea.width*this.scale, item.activeArea.height*this.scale);
+        var bounds = new Rect(item.activeArea.x * this.scale, item.activeArea.y * this.scale, item.activeArea.width * this.scale, item.activeArea.height * this.scale);
         this.screenImage.setBounds(bounds);
         this.screenImage.setImage(item.texture);
         this.screenImage.draw();
@@ -10721,54 +10683,40 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     }
     this.screenImage.setBounds(this.screenBounds);
     this.screenImage.setImage(this.renderer.getTexture());
-  }
-
-  GUI.prototype.serialize = function() {
+  };
+  GUI.prototype.serialize = function () {
     var data = {};
-    this.items.forEach(function(item, i) {
+    this.items.forEach(function (item, i) {
       data[item.title] = item.getNormalizedValue();
-    })
+    });
     return data;
-  }
-
-  GUI.prototype.deserialize = function(data) {
-    this.items.forEach(function(item, i) {
-      if (!(data[item.title] == undefined)) {
+  };
+  GUI.prototype.deserialize = function (data) {
+    this.items.forEach(function (item, i) {
+      if (data[item.title] !== undefined) {
         item.setNormalizedValue(data[item.title]);
         item.dirty = true;
       }
-    })
-  }
-
-  GUI.prototype.save = function(path) {
+    });
+  };
+  GUI.prototype.save = function (path) {
     var data = this.serialize();
     IO.saveTextFile(path, JSON.stringify(data));
-  }
-
-  GUI.prototype.load = function(path) {
+  };
+  GUI.prototype.load = function (path) {
     var self = this;
-    IO.loadTextFile(path, function(dataStr) {
+    IO.loadTextFile(path, function (dataStr) {
       var data = JSON.parse(dataStr);
       self.deserialize(data);
-    })
-  }
-
+    });
+  };
   GUI.ScreenImage = ScreenImage;
-
   return GUI;
 });
-
 //Module wrapper for gl classes.
-define(
-  'pex/gui',[
-    'pex/gui/GUI'
-  ],
-  function(GUI) {
-    return {
-      GUI : GUI
-    };
-  }
-);
+define('pex/gui',['pex/gui/GUI'], function (GUI) {
+  return { GUI: GUI };
+});
 (function() {
   define('pex',['require','pex/geom','pex/utils','pex/sys','pex/gl','pex/materials','pex/scene','pex/fx','pex/gui','pex/color'],function(require) {
     var color, fx, geom, gl, gui, materials, scene, sys, utils;

@@ -18,7 +18,7 @@ pex.sys.Window.create({
       circlePoints.push(Vec2.create(
         this.width / 2 + 300 * Math.cos(i/36 * Math.PI * 2),
         this.height / 2 + 300 * Math.sin(i/36 * Math.PI * 2)
-      ))
+      ));
     }
     this.circle = new Polygon2D(circlePoints);
   },
@@ -29,7 +29,7 @@ pex.sys.Window.create({
 
     this.points = [ Vec2.create(W/2, H/2) ];
     for(var i=0; i<50; i++) {
-      this.points.push(Vec2.create(W * Math.random() + 50*Math.cos(Time.seconds + i * 12.2312313), H * Math.random() + 50*Math.sin(Time.seconds)))
+      this.points.push(Vec2.create(W * Math.random() + 50*Math.cos(Time.seconds + i * 12.2312313), H * Math.random() + 50*Math.sin(Time.seconds)));
     }
 
     this.points.forEach(function(point, i) {
@@ -73,7 +73,7 @@ pex.sys.Window.create({
     var canvas = this.canvas;
     var paint = this.paint;
 
-    if (polygon.vertices.length == 0) return;
+    if (polygon.vertices.length === 0) return;
 
     paint.setFill();
     paint.setColor(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
@@ -109,7 +109,7 @@ pex.sys.Window.create({
       this.fillPolygon(point.polygon, Color.create(0,0.25,0,1));
       this.drawPolygon(point.polygon, Color.create(1,1,0,1));
       this.drawPoint(point);
-    }.bind(this))
+    }.bind(this));
 
     this.drawPolygon(this.circle, Color.Red);
   }

@@ -4,8 +4,8 @@
     Context = require('pex/gl/Context');
     IO = require('pex/sys/IO');
     Log = require('pex/utils/Log');
-    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float;\n' + '#endif\n' + '#define VERT\n';
-    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float;\n' + '#else\n' + '  precision mediump float;\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
+    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float\n' + '#endif\n' + '#define VERT\n';
+    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float\n' + '#else\n' + '  precision mediump float\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
     return Program = (function() {
       Program.currentProgram = null;
 
@@ -131,19 +131,15 @@
         switch (type) {
           case gl.BOOL:
           case gl.INT:
-            setterFun = (function(_this) {
-              return function(value) {
-                return gl.uniform1i(location, value);
-              };
-            })(this);
+            setterFun = function(value) {
+              return gl.uniform1i(location, value);
+            };
             break;
           case gl.SAMPLER_2D:
           case gl.SAMPLER_CUBE:
-            setterFun = (function(_this) {
-              return function(value) {
-                return gl.uniform1i(location, value);
-              };
-            })(this);
+            setterFun = function(value) {
+              return gl.uniform1i(location, value);
+            };
             break;
           case gl.FLOAT:
             setterFun = function(value) {

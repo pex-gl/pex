@@ -15,9 +15,9 @@ pex.sys.Window.create({
     var H = this.height;
 
     this.targetPolygon = new Polygon2D([
-      Vec2.create(W/2 - 70, H/2 -  50),
+      Vec2.create(W/2 -  70, H/2 -  50),
       Vec2.create(W/2 -  90, H/2 +  20),
-      Vec2.create(W/2 +   0, H/2 + 150),
+      Vec2.create(W/2,       H/2 + 150),
       Vec2.create(W/2 + 200, H/2 -  20),
       Vec2.create(W/2 + 150, H/2 -  70)
     ]);
@@ -37,7 +37,7 @@ pex.sys.Window.create({
         Vec2.create(+ 150 + e.x, + 200 + e.y)
       ]);
       this.resultPolygon = this.targetPolygon.clip(this.clippingPolygon);
-    }.bind(this))
+    }.bind(this));
   },
   drawPolygon: function(polygon, color) {
     var canvas = this.canvas;
@@ -56,7 +56,7 @@ pex.sys.Window.create({
     var canvas = this.canvas;
     var paint = this.paint;
 
-    if (polygon.vertices.length == 0) return;
+    if (polygon.vertices.length === 0) return;
 
     paint.setFill();
     //paint.setColor(color[0], color[1], color[2], 128);

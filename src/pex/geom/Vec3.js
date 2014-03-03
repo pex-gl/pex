@@ -21,13 +21,6 @@
         return new Vec3(x, y, z);
       };
 
-      Vec3.prototype.equals = function(v, tolerance) {
-        if (tolerance == null) {
-          tolerance = 0.0000001;
-        }
-        return (Math.abs(v.x - this.x) <= tolerance) && (Math.abs(v.y - this.y) <= tolerance) && (Math.abs(v.z - this.z) <= tolerance);
-      };
-
       Vec3.prototype.hash = function() {
         return 1 * this.x + 12 * this.y + 123 * this.z;
       };
