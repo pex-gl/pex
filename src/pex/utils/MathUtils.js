@@ -5,7 +5,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
 
   MathUtils.seed = function(s) {
     Math.seedrandom(s);
-  }
+  };
 
   MathUtils.randomFloat = function(min, max) {
     if (typeof(max) == 'undefined') {
@@ -16,11 +16,11 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
       min = 0;
     }
     return min + (max - min) * Math.random();
-  }
+  };
 
   MathUtils.randomInt = function(min, max) {
     return Math.floor(MathUtils.randomFloat(min, max));
-  }
+  };
 
   MathUtils.randomVec3 = function(r) {
     r = r || 0.5;
@@ -28,38 +28,38 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     var y = Math.random() - 0.5;
     var z = Math.random() - 0.5;
     return Vec3.create(x * r, y * r, z * r);
-  }
+  };
 
   MathUtils.randomVec3InBoundingBox = function(bbox) {
     var x = bbox.min.x + Math.random() * (bbox.max.x - bbox.min.x);
     var y = bbox.min.y + Math.random() * (bbox.max.y - bbox.min.y);
     var z = bbox.min.z + Math.random() * (bbox.max.z - bbox.min.z);
     return Vec3.create(x, y, z);
-  }
+  };
 
   MathUtils.randomVec2InRect = function(rect) {
     return Vec2.create(rect.x + Math.random() * rect.width, rect.y + Math.random() * rect.height);
-  }
+  };
 
   MathUtils.randomChance = function(probability) {
     return Math.random() <= probability;
-  }
+  };
 
   MathUtils.randomElement = function(list) {
     return list[Math.floor(Math.random() * list.length)];
-  }
+  };
 
   MathUtils.mix = function(a, b, t) {
     return a + (b - a) * t;
-  }
+  };
 
   MathUtils.map = function(value, oldMin, oldMax, newMin, newMax) {
     return newMin + (value - oldMin)/(oldMax - oldMin) * (newMax - newMin);
-  }
+  };
 
   MathUtils.clamp = function(value, min, max) {
     return Math.max(min, Math.min(value, max));
-  }
+  };
 
   var temporaryVec1 = {};
 
@@ -70,7 +70,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     }
     result.set(0, 0, 0);
     return result;
-  }
+  };
 
   var temporaryVec3 = {};
 
@@ -81,7 +81,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     }
     result.set(0, 0, 0);
     return result;
-  }
+  };
 
   var temporaryVec4 = {};
 
@@ -92,7 +92,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     }
     result.set(0, 0, 0);
     return result;
-  }
+  };
 
   var temporaryMat4 = {};
 
@@ -103,7 +103,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     }
     result.identity();
     return result;
-  }
+  };
 
   var temporaryQuat = {};
 
@@ -114,7 +114,7 @@ define(['lib/seedrandom', 'pex/geom/Vec2', 'pex/geom/Vec3', 'pex/geom/Vec4', 'pe
     }
     result.identity();
     return result;
-  }
+  };
 
   return MathUtils;
 });

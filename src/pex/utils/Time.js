@@ -11,12 +11,12 @@ define(['pex/utils/Log'], function(Log) {
     fpsFrequency: 3,
     paused: false,
     verbose: false
-  }
+  };
 
   Time.update = function(delta) {
     if (Time.paused) return;
 
-    if (Time.prev == 0) {
+    if (Time.prev === 0) {
       Time.prev = Date.now();
     }
     Time.now = Date.now();
@@ -37,12 +37,12 @@ define(['pex/utils/Log'], function(Log) {
       if (this.verbose) Log.message('FPS: ' + Time.fps);
     }
     return Time.seconds;
-  }
+  };
 
   var startOfMeasuredTime = 0;
   Time.startMeasuringTime = function() {
     startOfMeasuredTime = Date.now();
-  }
+  };
 
   Time.stopMeasuringTime = function(msg) {
     var now = Date.now();
@@ -50,18 +50,18 @@ define(['pex/utils/Log'], function(Log) {
     var seconds = (now - startOfMeasuredTime)/1000;
 
     if (msg) {
-      Log.message(msg + seconds)
+      Log.message(msg + seconds);
     }
     return seconds;
-  }
+  };
 
   Time.pause = function() {
     Time.paused = true;
-  }
+  };
 
   Time.togglePause = function() {
     Time.paused = !Time.paused;
-  }
+  };
 
   return Time;
 });

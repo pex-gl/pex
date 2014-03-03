@@ -20,7 +20,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
   GUIControl.prototype.setPosition = function(x, y) {
     this.px = x;
     this.py = y;
-  }
+  };
 
   GUIControl.prototype.getNormalizedValue = function(idx) {
     if (!this.contextObject) return 0;
@@ -37,7 +37,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       }
     }
     return val;
-  }
+  };
 
   GUIControl.prototype.setNormalizedValue = function(val, idx) {
     if (!this.contextObject) return;
@@ -60,7 +60,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       }
     }
     this.contextObject[this.attributeName] = val;
-  }
+  };
 
   GUIControl.prototype.getValue = function() {
     if (this.type == 'slider') {
@@ -73,13 +73,13 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       return this.contextObject[this.attributeName];
     }
     else return 0;
-  }
+  };
 
   GUIControl.prototype.getStrValue = function() {
     if (this.type == 'slider') {
       var str = '' + this.contextObject[this.attributeName];
       var dotPos = str.indexOf('.') + 1;
-      if (dotPos == 0) return str + '.0';
+      if (dotPos === 0) return str + '.0';
       while(str.charAt(dotPos) == '0') {
         dotPos++;
       }
@@ -89,13 +89,13 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       return this.contextObject[this.attributeName];
     }
     else return '';
-  }
+  };
 
   function GUI(window, x, y, scale) {
     this.gl = Context.currentContext.gl;
     this.window = window;
-    this.x = (x == undefined) ? 0 : x;
-    this.y = (y == undefined) ? 0 : y;
+    this.x = (x === undefined) ? 0 : x;
+    this.y = (y === undefined) ? 0 : y;
     this.mousePos = Vec2.create();
     this.scale = scale || 1;
 
@@ -126,7 +126,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     window.on('leftMouseUp', function(e) {
       self.onMouseUp(e);
     });
-  }
+  };
 
   GUI.prototype.onMouseDown = function(e) {
     this.activeControl = null;
@@ -160,7 +160,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
         break;
       }
     }
-  }
+  };
 
   GUI.prototype.onMouseDrag = function(e) {
     if (this.activeControl) {
@@ -186,7 +186,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       }
       e.handled = true;
     }
-  }
+  };
 
   GUI.prototype.onMouseUp = function(e) {
     if (this.activeControl) {
@@ -194,7 +194,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       this.activeControl.dirty = true;
       this.activeControl = null;
     }
-  }
+  };
 
   GUI.prototype.addLabel = function(title) {
     var ctrl = new GUIControl(
@@ -202,7 +202,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     );
     this.items.push(ctrl);
     return ctrl;
-  }
+  };
 
   GUI.prototype.addParam = function(title, contextObject, attributeName, options, onchange) {
     options = options || {};
@@ -254,7 +254,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
       this.items.push(ctrl);
       return ctrl;
     }
-  }
+  };
 
   GUI.prototype.addButton = function(title, contextObject, methodName, options) {
     var ctrl = new GUIControl(
@@ -270,7 +270,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     );
     this.items.push(ctrl);
     return ctrl;
-  }
+  };
 
   GUI.prototype.addRadioList = function(title, contextObject, attributeName, items, onchange) {
     var ctrl = new GUIControl(
@@ -287,7 +287,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     );
     this.items.push(ctrl);
     return ctrl;
-  }
+  };
 
   GUI.prototype.addTexture2D = function(title, texture) {
     var ctrl = new GUIControl(
@@ -301,15 +301,15 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     );
     this.items.push(ctrl);
     return ctrl;
-  }
+  };
 
   GUI.prototype.dispose = function() {
     //TODO: delete texture object
-  }
+  };
 
   var frame = 0;
   GUI.prototype.draw = function() {
-    if (this.items.length == 0) {
+    if (this.items.length === 0) {
       return;
     }
     this.renderer.draw(this.items, this.scale);
@@ -320,7 +320,7 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
     this.drawTextures();
-  }
+  };
 
   GUI.prototype.drawTextures = function() {
     for(var i=0; i<this.items.length; i++) {
@@ -334,37 +334,37 @@ function(Context, ScreenImage, Time, SkiaRenderer, HTMLCanvasRenderer, Rect, IO,
     }
     this.screenImage.setBounds(this.screenBounds);
     this.screenImage.setImage(this.renderer.getTexture());
-  }
+  };
 
   GUI.prototype.serialize = function() {
     var data = {};
     this.items.forEach(function(item, i) {
       data[item.title] = item.getNormalizedValue();
-    })
+    });
     return data;
-  }
+  };
 
   GUI.prototype.deserialize = function(data) {
     this.items.forEach(function(item, i) {
-      if (!(data[item.title] == undefined)) {
+      if (data[item.title] !== undefined) {
         item.setNormalizedValue(data[item.title]);
         item.dirty = true;
       }
-    })
-  }
+    });
+  };
 
   GUI.prototype.save = function(path) {
     var data = this.serialize();
     IO.saveTextFile(path, JSON.stringify(data));
-  }
+  };
 
   GUI.prototype.load = function(path) {
     var self = this;
     IO.loadTextFile(path, function(dataStr) {
       var data = JSON.parse(dataStr);
       self.deserialize(data);
-    })
-  }
+    });
+  };
 
   GUI.ScreenImage = ScreenImage;
 

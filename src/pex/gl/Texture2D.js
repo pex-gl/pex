@@ -30,14 +30,14 @@ define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Conte
     texture.target = gl.TEXTURE_2D;
 
     return texture;
-  }
+  };
 
   Texture2D.prototype.bind = function(unit) {
     unit = unit ? unit : 0;
 
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
     this.gl.bindTexture(this.gl.TEXTURE_2D,  this.handle);
-  }
+  };
 
   Texture2D.genNoise = function(w, h) {
     w = w || 256;
@@ -67,7 +67,7 @@ define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Conte
     texture.width = w;
     texture.height = h;
     return texture;
-  }
+  };
 
   Texture2D.genNoiseRGBA = function(w, h) {
     w = w || 256;
@@ -106,7 +106,7 @@ define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Conte
     texture.gl = gl;
 
     return texture;
-  }
+  };
 
   Texture2D.load = function(src, callback) {
     var gl = Context.currentContext.gl;
@@ -137,14 +137,14 @@ define(['pex/gl/Texture','pex/gl/Context','pex/sys/IO'], function(Texture, Conte
     });
 
     return texture;
-  }
+  };
 
   Texture2D.prototype.dispose = function() {
     if (this.handle) {
       this.gl.deleteTexture(this.handle);
       this.handle = null;
     }
-  }
+  };
 
   return Texture2D;
-})
+});

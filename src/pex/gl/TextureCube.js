@@ -55,7 +55,7 @@ define(['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], function(Texture, Con
     }
 
     return texture;
-  }
+  };
 
   //### dispose ( )
   //Frees the texture data.
@@ -64,7 +64,7 @@ define(['pex/gl/Texture', 'pex/gl/Context', 'pex/sys/IO'], function(Texture, Con
       this.gl.deleteTexture(this.handle);
       this.handle = null;
     }
-  }
+  };
 
   return TextureCube;
-})
+});

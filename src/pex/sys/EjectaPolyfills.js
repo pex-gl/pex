@@ -6,12 +6,12 @@ define(['pex/sys/Platform'], function(Platform) {
   HTMLElement.prototype.setAttribute = function(name, value) {
     if (!this.attributes) this.attributes = {};
     this.attributes[name] = value;
-  }
+  };
 
   HTMLElement.prototype.getAttribute = function(name, value) {
     if (!this.attributes) return null;
     return this.attributes[name];
-  }
+  };
 
   HTMLElement.prototype.addEventListener = function(name, callback, useCapture) {
     console.log('HTMLElement.prototype.addEventListener', name);
@@ -22,12 +22,12 @@ define(['pex/sys/Platform'], function(Platform) {
           currentTarget : this, 
           srcElement : this
         });
-      }
+      };
     }
     else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
       document.addEventListener(name, callback, useCapture);
     }
-  }
+  };
 
   HTMLElement.prototype.removeEventListener = function(name, callback, useCapture) {
     if (name == 'load') {
@@ -36,7 +36,7 @@ define(['pex/sys/Platform'], function(Platform) {
     else if (name == 'touchstart' || name == 'touchstart' || name == 'touchstart') {
       document.removeEventListener(name, callback);
     }
-  }
+  };
 
   return {};
 });

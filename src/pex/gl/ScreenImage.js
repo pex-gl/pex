@@ -55,31 +55,31 @@ define([
 
   ScreenImage.prototype.setAlpha = function(alpha) {
     this.mesh.material.uniforms.alpha = alpha;
-  }
+  };
 
   ScreenImage.prototype.setPosition = function(position) {
-  this.mesh.material.uniforms.pixelPosition = position;
-  }
+		this.mesh.material.uniforms.pixelPosition = position;
+  };
 
   ScreenImage.prototype.setSize = function(size) {
     this.mesh.material.uniforms.pixelSize = size;
-  }
+  };
 
   ScreenImage.prototype.setWindowSize = function(size) {
     this.mesh.material.uniforms.windowSize = size;
-  }
+  };
 
   ScreenImage.prototype.setBounds = function(bounds) {
     this.mesh.material.uniforms.pixelPosition.x = bounds.x;
     this.mesh.material.uniforms.pixelPosition.y = bounds.y;
     this.mesh.material.uniforms.pixelSize.x = bounds.width;
     this.mesh.material.uniforms.pixelSize.y = bounds.height;
-  }
+  };
 
   ScreenImage.prototype.setImage = function(image) {
     this.image = image;
     this.mesh.material.uniforms.image = image;
-  }
+  };
 
   ScreenImage.prototype.draw = function(image, program) {
     var oldImage = null;
@@ -101,7 +101,7 @@ define([
     if (oldImage) {
       this.mesh.material.uniforms.image = oldImage;
     }
-  }
+  };
 
   return ScreenImage;
 });

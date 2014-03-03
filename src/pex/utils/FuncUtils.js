@@ -16,7 +16,7 @@ define([], function() {
     return function next() {
       args = args.concat(Array.prototype.slice.call(arguments));
       return (args.length >= len) ? func.apply(this, args.splice(0)) : next;
-    }
+    };
   };
 
   FuncUtils.compose = function() {
@@ -51,7 +51,7 @@ define([], function() {
     var len = funcs.length;
 
     return function(target) {
-      var value = undefined;
+      var value;
       var args = Array.prototype.slice.call(arguments, 1);
 
       for (var i = 0; i < len; ++i) {

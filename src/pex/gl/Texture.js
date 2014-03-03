@@ -11,7 +11,7 @@ define(['pex/gl/Context'], function(Context) {
     this.gl = Context.currentContext.gl;
     this.target = target;
     this.handle = this.gl.createTexture();
-  }
+  };
 
   //### bind ( unit )
   //Binds the texture to the current GL context.
@@ -20,7 +20,7 @@ define(['pex/gl/Context'], function(Context) {
     unit = unit ? unit : 0;
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
     this.gl.bindTexture(this.target,  this.handle);
-  }
+  };
 
   return Texture;
 });

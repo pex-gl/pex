@@ -11,7 +11,6 @@ define([
   }
 
   HEMesh.prototype.subdivideFaceCenter = function() {
-    var numFaces = this.faces.length;
     var edgesToSelect = [];
 
     var faces = this.faces;
@@ -20,7 +19,7 @@ define([
       faces = selectedFaces;
     }
 
-    faces.forEach(function(face, i) {
+    faces.forEach(function(face) {
       var newEdge = this.splitFaceAtPoint(face, face.getCenter());
       edgesToSelect.push(newEdge);
     }.bind(this));
@@ -28,7 +27,7 @@ define([
     this.clearSelection();
     edgesToSelect.forEach(function(edge) {
       edge.vert.selected = true;
-    })
+    });
 
     return this;
   };

@@ -13,11 +13,11 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
       if (callback) {
         callback(data);
       }
-    }
+    };
 
     IO.getWorkingDirectory = function() {
       return Node.path.dirname(module.parent.filename);
-    }
+    };
 
     IO.loadImageData = function(gl, texture, target, file, callback) {
       var fullPath = Node.path.resolve(IO.getWorkingDirectory(), file);
@@ -28,7 +28,7 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
       if (callback) {
         callback(canvas);
       }
-    }
+    };
 
     IO.watchTextFile = function(file, callback) {
       Node.fs.watch(file, {}, function(event, fileName) {
@@ -39,11 +39,11 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
           }
         }
       });
-    }
+    };
 
     IO.saveTextFile = function(file, data) {
       Node.fs.writeFileSync(file, data);
-    }
+    };
 
     return IO;
   });
@@ -53,7 +53,7 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
 
     IO.getWorkingDirectory = function() {
       return '';
-    }
+    };
 
     IO.loadTextFile = function(url, callback) {
       var request = new XMLHttpRequest();
@@ -71,7 +71,7 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
         }
       };
       request.send(null);
-    }
+    };
 
     IO.loadImageData = function(gl, texture, target, url, callback) {
       var image = new Image();
@@ -86,13 +86,13 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
         if (callback) {
           callback(image);
         }
-      }
+      };
       image.src = url;
-    }
+    };
 
     IO.watchTextFile = function() {
       console.log('Warning: WebIO.watch is not implemented!');
-    }
+    };
 
     IO.saveTextFile = function(url, data, callback) {
       var request = new XMLHttpRequest();
@@ -111,7 +111,7 @@ define(['pex/utils/Log', 'pex/sys/Node', 'pex/sys/Platform'], function(Log, Node
       };
       request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
       request.send('data='+encodeURIComponent(data));
-    }
+    };
 
     return IO;
   });

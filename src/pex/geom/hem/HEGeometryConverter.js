@@ -106,7 +106,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     });
 
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors, faces:true})
+      geometry = new Geometry({vertices:true, normals:true, colors:hasFaceColors, faces:true});
     }
 
     var positions = geometry.vertices;
@@ -127,7 +127,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
     geometry.normals.dirty = true;
     if (geometry.colors) geometry.colors.dirty = true;
     geometry.faces.dirty = true;
-    geometry.faces.length = []
+    geometry.faces.length = [];
 
     var vertexIndex = 0;
     //var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -139,32 +139,32 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone();
           else positions[vertexIndex+j].copy(faceVertices[j].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone();
           else normals[vertexIndex+j].copy(faceNormal);
           if (hasFaceColors) {
             var c = face.color || Color.White;
-            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
+            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone();
             else colors[vertexIndex+j].copy(c);
           }
         }
-        geometry.faces.push(new Face3(vertexIndex, vertexIndex+1, vertexIndex+2))
+        geometry.faces.push(new Face3(vertexIndex, vertexIndex+1, vertexIndex+2));
         vertexIndex += 3;
       }
       else if (faceVertices.length == 4) {
         for(var j=0; j<4; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone();
           else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
-          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone()
+          if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceNormal.clone();
           else normals[vertexIndex+j].copy(faceNormal);
           if (hasFaceColors) {
             var c = face.color || Color.White;
-            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone()
+            if (!colors[vertexIndex+j]) colors[vertexIndex+j] = c.clone();
             else colors[vertexIndex+j].copy(c);
           }
         }
-        geometry.faces.push(new Face4(vertexIndex, vertexIndex+1, vertexIndex+2, vertexIndex+3))
+        geometry.faces.push(new Face4(vertexIndex, vertexIndex+1, vertexIndex+2, vertexIndex+3));
         vertexIndex += 4;
       }
       else {
@@ -178,7 +178,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
   HEMesh.prototype.toSmoothGeometry = function(geometry) {
     if (!geometry) {
-      geometry = new Geometry({vertices:true, normals:true})
+      geometry = new Geometry({vertices:true, normals:true});
     }
 
     var positions = geometry.vertices;
@@ -186,7 +186,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
 
     geometry.vertices.dirty = true;
     geometry.normals.dirty = true;
-    geometry.faces.length = []
+    geometry.faces.length = [];
 
     var vertexIndex = 0;
     var face4Swizzle = [0, 1, 3, 3, 1, 2];
@@ -197,7 +197,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       var faceNormal = face.getNormal();
       if (faceVertices.length == 3) {
         for(var j=0; j<3; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[j].position.clone();
           else positions[vertexIndex+j].copy(faceVertices[j].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[j].getNormal();
           else normals[vertexIndex+j].copy(faceVertices[j].getNormal());
@@ -206,7 +206,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       }
       else if (faceVertices.length == 4) {
         for(var j=0; j<6; j++) {
-          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone()
+          if (!positions[vertexIndex+j]) positions[vertexIndex+j] = faceVertices[face4Swizzle[j]].position.clone();
           else positions[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].position);
           if (!normals[vertexIndex+j]) normals[vertexIndex+j] = faceVertices[face4Swizzle[j]].getNormal();
           else normals[vertexIndex+j].copy(faceVertices[face4Swizzle[j]].getNormal());
@@ -220,7 +220,7 @@ function(Vec3, Face3, Face4, FacePolygon, Geometry, HEMesh, HEVertex, HEEdge, HE
       normals.length = vertexIndex; //truncs excess of data
     }
     return geometry;
-  }
+  };
 
   HEMesh.prototype.toEdgesGeometry = function(offset, normalOffset) {
     offset = (offset !== undefined) ? offset : 0.1;

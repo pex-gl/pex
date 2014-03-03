@@ -45,7 +45,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
 
   function makeMouseUpHandler(canvas) {
@@ -56,8 +56,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         option: e.altKey,
         shift: e.shiftKey,
         control: e.ctrlKey
-      })
-    })
+      });
+    });
   }
 
   function makeMouseDraggedHandler(canvas) {
@@ -88,7 +88,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         px = x;
         py = y;
       }
-    })
+    });
   }
 
   function makeMouseMovedHandler(canvas) {
@@ -100,11 +100,11 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
 
   function makeScrollWheelHandler(canvas) {
-    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel'
+    var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel';
     document.addEventListener(mousewheelevt, function(e) {
       fireEvent('scrollWheel', {
         x: (e.offsetX || e.layerX) * window.devicePixelRatio,
@@ -131,7 +131,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: false,
         control: false
       });
-    })
+    });
   }
 
   function makeTouchUpHandler(canvas) {
@@ -144,7 +144,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         control: false
       });
       lastTouch = null;
-    })
+    });
   }
 
    function makeTouchMoveHandler(canvas) {
@@ -160,7 +160,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: false,
         control: false
       });
-    })
+    });
   }
 
   function makeKeyDownHandler(canvas) {
@@ -174,8 +174,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
           shift: e.shiftKey,
           control: e.ctrlKey
         }, 1);
-      })
-    })
+      });
+    });
     window.addEventListener('keypress', function(e) {
       if (timeout) {
         clearTimeout(timeout);
@@ -188,7 +188,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
         shift: e.shiftKey,
         control: e.ctrlKey
       });
-    })
+    });
   }
 
   function simpleWindow(obj) {
@@ -251,8 +251,8 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
           console.error(err.message);
           return;
         }
-        if (gl == null) {
-          throw 'No WebGL context is available.'
+        if (gl === null) {
+          throw 'No WebGL context is available.';
         }
       }
       else if (obj.settings.type == '2d') {
@@ -261,17 +261,17 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
       obj.framerate = function(fps) {
         requestAnimFrameFps = fps;
-      }
+      };
 
       obj.on = function(eventType, handler) {
         eventListeners.push({eventType:eventType, handler:handler});
-      }
+      };
 
       registerEvents(canvas);
 
       obj.dispose = function() {
         obj.__disposed = true;
-      }
+      };
 
       obj.gl = gl;
       obj.ctx = ctx;
@@ -308,7 +308,7 @@ define(['pex/sys/Platform', 'pex/sys/EjectaPolyfills'], function(Platform, Eject
 
   var BrowserWindow = {
     simpleWindow : simpleWindow
-  }
+  };
 
   return BrowserWindow;
 });

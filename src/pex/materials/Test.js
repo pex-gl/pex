@@ -11,7 +11,7 @@ define([
     this.gl = Context.currentContext.gl;
     var program = new Program(TestGLSL);
 
-    var uniforms = {}
+    var uniforms = {};
 
     Material.call(this, program, uniforms);
   }

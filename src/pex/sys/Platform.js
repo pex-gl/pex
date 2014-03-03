@@ -6,5 +6,5 @@ define([], function() {
     isPlask : isPlask,
     isBrowser : isBrowser,
     isEjecta : isEjecta
-  }
+  };
 });

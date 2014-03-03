@@ -146,7 +146,7 @@ pex.sys.Window.create
         paPoints = sidePoints.filter((p) -> paLine.isPointOnTheLeftSide(p) == left)
 
         pbLine = new Line2D(dividingLine.b, max.point)
-        pbPoints = sidePoints.filter((p) -> pbLine.isPointOnTheLeftSide(p) == !left)
+        pbPoints = sidePoints.filter((p) -> pbLine.isPointOnTheLeftSide(p) != left)
 
         resultA = quickHullStep(paPoints, edgePoints, paLine, dividingEdgeA, depth + 1)
         resultB = quickHullStep(pbPoints, edgePoints, pbLine, dividingEdgeB, depth + 1)

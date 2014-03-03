@@ -21,7 +21,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     n.normalize();
 
     return n;
-  }
+  };
 
   HEVertex.prototype.forEachFace = function(callback) {
     var faceEdge = this.edge;
@@ -31,7 +31,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
       faceEdge = faceEdge.pair.next;
       face = faceEdge.face;
     } while(faceEdge != this.edge);
-  }
+  };
 
   HEVertex.prototype.forEachEdge = function(callback) {
     var faceEdge = this.edge;
@@ -39,11 +39,11 @@ define(['pex/geom/Vec3'], function(Vec3) {
       callback(faceEdge);
       faceEdge = faceEdge.pair.next;
     } while(faceEdge != this.edge);
-  }
+  };
 
   HEVertex.prototype.clearCaches = function() {
     this.edgesCache = null;
-  }
+  };
 
   var edgeVec3 = Vec3.create();
   HEVertex.prototype.forEachEdgeWithin = function(r, callback) {
@@ -74,16 +74,16 @@ define(['pex/geom/Vec3'], function(Vec3) {
     edges.forEach(callback); //iterate with external function
 
     this.edgesCache = edges;
-  }
+  };
 
 
   HEVertex.prototype.getNeighbors = function(radius) {
     var neighbors = [];
     this.forEachEdge(function(edge) {
       neighbors.push(edge.next.vert);
-    })
+    });
     return neighbors;
-  }
+  };
 
   return HEVertex;
 });

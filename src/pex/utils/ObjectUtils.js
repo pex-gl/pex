@@ -3,14 +3,14 @@ define([], function() {
   }
 
   ObjectUtils.mergeObjects = function(a, b) {
-    var result = { };
+    var result = {}, prop;
     if (a) {
-      for(var prop in a) {
+      for(prop in a) {
         result[prop] = a[prop];
       }
     }
     if (b) {
-      for(var prop in b) {
+      for(prop in b) {
         result[prop] = b[prop];
       }
     }

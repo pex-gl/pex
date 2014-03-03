@@ -48,7 +48,10 @@ pex.sys.Window.create
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(1, 0, 0), Color.Red)
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0, 1, 0), Color.Green)
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0, 0, 1), Color.Blue)
-    @lineMesh = new Mesh(lineBuilder, new ShowColors(), { useEdges: true})
+    @lineMesh = new Mesh(lineBuilder, new ShowColors(), { useEdges: true })
+
+    # don't return anything from init function
+    null
 
   draw: () ->
     @gl.enable(@gl.DEPTH_TEST)

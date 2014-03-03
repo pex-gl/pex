@@ -1,5 +1,5 @@
   define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Context, Texture2D) {
-  var plask = Node.plask
+  var plask = Node.plask;
   function SkiaRenderer(width, height) {
     this.gl = Context.currentContext.gl;
     this.tex = Texture2D.create(width, height);
@@ -134,11 +134,11 @@
     }
 
     this.updateTexture();
-  }
+  };
 
   SkiaRenderer.prototype.getTexture = function() {
     return this.tex;
-  }
+  };
 
   SkiaRenderer.prototype.updateTexture = function() {
     var gl = this.gl;
@@ -147,8 +147,7 @@
     gl.texImage2DSkCanvas(gl.TEXTURE_2D, 0, this.canvas);
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.bindTexture(gl.TEXTURE_2D, null);
-  }
-
+  };
 
   return SkiaRenderer;
 });

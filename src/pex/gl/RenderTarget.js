@@ -42,7 +42,7 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
     var gl = this.gl;
     this.oldBinding = gl.getParameter(gl.FRAMEBUFFER_BINDING);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.handle);
-  }
+  };
 
   RenderTarget.prototype.bindAndClear = function(){
     var gl = this.gl;
@@ -55,18 +55,18 @@ define(['pex/gl/Context', 'pex/gl/Texture2D'], function(Context, Texture2D) {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     else
       gl.clear(gl.COLOR_BUFFER_BIT);
-  }
+  };
 
   RenderTarget.prototype.unbind = function(){
     var gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.oldBinding);
     this.oldBinding = null;
-  }
+  };
 
   RenderTarget.prototype.getColorAttachement = function(index) {
     index = index || 0;
     return this.colorAttachements[index];
-  }
+  };
 
   return RenderTarget;
 });

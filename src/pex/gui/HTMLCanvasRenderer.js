@@ -113,11 +113,11 @@ define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Co
     }
 
     this.updateTexture();
-  }
+  };
 
   HTMLCanvasRenderer.prototype.getTexture = function() {
     return this.tex;
-  }
+  };
 
   HTMLCanvasRenderer.prototype.updateTexture = function() {
     var gl = this.gl;
@@ -129,8 +129,7 @@ define(['pex/sys/Node', 'pex/gl/Context', 'pex/gl/Texture2D'], function(Node, Co
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.bindTexture(gl.TEXTURE_2D, null);
-  }
-
+  };
 
   return HTMLCanvasRenderer;
 });

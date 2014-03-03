@@ -25,8 +25,12 @@ pex.sys.Window.create
     geom = Geometry.merge(geom1, geom2)
     @mesh = new Mesh(geom, new ShowNormals({color: Color.White}))
 
+    null
+
   draw: () ->
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
     @gl.enable(@gl.DEPTH_TEST)
 
     @mesh.draw(@camera)
+
+    null

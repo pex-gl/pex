@@ -20,7 +20,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
     this.normal.asCross(ab, ac).normalize();
 
     return this.normal;
-  }
+  };
 
   //calculates the centroid of the face
   HEFace.prototype.getCenter = function() {
@@ -38,7 +38,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
 
     this.center.scale(1/vertexCount);
     return this.center;
-  }
+  };
 
   HEFace.prototype.getAllVertices = function() {
     var vertices = [];
@@ -48,7 +48,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
       edge = edge.next;
     } while (edge != this.edge);
     return vertices;
-  }
+  };
 
   HEFace.prototype.edgePairLoop = function(callback) {
     var edge = this.edge;
@@ -56,8 +56,7 @@ define(['pex/geom/Vec3'], function(Vec3) {
       callback(edge, edge.next);
       edge = edge.next;
     } while(edge != this.edge);
-
-  }
+  };
 
   return HEFace;
 });

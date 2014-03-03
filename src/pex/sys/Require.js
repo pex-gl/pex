@@ -31,7 +31,7 @@ define(['pex/sys/Platform'], function(Platform) {
     });
 
     config.definedModules.forEach(function(moduleEntry) {
-      defineFunc(moduleEntry.name, [], function() { return moduleEntry.module });
+      defineFunc(moduleEntry.name, [], function() { return moduleEntry.module; });
     });
   }
 

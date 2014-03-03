@@ -11,9 +11,9 @@ define([
 ],
 function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
   function HEMesh() {
-    this.vertices = new Array();
-    this.faces = new Array();
-    this.edges = new Array();
+    this.vertices = [];
+    this.faces = [];
+    this.edges = [];
   }
 
   HEMesh.prototype.fixDuplicatedVertices = function(debug) {
@@ -27,7 +27,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         octree.add(v.position);
       }
       else {
-        if (debug) console.log('HEMesh duplicated vert', v)
+        if (debug) console.log('HEMesh duplicated vert', v);
         this.vertices.splice(i, 1);
         i--;
         var duplicateVertex = duplicate.vertex;
@@ -39,7 +39,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       }
     }
     return this;
-  }
+  };
 
   HEMesh.prototype.faceHash = function(f) {
     var vertices = f.getAllVertices();
@@ -52,14 +52,14 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       console.log(hash);
     }
     return hash;
-  }
+  };
 
   HEMesh.prototype.edgeHash = function(e) {
     var i = this.vertices.indexOf(e.vert);
     var j = this.vertices.indexOf(e.next.vert);
     var hash = i + "_" + j;
     return hash;
-  }
+  };
 
   HEMesh.prototype.fixDuplicatedEdges = function(debug) {
     var uniques = [];
@@ -72,7 +72,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         uniques.push(hash);
       }
       else {
-        if (debug) console.log('HEMesh duplicated edge', hash)
+        if (debug) console.log('HEMesh duplicated edge', hash);
         var duplicateEdge = this.edges[duplicateIndex];
         this.edges.splice(i, 1);
         i--;
@@ -87,7 +87,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
         });
       }
     }
-  }
+  };
 
   HEMesh.prototype.fixVertexEdges = function() {
     this.vertices.forEach(function(v) {
@@ -98,7 +98,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       edge.vert.edge = edge;
     }
     return this;
-  }
+  };
 
   var pairs = 0;
   HEMesh.prototype.fixEdgePairs = function() {
@@ -124,7 +124,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
       this.vertices[i].index = -1;
     }
     return this;
-  }
+  };
 
   // HEMesh.prototype.getEdgeBetween = function(a, b) {
   //       for(var i in this.edges) {
@@ -190,7 +190,7 @@ function(Vec3, HEEdge, HEVertex, HEFace, BoundingBox, Octree) {
           break;
         }
         e = e.next;
-      } while(e != edge)
+      } while(e != edge);
     }
 
     return this;
