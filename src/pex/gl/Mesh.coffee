@@ -116,7 +116,7 @@ define (require) ->
       rotation = if instance and instance.rotation then instance.rotation else @rotation
       scale = if instance and instance.scale then instance.scale else @scale
 
-      rotation.toMat4(@rotationMatrix);
+      rotation.toMat4(@rotationMatrix)
       @modelWorldMatrix.identity()
         .translate(position.x, position.y, position.z)
         .mul(@rotationMatrix)
