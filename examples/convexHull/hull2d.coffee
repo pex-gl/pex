@@ -48,24 +48,24 @@ pex.sys.Window.create
     color = [255, 0,   0, 255]
     color = [0,   0, 255, 255] if p.used is 1
     color = [0,   0,   0, 255] if p.used is -1
-    @paint.setFlags(@paint.kAntiAliasFlag);
-    @paint.setStroke();
+    @paint.setFlags(@paint.kAntiAliasFlag)
+    @paint.setStroke()
     @paint.setStrokeWidth(2)
     @paint.setColor(color[0], color[1], color[2], color[3])
     @canvas.drawLine(@paint, p.x - 3, p.y - 3, p.x + 3, p.y + 3)
     @canvas.drawLine(@paint, p.x + 3, p.y - 3, p.x - 3, p.y + 3)
 
   drawEdge: (edge, i) ->
-    a = edge.a;
-    b = edge.b;
-    #  var alpha = edge[2];
+    a = edge.a
+    b = edge.b
+    #  var alpha = edge[2]
     alpha = 255
     @paint.setFlags(@paint.kAntiAliasFlag)
     @paint.setStroke()
     @paint.setStrokeWidth(1)
     @paint.setColor(0, 200, 0, alpha)
     @canvas.drawLine(@paint, a.x, a.y, b.x, b.y)
-    @paint.setFill();
+    @paint.setFill()
     @paint.setColor(255, 0, 0, 255)
     @canvas.drawText(@paint, "" + i, (a.x + b.x)/2, (a.y + b.y)/2)
 

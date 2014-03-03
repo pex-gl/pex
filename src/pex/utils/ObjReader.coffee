@@ -55,7 +55,7 @@ define (require) ->
         geom.faces.push(new Face3(a, b, c))
 
       else
-        if (ObjReader.verbose) then console.log('ObjReader unknown line', line);
+        if (ObjReader.verbose) then console.log('ObjReader unknown line', line)
 
     if (geom.normals.length == 0) then delete geom.normals
     if (geom.texCoords.length == 0) then delete geom.texCoords
@@ -63,9 +63,9 @@ define (require) ->
     #if geom.normals.length == 0
     #  geom.computeNormals()
 
-    if (ObjReader.verbose) then console.log("Vertices count " + geom.vertices.length);
-    #console.log("Vertices normals " + geom.normals.length);
-    if (ObjReader.verbose) then console.log("Vertices faces " + geom.faces.length);
+    if (ObjReader.verbose) then console.log("Vertices count " + geom.vertices.length)
+    #console.log("Vertices normals " + geom.normals.length)
+    if (ObjReader.verbose) then console.log("Vertices faces " + geom.faces.length)
 
     geom
 

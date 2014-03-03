@@ -12,9 +12,6 @@ define (require) ->
     @create: (x, y, z) ->
       new Vec3(x, y, z)
 
-    equals: (v, tolerance=0.0000001) ->
-      (Math.abs(v.x - @x) <= tolerance) && (Math.abs(v.y - @y) <= tolerance) && (Math.abs(v.z - @z) <= tolerance)
-
     hash: () ->
       return 1 * @x + 12 * @y + 123 * @z
 
@@ -73,8 +70,8 @@ define (require) ->
       @clone()
 
     cross: (v) ->
-      x = @x; y = @y; z = @z;
-      vx = v.x; vy = v.y; vz = v.z;
+      x = @x y = @y z = @z
+      vx = v.x vy = v.y vz = v.z
 
       @x = y * vz - z * vy
       @y = z * vx - x * vz
@@ -117,8 +114,8 @@ define (require) ->
       this
 
     transformQuat: (q) ->
-      x = @x; y = @y; z = @z;
-      qx = q.x; qy = q.y; qz = q.z; qw = q.w;
+      x = @x y = @y z = @z
+      qx = q.x qy = q.y qz = q.z qw = q.w
 
       #calculate quat * vec
       ix = qw * x + qy * z - qz * y

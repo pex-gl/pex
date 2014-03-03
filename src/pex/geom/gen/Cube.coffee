@@ -37,7 +37,7 @@ define (require) ->
             texCoord.x = i/nu
             texCoord.y = 1.0 - j/nv
 
-            ++vertexIndex;
+            ++vertexIndex
 
         for j in [0..nv-1]
           for i in [0..nu-1]

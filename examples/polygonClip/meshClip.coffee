@@ -74,7 +74,7 @@ pex.require ['Plane', 'Line3d'], (Plane, Line3D) ->
       @arcball = new Arcball(this, @camera)
 
     draw: () ->
-      @gl.clearColor(0,0,0,1);
-      @gl.clear(@gl.COLOR_BUFFER_BIT);
+      @gl.clearColor(0,0,0,1)
+      @gl.clear(@gl.COLOR_BUFFER_BIT)
       @mainMesh.draw(@camera)
 

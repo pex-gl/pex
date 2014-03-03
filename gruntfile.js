@@ -37,7 +37,11 @@ module.exports = function(grunt) {
 			}
 		},
 		coffeelint: {
-			app: [ 'src/**/*.coffee', 'examples/**/*.coffee' ]
+			app: [ 'src/**/*.coffee', 'examples/**/*.coffee' ],
+			options: {
+				max_line_length: { level: 'ignore' },
+				no_throwing_strings: { level: 'ignore' }
+			}
 		},
 		jshint: {
 			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js' ],

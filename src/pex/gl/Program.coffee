@@ -5,19 +5,19 @@ define (require) ->
 
   kVertexShaderPrefix   = '' +
     '#ifdef GL_ES\n' +
-    'precision highp float;\n' +
+    'precision highp float\n' +
     '#endif\n' +
-    '#define VERT\n';
+    '#define VERT\n'
 
   kFragmentShaderPrefix = '' +
     '#ifdef GL_ES\n' +
     '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' +
-    '  precision highp float;\n' +
+    '  precision highp float\n' +
     '#else\n' +
-    '  precision mediump float;\n' +
+    '  precision mediump float\n' +
     '#endif\n' +
     '#endif\n' +
-    '#define FRAG\n';
+    '#define FRAG\n'
 
   class Program
     @currentProgram: null
@@ -31,20 +31,20 @@ define (require) ->
       @link() if @vertShader and @fragShader
 
     addSources: (vertSrc, fragSrc) ->
-      fragSrc ?= vertSrc;
+      fragSrc ?= vertSrc
 
       @addVertexSource(vertSrc) if vertSrc
       @addFragmentSource(fragSrc) if fragSrc
 
     addVertexSource: (vertSrc) ->
-      @vertShader = @gl.createShader(@gl.VERTEX_SHADER);
+      @vertShader = @gl.createShader(@gl.VERTEX_SHADER)
       @gl.shaderSource(@vertShader, kVertexShaderPrefix + vertSrc + '\n')
       @gl.compileShader(@vertShader)
       if !@gl.getShaderParameter(@vertShader, @gl.COMPILE_STATUS)
         throw @gl.getShaderInfoLog(@vertShader)
 
     addFragmentSource: (fragSrc) ->
-      @fragShader = @gl.createShader(@gl.FRAGMENT_SHADER);
+      @fragShader = @gl.createShader(@gl.FRAGMENT_SHADER)
       @gl.shaderSource(@fragShader, kFragmentShaderPrefix + fragSrc + '\n')
       @gl.compileShader(@fragShader)
       if !@gl.getShaderParameter(@fragShader, @gl.COMPILE_STATUS)
@@ -61,22 +61,22 @@ define (require) ->
       numUniforms = @gl.getProgramParameter(@handle, @gl.ACTIVE_UNIFORMS)
 
       for i in [0..numUniforms-1]
-        info     = @gl.getActiveUniform(@handle, i);
+        info     = @gl.getActiveUniform(@handle, i)
         if info.size > 1
           for j in [0..info.size-1]
             arrayElementName = info.name.replace(/\[\d+\]/, '[' + j + ']')
-            location = @gl.getUniformLocation(@handle, arrayElementName);
-            @uniforms[arrayElementName] = Program.makeUniformSetter(@gl, info.type, location);
+            location = @gl.getUniformLocation(@handle, arrayElementName)
+            @uniforms[arrayElementName] = Program.makeUniformSetter(@gl, info.type, location)
         else
-          location = @gl.getUniformLocation(@handle, info.name);
-          @uniforms[info.name] = Program.makeUniformSetter(@gl, info.type, location);
+          location = @gl.getUniformLocation(@handle, info.name)
+          @uniforms[info.name] = Program.makeUniformSetter(@gl, info.type, location)
 
       numAttributes = @gl.getProgramParameter(@handle, @gl.ACTIVE_ATTRIBUTES)
 
       for i in [0..numAttributes-1]
-        info     = @gl.getActiveAttrib(@handle, i);
-        location = @gl.getAttribLocation(@handle, info.name);
-        @attributes[info.name] = location;
+        info     = @gl.getActiveAttrib(@handle, i)
+        location = @gl.getAttribLocation(@handle, info.name)
+        @attributes[info.name] = location
 
       @ready = true
       this
@@ -84,7 +84,7 @@ define (require) ->
     use: () ->
       if Program.currentProgram != @handle
         Program.currentProgram = @handle
-        @gl.useProgram(@handle);
+        @gl.useProgram(@handle)
 
     dispose: () ->
       @gl.deleteShader(this.vertShader)
@@ -114,12 +114,12 @@ define (require) ->
       program
 
     @makeUniformSetter = (gl, type, location) ->
-      setterFun = null;
+      setterFun = null
       switch type
         when gl.BOOL, gl.INT
-          setterFun = (value) => gl.uniform1i(location, value)
+          setterFun = (value) -> gl.uniform1i(location, value)
         when gl.SAMPLER_2D, gl.SAMPLER_CUBE
-          setterFun = (value) => gl.uniform1i(location, value)
+          setterFun = (value) -> gl.uniform1i(location, value)
         when gl.FLOAT
           setterFun = (value) -> gl.uniform1f(location, value)
         when gl.FLOAT_VEC2

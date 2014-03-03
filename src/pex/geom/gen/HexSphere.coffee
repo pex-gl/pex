@@ -12,14 +12,14 @@ define (require) ->
       baseGeom = new Icosahedron(r)
       he = hem().fromGeometry(baseGeom)
       for i in [0..level-1]
-        he.subdivideTriangles();
+        he.subdivideTriangles()
 
       vertices = []
       faces = []
 
       for vertex in he.vertices
-        vertexIndex = vertices.length;
-        midPoints = [];
+        vertexIndex = vertices.length
+        midPoints = []
         vertex.forEachEdge (edge) ->
           midPoints.push(edge.face.getCenter())
 
@@ -33,7 +33,7 @@ define (require) ->
           faces.push(new FacePolygon([vertexIndex+4, vertexIndex+3, vertexIndex+2, vertexIndex+1, vertexIndex]))
 
         if midPoints.length == 6
-          faces.push(new FacePolygon([vertexIndex+5, vertexIndex+4, vertexIndex+3, vertexIndex+2, vertexIndex+1, vertexIndex]));
+          faces.push(new FacePolygon([vertexIndex+5, vertexIndex+4, vertexIndex+3, vertexIndex+2, vertexIndex+1, vertexIndex]))
 
       for v in vertices
         v.normalize().scale(r/2)

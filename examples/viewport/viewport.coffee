@@ -46,9 +46,9 @@ pex.sys.Window.create
 
     #@scenes[i].add(@cubeMesh) for i in [0..2]
 
-    #@viewport1 = new Viewport(this, new Rect(0, 0, 200, 200));
-    #@viewport2 = new Viewport(this, new Rect(0, 200, 200, 200));
-    #@viewport3 = new Viewport(this, new Rect(0, 400, 200, 200));
+    #@viewport1 = new Viewport(this, new Rect(0, 0, 200, 200))
+    #@viewport2 = new Viewport(this, new Rect(0, 200, 200, 200))
+    #@viewport3 = new Viewport(this, new Rect(0, 400, 200, 200))
     #@scene = new Scene()
     #@scene.add())
 
