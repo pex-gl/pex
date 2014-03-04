@@ -23,7 +23,7 @@ define (require) ->
 
     addCross: (pos, size, color) ->
       size = size || 0.1
-      halfSize = size / 2;
+      halfSize = size / 2
 
       color = color || Color.White
 

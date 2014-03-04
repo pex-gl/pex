@@ -18,9 +18,9 @@ define (require) ->
       dphi   = 360.0/nsides
 
       evalPos = (pos, theta, phi) ->
-        pos.x = r * Math.sin(theta * degToRad) * Math.sin(phi * degToRad);
-        pos.y = r * Math.cos(theta * degToRad);
-        pos.z = r * Math.sin(theta * degToRad) * Math.cos(phi * degToRad);
+        pos.x = r * Math.sin(theta * degToRad) * Math.sin(phi * degToRad)
+        pos.y = r * Math.cos(theta * degToRad)
+        pos.z = r * Math.sin(theta * degToRad) * Math.cos(phi * degToRad)
 
       theta = 0
       segment = 0
@@ -34,8 +34,8 @@ define (require) ->
           texCoord = @texCoords[vertexIndex] = Vec2.create()
           evalPos(vert, theta, phi)
 
-          normal.copy(vert).normalize();
-          texCoord.set(phi/360.0, theta/180.0);
+          normal.copy(vert).normalize()
+          texCoord.set(phi/360.0, theta/180.0)
 
           ++vertexIndex
 

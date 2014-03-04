@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
   function HEEdge(vert, pair, face, next) {
     this.vert = vert;
     this.pair = pair;
@@ -6,13 +6,12 @@ define([], function() {
     this.next = next;
     this.selected = 0;
   }
-
-  HEEdge.prototype.findPrev = function() {
+  HEEdge.prototype.findPrev = function () {
     var edge = this;
-    while(edge.next != this) {
+    while (edge.next != this) {
       edge = edge.next;
     }
     return edge;
-  }
+  };
   return HEEdge;
 });

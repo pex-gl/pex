@@ -37,7 +37,7 @@ define (require) ->
       @updateMatrices()
 
     setAspectRatio: (ratio) ->
-      @aspectRatio = ratio;
+      @aspectRatio = ratio
       @updateMatrices()
 
     setFar: (far) ->
@@ -91,10 +91,10 @@ define (require) ->
     ## getWorldRay (x, y, windowWidth, windowHeight)
     #Gets ray in world coordinates for a x,y screen position
     #
-    #`x` - x position *{ Number }*  
-    #`y` - y position *{ Number }*  
-    #`windowWidth` - width of the window *{ Number }*  
-    #`windowHeight` - height of the window *{ Number }*  
+    #`x` - x position *{ Number }*
+    #`y` - y position *{ Number }*
+    #`windowWidth` - width of the window *{ Number }*
+    #`windowHeight` - height of the window *{ Number }*
     #Returns the ray in world coordinates *{ Vec3 }*
     getWorldRay: (x, y, windowWidth, windowHeight) ->
       x = (x - windowWidth/2) / (windowWidth/2)
@@ -106,7 +106,7 @@ define (require) ->
       x *= wNear / 2
       y *= hNear / 2
 
-      vOrigin = new Vec3(0, 0, 0);
+      vOrigin = new Vec3(0, 0, 0)
       vTarget = new Vec3(x, y, -this.getNear())
       invViewMatrix = @getViewMatrix().dup().invert()
 

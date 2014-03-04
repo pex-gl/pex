@@ -9,7 +9,6 @@ define (require) ->
     bind: ()->
       if (@oldViewport)
         throw 'Viewport.bind: Already bound.'
-        return
       @oldViewport = @gl.getParameter(@gl.VIEWPORT)
       @oldScissorBox = @gl.getParameter(@gl.SCISSOR_BOX)
       @oldScissorTest = @gl.getParameter(@gl.SCISSOR_TEST)
