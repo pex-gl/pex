@@ -14,18 +14,19 @@ pex.sys.Window.create({
   init: function() {
     var W = this.width;
     var H = this.height;
+		var i;
 
     pex.utils.MathUtils.seed(1);
 
     var center = Vec2.create(W/2, H/2);
     this.points = [];
     this.points.push(center);
-    for(var i=0; i<5; i++) {
-      this.points.push(Vec2.create(W * Math.random(), H * Math.random()))
+    for(i=0; i<5; i++) {
+      this.points.push(Vec2.create(W * Math.random(), H * Math.random()));
     }
 
     this.lines = [];
-    for(var i=1; i<this.points.length; i++) {
+    for(i=1; i<this.points.length; i++) {
       var midPoint = this.points[i].dup().sub(center).scale(0.5).add(center);
       var dir = midPoint.dup().sub(center).normalize().scale(200);
       var perp = Vec2.create(-dir.y, dir.x);
@@ -45,7 +46,7 @@ pex.sys.Window.create({
 
     this.lines.forEach(function(line) {
       this.resultPolygon = this.resultPolygon.clipToLine(line);
-    }.bind(this))
+    }.bind(this));
 
     /*
     this.clippingPolygon = new Polygon2D([
@@ -63,7 +64,7 @@ pex.sys.Window.create({
         Vec2.create(+ 150 + e.x, + 200 + e.y)
       ]);
       this.resultPolygon = this.targetPolygon.clip(this.clippingPolygon);
-    }.bind(this))
+    }.bind(this));
     */
   },
   drawPolygon: function(polygon, color) {
@@ -83,7 +84,7 @@ pex.sys.Window.create({
     var canvas = this.canvas;
     var paint = this.paint;
 
-    if (polygon.vertices.length == 0) return;
+    if (polygon.vertices.length === 0) return;
 
     paint.setFill();
     paint.setColor(color.r * 255, color.g * 255, color.b * 255, color.a * 255);

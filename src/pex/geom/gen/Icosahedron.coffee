@@ -8,7 +8,7 @@ define (require) ->
   class Icosahedron extends Geometry
     constructor: (r=1) ->
 
-      r = r || 1;
+      r = r || 1
 
       phi = (1 + Math.sqrt(5)) / 2
       a = r * 1 / 2

@@ -35,5 +35,5 @@ requirejs(['pex', 'pex/sys', 'pex/scene', 'pex/gl', 'pex/geom', 'pex/geom/gen', 
       gl.enable(gl.DEPTH_TEST);
       this.mesh.draw(this.camera);
     }
-  })
+  });
 });

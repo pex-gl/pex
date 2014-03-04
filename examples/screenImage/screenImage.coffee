@@ -32,15 +32,15 @@ pex.sys.Window.create
 
     @screenshot = new pex.gl.ScreenImage(Texture2D.load('screenshot.png'), 0, 0, 300, 300, @width, @height)
     @rt = new pex.gl.RenderTarget(300, 300, { depth : true })
-    @rtImage = new pex.gl.ScreenImage(@rt.getColorAttachement(0), 600, 0, 300, 300, @width, @height);
+    @rtImage = new pex.gl.ScreenImage(@rt.getColorAttachement(0), 600, 0, 300, 300, @width, @height)
 
     @rtImg = new pex.gl.RenderTarget(300, 300, { depth : true })
-    @rtImgFSQ = new pex.gl.ScreenImage(@screenshot.image, 0, 0, 1, 1, 1, 1);
-    @rtImgImage = new pex.gl.ScreenImage(@rtImg.getColorAttachement(0), 300, 0, 300, 300, @width, @height);
+    @rtImgFSQ = new pex.gl.ScreenImage(@screenshot.image, 0, 0, 1, 1, 1, 1)
+    @rtImgImage = new pex.gl.ScreenImage(@rtImg.getColorAttachement(0), 300, 0, 300, 300, @width, @height)
 
     @rt2 = new pex.gl.RenderTarget(300, 300, { depth : true })
-    @rtFSQ2 = new pex.gl.ScreenImage(@rt.getColorAttachement(0), 0, 0, 1, 1, 1, 1);
-    @rtImage2 = new pex.gl.ScreenImage(@rt2.getColorAttachement(0), 900, 0, 300, 300, @width, @height);
+    @rtFSQ2 = new pex.gl.ScreenImage(@rt.getColorAttachement(0), 0, 0, 1, 1, 1, 1)
+    @rtImage2 = new pex.gl.ScreenImage(@rt2.getColorAttachement(0), 900, 0, 300, 300, @width, @height)
 
     @texCube = new Mesh(new Cube(1, 1, 1), new Textured({texture:@rt.getColorAttachement(0)}))
 
@@ -48,7 +48,10 @@ pex.sys.Window.create
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(1, 0, 0), Color.Red)
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0, 1, 0), Color.Green)
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0, 0, 1), Color.Blue)
-    @lineMesh = new Mesh(lineBuilder, new ShowColors(), { useEdges: true})
+    @lineMesh = new Mesh(lineBuilder, new ShowColors(), { useEdges: true })
+
+    # don't return anything from init function
+    null
 
   draw: () ->
     @gl.enable(@gl.DEPTH_TEST)
@@ -62,53 +65,53 @@ pex.sys.Window.create
     @screenshot.draw()
 
     #draw
-    @gl.viewport(0, 0, 300, 300);
+    @gl.viewport(0, 0, 300, 300)
     @bgCube.material.uniforms.color = new Color(0.6, 0.5, 0.5, 1.0)
     @bgCube.draw(@camera)
     @lineMesh.draw(@camera)
 
     #rtImgDraw
-    @gl.viewport(0, 0, 300, 300);
-    @rt.bind();
+    @gl.viewport(0, 0, 300, 300)
+    @rt.bind()
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
     @bgCube.material.uniforms.color = new Color(0.6, 0.6, 0.5, 1.0)
     @bgCube.draw(@camera)
     @lineMesh.draw(@camera)
-    @rt.unbind();
+    @rt.unbind()
     @gl.viewport(0, 0, @width, @height)
     @rtImage.draw()
 
     #rtDraw
-    @gl.viewport(0, 0, 300, 300);
-    @rtImg.bind();
+    @gl.viewport(0, 0, 300, 300)
+    @rtImg.bind()
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
     @rtImgFSQ.draw()
-    @rtImg.unbind();
+    @rtImg.unbind()
     @gl.viewport(0, 0, @width, @height)
     @rtImgImage.draw()
 
     #textCube
-    @gl.viewport(600, 0, 300, 300);
+    @gl.viewport(600, 0, 300, 300)
     @bgCube.material.uniforms.color = new Color(0.5, 0.5, 0.6, 1.0)
     @bgCube.draw(@camera)
     @texCube.draw(@camera)
 
     #textCube2
-    @gl.viewport(900, 0, 300, 300);
+    @gl.viewport(900, 0, 300, 300)
     @bgCube.material.uniforms.color = new Color(0.5, 0.5, 0.6, 1.0)
     @bgCube.draw(@camera)
     @texCube.draw(@camera)
 
     #rtDraw2
-    @gl.viewport(0, 0, 300, 300);
-    @rt2.bind();
+    @gl.viewport(0, 0, 300, 300)
+    @rt2.bind()
     @gl.clearColor(0.0, 0.0, 1.0, 1)
     @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
     @rtFSQ2.draw()
-    @rt2.unbind();
+    @rt2.unbind()
     @gl.viewport(0, 0, @width, @height)
     @rtImage2.draw()
 
-    @gl.viewport(0, 0, @width, @height);
+    @gl.viewport(0, 0, @width, @height)
     @gl.disable(@gl.DEPTH_TEST)
     @gui.draw()

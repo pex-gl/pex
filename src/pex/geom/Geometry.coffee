@@ -123,7 +123,7 @@ define (require) ->
         @normals[f.c].add(n)
         count[f.c]++
 
-      @normals.forEach (n, i) =>
+      @normals.forEach (n, i) ->
         n.scale(1 / count[i])
 
 

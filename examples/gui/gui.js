@@ -73,7 +73,7 @@ pex.sys.Window.create({
         case 'S': self.gui.save('client.gui.settings.txt'); break;
         case 'L': self.gui.load('client.gui.settings.txt'); break;
       }
-    })
+    });
   },
   draw: function() {
     var gl = pex.gl.Context.currentContext.gl;

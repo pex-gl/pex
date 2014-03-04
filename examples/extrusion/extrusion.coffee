@@ -12,12 +12,12 @@ class Turtle
   constructor: (@hem, @face) ->
     @direction = Vec3.create().copy(face.getNormal())
     center = face.getCenter()
-    avgDist = 0;
-    vertices = face.getAllVertices();
+    avgDist = 0
+    vertices = face.getAllVertices()
     distances = vertices.map (v) ->
       dist = v.position.distance(center)
       avgDist += dist
-    @avgDist = avgDist / vertices.length;
+    @avgDist = avgDist / vertices.length
     @radiusScale = 1
 
   move: (distance) ->
@@ -26,10 +26,10 @@ class Turtle
       .selectFace(@face)
       .extrude(distance)
 
-    distances = @distances;
-    center = @face.getCenter();
-    radiusScale = @radiusScale;
-    avgDist = @avgDist;
+    distances = @distances
+    center = @face.getCenter()
+    radiusScale = @radiusScale
+    avgDist = @avgDist
     @face.getAllVertices().forEach (v, i) ->
       v.position
         .sub(center)
@@ -80,7 +80,7 @@ pex.sys.Window.create
 
   draw: () ->
     if this.totalLength < 1 && Time.frameNumber % 5 == 0
-      tmp = Vec3.create();
+      tmp = Vec3.create()
       @turtles.forEach (turtle, i) ->
         if Time.seconds < 2
           turtle.move(0.1)
@@ -112,9 +112,9 @@ pex.sys.Window.create
       @hem.toFlatGeometry(@mesh.geometry)
       @totalLength += 10.2
 
-    @gl.clearColor(0, 0, 0, 1);
-    @gl.depthFunc(@gl.LEQUAL);
-    @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT);
+    @gl.clearColor(0, 0, 0, 1)
+    @gl.depthFunc(@gl.LEQUAL)
+    @gl.clear(@gl.COLOR_BUFFER_BIT | @gl.DEPTH_BUFFER_BIT)
 
     @mesh.draw(@camera) if @mesh
     @selectionMesh.draw(@camera) if @selectionMesh

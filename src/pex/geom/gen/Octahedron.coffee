@@ -8,10 +8,10 @@ define (require) ->
   class Octahedron extends Geometry
     constructor: (r=1) ->
 
-      r = r || 1;
+      r = r || 1
 
-      a = r * 1 / (2 * Math.sqrt(2));
-      b = r * 1 / 2;
+      a = r * 1 / (2 * Math.sqrt(2))
+      b = r * 1 / 2
 
       s3 = Math.sqrt(3)
       s6 = Math.sqrt(6)
