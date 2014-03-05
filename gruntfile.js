@@ -59,17 +59,6 @@ module.exports = function(grunt) {
 		watch: {
 			files: [ '<%= jshint.files %>', '**/*.coffee' ],
 			tasks: [ 'lint', 'coffee' ]
-		},
-		fixmyjs: {
-			fix: {
-				files: [ {
-					expand: true,
-					cwd: 'src/',
-					src: ['**/*.js'],
-					dest: 'src/',
-					ext: '.js'
-				} ]
-			}
 		}
 	});
 
@@ -80,7 +69,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-coffeelint');
 	grunt.loadNpmTasks('grunt-exec');
-	grunt.loadNpmTasks('grunt-fixmyjs');
 
 	// run task - watch, lint, and convert coffeescripts
 	grunt.registerTask('run', [ 'lint', 'coffee', 'watch' ]);
@@ -92,5 +80,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('docs', [ 'docco' ]);
 
 	// building task
-	grunt.registerTask('build', [ 'fixmyjs', 'lint', 'coffee', 'requirejs' ]);
+	grunt.registerTask('build', [ 'lint', 'coffee', 'requirejs' ]);
 };

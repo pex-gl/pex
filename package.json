@@ -9,7 +9,6 @@
 		"grunt-contrib-requirejs": "latest",
 		"grunt-contrib-watch": "latest",
 		"grunt-coffeelint": "latest",
-		"grunt-exec": "latest",
-		"grunt-fixmyjs": "latest"
+		"grunt-exec": "latest"
 	}
 }
