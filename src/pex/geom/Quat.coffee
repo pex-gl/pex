@@ -80,7 +80,10 @@ define (require) ->
       this
 
     mul4: (x, y, z, w) ->
-      ax = @x ay = @y az = @z aw = @w
+      ax = @x
+      ay = @y
+      az = @z
+      aw = @w
 
       @x = w*ax + x*aw + y*az - z*ay
       @y = w*ay + y*aw + z*ax - x*az

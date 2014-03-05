@@ -1247,7 +1247,10 @@ define("../tools/include/inject", function(){});
 
       Quat.prototype.mul4 = function(x, y, z, w) {
         var aw, ax, ay, az;
-        ax = this.x(ay = this.y(az = this.z(aw = this.w)));
+        ax = this.x;
+        ay = this.y;
+        az = this.z;
+        aw = this.w;
         this.x = w * ax + x * aw + y * az - z * ay;
         this.y = w * ay + y * aw + z * ax - x * az;
         this.z = w * az + z * aw + x * ay - y * ax;

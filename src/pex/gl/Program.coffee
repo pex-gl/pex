@@ -3,7 +3,7 @@ define (require) ->
   IO = require('pex/sys/IO')
   Log = require('pex/utils/Log')
 
-  kVertexShaderPrefix   = '' +
+  kVertexShaderPrefix = '' +
     '#ifdef GL_ES\n' +
     'precision highp float\n' +
     '#endif\n' +
