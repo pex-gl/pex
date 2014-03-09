@@ -4,8 +4,8 @@
     Context = require('pex/gl/Context');
     IO = require('pex/sys/IO');
     Log = require('pex/utils/Log');
-    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float\n' + '#endif\n' + '#define VERT\n';
-    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float\n' + '#else\n' + '  precision mediump float\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
+    kVertexShaderPrefix = '' + '#ifdef GL_ES\n' + 'precision highp float;\n' + '#endif\n' + '#define VERT\n';
+    kFragmentShaderPrefix = '' + '#ifdef GL_ES\n' + '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' + '  precision highp float;\n' + '#else\n' + '  precision mediump float;\n' + '#endif\n' + '#endif\n' + '#define FRAG\n';
     return Program = (function() {
       Program.currentProgram = null;
 

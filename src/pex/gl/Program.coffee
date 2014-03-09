@@ -5,16 +5,16 @@ define (require) ->
 
   kVertexShaderPrefix = '' +
     '#ifdef GL_ES\n' +
-    'precision highp float\n' +
+    'precision highp float;\n' +
     '#endif\n' +
     '#define VERT\n'
 
   kFragmentShaderPrefix = '' +
     '#ifdef GL_ES\n' +
     '#ifdef GL_FRAGMENT_PRECISION_HIGH\n' +
-    '  precision highp float\n' +
+    '  precision highp float;\n' +
     '#else\n' +
-    '  precision mediump float\n' +
+    '  precision mediump float;\n' +
     '#endif\n' +
     '#endif\n' +
     '#define FRAG\n'
