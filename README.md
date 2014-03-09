@@ -49,8 +49,9 @@ pex.sys.Window.create({
 
 # How to use Pex in the browser*?
 1. Follow steps 1-4 from "How to use in Plask from scratch?"
-2. In the same folder copy `require.js` from pex-master/build/require.js
-3. Create `index.html` in the same folder with the following code:
+2. Change frist line in `main.js` to `var pex = pex || require('pex.js');` or remove it completely if you don't plan to use pex with Plask.
+3. In the same folder copy `require.js` from pex-master/build/require.js
+4. Create `index.html` in the same folder with the following code:
 
 ```HTML
 <!doctype html>
