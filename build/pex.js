@@ -5120,7 +5120,6 @@ define('pex/sys/IO',[
         if (callback) {
           callback(image);
         }
-      }
       };
       image.src = url;
     };
@@ -5349,7 +5348,7 @@ define('pex/sys/BrowserWindow',[
         touch.x = touch.clientX * window.devicePixelRatio;
         touch.y = touch.clientY * window.devicePixelRatio;
         return touch;
-      })
+      });
       fireEvent('leftMouseDown', {
         x: e.touches[0].clientX * window.devicePixelRatio,
         y: e.touches[0].clientY * window.devicePixelRatio,
@@ -5388,7 +5387,7 @@ define('pex/sys/BrowserWindow',[
         touch.x = touch.clientX * window.devicePixelRatio;
         touch.y = touch.clientY * window.devicePixelRatio;
         return touch;
-      })
+      });
       fireEvent('mouseDragged', {
         x: e.touches[0].clientX * window.devicePixelRatio,
         y: e.touches[0].clientY * window.devicePixelRatio,
