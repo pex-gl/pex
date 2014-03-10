@@ -8813,12 +8813,13 @@ define('pex/materials/SolidColor',[
         pointSize: 1,
         premultiplied: 0
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   SolidColor.prototype = Object.create(Material.prototype);
   return SolidColor;
 });
+
 
 define('lib/text!pex/materials/ShowNormals.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec4 vColor;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vColor = vec4(normal * 0.5 + 0.5, 1.0);\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
 
@@ -8833,12 +8834,13 @@ define('pex/materials/ShowNormals',[
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowNormalGLSL);
     var defaults = { pointSize: 1 };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowNormals.prototype = Object.create(Material.prototype);
   return ShowNormals;
 });
+
 
 define('lib/text!pex/materials/Textured.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nattribute vec3 position;\nattribute vec2 texCoord;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform sampler2D texture;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_FragColor = texture2D(texture, vTexCoord);\n}\n\n#endif\n';});
 
@@ -8854,12 +8856,13 @@ define('pex/materials/Textured',[
     this.gl = Context.currentContext.gl;
     var program = new Program(TexturedGLSL);
     var defaults = {};
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   Textured.prototype = Object.create(Material.prototype);
   return Textured;
 });
+
 
 define('lib/text!pex/materials/ShowTexCoords.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec2 texCoord;\nvarying vec4 vColor;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vColor = vec4(texCoord, 1.0, 1.0);\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif';});
 
@@ -8874,12 +8877,13 @@ define('pex/materials/ShowTexCoords',[
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowTexCoordGLSL);
     var defaults = { pointSize: 1 };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowTexCoords.prototype = Object.create(Material.prototype);
   return ShowTexCoords;
 });
+
 
 define('lib/text!pex/materials/ShowDepth.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float near;\nuniform float far;\nuniform vec4 farColor;\nuniform vec4 nearColor;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec4 vColor;\nvoid main() {\n  vec4 pos = modelViewMatrix * vec4(position, 1.0);\n  gl_Position = projectionMatrix * pos;\n  float depth = clamp((-pos.z - near) / (far - near), 0.0, 1.0);\n  vColor = mix(nearColor, farColor, depth);\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
 
@@ -8900,12 +8904,13 @@ define('pex/materials/ShowDepth',[
         nearColor: Color.create(0, 0, 0, 1),
         farColor: Color.create(1, 1, 1, 1)
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowDepth.prototype = Object.create(Material.prototype);
   return ShowDepth;
 });
+
 
 define('lib/text!pex/materials/ShowColors.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec4 color;\nvarying vec4 vColor;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vColor = color;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
 
@@ -8920,12 +8925,13 @@ define('pex/materials/ShowColors',[
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowColorsGLSL);
     var defaults = { pointSize: 1 };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowColors.prototype = Object.create(Material.prototype);
   return ShowColors;
 });
+
 
 define('lib/text!pex/materials/ShowPositions.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 modelWorldMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec4 vColor;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vColor = modelWorldMatrix * vec4(position, 1.0);\n  vColor.a = (modelViewMatrix * vec4(position, 1.0)).z;\n}\n\n#endif\n\n#ifdef FRAG\n\nvarying vec4 vColor;\n\nvoid main() {\n  gl_FragColor = vColor;\n}\n\n#endif\n';});
 
@@ -8940,12 +8946,13 @@ define('pex/materials/ShowPositions',[
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowPositionsGLSL);
     var defaults = { pointSize: 1 };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowPositions.prototype = Object.create(Material.prototype);
   return ShowPositions;
 });
+
 
 define('lib/text!pex/materials/PackDepth.glsl',[],function () { return '#ifdef VERT\n\nattribute vec4 position;\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform float near;\nuniform float far;\n\nvarying float depth;\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * position;\n\n  //linear depth in camera space (0..far)\n  depth = (modelViewMatrix * position).z/far;\n}\n#endif\n\n#ifdef FRAG\n\nuniform float near;\nuniform float far;\n\nvarying float depth;\n\n//from http://spidergl.org/example.php?id=6\nvec4 packDepth(const in float depth) {\n  const vec4 bit_shift = vec4(256.0*256.0*256.0, 256.0*256.0, 256.0, 1.0);\n  const vec4 bit_mask  = vec4(0.0, 1.0/256.0, 1.0/256.0, 1.0/256.0);\n  vec4 res = fract(depth * bit_shift);\n  res -= res.xxyz * bit_mask;\n  return res;\n}\n\nvoid main() {\n  gl_FragColor = packDepth(-depth);\n  gl_FragColor.r = 1.0;\n}\n\n#endif';});
 
@@ -8958,16 +8965,18 @@ define('pex/materials/PackDepth',[
 ], function (Context, Program, Material, ObjectUtils, PackDepthGLSL) {
   function PackDepthMaterial(uniforms) {
     this.gl = Context.currentContext.gl;
-    this.program = new Program(PackDepthGLSL);
+    var program = new Program(PackDepthGLSL);
     var defaults = {
         near: 0.1,
         far: 100
       };
-    this.uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    Material.call(this, program, uniforms);
   }
-  PackDepthMaterial.prototype = new Material();
+  PackDepthMaterial.prototype = Object.create(Material.prototype);
   return PackDepthMaterial;
 });
+
 
 define('lib/text!pex/materials/Diffuse.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 normalMatrix;\nuniform float pointSize;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec3 vNormal;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = pointSize;\n  vNormal = (normalMatrix * vec4(normal, 1.0)).xyz;\n}\n\n#endif\n\n#ifdef FRAG\n\nuniform vec4 ambientColor;\nuniform vec4 diffuseColor;\nuniform vec3 lightPos;\nuniform float wrap;\nvarying vec3 vNormal;\n\nvoid main() {\n  vec3 L = normalize(lightPos);\n  vec3 N = normalize(vNormal);\n  float NdotL = max(0.0, (dot(N, L) + wrap) / (1.0 + wrap));\n  gl_FragColor = ambientColor + NdotL * diffuseColor;\n}\n\n#endif\n';});
 
@@ -8990,12 +8999,13 @@ define('pex/materials/Diffuse',[
         ambientColor: Color.create(0, 0, 0, 1),
         diffuseColor: Color.create(1, 1, 1, 1)
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   Diffuse.prototype = Object.create(Material.prototype);
   return Diffuse;
 });
+
 
 define('lib/text!pex/materials/Test.glsl',[],function () { return '#ifdef VERT\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\n\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 texCoord;\n\nvarying vec3 vNormal;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = 2.0;\n  vNormal = normal;\n  vTexCoord = texCoord;\n}\n\n#endif\n\n#ifdef FRAG\n\nvec4 checker(vec2 uv) {\n  float checkSize = 8.0;\n  float fmodResult = mod(floor(checkSize * uv.x) + floor(checkSize * uv.y),2.0);\n  if (fmodResult < 1.0) {\n    return vec4(1, 1, 1, 1);\n  } else {\n    return vec4(0, 0, 0, 1);\n  }\n}\n\nvarying vec3 vNormal;\nvarying vec2 vTexCoord;\n\nvoid main() {\n  gl_FragColor.rgba = 0.25 * checker(vTexCoord);\n  gl_FragColor.rgb += 0.5 * normalize(vNormal)*0.5 + 0.5;\n  gl_FragColor.a = 1.0;\n}\n\n#endif';});
 
@@ -9078,12 +9088,13 @@ define('pex/materials/PointSpriteTextured',[
         pointSize: 1,
         alpha: 1
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   PointSpriteTextured.prototype = Object.create(Material.prototype);
   return PointSpriteTextured;
 });
+
 //Module wrapper for materials classes.
 define('pex/materials',[
   'pex/materials/SolidColor',

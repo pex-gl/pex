@@ -13,7 +13,7 @@ define([
         pointSize: 1,
         alpha: 1
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   PointSpriteTextured.prototype = Object.create(Material.prototype);

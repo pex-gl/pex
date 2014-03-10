@@ -10,7 +10,7 @@ define([
     this.gl = Context.currentContext.gl;
     var program = new Program(TexturedGLSL);
     var defaults = {};
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   Textured.prototype = Object.create(Material.prototype);

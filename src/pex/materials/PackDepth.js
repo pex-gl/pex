@@ -7,13 +7,14 @@ define([
 ], function (Context, Program, Material, ObjectUtils, PackDepthGLSL) {
   function PackDepthMaterial(uniforms) {
     this.gl = Context.currentContext.gl;
-    this.program = new Program(PackDepthGLSL);
+    var program = new Program(PackDepthGLSL);
     var defaults = {
         near: 0.1,
         far: 100
       };
-    this.uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    Material.call(this, program, uniforms);
   }
-  PackDepthMaterial.prototype = new Material();
+  PackDepthMaterial.prototype = Object.create(Material.prototype);
   return PackDepthMaterial;
 });

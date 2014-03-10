@@ -14,7 +14,7 @@ define([
         pointSize: 1,
         premultiplied: 0
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   SolidColor.prototype = Object.create(Material.prototype);
