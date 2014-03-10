@@ -9,7 +9,7 @@ define([
     this.gl = Context.currentContext.gl;
     var program = new Program(ShowColorsGLSL);
     var defaults = { pointSize: 1 };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowColors.prototype = Object.create(Material.prototype);

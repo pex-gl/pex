@@ -17,7 +17,7 @@ define([
         ambientColor: Color.create(0, 0, 0, 1),
         diffuseColor: Color.create(1, 1, 1, 1)
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   Diffuse.prototype = Object.create(Material.prototype);

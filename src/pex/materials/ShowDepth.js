@@ -15,7 +15,7 @@ define([
         nearColor: Color.create(0, 0, 0, 1),
         farColor: Color.create(1, 1, 1, 1)
       };
-    var uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
+    uniforms = ObjectUtils.mergeObjects(defaults, uniforms);
     Material.call(this, program, uniforms);
   }
   ShowDepth.prototype = Object.create(Material.prototype);
