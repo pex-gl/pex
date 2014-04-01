@@ -36,9 +36,19 @@
           s += 'v ' + v.x + ' ' + v.y + ' ' + v.z + '\n';
           return vertexCount++;
         });
+        if (geometry.texCoords) {
+          geometry.texCoords.forEach(function(vt) {
+            return s += 'vt ' + vt.x + ' ' + vt.y + '\n';
+          });
+        }
+        if (geometry.normals) {
+          geometry.normals.forEach(function(n) {
+            return s += 'vn ' + n.x + ' ' + n.y + ' ' + n.z + '\n';
+          });
+        }
         if (geometry.faces && geometry.faces.length > 0) {
           return geometry.faces.forEach(function(f) {
-            s += 'f ' + (f.a + 1) + ' ' + (f.b + 1) + ' ' + (f.c + 1);
+            s += 'f ' + (f.a + 1) + '/' + (f.a + 1) + '/' + (f.a + 1) + ' ' + (f.b + 1) + '/' + (f.b + 1) + '/' + (f.b + 1) + ' ' + (f.c + 1) + '/' + (f.c + 1) + '/' + (f.c + 1);
             if (f.d) {
               s += ' ' + (f.d + 1);
             }

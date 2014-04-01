@@ -35,9 +35,17 @@ define (require) ->
         s += 'v ' + v.x + ' ' + v.y + ' ' + v.z + '\n'
         vertexCount++
 
+      if geometry.texCoords
+        geometry.texCoords.forEach (vt) ->
+          s += 'vt ' + vt.x + ' ' + vt.y + '\n'
+
+      if geometry.normals
+        geometry.normals.forEach (n) ->
+          s += 'vn ' + n.x + ' ' + n.y + ' ' + n.z + '\n'
+
       if geometry.faces && geometry.faces.length > 0
         geometry.faces.forEach (f) ->
-          s += 'f ' + (f.a+1) + ' ' + (f.b+1) + ' ' + (f.c+1)
+          s += 'f ' + (f.a+1) + '/' + (f.a+1) + '/' + (f.a+1) + ' ' + (f.b+1) + '/' + (f.b+1) + '/' + (f.b+1) + ' ' + (f.c+1) + '/' + (f.c+1) + '/' + (f.c+1)
           if f.d then s += ' ' + (f.d+1)
           s  += '\n'
       else
