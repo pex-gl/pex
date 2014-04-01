@@ -16,24 +16,31 @@ define (require) ->
     lines.forEach (line) ->
       matches = null
 
-      if matches == line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      matches = line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      if matches != null
         x = parseFloat(matches[1])
         y = parseFloat(matches[2])
         z = parseFloat(matches[3])
         geom.vertices.push(new Vec3(x, y, z))
+        return
 
-      else if matches == line.match(/vt\s+([^\s]+)\s+([^\s]+)/)
+      matches = line.match(/vt\s+([^\s]+)\s+([^\s]+)/)
+      if matches != null
         u = parseFloat(matches[1])
         v = parseFloat(matches[2])
         geom.texCoords.push(new Vec2(u, v))
+        return
 
-      else if matches == line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      matches = line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      if matches != null
         x = parseFloat(matches[1])
         y = parseFloat(matches[2])
         z = parseFloat(matches[3])
         geom.normals.push(new Vec3(x, y, z))
+        return
 
-      else if matches == line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      if matches != null
         a = parseInt(matches[1])
         b = parseInt(matches[2])
         c = parseInt(matches[3])
@@ -44,8 +51,10 @@ define (require) ->
         if d < 0 then d = geom.vertices.length + d else d--
         geom.faces.push(new Face3(a, b, c))
         geom.faces.push(new Face3(a, c, d))
+        return
 
-      else if matches == line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)
+      if matches != null
         a = parseInt(matches[1])
         b = parseInt(matches[2])
         c = parseInt(matches[3])
@@ -53,9 +62,9 @@ define (require) ->
         if b < 0 then b = geom.vertices.length + b else b--
         if c < 0 then c = geom.vertices.length + c else c--
         geom.faces.push(new Face3(a, b, c))
+        return
 
-      else
-        if (ObjReader.verbose) then console.log('ObjReader unknown line', line)
+      if (ObjReader.verbose) then console.log('ObjReader unknown line', line)
 
     if (geom.normals.length == 0) then delete geom.normals
     if (geom.texCoords.length == 0) then delete geom.texCoords
