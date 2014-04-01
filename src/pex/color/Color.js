@@ -23,6 +23,13 @@
         return new Color(r, g, b, a);
       };
 
+      Color.createHSV = function(h, s, v) {
+        var c;
+        c = new Color();
+        c.setHSV(h, s, v);
+        return c;
+      };
+
       Color.prototype.set = function(r, g, b, a) {
         this.r = r;
         this.g = g;

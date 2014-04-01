@@ -14,6 +14,11 @@ define (require) ->
     @create: (r, g, b, a) ->
       new Color(r, g, b, a)
 
+    @createHSV: (h, s, v) ->
+      c = new Color()
+      c.setHSV(h, s, v)
+      c
+
     set: (r, g, b, a) ->
       @r = r
       @g = g

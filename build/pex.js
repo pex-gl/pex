@@ -1902,6 +1902,13 @@ define('pex/utils/MathUtils',[
         return new Color(r, g, b, a);
       };
 
+      Color.createHSV = function(h, s, v) {
+        var c;
+        c = new Color();
+        c.setHSV(h, s, v);
+        return c;
+      };
+
       Color.prototype.set = function(r, g, b, a) {
         this.r = r;
         this.g = g;
@@ -7263,21 +7270,31 @@ define('pex/sys',[
       lines.forEach(function(line) {
         var a, b, c, d, matches, u, v, x, y, z;
         matches = null;
-        if (matches === line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        matches = line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
-          return geom.vertices.push(new Vec3(x, y, z));
-        } else if (matches === line.match(/vt\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.vertices.push(new Vec3(x, y, z));
+          return;
+        }
+        matches = line.match(/vt\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           u = parseFloat(matches[1]);
           v = parseFloat(matches[2]);
-          return geom.texCoords.push(new Vec2(u, v));
-        } else if (matches === line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.texCoords.push(new Vec2(u, v));
+          return;
+        }
+        matches = line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
-          return geom.normals.push(new Vec3(x, y, z));
-        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.normals.push(new Vec3(x, y, z));
+          return;
+        }
+        matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -7303,8 +7320,11 @@ define('pex/sys',[
             d--;
           }
           geom.faces.push(new Face3(a, b, c));
-          return geom.faces.push(new Face3(a, c, d));
-        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.faces.push(new Face3(a, c, d));
+          return;
+        }
+        matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -7323,11 +7343,11 @@ define('pex/sys',[
           } else {
             c--;
           }
-          return geom.faces.push(new Face3(a, b, c));
-        } else {
-          if (ObjReader.verbose) {
-            return console.log('ObjReader unknown line', line);
-          }
+          geom.faces.push(new Face3(a, b, c));
+          return;
+        }
+        if (ObjReader.verbose) {
+          return console.log('ObjReader unknown line', line);
         }
       });
       if (geom.normals.length === 0) {
@@ -7387,9 +7407,19 @@ define('pex/sys',[
           s += 'v ' + v.x + ' ' + v.y + ' ' + v.z + '\n';
           return vertexCount++;
         });
+        if (geometry.texCoords) {
+          geometry.texCoords.forEach(function(vt) {
+            return s += 'vt ' + vt.x + ' ' + vt.y + '\n';
+          });
+        }
+        if (geometry.normals) {
+          geometry.normals.forEach(function(n) {
+            return s += 'vn ' + n.x + ' ' + n.y + ' ' + n.z + '\n';
+          });
+        }
         if (geometry.faces && geometry.faces.length > 0) {
           return geometry.faces.forEach(function(f) {
-            s += 'f ' + (f.a + 1) + ' ' + (f.b + 1) + ' ' + (f.c + 1);
+            s += 'f ' + (f.a + 1) + '/' + (f.a + 1) + '/' + (f.a + 1) + ' ' + (f.b + 1) + '/' + (f.b + 1) + '/' + (f.b + 1) + ' ' + (f.c + 1) + '/' + (f.c + 1) + '/' + (f.c + 1);
             if (f.d) {
               s += ' ' + (f.d + 1);
             }

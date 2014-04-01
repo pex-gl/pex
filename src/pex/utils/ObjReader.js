@@ -23,21 +23,31 @@
       lines.forEach(function(line) {
         var a, b, c, d, matches, u, v, x, y, z;
         matches = null;
-        if (matches === line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+        matches = line.match(/v\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
-          return geom.vertices.push(new Vec3(x, y, z));
-        } else if (matches === line.match(/vt\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.vertices.push(new Vec3(x, y, z));
+          return;
+        }
+        matches = line.match(/vt\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           u = parseFloat(matches[1]);
           v = parseFloat(matches[2]);
-          return geom.texCoords.push(new Vec2(u, v));
-        } else if (matches === line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.texCoords.push(new Vec2(u, v));
+          return;
+        }
+        matches = line.match(/vn\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           x = parseFloat(matches[1]);
           y = parseFloat(matches[2]);
           z = parseFloat(matches[3]);
-          return geom.normals.push(new Vec3(x, y, z));
-        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.normals.push(new Vec3(x, y, z));
+          return;
+        }
+        matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -63,8 +73,11 @@
             d--;
           }
           geom.faces.push(new Face3(a, b, c));
-          return geom.faces.push(new Face3(a, c, d));
-        } else if (matches === line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/)) {
+          geom.faces.push(new Face3(a, c, d));
+          return;
+        }
+        matches = line.match(/f\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)/);
+        if (matches !== null) {
           a = parseInt(matches[1]);
           b = parseInt(matches[2]);
           c = parseInt(matches[3]);
@@ -83,11 +96,11 @@
           } else {
             c--;
           }
-          return geom.faces.push(new Face3(a, b, c));
-        } else {
-          if (ObjReader.verbose) {
-            return console.log('ObjReader unknown line', line);
-          }
+          geom.faces.push(new Face3(a, b, c));
+          return;
+        }
+        if (ObjReader.verbose) {
+          return console.log('ObjReader unknown line', line);
         }
       });
       if (geom.normals.length === 0) {
