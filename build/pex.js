@@ -1801,9 +1801,9 @@ define('pex/utils/MathUtils',[
   };
   MathUtils.randomVec3 = function (r) {
     r = r || 0.5;
-    var x = Math.random() - 0.5;
-    var y = Math.random() - 0.5;
-    var z = Math.random() - 0.5;
+    var x = 2 * Math.random() - 1;
+    var y = 2 * Math.random() - 1;
+    var z = 2 * Math.random() - 1;
     return Vec3.create(x * r, y * r, z * r);
   };
   MathUtils.randomVec3InBoundingBox = function (bbox) {
@@ -2915,7 +2915,7 @@ define('pex/geom/Octree',['pex/geom/Vec3'], function (Vec3) {
   //position is bottom left corner of the cell
   function Octree(position, size, accuracy) {
     this.maxDistance = Math.max(size.x, Math.max(size.y, size.z));
-    this.accuracy = typeof accuracy !== 'undefined' ? accuracy : this.maxDistance / 1000;
+    this.accuracy = typeof accuracy !== 'undefined' ? accuracy : this.maxDistance / 100000;
     this.root = new Octree.Cell(this, position, size, 0);
   }
   Octree.fromBoundingBox = function (bbox) {
@@ -7449,6 +7449,63 @@ define('pex/utils/MovieRecorder',[
   };
   return MovieRecorder;
 });
+define('pex/utils/FuncUtils',[], function () {
+  function FuncUtils() {
+  }
+  FuncUtils.not = function (x) {
+    return !x;
+  };
+  FuncUtils.equal = function (a, b) {
+    return a === b;
+  };
+  FuncUtils.autoCurry = function (func) {
+    var len = func.length;
+    var args = [];
+    return function next() {
+      args = args.concat(Array.prototype.slice.call(arguments));
+      return args.length >= len ? func.apply(this, args.splice(0)) : next;
+    };
+  };
+  FuncUtils.compose = function () {
+    var funcs = Array.prototype.slice.apply(arguments);
+    return function () {
+      var args = Array.prototype.slice.apply(arguments);
+      for (var i = funcs.length - 1; i >= 0; --i) {
+        args = [funcs[i].apply(this, args)];
+      }
+      return args[0];
+    };
+  };
+  FuncUtils.repeatedly = function (num, func) {
+    var i = 0;
+    var values = [];
+    for (i = 0; i < num; ++i) {
+      values.push(func(i));
+    }
+    return values;
+  };
+  FuncUtils.repeat = function (num, value) {
+    return FuncUtils.repeatedly(num, function () {
+      return value;
+    });
+  };
+  FuncUtils.dispatch = function () {
+    var funcs = Array.prototype.slice.apply(arguments);
+    var len = funcs.length;
+    return function (target) {
+      var value;
+      var args = Array.prototype.slice.call(arguments, 1);
+      for (var i = 0; i < len; ++i) {
+        var func = funcs[i];
+        value = func.apply(func, Array.prototype.concat(target, args));
+        if (value)
+          return value;
+      }
+      return value;
+    };
+  };
+  return FuncUtils;
+});
 //Module wrapper for utility classes.
 define('pex/utils',[
   'pex/utils/Log',
@@ -7458,8 +7515,9 @@ define('pex/utils',[
   'pex/utils/ArrayUtils',
   'pex/utils/ObjReader',
   'pex/utils/ObjWriter',
-  'pex/utils/MovieRecorder'
-], function (Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter, MovieRecorder) {
+  'pex/utils/MovieRecorder',
+  'pex/utils/FuncUtils'
+], function (Log, Time, ObjectUtils, MathUtils, ArrayUtils, ObjReader, ObjWriter, MovieRecorder, FuncUtils) {
   return {
     Log: Log,
     Time: Time,
@@ -7468,7 +7526,8 @@ define('pex/utils',[
     ArrayUtils: ArrayUtils,
     ObjReader: ObjReader,
     ObjWriter: ObjWriter,
-    MovieRecorder: MovieRecorder
+    MovieRecorder: MovieRecorder,
+    FuncUtils: FuncUtils
   };
 });
 (function() {
