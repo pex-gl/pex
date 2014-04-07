@@ -26,9 +26,9 @@ define([
   };
   MathUtils.randomVec3 = function (r) {
     r = r || 0.5;
-    var x = Math.random() - 0.5;
-    var y = Math.random() - 0.5;
-    var z = Math.random() - 0.5;
+    var x = 2 * Math.random() - 1;
+    var y = 2 * Math.random() - 1;
+    var z = 2 * Math.random() - 1;
     return Vec3.create(x * r, y * r, z * r);
   };
   MathUtils.randomVec3InBoundingBox = function (bbox) {
