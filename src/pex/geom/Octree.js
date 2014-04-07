@@ -2,7 +2,7 @@ define(['pex/geom/Vec3'], function (Vec3) {
   //position is bottom left corner of the cell
   function Octree(position, size, accuracy) {
     this.maxDistance = Math.max(size.x, Math.max(size.y, size.z));
-    this.accuracy = typeof accuracy !== 'undefined' ? accuracy : this.maxDistance / 1000;
+    this.accuracy = typeof accuracy !== 'undefined' ? accuracy : this.maxDistance / 100000;
     this.root = new Octree.Cell(this, position, size, 0);
   }
   Octree.fromBoundingBox = function (bbox) {
