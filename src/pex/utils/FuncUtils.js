@@ -1,13 +1,16 @@
 define([], function () {
   function FuncUtils() {
   }
-  FuncUtils.not = function (x) {
+
+  FuncUtils.not = function(x) {
     return !x;
   };
-  FuncUtils.equal = function (a, b) {
+
+  FuncUtils.equal = function(a, b) {
     return a === b;
   };
-  FuncUtils.autoCurry = function (func) {
+
+  FuncUtils.autoCurry = function(func) {
     var len = func.length;
     var args = [];
     return function next() {
@@ -15,9 +18,10 @@ define([], function () {
       return args.length >= len ? func.apply(this, args.splice(0)) : next;
     };
   };
-  FuncUtils.compose = function () {
+
+  FuncUtils.compose = function() {
     var funcs = Array.prototype.slice.apply(arguments);
-    return function () {
+    return function() {
       var args = Array.prototype.slice.apply(arguments);
       for (var i = funcs.length - 1; i >= 0; --i) {
         args = [funcs[i].apply(this, args)];
@@ -25,7 +29,8 @@ define([], function () {
       return args[0];
     };
   };
-  FuncUtils.repeatedly = function (num, func) {
+
+  FuncUtils.repeatedly = function(num, func) {
     var i = 0;
     var values = [];
     for (i = 0; i < num; ++i) {
@@ -33,12 +38,14 @@ define([], function () {
     }
     return values;
   };
-  FuncUtils.repeat = function (num, value) {
+
+  FuncUtils.repeat = function(num, value) {
     return FuncUtils.repeatedly(num, function () {
       return value;
     });
   };
-  FuncUtils.dispatch = function () {
+
+  FuncUtils.dispatch = function() {
     var funcs = Array.prototype.slice.apply(arguments);
     var len = funcs.length;
     return function (target) {
@@ -53,5 +60,6 @@ define([], function () {
       return value;
     };
   };
+
   return FuncUtils;
 });
