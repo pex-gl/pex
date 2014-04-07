@@ -45,7 +45,7 @@ pex.sys.Window.create
         geom = geom.toFlatGeometry()
       else if i == 5
         geom = hem().fromGeometry(new Cube(1, 0.1, 1, 3, 1, 3))
-        geom.selectFacesBy((f) -> 
+        geom.selectFacesBy((f) ->
           c = f.getCenter()
           n = f.getNormal()
           return c.length() < 0.1 && n.y > 0
