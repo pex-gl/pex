@@ -19,8 +19,9 @@ define([
   'pex/geom/BoundingBox',
   'pex/geom/Octree',
   'pex/geom/Spline3D',
-  'pex/geom/Ray'
-], function (Vec2, Vec3, Vec4, Mat4, Quat, Geometry, GeometryOperations, gen, Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem, BoundingBox, Octree, Spline3D, Ray) {
+  'pex/geom/Ray',
+  'pex/geom/Path'
+], function (Vec2, Vec3, Vec4, Mat4, Quat, Geometry, GeometryOperations, gen, Edge, Face3, Face4, FacePolygon, Line2D, Rect, Triangle2D, Polygon2D, hem, BoundingBox, Octree, Spline3D, Ray, Path) {
   return {
     Vec2: Vec2,
     Vec3: Vec3,
@@ -42,6 +43,7 @@ define([
     BoundingBox: BoundingBox,
     Octree: Octree,
     Spline3D: Spline3D,
-    Ray: Ray
+    Ray: Ray,
+    Path: Path
   };
 });
