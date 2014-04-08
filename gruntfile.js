@@ -47,7 +47,7 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
-			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js', '!src/lib/*' ],
+			files: [ 'src/**/*.js', 'examples/**/*.js', '*.js', '!src/lib/*', '!**/node_modules/**', '!**/*.min.js' ],
 			options: { // ignore warnings from coffeescript generated files
 				"-W030": true,
 				"-W093": true,

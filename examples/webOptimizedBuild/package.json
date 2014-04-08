@@ -1,0 +1,10 @@
+{
+	"name": "webOptimizedBuild",
+	"version": "0.0.1",
+	"description": "",
+	"dependencies": {
+		"requirejs": "latest",
+		"grunt-contrib-requirejs": "latest",
+		"grunt-exec": "latest"
+	}
+}
