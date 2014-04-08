@@ -53,7 +53,8 @@ module.exports = function(grunt) {
 				"-W093": true,
 				"-W004": true,
 				"-W041": true,
-				"-W083": true
+				"-W083": true,
+				"-W061": true // ignore eval() warning
 			}
 		},
 		watch: {
