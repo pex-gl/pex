@@ -19,7 +19,8 @@ define (require) ->
         vsync: true
         multisample: true
         fullscreen: false
-        center: true
+        center: true,
+        hdpi: 1
 
       obj.settings = obj.settings || {}
 
