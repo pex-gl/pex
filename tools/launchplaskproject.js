@@ -26,3 +26,16 @@ while(dir != '/' && ++iterationCount < 50) {
     dir = path.resolve(path.join(dir, '/', '..'));
   }
 }
+
+if (dir == '/') {
+  var mainFile = scriptPath;
+  var child = spawn(plaskPath,[mainFile], {cwd:dir+'/'});
+    child.on('exit', function() {
+  })
+  child.stdout.on('data', function(data) {
+    console.log(data.toString());
+  });
+  child.stderr.on('data', function(data) {
+    console.log(data.toString());
+  });
+}
