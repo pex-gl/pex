@@ -8,7 +8,7 @@ var dir = path.dirname(scriptPath);
 
 var iterationCount = 0;
 while(dir != '/' && ++iterationCount < 50) {
-  var mainFile = path.join(dir,'/','main.js');
+  var mainFile = path.join(dir,'/','index.js');
   if (fs.existsSync(mainFile)) {
     console.log(dir);
     var child = spawn(plaskPath,[mainFile], {cwd:dir+'/'});
