@@ -1,1 +1,0 @@
-Javascript + WebGL = Love
