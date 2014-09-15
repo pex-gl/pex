@@ -53,7 +53,7 @@ This seems like a lot of text but don't be scared! I'ts really easy, especially 
 		
 	which launches a new browser tab with the example app and watches for changes in **main.js** (where your pex program is) or you run **main.js** in Plask. You can open the **index.html** document manually and while that would work just fine since your Pex source code needs to be browserified changing **main.js** and saving wouldn't change what you see. 
 	
-	You can usually use a gulp or grunt script instead of a npm script to watch and build **main.js** by adding the `-g --grunt` or `-u --gulp` flag when creating a new app with `pex init`. For more info check out: [Pex command line reference](#pex-cli-reference).
+	You can usually use a gulp or grunt script instead of a npm script to watch and build **main.js** by adding the `-g --grunt` or `-u --gulp` flag when creating a new app with `pex init`. For more info check out: [Pex command line reference](#pex-command-line-reference).
 
 4. Play around with the example! If you made it this far all you need to do now is dive into the amazing world of 3D graphics. The example app is a basic cube. But Pex comes with a lot more awesome examples so try them all out, copy pasta some code to make some neat stuff and dive into the docs. 
 
