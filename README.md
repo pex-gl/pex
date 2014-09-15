@@ -78,11 +78,22 @@ Pex has different goals in mind. It's simplifying coding but there is more boile
 [Szymon Kaliski](https://github.com/szymonkaliski) - various build scripts improvements, examples contributor
 [Dean McNamee](https://github.com/deanm) - author of Plask and core math code in pex  
 
-### Projects showcase
+## Projects showcase
 
+[Fibers](http://variable.io/fibers/) - data driven artwork
+![Fibers](assets/project-fibers.jpg)
+
+[Flora](http://variable.io/flora/) - generative educational app
+![Flora](assets/project-flora.jpg)
+
+[Digital Type Wall](http://variable.io/digital-type-wall/) - generative typograpy installation
+![Flora](assets/project-monotype.jpg)
+
+And more:
+
+[http://variable.io/](http://variable.io/) (All WebGL projects)  
 [http://marcinignac.com/experiments/technology/webgl/](http://marcinignac.com/experiments/technology/webgl/)  
 [http://marcinignac.com/projects/technology/webgl/](http://marcinignac.com/projects/technology/webgl/)  
-[http://variable.io/](http://variable.io/) (All WebGL projects)  
 [http://www.flickr.com/photos/marcinignac/sets/72157629801608107/](http://www.flickr.com/photos/marcinignac/sets/72157629801608107/)  
 
 ## Reference guide
