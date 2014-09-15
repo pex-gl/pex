@@ -109,7 +109,10 @@ Pex has different goals in mind. It's simplifying coding but there is more boile
 		npm install
 		
 7. Open **PlaskLauncher.app**, click `File->Open` and choose generated `myFirstProject/main.js` file.
+
 8. You should see a colorful cube. Drag your mouse to rotate it.
+
+	![Pex in the browser](assets/basic-plask.png)
 
 ### How to use Pex in a web browser?
 
@@ -136,6 +139,8 @@ Pex has different goals in mind. It's simplifying coding but there is more boile
 
 6. You should see a colorful cube. Drag your mouse to rotate it.
 
+	![Pex in the browser](assets/basic-browser.png)
+
 ### Basic Pex Example
 
 ```JavaScript
@@ -151,12 +156,14 @@ var ShowNormals = materials.ShowNormals;
 var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball = glu.Arcball;
 var Color = color.Color;
+var Platform = sys.Platform;
 
 sys.Window.create({
   settings: {
     width: 1280,
     height: 720,
-    type: '3d'
+    type: '3d',
+    fullscreen: Platform.isBrowser ? true : false
   },
   init: function() {
     var cube = new Cube();
@@ -174,7 +181,7 @@ sys.Window.create({
 ```
 
 ### HTML File Structure
-I
+
 ```HTML
 <!doctype html>
 <html lang="en">
