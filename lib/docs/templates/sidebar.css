@@ -1,0 +1,165 @@
+/*--------------------- Typography ----------------------------*/
+
+@font-face {
+    font-family: 'droidsans';
+    src: url('public/fonts/droidsans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'droidsans-bold';
+    src: url('public/fonts/droidsans-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*--------------------- Layout ----------------------------*/
+html { height: 100%; }
+body {
+  font-family: "droidsans";
+  font-size: 14px;
+  line-height: 24px;
+  margin: 0px;
+  padding: 0px 0px 0px 200px;
+  height:100%;
+  overflow: hidden;
+}
+#viewer {
+  border: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+#container {
+  width: 220px;
+  overflow: auto;
+  position: fixed;
+  height: 100%;
+  background-color: #E9FCF8;
+  left: 0px;
+
+}
+
+.annotation { padding: 20px; }
+
+a {
+  color: #000;
+  text-decoration: none;
+}
+
+b, strong {
+  font-weight: normal;
+  font-family: "droidsans-bold";
+}
+
+p {
+  margin: 15px 0 0px;
+}
+  .annotation ul, .annotation ol {
+    margin: 25px 0;
+    width: 200px;
+  }
+    .annotation ul li, .annotation ol li {
+      font-size: 14px;
+      line-height: 18px;
+      margin: 10px 0;
+    }
+
+h1, h2, h3, h4 {
+  color: #512233;
+  line-height: 1em;
+  font-weight: normal;
+  font-family: "droidsans";
+  margin: 15px 0 15px 0;
+}
+
+h1 {
+  font-family: "droidsans";
+}
+
+h4 {
+  margin-bottom: 5px;
+  margin-left: 10px;
+  text-transform: capitalize;
+  font-family: "droidsans-bold";
+}
+
+h5 {
+  margin: auto;
+  margin-left: 10px;
+  font-size: 13px;
+  line-height: 14px;
+  font-weight: normal;
+  font-family: "droidsans";
+}
+
+hr {
+  border: 0;
+  background: 1px #ddd;
+  height: 1px;
+  margin: 20px 0;
+}
+
+pre, tt, code {
+  font-size: 12px; line-height: 16px;
+  font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+  margin: 0; padding: 0;
+}
+  .annotation pre {
+    display: block;
+    margin: 0;
+    padding: 7px 10px;
+    background: #fcfcfc;
+    -moz-box-shadow:    inset 0 0 10px rgba(0,0,0,0.1);
+    -webkit-box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    box-shadow:         inset 0 0 10px rgba(0,0,0,0.1);
+    overflow-x: auto;
+  }
+    .annotation pre code {
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+
+blockquote {
+  border-left: 5px solid #ccc;
+  margin: 0;
+  padding: 1px 0 1px 1em;
+}
+  .sections blockquote p {
+    font-family: Menlo, Consolas, Monaco, monospace;
+    font-size: 12px; line-height: 16px;
+    color: #999;
+    margin: 10px 0 0;
+    white-space: pre-wrap;
+  }
+
+ul.sections {
+  list-style: none;
+  padding:0 0 5px 2;
+  margin:0;
+}
+
+#background {
+  width: 200px;
+}
+
+/*
+  Force border-box so that % widths fit the parent
+  container without overlap because of margin/padding.
+
+  More Info : http://www.quirksmode.org/css/box.html
+*/
+ul.sections > li > div {
+  -moz-box-sizing: border-box;    /* firefox */
+  -ms-box-sizing: border-box;     /* ie */
+  -webkit-box-sizing: border-box; /* webkit */
+  -khtml-box-sizing: border-box;  /* konqueror */
+  box-sizing: border-box;         /* css3 */
+}
+
+
+
