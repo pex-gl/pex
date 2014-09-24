@@ -9,7 +9,7 @@ var init = require('./lib/init/init.js');
 var args = process.argv.slice(2);
 
 program
-  .usage('[command / projectName] [options]')
+  .usage('[command] [options]')
   .version(version)
   .option('-g, --grunt', 'add grunt build script')
   .option('-u, --gulp', 'add gulp build script')
@@ -17,14 +17,14 @@ program
 
 program
   .command('docs')
-  .description('generate docs from node_modules folder')
+  .description('generate docs from node_modules folder in the current directory')
   .action(function(){
     console.log('generating pretty docs');
     docs.generate()
   });
 
 program
-  .command('init')
+  .command('init [projectName]')
   .description('generate example project')
   .action(function(name) {
     init.generate(name, {gulp: program.gulp, grunt: program.grunt});
