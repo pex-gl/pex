@@ -1,9 +1,5 @@
 .DS_Store
-*.swp
-*.swo
 *~
 stuff
 experiments
-examples.*
-src/pex/alpha
 node_modules
