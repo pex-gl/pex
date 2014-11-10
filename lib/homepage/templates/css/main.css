@@ -1,0 +1,284 @@
+/*--------------------- Typography ----------------------------*/
+
+@font-face {
+  font-family: 'droidsansmono';
+  src: url('fonts/DroidSansMono.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'droidsans';
+  src: url('fonts/droidsans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'droidsans-bold';
+  src: url('fonts/droidsans-bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*--------------------- Layout ----------------------------*/
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: "droidsansmono";
+  font-size: 14px;
+}
+
+body, body * {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+}
+
+h1, h2, h3, h4, h5 {
+  line-height: 110%;
+  font-weight: normal;
+}
+
+h1, h2 {
+  color: #2c3e50;
+}
+
+h1 {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+a {
+  color: #34495e;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+canvas {
+  background-color: transparent !important;
+}
+
+a.disabled {
+  opacity: 0.5;
+}
+
+a.disabled:hover {
+  text-decoration: none;
+}
+
+/*--------------------- header ----------------------------*/
+
+#header {
+  background: #1abc9c;
+  border-bottom: 0.2em solid #1abc9c;
+  overflow: auto;
+}
+
+#header canvas {
+  margin-left: 0em;
+}
+
+#header h1 {
+  position: absolute;
+  left: 0.66em;
+  top: 1.2em;
+  xcolor: #000;
+  margin: 0;
+  font-size: 300%;
+  xfloat: left;
+  color: white;
+}
+
+#header blockquote {
+  position: absolute;
+  left: 12em;
+  top: 4.5em;
+  color: rgba(255, 255, 255, 1);
+  xfloat: left;
+  xmargin: 3.1em 0 0 2em;
+  xwidth: 20em;
+  line-height: 180%;
+}
+
+#header canvas {
+  margin-left: 4em;
+}
+
+
+#header h1 {
+  left: 0.66em;
+  top: 1.2em;
+}
+
+#header blockquote {
+  left: 9em;
+  top: 4.5em;
+}
+
+/*--------------------- code ----------------------------*/
+
+#code {
+  padding: 0 2em 2em 2em;
+  border-bottom: 0.2em solid #1abc9c;
+  display: flex; display: -webkit-flex;
+  font-size: 90%;
+}
+
+#code .col {
+  flex: 1; -webkit-flex: 1;
+}
+
+#code code {
+  display: inline-block;
+  padding: 1.5em;
+}
+
+#code h1 + pre code {
+  padding: 0 1.5em 1.5em 1.5em;
+}
+
+#code code.sparse {
+  line-height: 150%;
+}
+
+#code a {
+  color: #1abc9c;
+}
+
+/*--------------------- projects ----------------------------*/
+
+#projects {
+  padding: 0 2em 2em 2em;
+  border-bottom: 0.2em solid #1abc9c;
+}
+
+#projects ul {
+  overflow: auto;
+  display: flex; display: -webkit-flex;
+  flex-wrap: wrap; -webkit-flex-wrap: wrap;
+}
+
+#projects ul li {
+  min-width: 11em;
+  margin-right:  0.5em;
+  margin-bottom: 0.5em;
+  xfloat: left;
+  xflex: 1; x-webkit-flex: 1;
+}
+
+#projects ul li:first-child {
+}
+
+#projects ul li {
+}
+
+#projects ul li div.thumb {
+  width: 11em;
+  height: 16em;
+  width: 100%;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+/*--------------------- start ----------------------------*/
+
+#start {
+  padding: 0 2em 2em 2em;
+  border-bottom: 0.2em solid #1abc9c;
+}
+
+/*--------------------- examples ----------------------------*/
+
+#examples {
+  padding-left: 2em;
+  padding-bottom: 2em;
+  overflow: auto;
+}
+
+#examples .thumb {
+  float: left;
+  width: 12em;
+  overflow: hidden;
+  margin-right:  0.5em;
+  margin-bottom: 0.5em;
+}
+
+#examples .thumb img {
+  width: 12em;
+  height: auto;
+}
+
+#examples h2 {
+  font-size: 100%;
+  width: 12em;
+  float: left;
+  border: 1em solid #2c3e50;
+  border-width: 1px 5px 1px 1px;
+  color: #2c3e50;
+  height: 9em;
+  margin-right:  0.5em;
+  margin-bottom: 0.5em;
+  padding: 1em;
+  text-align: right;
+  box-sizing: border-box;
+  display: none;
+}
+
+/*--------------------- docs ----------------------------*/
+
+#docs {
+  padding-left: 2em;
+  padding-bottom: 2em;
+  border-bottom: 0.2em solid #2980b9;
+}
+
+#docs .packages {
+  column-width: 15em; -webkit-column-width: 15em; -moz-column-width: 15em;
+  column-gap: 0; -webkit-column-gap: 0; -moz-column-gap: 0;
+}
+
+#docs .packages li {
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+}
+
+#docs h2 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+#docs li:first-child h2 {
+  margin-top: 0;
+}
+
+#docs h3, #docs h4, #docs h5 {
+  line-height: 130%;
+  font-weight: normal;
+}
+
+#docs .ver {
+  opacity: 0.5;
+  font-size: 50% !important;
+}
+
+/*--------------------- footer ----------------------------*/
+
+#footer {
+  display: flex; display: -webkit-flex;
+  justify-content: center; -webkit-justify-content: center;
+}
+
+.pex {
+  display: inline-block;
+  color: #DDD;
+}

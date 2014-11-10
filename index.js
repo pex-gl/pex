@@ -5,6 +5,7 @@ var pkg = require(__dirname + '/package.json');
 var version = pkg.version;
 var docs = require('./lib/docs/docs.js');
 var init = require('./lib/init/init.js');
+var homepage = require('./lib/homepage/homepage.js');
 
 var args = process.argv.slice(2);
 
@@ -16,6 +17,13 @@ program
   .option('-f, --force', 'force on non-empty directory')
 
 program
+  .command('init [projectName]')
+  .description('generate example project')
+  .action(function(name) {
+    init.generate(name, {gulp: program.gulp, grunt: program.grunt});
+  });
+
+program
   .command('docs')
   .description('generate docs from node_modules folder in the current directory')
   .action(function(){
@@ -24,17 +32,18 @@ program
   });
 
 program
-  .command('init [projectName]')
-  .description('generate example project')
-  .action(function(name) {
-    init.generate(name, {gulp: program.gulp, grunt: program.grunt});
+  .command('homepage')
+  .description('generate pex homepage')
+  .action(function() {
+    homepage.generate();
   });
+
+
 
 program.on('--help', function(){
   console.log('  Examples:');
   console.log('');
-  console.log('    $ pex');
-  console.log('    $ pex projectName --grunt');
+  console.log('    $ pex init projectName');
   console.log('    $ pex docs');
   console.log('');
 });
