@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Color.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Color.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Color utility class</p>
+<h2 id="example-use">Example use</h2>
+<pre><code><span class="hljs-keyword">var</span> Color = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-color'</span>).Color;
+
+<span class="hljs-keyword">var</span> red = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>);
+<span class="hljs-keyword">var</span> green = Color.fromHSL(<span class="hljs-number">0.2</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.5</span>);
+</code></pre><h2 id="reference">Reference</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Dependencies imports</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> lerp = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lerp'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="color-r-g-b-a-">Color(r, g, b, a)</h3>
+<p>RGBA color constructor<br><code>r</code> - red component <em>{ Number 0..1 }</em> = 0<br><code>g</code> - green component <em>{ Number 0..1 }</em> = 0<br><code>b</code> - blue component <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha component <em>{ Number 0..1 }</em> = 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Color</span><span class="hljs-params">(r, g, b, a)</span> </span>{
+  <span class="hljs-keyword">this</span>.r = (r !== <span class="hljs-literal">null</span>) ? r : <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.g = (g !== <span class="hljs-literal">null</span>) ? g : <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.b = (b !== <span class="hljs-literal">null</span>) ? b : <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.a = (a !== <span class="hljs-literal">null</span>) ? a : <span class="hljs-number">1</span>;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="create-r-g-b-a-">create(r, g, b, a)</h3>
+<p>RGBA color constructor function<br><code>r</code> - red component <em>{ Number 0..1 }</em> = 0<br><code>g</code> - green component <em>{ Number 0..1 }</em> = 0<br><code>b</code> - blue component <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.create = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r, g, b, a)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Color(r, g, b, a);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="fromrgb-r-g-b-a-">fromRGB(r, g, b, a)</h3>
+<p>Alias for create(r, g, b, a)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromRGB = Color.create;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="fromarray-a-">fromArray(a)</h3>
+<p>Creates new color from array of 4 values [r, g, b, a]<br><code>a</code> - red component <em>{ Array of Numbers 0..1 }</em> = [0, 0, 0, 1]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
+ <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Color(a[<span class="hljs-number">0</span>], a[<span class="hljs-number">1</span>], a[<span class="hljs-number">2</span>], a[<span class="hljs-number">3</span>]);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="fromhsv-h-s-v-a-">fromHSV(h, s, v, a)</h3>
+<p>Creates new color from hue, saturation and value<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>v</code> - value <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromHSV = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h, s, v, a)</span> </span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Color();
+  c.setHSV(h, s, v, a);
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="fromhsl-h-s-l-a-">fromHSL(h, s, l, a)</h3>
+<p>Creates new color from hue, saturation and lightness<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>l</code> - lightness <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromHSL = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h, s, l, a)</span> </span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Color();
+  c.setHSL(h, s, l, a);
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="fromhex-hex-">fromHex(hex)</h3>
+<p>Creates new color from html hex value e.g. #FF0000<br><code>hex</code> - html hex color string (with or without #) <em>{ String }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromHex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(hex)</span> </span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Color();
+  c.setHex(hex);
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="fromxyz-x-y-z-">fromXYZ(x, y, z)</h3>
+<p>Creates new color from XYZ representation<br>x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number 0..1 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromXYZ = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Color();
+  c.setXYZ(x, y, z);
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h3 id="fromlab-l-a-b-">fromLab(l, a, b)</h3>
+<p>Creates new color from Lab representation<br>l - <em>{ Number 0..100 }</em><br>a - <em>{ Number -128..127 }</em><br>b - <em>{ Number -128..127 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromLab = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(l, a, b)</span> </span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Color();
+  c.setLab(l, a, b);
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="set-r-g-b-a-">set(r, g, b, a)</h3>
+<p><code>r</code> - red component <em>{ Number 0..1 }</em> = 0<br><code>g</code> - green component <em>{ Number 0..1 }</em> = 0<br><code>b</code> - blue component <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r, g, b, a)</span> </span>{
+  <span class="hljs-keyword">this</span>.r = r;
+  <span class="hljs-keyword">this</span>.g = g;
+  <span class="hljs-keyword">this</span>.b = b;
+  <span class="hljs-keyword">this</span>.a = (a !== <span class="hljs-literal">null</span>) ? a : <span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h3 id="sethsv-h-s-l-a-">setHSV(h, s, l, a)</h3>
+<p>Sets rgb color values from a hue, saturation, value and alpha<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>v</code> - value <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.setHSV = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h, s, v, a)</span> </span>{
+  a = a || <span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">var</span> i = <span class="hljs-built_in">Math</span>.floor(h * <span class="hljs-number">6</span>);
+  <span class="hljs-keyword">var</span> f = h * <span class="hljs-number">6</span> - i;
+  <span class="hljs-keyword">var</span> p = v * (<span class="hljs-number">1</span> - s);
+  <span class="hljs-keyword">var</span> q = v * (<span class="hljs-number">1</span> - f * s);
+  <span class="hljs-keyword">var</span> t = v * (<span class="hljs-number">1</span> - (<span class="hljs-number">1</span> - f) * s);
+
+  <span class="hljs-keyword">switch</span> (i % <span class="hljs-number">6</span>) {
+    <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>: <span class="hljs-keyword">this</span>.r = v; <span class="hljs-keyword">this</span>.g = t; <span class="hljs-keyword">this</span>.b = p; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>: <span class="hljs-keyword">this</span>.r = q; <span class="hljs-keyword">this</span>.g = v; <span class="hljs-keyword">this</span>.b = p; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>: <span class="hljs-keyword">this</span>.r = p; <span class="hljs-keyword">this</span>.g = v; <span class="hljs-keyword">this</span>.b = t; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>: <span class="hljs-keyword">this</span>.r = p; <span class="hljs-keyword">this</span>.g = q; <span class="hljs-keyword">this</span>.b = v; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>: <span class="hljs-keyword">this</span>.r = t; <span class="hljs-keyword">this</span>.g = p; <span class="hljs-keyword">this</span>.b = v; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>: <span class="hljs-keyword">this</span>.r = v; <span class="hljs-keyword">this</span>.g = p; <span class="hljs-keyword">this</span>.b = q; <span class="hljs-keyword">break</span>;
+  }
+
+  <span class="hljs-keyword">this</span>.a = a;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h3 id="gethsv-">getHSV()</h3>
+<p>Returns hue, saturation, value and alpha of color as<br><em>{ Object h:0.1, s:0..1, v:0..1, a:0..1 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.getHSV = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> r = <span class="hljs-keyword">this</span>.r;
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">this</span>.g;
+  <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">this</span>.b;
+  <span class="hljs-keyword">var</span> max = <span class="hljs-built_in">Math</span>.max(r, g, b);
+  <span class="hljs-keyword">var</span> min = <span class="hljs-built_in">Math</span>.min(r, g, b);
+  <span class="hljs-keyword">var</span> h;
+  <span class="hljs-keyword">var</span> v = max;
+  <span class="hljs-keyword">var</span> d = max - min;
+  <span class="hljs-keyword">var</span> s = max === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : d / max;
+
+  <span class="hljs-keyword">if</span> (max === min) {
+    h = <span class="hljs-number">0</span>; <span class="hljs-comment">// achromatic</span>
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">switch</span> (max) {
+      <span class="hljs-keyword">case</span> r: h = (g - b) / d + (g &lt; b ? <span class="hljs-number">6</span> : <span class="hljs-number">0</span>); <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> g: h = (b - r) / d + <span class="hljs-number">2</span>; <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> b: h = (r - g) / d + <span class="hljs-number">4</span>; <span class="hljs-keyword">break</span>;
+    }
+    h /= <span class="hljs-number">6</span>;
+  }
+
+  <span class="hljs-keyword">return</span> { h: h, s: s, v: v, a: <span class="hljs-keyword">this</span>.a };
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="sethsl-h-s-l-a-">setHSL(h, s, l, a)</h3>
+<p>Sets rgb color values from a hue, saturation, lightness and alpha<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>l</code> - lightness <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1<br>Based on <a href="https://gist.github.com/mjijackson/5311256">https://gist.github.com/mjijackson/5311256</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.setHSL = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h, s, l, a)</span> </span>{
+  a = a || <span class="hljs-number">1</span>;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">hue2rgb</span><span class="hljs-params">(p, q, t)</span> </span>{
+    <span class="hljs-keyword">if</span> (t &lt; <span class="hljs-number">0</span>) { t += <span class="hljs-number">1</span>; }
+    <span class="hljs-keyword">if</span> (t &gt; <span class="hljs-number">1</span>) { t -= <span class="hljs-number">1</span>; }
+    <span class="hljs-keyword">if</span> (t &lt; <span class="hljs-number">1</span>/<span class="hljs-number">6</span>) { <span class="hljs-keyword">return</span> p + (q - p) * <span class="hljs-number">6</span> * t; }
+    <span class="hljs-keyword">if</span> (t &lt; <span class="hljs-number">1</span>/<span class="hljs-number">2</span>) { <span class="hljs-keyword">return</span> q; }
+    <span class="hljs-keyword">if</span> (t &lt; <span class="hljs-number">2</span>/<span class="hljs-number">3</span>) { <span class="hljs-keyword">return</span> p + (q - p) * (<span class="hljs-number">2</span>/<span class="hljs-number">3</span> - t) * <span class="hljs-number">6</span>; }
+    <span class="hljs-keyword">return</span> p;
+  }
+
+  <span class="hljs-keyword">if</span> (s === <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">this</span>.r = <span class="hljs-keyword">this</span>.g = <span class="hljs-keyword">this</span>.b = l; <span class="hljs-comment">// achromatic</span>
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">var</span> q = l &lt; <span class="hljs-number">0.5</span> ? l * (<span class="hljs-number">1</span> + s) : l + s - l * s;
+    <span class="hljs-keyword">var</span> p = <span class="hljs-number">2</span> * l - q;
+
+    <span class="hljs-keyword">this</span>.r = hue2rgb(p, q, h + <span class="hljs-number">1</span>/<span class="hljs-number">3</span>);
+    <span class="hljs-keyword">this</span>.g = hue2rgb(p, q, h);
+    <span class="hljs-keyword">this</span>.b = hue2rgb(p, q, h - <span class="hljs-number">1</span>/<span class="hljs-number">3</span>);
+    <span class="hljs-keyword">this</span>.a = a;
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h3 id="gethsl-">getHSL()</h3>
+<p>Returns hue, saturation, lightness and alpha of color as<br><em>{ Object h:0.1, s:0..1, l:0..1, a:0..1 }</em><br>Based on <a href="https://gist.github.com/mjijackson/5311256">https://gist.github.com/mjijackson/5311256</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.getHSL = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> r = <span class="hljs-keyword">this</span>.r;
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">this</span>.g;
+  <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">this</span>.b;
+  <span class="hljs-keyword">var</span> max = <span class="hljs-built_in">Math</span>.max(r, g, b);
+  <span class="hljs-keyword">var</span> min = <span class="hljs-built_in">Math</span>.min(r, g, b);
+  <span class="hljs-keyword">var</span> l = (max + min) / <span class="hljs-number">2</span>;
+  <span class="hljs-keyword">var</span> h;
+  <span class="hljs-keyword">var</span> s;
+
+  <span class="hljs-keyword">if</span> (max === min) {
+    h = s = <span class="hljs-number">0</span>; <span class="hljs-comment">// achromatic</span>
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">var</span> d = max - min;
+    s = l &gt; <span class="hljs-number">0.5</span> ? d / (<span class="hljs-number">2</span> - max - min) : d / (max + min);
+
+    <span class="hljs-keyword">switch</span> (max) {
+      <span class="hljs-keyword">case</span> r: h = (g - b) / d + (g &lt; b ? <span class="hljs-number">6</span> : <span class="hljs-number">0</span>); <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> g: h = (b - r) / d + <span class="hljs-number">2</span>; <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> b: h = (r - g) / d + <span class="hljs-number">4</span>; <span class="hljs-keyword">break</span>;
+    }
+
+    h /= <span class="hljs-number">6</span>;
+  }
+
+  <span class="hljs-keyword">return</span> { h: h, s: s, l: l, a: <span class="hljs-keyword">this</span>.a };
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3 id="sethex-hex-">setHex(hex)</h3>
+<p>Sets rgb color values from a html hex value e.g. #FF0000<br><code>hex</code> - html hex color string (with or without #) <em>{ String }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.setHex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(hex)</span> </span>{
+  hex = hex.replace(<span class="hljs-regexp">/^#/</span>, <span class="hljs-string">""</span>);
+  <span class="hljs-keyword">var</span> num = <span class="hljs-built_in">parseInt</span>(hex, <span class="hljs-number">16</span>);
+
+  <span class="hljs-keyword">var</span> color = [ num &gt;&gt; <span class="hljs-number">16</span>, num &gt;&gt; <span class="hljs-number">8</span> &amp; <span class="hljs-number">255</span>, num &amp; <span class="hljs-number">255</span> ].map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> </span>{
+    <span class="hljs-keyword">return</span> val / <span class="hljs-number">255</span>;
+  });
+
+  <span class="hljs-keyword">this</span>.r = color[<span class="hljs-number">0</span>];
+  <span class="hljs-keyword">this</span>.g = color[<span class="hljs-number">1</span>];
+  <span class="hljs-keyword">this</span>.b = color[<span class="hljs-number">2</span>];
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="gethex-">getHex()</h3>
+<p>Returns html hex representation of this color <em>{ String }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.getHex = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> color = [ <span class="hljs-keyword">this</span>.r, <span class="hljs-keyword">this</span>.g, <span class="hljs-keyword">this</span>.b ].map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(val * <span class="hljs-number">255</span>);
+  });
+
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"#"</span> + ((color[<span class="hljs-number">2</span>] | color[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-number">8</span> | color[<span class="hljs-number">0</span>] &lt;&lt; <span class="hljs-number">16</span>) | <span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">24</span>)
+    .toString(<span class="hljs-number">16</span>)
+    .slice(<span class="hljs-number">1</span>)
+    .toUpperCase();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3 id="setxyz-x-y-z-">setXYZ(x, y, z)</h3>
+<p>Sets rgb color values from XYZ
+x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number 0..1 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.setXYZ = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
+  <span class="hljs-keyword">var</span> rgb = {
+    r: x *  <span class="hljs-number">3.2406</span> + y * -<span class="hljs-number">1.5372</span> + z * -<span class="hljs-number">0.4986</span>,
+    g: x * -<span class="hljs-number">0.9689</span> + y *  <span class="hljs-number">1.8758</span> + z *  <span class="hljs-number">0.0415</span>,
+    b: x *  <span class="hljs-number">0.0557</span> + y * -<span class="hljs-number">0.2040</span> + z *  <span class="hljs-number">1.0570</span>
+  };
+
+  [ <span class="hljs-string">"r"</span>, <span class="hljs-string">"g"</span>, <span class="hljs-string">"b"</span> ].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> </span>{
+    rgb[key] /= <span class="hljs-number">100</span>;
+
+    <span class="hljs-keyword">if</span> (rgb[key] &lt; <span class="hljs-number">0</span>) {
+      rgb[key] = <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (rgb[key] &gt; <span class="hljs-number">0.0031308</span>) {
+      rgb[key] = <span class="hljs-number">1.055</span> * <span class="hljs-built_in">Math</span>.pow(rgb[key], (<span class="hljs-number">1</span> / <span class="hljs-number">2.4</span>)) - <span class="hljs-number">0.055</span>;
+    }
+    <span class="hljs-keyword">else</span> {
+      rgb[key] *= <span class="hljs-number">12.92</span>;
+    }
+  });
+
+  <span class="hljs-keyword">this</span>.r = rgb.r;
+  <span class="hljs-keyword">this</span>.g = rgb.g;
+  <span class="hljs-keyword">this</span>.b = rgb.b;
+  <span class="hljs-keyword">this</span>.a = <span class="hljs-number">1.0</span>;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="getxyz-">getXYZ()</h3>
+<p>Returns xyz representation of this color as<br><em>{ Object x:0..1, y:0..1, z:0..1 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.getXYZ = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> rgb = <span class="hljs-keyword">this</span>.clone();
+
+  [ <span class="hljs-string">"r"</span>, <span class="hljs-string">"g"</span>, <span class="hljs-string">"b"</span> ].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> </span>{
+    <span class="hljs-keyword">if</span> (rgb[key] &gt; <span class="hljs-number">0.04045</span>) {
+      rgb[key] = <span class="hljs-built_in">Math</span>.pow(((rgb[key] + <span class="hljs-number">0.055</span>) / <span class="hljs-number">1.055</span>), <span class="hljs-number">2.4</span>);
+    } <span class="hljs-keyword">else</span> {
+      rgb[key] /= <span class="hljs-number">12.92</span>;
+    }
+
+    rgb[key] = rgb[key] * <span class="hljs-number">100</span>;
+  });
+
+  <span class="hljs-keyword">return</span> {
+    x: rgb.r * <span class="hljs-number">0.4124</span> + rgb.g * <span class="hljs-number">0.3576</span> + rgb.b * <span class="hljs-number">0.1805</span>,
+    y: rgb.r * <span class="hljs-number">0.2126</span> + rgb.g * <span class="hljs-number">0.7152</span> + rgb.b * <span class="hljs-number">0.0722</span>,
+    z: rgb.r * <span class="hljs-number">0.0193</span> + rgb.g * <span class="hljs-number">0.1192</span> + rgb.b * <span class="hljs-number">0.9505</span>
+  };
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h3 id="setlab-l-a-b-">setLab(l, a, b)</h3>
+<p>Sets rgb color values from Lab<br>l - <em>{ Number 0..100 }</em><br>a - <em>{ Number -128..127 }</em><br>b - <em>{ Number -128..127 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.setLab = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(l, a, b)</span> </span>{
+  <span class="hljs-keyword">var</span> y = (l + <span class="hljs-number">16</span>) / <span class="hljs-number">116</span>;
+  <span class="hljs-keyword">var</span> x = a / <span class="hljs-number">500</span> + y;
+  <span class="hljs-keyword">var</span> z = y - b / <span class="hljs-number">200</span>;
+
+  <span class="hljs-keyword">var</span> xyz = { x: x, y: y, z: z };
+  <span class="hljs-keyword">var</span> pow;
+
+  [ <span class="hljs-string">"x"</span>, <span class="hljs-string">"y"</span>, <span class="hljs-string">"z"</span> ].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> </span>{
+    pow = <span class="hljs-built_in">Math</span>.pow(xyz[key], <span class="hljs-number">3</span>);
+
+    <span class="hljs-keyword">if</span> (pow &gt; <span class="hljs-number">0.008856</span>) {
+      xyz[key] = pow;
+    }
+    <span class="hljs-keyword">else</span> {
+      xyz[key] = (xyz[key] - <span class="hljs-number">16</span> / <span class="hljs-number">116</span>) / <span class="hljs-number">7.787</span>;
+    }
+  });
+
+  <span class="hljs-keyword">var</span> color = Color.fromXYZ(xyz.x, xyz.y, xyz.z);
+
+  <span class="hljs-keyword">this</span>.r = color.r;
+  <span class="hljs-keyword">this</span>.g = color.g;
+  <span class="hljs-keyword">this</span>.b = color.b;
+  <span class="hljs-keyword">this</span>.a = color.a;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="getlab-">getLab()</h3>
+<p>Returns Lab representation of this color as<br><em>{ Object l: 0..100, a: -128..127, b: -128..127 }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.getLab = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> white = { x: <span class="hljs-number">95.047</span>, y: <span class="hljs-number">100.000</span>, z: <span class="hljs-number">108.883</span> };
+  <span class="hljs-keyword">var</span> xyz = <span class="hljs-keyword">this</span>.getXYZ();
+
+  [ <span class="hljs-string">"x"</span>, <span class="hljs-string">"y"</span>, <span class="hljs-string">"z"</span> ].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> </span>{
+    xyz[key] /= white[key];
+
+    <span class="hljs-keyword">if</span> (xyz[key] &gt; <span class="hljs-number">0.008856</span>) {
+      xyz[key] = <span class="hljs-built_in">Math</span>.pow(xyz[key], <span class="hljs-number">1</span> / <span class="hljs-number">3</span>);
+    }
+    <span class="hljs-keyword">else</span> {
+      xyz[key] = (<span class="hljs-number">7.787</span> * xyz[key]) + (<span class="hljs-number">16</span> / <span class="hljs-number">116</span>);
+    }
+  });
+
+  <span class="hljs-keyword">return</span> {
+    l: <span class="hljs-number">116</span> * xyz.y - <span class="hljs-number">16</span>,
+    a: <span class="hljs-number">500</span> * (xyz.x - xyz.y),
+    b: <span class="hljs-number">200</span> * (xyz.y - xyz.z)
+  };
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="copy-">copy()</h3>
+<p>Copies rgba values from another color into this instance<br><code>c</code> - another color to copy values from <em>{ Color }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(c)</span> </span>{
+  <span class="hljs-keyword">this</span>.r = c.r;
+  <span class="hljs-keyword">this</span>.g = c.g;
+  <span class="hljs-keyword">this</span>.b = c.b;
+  <span class="hljs-keyword">this</span>.a = c.a;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h3 id="clone-">clone()</h3>
+<p>Returns a copy of this color <em>{ Color }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Color(<span class="hljs-keyword">this</span>.r, <span class="hljs-keyword">this</span>.g, <span class="hljs-keyword">this</span>.b, <span class="hljs-keyword">this</span>.a);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h3 id="hash-">hash()</h3>
+<p>Returns one (naive) hash number representation of this color <em>{ Number }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.hash = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.r + <span class="hljs-number">12</span> * <span class="hljs-keyword">this</span>.g + <span class="hljs-number">123</span> * <span class="hljs-keyword">this</span>.b + <span class="hljs-number">1234</span> * <span class="hljs-keyword">this</span>.a;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h3 id="distance-color-">distance(color)</h3>
+<p>Returns distance (CIE76) between this and given color using Lab representation <em>{ Number }</em><br>Based on <a href="http://en.wikipedia.org/wiki/Color_difference">http://en.wikipedia.org/wiki/Color_difference</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.prototype.distance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(color)</span> </span>{
+  <span class="hljs-keyword">var</span> lab1 = <span class="hljs-keyword">this</span>.getLab();
+  <span class="hljs-keyword">var</span> lab2 = color.getLab();
+
+  <span class="hljs-keyword">var</span> dl = lab2.l - lab1.l;
+  <span class="hljs-keyword">var</span> da = lab2.a - lab1.a;
+  <span class="hljs-keyword">var</span> db = lab2.b - lab1.b;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(dl * dl, da * da, db * db);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <h3 id="lerp-startcolor-endcolor-t-mode-">lerp(startColor, endColor, t, mode)</h3>
+<p>Creates new color from linearly interpolated two colors<br><code>startColor</code> - <em>{ Color }</em><br><code>endColor</code> - <em>{ Color } </em><br><code>t</code> - interpolation ratio <em>{ Number 0..1 }</em><br><code>mode</code> - interpolation mode : ‘rgb’, ‘hsv’, ‘hsl’ <em>{ String }</em> = ‘rgb’  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.lerp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(startColor, endColor, t, mode)</span> </span>{
+  mode = mode || <span class="hljs-string">'rgb'</span>;
+
+  <span class="hljs-keyword">if</span> (mode === <span class="hljs-string">'rgb'</span>) {
+    <span class="hljs-keyword">return</span> Color.fromRGB(
+      lerp(startColor.r, endColor.r, t),
+      lerp(startColor.g, endColor.g, t),
+      lerp(startColor.b, endColor.b, t),
+      lerp(startColor.a, endColor.a, t)
+    );
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mode === <span class="hljs-string">'hsv'</span>) {
+    <span class="hljs-keyword">var</span> startHSV = startColor.getHSV();
+    <span class="hljs-keyword">var</span> endHSV = endColor.getHSV();
+    <span class="hljs-keyword">return</span> Color.fromHSV(
+      lerp(startHSV.h, endHSV.h, t),
+      lerp(startHSV.s, endHSV.s, t),
+      lerp(startHSV.v, endHSV.v, t),
+      lerp(startHSV.a, endHSV.a, t)
+    );
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mode === <span class="hljs-string">'hsl'</span>) {
+    <span class="hljs-keyword">var</span> startHSL = startColor.getHSL();
+    <span class="hljs-keyword">var</span> endHSL = endColor.getHSL();
+    <span class="hljs-keyword">return</span> Color.fromHSL(
+      lerp(startHSL.h, endHSL.h, t),
+      lerp(startHSL.s, endHSL.s, t),
+      lerp(startHSL.l, endHSL.l, t),
+      lerp(startHSL.a, endHSL.a, t)
+    );
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> startColor;
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <h2 id="predefined-colors-ready-to-use">Predefined colors ready to use</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+Color.Transparent = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+Color.None = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+Color.Black = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+Color.White = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+Color.DarkGrey = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0.25</span>, <span class="hljs-number">0.25</span>, <span class="hljs-number">0.25</span>, <span class="hljs-number">1</span>);
+Color.Grey = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">1</span>);
+Color.Red = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+Color.Green = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+Color.Blue = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+Color.Yellow = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+Color.Pink = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+Color.Cyan = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+Color.Orange = <span class="hljs-keyword">new</span> Color(<span class="hljs-number">1</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+
+<span class="hljs-built_in">module</span>.exports = Color;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

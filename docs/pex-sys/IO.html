@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>IO.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>IO.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Platform = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Platform'</span>);
+<span class="hljs-keyword">var</span> Log = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Log'</span>);
+<span class="hljs-keyword">var</span> plask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'plask'</span>);
+<span class="hljs-keyword">var</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+<span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);
+
+<span class="hljs-keyword">var</span> PlaskIO = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">IO</span><span class="hljs-params">()</span> </span>{
+  }
+
+  IO.loadTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(file, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> fullPath = path.resolve(IO.getWorkingDirectory(), file);
+    <span class="hljs-keyword">if</span> (!fs.existsSync(fullPath)) {
+      <span class="hljs-keyword">if</span> (callback) {
+        <span class="hljs-keyword">return</span> callback(<span class="hljs-literal">null</span>);
+      }
+    }
+    <span class="hljs-keyword">var</span> data = fs.readFileSync(fullPath, <span class="hljs-string">'utf8'</span>);
+    <span class="hljs-keyword">if</span> (callback) {
+      callback(data);
+    }
+  };
+
+  IO.getWorkingDirectory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> path.dirname(process.mainModule.filename);
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>textureHandle - texture handl
+textureTarget - gl.TEXTURE_2D, gl.TEXTURE_CUBE
+dataTarget - gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_X, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  IO.loadImageData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gl, textureHandle, textureTarget, dataTarget, file, options, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> defaultOptions = { flip: <span class="hljs-literal">false</span>, lod: <span class="hljs-number">0</span> };
+    options = merge(defaultOptions, options);
+    <span class="hljs-keyword">var</span> fullPath = path.resolve(IO.getWorkingDirectory(), file);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(textureTarget, textureHandle);
+    <span class="hljs-keyword">var</span> canvas = plask.SkCanvas.createFromImage(fullPath);
+    <span class="hljs-keyword">if</span> (options.flip) {
+      gl.texImage2DSkCanvas(dataTarget, options.lod, canvas);
+    }
+    <span class="hljs-keyword">else</span> {
+      gl.texImage2DSkCanvasNoFlip(dataTarget, options.lod, canvas);
+    }
+    <span class="hljs-keyword">if</span> (callback) {
+      callback(canvas);
+    }
+  };
+
+  IO.watchTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(file, callback)</span> </span>{
+    fs.watch(file, {}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, fileName)</span> </span>{
+      <span class="hljs-keyword">if</span> (event == <span class="hljs-string">'change'</span>) {
+        <span class="hljs-keyword">var</span> data = fs.readFileSync(file, <span class="hljs-string">'utf8'</span>);
+        <span class="hljs-keyword">if</span> (callback) {
+          callback(data);
+        }
+      }
+    });
+  };
+
+  IO.saveTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(file, data)</span> </span>{
+    fs.writeFileSync(file, data);
+  };
+  <span class="hljs-keyword">return</span> IO;
+};
+
+<span class="hljs-keyword">var</span> WebIO = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">IO</span><span class="hljs-params">()</span> </span>{
+  }
+
+  IO.getWorkingDirectory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'.'</span>;
+  };
+
+  IO.loadTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> request = <span class="hljs-keyword">new</span> XMLHttpRequest();
+    request.open(<span class="hljs-string">'GET'</span>, url, <span class="hljs-literal">true</span>);
+    request.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+      <span class="hljs-keyword">if</span> (request.readyState == <span class="hljs-number">4</span>) {
+        <span class="hljs-keyword">if</span> (request.status == <span class="hljs-number">200</span>) {
+          <span class="hljs-keyword">if</span> (callback) {
+            callback(request.responseText);
+          }
+        } <span class="hljs-keyword">else</span> {
+          Log.error(<span class="hljs-string">'WebIO.loadTextFile error : '</span> + request.statusText);
+        }
+      }
+    };
+    request.send(<span class="hljs-literal">null</span>);
+  };
+
+  IO.loadImageData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(gl, textureHandle, textureTarget, dataTarget, url, options, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> defaultOptions = { flip: <span class="hljs-literal">false</span>, lod: <span class="hljs-number">0</span> };
+    options = merge(defaultOptions, options);
+    <span class="hljs-keyword">var</span> image = <span class="hljs-keyword">new</span> Image();
+    <span class="hljs-keyword">if</span> (options.crossOrigin) image.crossOrigin = options.crossOrigin;
+    image.onload = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(textureTarget, textureHandle);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, options.flip);
+      gl.texImage2D(dataTarget, options.lod, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      <span class="hljs-keyword">if</span> (callback) {
+        callback(image);
+      }
+    };
+    image.src = url;
+  };
+
+  IO.watchTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Warning: WebIO.watch is not implemented!'</span>);
+  };
+
+  IO.saveTextFile = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(url, data, callback)</span> </span>{
+    <span class="hljs-keyword">var</span> request = <span class="hljs-keyword">new</span> XMLHttpRequest();
+    request.open(<span class="hljs-string">'POST'</span>, url, <span class="hljs-literal">true</span>);
+    request.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+      <span class="hljs-keyword">if</span> (request.readyState == <span class="hljs-number">4</span>) {
+        <span class="hljs-keyword">if</span> (request.status == <span class="hljs-number">200</span>) {
+          <span class="hljs-keyword">if</span> (callback) {
+            callback(request.responseText, request);
+          }
+        } <span class="hljs-keyword">else</span> {
+          Log.error(<span class="hljs-string">'WebIO.saveTextFile error : '</span> + request.statusText);
+        }
+      }
+    };
+    request.setRequestHeader(<span class="hljs-string">'Content-type'</span>, <span class="hljs-string">'application/x-www-form-urlencoded'</span>);
+    request.send(<span class="hljs-string">'data='</span> + <span class="hljs-built_in">encodeURIComponent</span>(data));
+  };
+
+  <span class="hljs-keyword">return</span> IO;
+};
+
+<span class="hljs-keyword">if</span> (Platform.isPlask) <span class="hljs-built_in">module</span>.exports = PlaskIO();
+<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Platform.isBrowser) <span class="hljs-built_in">module</span>.exports = WebIO();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

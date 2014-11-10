@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Mat4.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Mat4.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>A 4 by 4 for Matrix</p>
+<h2 id="example-use">Example use</h2>
+<pre><code><span class="hljs-keyword">var</span> mat4 = <span class="hljs-keyword">new</span> Mat4()
+<span class="hljs-built_in">console</span>.log(mat4)
+<span class="hljs-comment">// returns the matrix [1, 0, 0, 0,</span>
+<span class="hljs-comment">//                     0, 1, 0, 0,</span>
+<span class="hljs-comment">//                     0, 0, 1, 0,</span>
+<span class="hljs-comment">//                     0, 0, 0, 1]</span>
+</code></pre><h2 id="reference">Reference</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Vec3 = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Vec3'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h3 id="mat4-">Mat4 ()</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Mat4</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.reset();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="create-">create ()</h3>
+<p>returns new <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.create = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Mat4();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="equals-m-tolerance-">equals (m, tolerance)</h3>
+<p><code>m</code> - matrix for equals check <em>{ Mat4 }</em><br><code>tolerance</code> - the tolerance of comparance <em>{ Number }</em> = 0.0000001<br>returns <em>{ Boolean }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.equals = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m, tolerance)</span> </span>{
+  <span class="hljs-keyword">if</span> (tolerance == <span class="hljs-literal">null</span>) {
+    tolerance = <span class="hljs-number">0.0000001</span>;
+  }
+  <span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.abs(m.a11 - <span class="hljs-keyword">this</span>.a11) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a12 - <span class="hljs-keyword">this</span>.a12) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a13 - <span class="hljs-keyword">this</span>.a13) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a14 - <span class="hljs-keyword">this</span>.a14) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a21 - <span class="hljs-keyword">this</span>.a21) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a22 - <span class="hljs-keyword">this</span>.a22) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a23 - <span class="hljs-keyword">this</span>.a23) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a24 - <span class="hljs-keyword">this</span>.a24) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a31 - <span class="hljs-keyword">this</span>.a31) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a32 - <span class="hljs-keyword">this</span>.a32) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a33 - <span class="hljs-keyword">this</span>.a33) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a34 - <span class="hljs-keyword">this</span>.a34) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a41 - <span class="hljs-keyword">this</span>.a41) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a42 - <span class="hljs-keyword">this</span>.a42) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a43 - <span class="hljs-keyword">this</span>.a43) &lt;= tolerance)
+  &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(m.a44 - <span class="hljs-keyword">this</span>.a44) &lt;= tolerance);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="hash-">hash ()</h3>
+<p>returns the hash of the matrix as <em>{ Number }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.hash = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.a11 * <span class="hljs-number">0.01</span> + <span class="hljs-keyword">this</span>.a12 * <span class="hljs-number">0.02</span>
+  + <span class="hljs-keyword">this</span>.a13 * <span class="hljs-number">0.03</span> + <span class="hljs-keyword">this</span>.a14 * <span class="hljs-number">0.04</span>
+  + <span class="hljs-keyword">this</span>.a21 * <span class="hljs-number">0.05</span> + <span class="hljs-keyword">this</span>.a22 * <span class="hljs-number">0.06</span>
+  + <span class="hljs-keyword">this</span>.a23 * <span class="hljs-number">0.07</span> + <span class="hljs-keyword">this</span>.a24 * <span class="hljs-number">0.08</span>
+  + <span class="hljs-keyword">this</span>.a31 * <span class="hljs-number">0.09</span> + <span class="hljs-keyword">this</span>.a32 * <span class="hljs-number">0.10</span>
+  + <span class="hljs-keyword">this</span>.a33 * <span class="hljs-number">0.11</span> + <span class="hljs-keyword">this</span>.a34 * <span class="hljs-number">0.12</span>
+  + <span class="hljs-keyword">this</span>.a41 * <span class="hljs-number">0.13</span> + <span class="hljs-keyword">this</span>.a42 * <span class="hljs-number">0.14</span>
+  + <span class="hljs-keyword">this</span>.a43 * <span class="hljs-number">0.15</span> + <span class="hljs-keyword">this</span>.a44 * <span class="hljs-number">0.16</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="set4x4r-a11-a44-">set4x4r ( a11 .. a44 )</h3>
+<p><code>a11</code> .. <code>a44</code> - all elements of the matrix <em>{ Number }</em><br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.set4x4r = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a11, a12, a13, a14,
+                                  a21, a22, a23, a24,
+                                  a31, a32, a33, a34,
+                                  a41, a42, a43, a44)</span> </span>{
+  <span class="hljs-keyword">this</span>.a11 = a11;
+  <span class="hljs-keyword">this</span>.a12 = a12;
+  <span class="hljs-keyword">this</span>.a13 = a13;
+  <span class="hljs-keyword">this</span>.a14 = a14;
+  <span class="hljs-keyword">this</span>.a21 = a21;
+  <span class="hljs-keyword">this</span>.a22 = a22;
+  <span class="hljs-keyword">this</span>.a23 = a23;
+  <span class="hljs-keyword">this</span>.a24 = a24;
+  <span class="hljs-keyword">this</span>.a31 = a31;
+  <span class="hljs-keyword">this</span>.a32 = a32;
+  <span class="hljs-keyword">this</span>.a33 = a33;
+  <span class="hljs-keyword">this</span>.a34 = a34;
+  <span class="hljs-keyword">this</span>.a41 = a41;
+  <span class="hljs-keyword">this</span>.a42 = a42;
+  <span class="hljs-keyword">this</span>.a43 = a43;
+  <span class="hljs-keyword">this</span>.a44 = a44;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="copy-m-">copy ( m )</h3>
+<p><code>m</code> - the matrix to be copied onto this one <em>{ Mat4}</em><br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m)</span> </span>{
+  <span class="hljs-keyword">this</span>.a11 = m.a11;
+  <span class="hljs-keyword">this</span>.a12 = m.a12;
+  <span class="hljs-keyword">this</span>.a13 = m.a13;
+  <span class="hljs-keyword">this</span>.a14 = m.a14;
+  <span class="hljs-keyword">this</span>.a21 = m.a21;
+  <span class="hljs-keyword">this</span>.a22 = m.a22;
+  <span class="hljs-keyword">this</span>.a23 = m.a23;
+  <span class="hljs-keyword">this</span>.a24 = m.a24;
+  <span class="hljs-keyword">this</span>.a31 = m.a31;
+  <span class="hljs-keyword">this</span>.a32 = m.a32;
+  <span class="hljs-keyword">this</span>.a33 = m.a33;
+  <span class="hljs-keyword">this</span>.a34 = m.a34;
+  <span class="hljs-keyword">this</span>.a41 = m.a41;
+  <span class="hljs-keyword">this</span>.a42 = m.a42;
+  <span class="hljs-keyword">this</span>.a43 = m.a43;
+  <span class="hljs-keyword">this</span>.a44 = m.a44;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="dup-">dup ()</h3>
+<p>returns a new copy of this matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.dup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> Mat4.create().copy(<span class="hljs-keyword">this</span>);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="reset-">reset ()</h3>
+<p>returns the matrix with reset values <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.reset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.set4x4r(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="identity-">identity ()</h3>
+<p>returns the matrix with reset values <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.identity = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.reset();
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h3 id="mul4x4r-b11-b44-">mul4x4r ( b11 .. b44 )</h3>
+<p><code>b11</code> .. <code>b44</code> - multipliers <em>{ Number }</em><br>returns the matrix with the new values after the multiplication <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.mul4x4r = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b11, b12, b13, b14,
+                                  b21, b22, b23, b24,
+                                  b31, b32, b33, b34,
+                                  b41, b42, b43, b44)</span> </span>{
+  <span class="hljs-keyword">var</span> a11 = <span class="hljs-keyword">this</span>.a11;
+  <span class="hljs-keyword">var</span> a12 = <span class="hljs-keyword">this</span>.a12;
+  <span class="hljs-keyword">var</span> a13 = <span class="hljs-keyword">this</span>.a13;
+  <span class="hljs-keyword">var</span> a14 = <span class="hljs-keyword">this</span>.a14;
+  <span class="hljs-keyword">var</span> a21 = <span class="hljs-keyword">this</span>.a21;
+  <span class="hljs-keyword">var</span> a22 = <span class="hljs-keyword">this</span>.a22;
+  <span class="hljs-keyword">var</span> a23 = <span class="hljs-keyword">this</span>.a23;
+  <span class="hljs-keyword">var</span> a24 = <span class="hljs-keyword">this</span>.a24;
+  <span class="hljs-keyword">var</span> a31 = <span class="hljs-keyword">this</span>.a31;
+  <span class="hljs-keyword">var</span> a32 = <span class="hljs-keyword">this</span>.a32;
+  <span class="hljs-keyword">var</span> a33 = <span class="hljs-keyword">this</span>.a33;
+  <span class="hljs-keyword">var</span> a34 = <span class="hljs-keyword">this</span>.a34;
+  <span class="hljs-keyword">var</span> a41 = <span class="hljs-keyword">this</span>.a41;
+  <span class="hljs-keyword">var</span> a42 = <span class="hljs-keyword">this</span>.a42;
+  <span class="hljs-keyword">var</span> a43 = <span class="hljs-keyword">this</span>.a43;
+  <span class="hljs-keyword">var</span> a44 = <span class="hljs-keyword">this</span>.a44;
+  <span class="hljs-keyword">this</span>.a11 = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+  <span class="hljs-keyword">this</span>.a12 = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+  <span class="hljs-keyword">this</span>.a13 = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+  <span class="hljs-keyword">this</span>.a14 = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+  <span class="hljs-keyword">this</span>.a21 = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+  <span class="hljs-keyword">this</span>.a22 = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+  <span class="hljs-keyword">this</span>.a23 = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+  <span class="hljs-keyword">this</span>.a24 = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+  <span class="hljs-keyword">this</span>.a31 = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+  <span class="hljs-keyword">this</span>.a32 = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+  <span class="hljs-keyword">this</span>.a33 = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+  <span class="hljs-keyword">this</span>.a34 = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+  <span class="hljs-keyword">this</span>.a41 = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+  <span class="hljs-keyword">this</span>.a42 = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+  <span class="hljs-keyword">this</span>.a43 = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+  <span class="hljs-keyword">this</span>.a44 = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="perspective-fovy-aspect-znear-zfar-">perspective ( fovy, aspect, znear, zfar )</h3>
+<p><code>fovy</code> -<br><code>aspect</code> -<br><code>znear</code> -<br><code>zfar</code> -<br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.perspective = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fovy, aspect, znear, zfar)</span> </span>{
+  <span class="hljs-keyword">var</span> f = <span class="hljs-number">1.0</span> / <span class="hljs-built_in">Math</span>.tan(fovy / <span class="hljs-number">180</span> * <span class="hljs-built_in">Math</span>.PI / <span class="hljs-number">2</span>);
+  <span class="hljs-keyword">var</span> nf = <span class="hljs-number">1.0</span> / (zfar - znear);
+  <span class="hljs-keyword">this</span>.mul4x4r(f / aspect, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, f, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>,
+               -(zfar + znear) * nf,
+               -<span class="hljs-number">2</span> * zfar * znear * nf, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h3 id="ortho-l-r-b-t-n-f-">ortho ( l, r, b, t, n, f )</h3>
+<p>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.ortho = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(l, r, b, t, n, f)</span> </span>{
+  <span class="hljs-keyword">this</span>.mul4x4r(<span class="hljs-number">2</span> / (r - l), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, (r + l) / (l - r), <span class="hljs-number">0</span>, <span class="hljs-number">2</span> / (t - b),
+               <span class="hljs-number">0</span>, (t + b) / (b - t), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">2</span> / (n - f), (f + n) / (n - f),
+               <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h3 id="lookat-eye-target-up-">lookAt ( eye, target, up )</h3>
+<p><code>eye</code> - the eye to look from as a <em>{ <a href="Vec3.html">Vec3</a> }</em><br><code>target</code> - the target to be looking at as a <em>{ <a href="Vec3.html">Vec3</a> }</em><br><code>up</code> - the up vector <em>{ <a href="Vec3.html">Vec3</a> }</em><br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.lookAt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(eye, target, up)</span> </span>{
+  <span class="hljs-keyword">var</span> z = (Vec3.create(eye.x - target.x, eye.y - target.y, eye.z - target.z)).normalize();
+  <span class="hljs-keyword">var</span> x = (Vec3.create(up.x, up.y, up.z)).cross(z).normalize();
+  <span class="hljs-keyword">var</span> y = Vec3.create().copy(z).cross(x).normalize();
+  <span class="hljs-keyword">this</span>.mul4x4r(x.x, x.y, x.z, <span class="hljs-number">0</span>, y.x, y.y, y.z, <span class="hljs-number">0</span>, z.x, z.y, z.z, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">this</span>.translate(-eye.x, -eye.y, -eye.z);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="translate-dx-dy-dz-">translate ( dx, dy, dz )</h3>
+<p><code>dx</code> - <em>{ Number }</em><br><code>dy</code> - <em>{ Number }</em><br><code>dz</code> - <em>{ Number }</em><br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.translate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dx, dy, dz)</span> </span>{
+  <span class="hljs-keyword">this</span>.mul4x4r(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, dx, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, dy, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, dz, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h3 id="rotate-theta-x-y-z-">rotate ( theta, x ,y , z )</h3>
+<p>theta - rotation angle <em>{ Number }</em><br><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>z</code> - <em>{ Number }</em><br>returns the matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.rotate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(theta, x, y, z)</span> </span>{
+  <span class="hljs-keyword">var</span> s = <span class="hljs-built_in">Math</span>.sin(theta);
+  <span class="hljs-keyword">var</span> c = <span class="hljs-built_in">Math</span>.cos(theta);
+  <span class="hljs-keyword">this</span>.mul4x4r(x * x * (<span class="hljs-number">1</span> - c) + c, x * y * (<span class="hljs-number">1</span> - c) - z * s, x * z * (<span class="hljs-number">1</span> - c) + y * s,
+               <span class="hljs-number">0</span>, y * x * (<span class="hljs-number">1</span> - c) + z * s, y * y * (<span class="hljs-number">1</span> - c) + c, y * z * (<span class="hljs-number">1</span> - c) - x * s,
+               <span class="hljs-number">0</span>, x * z * (<span class="hljs-number">1</span> - c) - y * s, y * z * (<span class="hljs-number">1</span> - c) + x * s, z * z * (<span class="hljs-number">1</span> - c) + c,
+               <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3 id="asmul-a-b-">asMul ( a, b )</h3>
+<p><code>a</code> - the first matrix used in the multiplication <em>{ Mat4 }</em><br><code>b</code> - the second matrix used in the multiplication <em>{ Mat4 }</em><br>returns the matrix with its values being<br>the result of the multiplied a and b matrices <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.asMul = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+  <span class="hljs-keyword">var</span> a11 = a.a11;
+  <span class="hljs-keyword">var</span> a12 = a.a12;
+  <span class="hljs-keyword">var</span> a13 = a.a13;
+  <span class="hljs-keyword">var</span> a14 = a.a14;
+  <span class="hljs-keyword">var</span> a21 = a.a21;
+  <span class="hljs-keyword">var</span> a22 = a.a22;
+  <span class="hljs-keyword">var</span> a23 = a.a23;
+  <span class="hljs-keyword">var</span> a24 = a.a24;
+  <span class="hljs-keyword">var</span> a31 = a.a31;
+  <span class="hljs-keyword">var</span> a32 = a.a32;
+  <span class="hljs-keyword">var</span> a33 = a.a33;
+  <span class="hljs-keyword">var</span> a34 = a.a34;
+  <span class="hljs-keyword">var</span> a41 = a.a41;
+  <span class="hljs-keyword">var</span> a42 = a.a42;
+  <span class="hljs-keyword">var</span> a43 = a.a43;
+  <span class="hljs-keyword">var</span> a44 = a.a44;
+  <span class="hljs-keyword">var</span> b11 = b.a11;
+  <span class="hljs-keyword">var</span> b12 = b.a12;
+  <span class="hljs-keyword">var</span> b13 = b.a13;
+  <span class="hljs-keyword">var</span> b14 = b.a14;
+  <span class="hljs-keyword">var</span> b21 = b.a21;
+  <span class="hljs-keyword">var</span> b22 = b.a22;
+  <span class="hljs-keyword">var</span> b23 = b.a23;
+  <span class="hljs-keyword">var</span> b24 = b.a24;
+  <span class="hljs-keyword">var</span> b31 = b.a31;
+  <span class="hljs-keyword">var</span> b32 = b.a32;
+  <span class="hljs-keyword">var</span> b33 = b.a33;
+  <span class="hljs-keyword">var</span> b34 = b.a34;
+  <span class="hljs-keyword">var</span> b41 = b.a41;
+  <span class="hljs-keyword">var</span> b42 = b.a42;
+  <span class="hljs-keyword">var</span> b43 = b.a43;
+  <span class="hljs-keyword">var</span> b44 = b.a44;
+  <span class="hljs-keyword">this</span>.a11 = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+  <span class="hljs-keyword">this</span>.a12 = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+  <span class="hljs-keyword">this</span>.a13 = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+  <span class="hljs-keyword">this</span>.a14 = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+  <span class="hljs-keyword">this</span>.a21 = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+  <span class="hljs-keyword">this</span>.a22 = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+  <span class="hljs-keyword">this</span>.a23 = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+  <span class="hljs-keyword">this</span>.a24 = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+  <span class="hljs-keyword">this</span>.a31 = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+  <span class="hljs-keyword">this</span>.a32 = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+  <span class="hljs-keyword">this</span>.a33 = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+  <span class="hljs-keyword">this</span>.a34 = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+  <span class="hljs-keyword">this</span>.a41 = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+  <span class="hljs-keyword">this</span>.a42 = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+  <span class="hljs-keyword">this</span>.a43 = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+  <span class="hljs-keyword">this</span>.a44 = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="mul-b-">mul ( b )</h3>
+<p><code>b</code> - the matrix to be multipled by <em>{ Mat4 }</em><br>returns the matrix multiplied by b <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.mul = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.asMul(<span class="hljs-keyword">this</span>, b);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3 id="scale-sx-sy-sz-">scale ( sx, sy, sz )</h3>
+<p><code>sx</code> = <em>{ Number }</em><br><code>sy</code> = <em>{ Number }</em><br><code>sz</code> = <em>{ Number }</em><br>returns the matrix scaled <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.scale = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(sx, sy, sz)</span> </span>{
+  <span class="hljs-keyword">this</span>.mul4x4r(sx, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sy, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sz, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="invert-">invert ()</h3>
+<p>returns the matrix inverted <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.invert = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> x0 = <span class="hljs-keyword">this</span>.a11;
+  <span class="hljs-keyword">var</span> x1 = <span class="hljs-keyword">this</span>.a12;
+  <span class="hljs-keyword">var</span> x2 = <span class="hljs-keyword">this</span>.a13;
+  <span class="hljs-keyword">var</span> x3 = <span class="hljs-keyword">this</span>.a14;
+  <span class="hljs-keyword">var</span> x4 = <span class="hljs-keyword">this</span>.a21;
+  <span class="hljs-keyword">var</span> x5 = <span class="hljs-keyword">this</span>.a22;
+  <span class="hljs-keyword">var</span> x6 = <span class="hljs-keyword">this</span>.a23;
+  <span class="hljs-keyword">var</span> x7 = <span class="hljs-keyword">this</span>.a24;
+  <span class="hljs-keyword">var</span> x8 = <span class="hljs-keyword">this</span>.a31;
+  <span class="hljs-keyword">var</span> x9 = <span class="hljs-keyword">this</span>.a32;
+  <span class="hljs-keyword">var</span> x10 = <span class="hljs-keyword">this</span>.a33;
+  <span class="hljs-keyword">var</span> x11 = <span class="hljs-keyword">this</span>.a34;
+  <span class="hljs-keyword">var</span> x12 = <span class="hljs-keyword">this</span>.a41;
+  <span class="hljs-keyword">var</span> x13 = <span class="hljs-keyword">this</span>.a42;
+  <span class="hljs-keyword">var</span> x14 = <span class="hljs-keyword">this</span>.a43;
+  <span class="hljs-keyword">var</span> x15 = <span class="hljs-keyword">this</span>.a44;
+  <span class="hljs-keyword">var</span> a0 = x0 * x5 - x1 * x4;
+  <span class="hljs-keyword">var</span> a1 = x0 * x6 - x2 * x4;
+  <span class="hljs-keyword">var</span> a2 = x0 * x7 - x3 * x4;
+  <span class="hljs-keyword">var</span> a3 = x1 * x6 - x2 * x5;
+  <span class="hljs-keyword">var</span> a4 = x1 * x7 - x3 * x5;
+  <span class="hljs-keyword">var</span> a5 = x2 * x7 - x3 * x6;
+  <span class="hljs-keyword">var</span> b0 = x8 * x13 - x9 * x12;
+  <span class="hljs-keyword">var</span> b1 = x8 * x14 - x10 * x12;
+  <span class="hljs-keyword">var</span> b2 = x8 * x15 - x11 * x12;
+  <span class="hljs-keyword">var</span> b3 = x9 * x14 - x10 * x13;
+  <span class="hljs-keyword">var</span> b4 = x9 * x15 - x11 * x13;
+  <span class="hljs-keyword">var</span> b5 = x10 * x15 - x11 * x14;
+  <span class="hljs-keyword">var</span> invdet = <span class="hljs-number">1</span> / (a0 * b5 - a1 * b4 + a2 * b3 + a3 * b2 - a4 * b1 + a5 * b0);
+  <span class="hljs-keyword">this</span>.a11 = (+x5 * b5 - x6 * b4 + x7 * b3) * invdet;
+  <span class="hljs-keyword">this</span>.a12 = (-x1 * b5 + x2 * b4 - x3 * b3) * invdet;
+  <span class="hljs-keyword">this</span>.a13 = (+x13 * a5 - x14 * a4 + x15 * a3) * invdet;
+  <span class="hljs-keyword">this</span>.a14 = (-x9 * a5 + x10 * a4 - x11 * a3) * invdet;
+  <span class="hljs-keyword">this</span>.a21 = (-x4 * b5 + x6 * b2 - x7 * b1) * invdet;
+  <span class="hljs-keyword">this</span>.a22 = (+x0 * b5 - x2 * b2 + x3 * b1) * invdet;
+  <span class="hljs-keyword">this</span>.a23 = (-x12 * a5 + x14 * a2 - x15 * a1) * invdet;
+  <span class="hljs-keyword">this</span>.a24 = (+x8 * a5 - x10 * a2 + x11 * a1) * invdet;
+  <span class="hljs-keyword">this</span>.a31 = (+x4 * b4 - x5 * b2 + x7 * b0) * invdet;
+  <span class="hljs-keyword">this</span>.a32 = (-x0 * b4 + x1 * b2 - x3 * b0) * invdet;
+  <span class="hljs-keyword">this</span>.a33 = (+x12 * a4 - x13 * a2 + x15 * a0) * invdet;
+  <span class="hljs-keyword">this</span>.a34 = (-x8 * a4 + x9 * a2 - x11 * a0) * invdet;
+  <span class="hljs-keyword">this</span>.a41 = (-x4 * b3 + x5 * b1 - x6 * b0) * invdet;
+  <span class="hljs-keyword">this</span>.a42 = (+x0 * b3 - x1 * b1 + x2 * b0) * invdet;
+  <span class="hljs-keyword">this</span>.a43 = (-x12 * a3 + x13 * a1 - x14 * a0) * invdet;
+  <span class="hljs-keyword">this</span>.a44 = (+x8 * a3 - x9 * a1 + x10 * a0) * invdet;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h3 id="transpose-">transpose ()</h3>
+<p>returns the matrix transposed <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.transpose = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> a11 = <span class="hljs-keyword">this</span>.a11;
+  <span class="hljs-keyword">var</span> a12 = <span class="hljs-keyword">this</span>.a12;
+  <span class="hljs-keyword">var</span> a13 = <span class="hljs-keyword">this</span>.a13;
+  <span class="hljs-keyword">var</span> a14 = <span class="hljs-keyword">this</span>.a14;
+  <span class="hljs-keyword">var</span> a21 = <span class="hljs-keyword">this</span>.a21;
+  <span class="hljs-keyword">var</span> a22 = <span class="hljs-keyword">this</span>.a22;
+  <span class="hljs-keyword">var</span> a23 = <span class="hljs-keyword">this</span>.a23;
+  <span class="hljs-keyword">var</span> a24 = <span class="hljs-keyword">this</span>.a24;
+  <span class="hljs-keyword">var</span> a31 = <span class="hljs-keyword">this</span>.a31;
+  <span class="hljs-keyword">var</span> a32 = <span class="hljs-keyword">this</span>.a32;
+  <span class="hljs-keyword">var</span> a33 = <span class="hljs-keyword">this</span>.a33;
+  <span class="hljs-keyword">var</span> a34 = <span class="hljs-keyword">this</span>.a34;
+  <span class="hljs-keyword">var</span> a41 = <span class="hljs-keyword">this</span>.a41;
+  <span class="hljs-keyword">var</span> a42 = <span class="hljs-keyword">this</span>.a42;
+  <span class="hljs-keyword">var</span> a43 = <span class="hljs-keyword">this</span>.a43;
+  <span class="hljs-keyword">var</span> a44 = <span class="hljs-keyword">this</span>.a44;
+  <span class="hljs-keyword">this</span>.a11 = a11;
+  <span class="hljs-keyword">this</span>.a12 = a21;
+  <span class="hljs-keyword">this</span>.a13 = a31;
+  <span class="hljs-keyword">this</span>.a14 = a41;
+  <span class="hljs-keyword">this</span>.a21 = a12;
+  <span class="hljs-keyword">this</span>.a22 = a22;
+  <span class="hljs-keyword">this</span>.a23 = a32;
+  <span class="hljs-keyword">this</span>.a24 = a42;
+  <span class="hljs-keyword">this</span>.a31 = a13;
+  <span class="hljs-keyword">this</span>.a32 = a23;
+  <span class="hljs-keyword">this</span>.a33 = a33;
+  <span class="hljs-keyword">this</span>.a34 = a43;
+  <span class="hljs-keyword">this</span>.a41 = a14;
+  <span class="hljs-keyword">this</span>.a42 = a24;
+  <span class="hljs-keyword">this</span>.a43 = a34;
+  <span class="hljs-keyword">this</span>.a44 = a44;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="toarray-">toArray ()</h3>
+<p>returns the matrix as an array [a11 … a44] <em>{ Array }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.toArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> [
+      <span class="hljs-keyword">this</span>.a11, <span class="hljs-keyword">this</span>.a21, <span class="hljs-keyword">this</span>.a31, <span class="hljs-keyword">this</span>.a41,
+      <span class="hljs-keyword">this</span>.a12, <span class="hljs-keyword">this</span>.a22, <span class="hljs-keyword">this</span>.a32, <span class="hljs-keyword">this</span>.a42,
+      <span class="hljs-keyword">this</span>.a13, <span class="hljs-keyword">this</span>.a23, <span class="hljs-keyword">this</span>.a33, <span class="hljs-keyword">this</span>.a43,
+      <span class="hljs-keyword">this</span>.a14, <span class="hljs-keyword">this</span>.a24, <span class="hljs-keyword">this</span>.a34, <span class="hljs-keyword">this</span>.a44];
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="fromarray-">fromArray ()</h3>
+<p><code>a</code> - the array providing the values for the matrix <em>{ Array }</em>
+returns the matrix with values taken from the array <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Mat4.prototype.fromArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
+  <span class="hljs-keyword">this</span>.a11 = a[<span class="hljs-number">0</span>](<span class="hljs-keyword">this</span>.a21 = a[<span class="hljs-number">1</span>](<span class="hljs-keyword">this</span>.a31 = a[<span class="hljs-number">2</span>](<span class="hljs-keyword">this</span>.a41 = a[<span class="hljs-number">3</span>])));
+  <span class="hljs-keyword">this</span>.a12 = a[<span class="hljs-number">4</span>](<span class="hljs-keyword">this</span>.a22 = a[<span class="hljs-number">5</span>](<span class="hljs-keyword">this</span>.a32 = a[<span class="hljs-number">6</span>](<span class="hljs-keyword">this</span>.a42 = a[<span class="hljs-number">7</span>])));
+  <span class="hljs-keyword">this</span>.a13 = a[<span class="hljs-number">8</span>](<span class="hljs-keyword">this</span>.a23 = a[<span class="hljs-number">9</span>](<span class="hljs-keyword">this</span>.a33 = a[<span class="hljs-number">10</span>](<span class="hljs-keyword">this</span>.a43 = a[<span class="hljs-number">11</span>])));
+  <span class="hljs-keyword">this</span>.a14 = a[<span class="hljs-number">12</span>](<span class="hljs-keyword">this</span>.a24 = a[<span class="hljs-number">13</span>](<span class="hljs-keyword">this</span>.a34 = a[<span class="hljs-number">14</span>](<span class="hljs-keyword">this</span>.a44 = a[<span class="hljs-number">15</span>])));
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+<span class="hljs-built_in">module</span>.exports = Mat4;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

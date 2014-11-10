@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>GUIControl.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>GUIControl.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">GUIControl</span><span class="hljs-params">(o)</span> </span>{
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> o) {
+    <span class="hljs-keyword">this</span>[i] = o[i];
+  }
+}
+
+GUIControl.prototype.setPosition = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> </span>{
+  <span class="hljs-keyword">this</span>.px = x;
+  <span class="hljs-keyword">this</span>.py = y;
+};
+
+GUIControl.prototype.getNormalizedValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(idx)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.contextObject) {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-keyword">var</span> val = <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
+  <span class="hljs-keyword">if</span> (options &amp;&amp; options.min !== <span class="hljs-literal">undefined</span> &amp;&amp; options.max !== <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'multislider'</span>) {
+      val = (val[idx] - options.min) / (options.max - options.min);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec2'</span>) {
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) val = val.x;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) val = val.y;
+      val = (val - options.min) / (options.max - options.min);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec3'</span>) {
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) val = val.x;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) val = val.y;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">2</span>) val = val.z;
+      val = (val - options.min) / (options.max - options.min);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'color'</span>) {
+      <span class="hljs-keyword">var</span> hsla = val.getHSL();
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) val = hsla.h;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) val = hsla.s;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">2</span>) val = hsla.l;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">3</span>) val = hsla.a;
+    }
+    <span class="hljs-keyword">else</span> {
+      val = (val - options.min) / (options.max - options.min);
+    }
+  }
+  <span class="hljs-keyword">return</span> val;
+};
+
+GUIControl.prototype.setNormalizedValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val, idx)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.contextObject) {
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
+  <span class="hljs-keyword">if</span> (options &amp;&amp; options.min !== <span class="hljs-literal">undefined</span> &amp;&amp; options.max !== <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'multislider'</span>) {
+      <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+      <span class="hljs-keyword">if</span> (idx &gt;= a.length) {
+        <span class="hljs-keyword">return</span>;
+      }
+      a[idx] = options.min + val * (options.max - options.min);
+      val = a;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec2'</span>) {
+      <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+      <span class="hljs-keyword">var</span> val = options.min + val * (options.max - options.min);
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) c.x = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) c.y = val;
+      val = c;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec3'</span>) {
+      <span class="hljs-keyword">var</span> val = options.min + val * (options.max - options.min);
+      <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) c.x = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) c.y = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">2</span>) c.z = val;
+      val = c;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'color'</span>) {
+      <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+      <span class="hljs-keyword">var</span> hsla = c.getHSL();
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">0</span>) hsla.h = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">1</span>) hsla.s = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">2</span>) hsla.l = val;
+      <span class="hljs-keyword">if</span> (idx == <span class="hljs-number">3</span>) hsla.a = val;
+      c.setHSL(hsla.h, hsla.s, hsla.l, hsla.a);
+      val = c;
+    }
+    <span class="hljs-keyword">else</span> {
+      val = options.min + val * (options.max - options.min);
+    }
+    <span class="hljs-keyword">if</span> (options &amp;&amp; options.step) {
+      val = val - val % options.step;
+    }
+  }
+  <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName] = val;
+};
+
+GUIControl.prototype.getSerializedValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.contextObject) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>;
+  }
+
+}
+
+GUIControl.prototype.setSerializedValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'slider'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName] = value;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'multislider'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName] = value;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec2'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].x = value.x;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].y = value.y;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec3'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].x = value.x;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].y = value.y;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].z = value.z;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'color'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].r = value.r;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].g = value.g;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].b = value.b;
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName].a = value.a;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'toggle'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName] = value;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'radiolist'</span>) {
+    <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName] = value;
+  }
+}
+
+
+GUIControl.prototype.getValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'slider'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'multislider'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec2'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec3'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'color'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'toggle'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+};
+
+GUIControl.prototype.getStrValue = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'slider'</span>) {
+    <span class="hljs-keyword">var</span> str = <span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+    <span class="hljs-keyword">var</span> dotPos = str.indexOf(<span class="hljs-string">'.'</span>) + <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span> (dotPos === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">return</span> str + <span class="hljs-string">'.0'</span>;
+    }
+    <span class="hljs-keyword">while</span> (str.charAt(dotPos) == <span class="hljs-string">'0'</span>) {
+      dotPos++;
+    }
+    <span class="hljs-keyword">return</span> str.substr(<span class="hljs-number">0</span>, dotPos + <span class="hljs-number">2</span>);
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec2'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'XY'</span>;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'vec3'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'XYZ'</span>;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'color'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'HSLA'</span>;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">'toggle'</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.contextObject[<span class="hljs-keyword">this</span>.attributeName];
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>;
+  }
+};
+
+<span class="hljs-built_in">module</span>.exports = GUIControl;
+GUIControl;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

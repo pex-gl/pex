@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Save.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Save.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom  = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> glu  = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-glu'</span>);
+<span class="hljs-keyword">var</span> FXStage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./FXStage'</span>);
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+
+<span class="hljs-keyword">var</span> SaveGLSL = fs.readFileSync(__dirname + <span class="hljs-string">'/Save.glsl'</span>, <span class="hljs-string">'utf8'</span>);
+
+<span class="hljs-keyword">var</span> pad = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(num, char, len)</span> </span>{
+  <span class="hljs-keyword">var</span> s = <span class="hljs-string">''</span> + num;
+  <span class="hljs-keyword">while</span> (s.length &lt; len) {
+    s = char + s;
+  }
+  <span class="hljs-keyword">return</span> s;
+}
+
+FXStage.prototype.save = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(path, options)</span> </span>{
+  path = path || <span class="hljs-string">'.'</span>
+  options = options || {};
+
+  <span class="hljs-keyword">var</span> outputSize = <span class="hljs-keyword">this</span>.getOutputSize(options.width, options.height);
+  <span class="hljs-keyword">var</span> rt = <span class="hljs-keyword">this</span>.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+  rt.bind();
+  <span class="hljs-keyword">this</span>.getSourceTexture().bind(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">var</span> program = <span class="hljs-keyword">this</span>.getShader(SaveGLSL);
+  program.use();
+  program.uniforms.tex0(<span class="hljs-number">0</span>);
+
+  <span class="hljs-keyword">var</span> oldViewport = <span class="hljs-keyword">this</span>.gl.getParameter(<span class="hljs-keyword">this</span>.gl.VIEWPORT);
+  glu.viewport(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, outputSize.width, outputSize.height, <span class="hljs-literal">false</span>);
+
+  <span class="hljs-keyword">this</span>.drawFullScreenQuad(outputSize.width, outputSize.height, <span class="hljs-literal">null</span>, program);
+
+  <span class="hljs-keyword">var</span> d = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+  <span class="hljs-keyword">var</span> filename = path + <span class="hljs-string">"/screenshot_"</span>
+  filename += d.getFullYear() + <span class="hljs-string">'-'</span> + pad(d.getMonth()+<span class="hljs-number">1</span>,<span class="hljs-string">'0'</span>,<span class="hljs-number">2</span>) + <span class="hljs-string">'-'</span> + pad(d.getDate(),<span class="hljs-string">'0'</span>,<span class="hljs-number">2</span>);
+  filename += <span class="hljs-string">'_'</span> + pad(d.getHours(),<span class="hljs-string">'0'</span>,<span class="hljs-number">2</span>) + <span class="hljs-string">':'</span> + pad(d.getMinutes(),<span class="hljs-string">'0'</span>,<span class="hljs-number">2</span>) + <span class="hljs-string">':'</span> + pad(d.getSeconds(),<span class="hljs-string">'0'</span>,<span class="hljs-number">2</span>) + <span class="hljs-string">'.png'</span>
+  <span class="hljs-keyword">this</span>.gl.writeImage(<span class="hljs-string">'png'</span>, filename);
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Saved'</span>, filename);
+
+  glu.viewport(oldViewport[<span class="hljs-number">0</span>], oldViewport[<span class="hljs-number">1</span>], oldViewport[<span class="hljs-number">2</span>], oldViewport[<span class="hljs-number">3</span>], <span class="hljs-literal">false</span>);
+
+  rt.unbind();
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.asFXStage(rt, <span class="hljs-string">'save'</span>);
+};
+
+<span class="hljs-built_in">module</span>.exports = FXStage;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

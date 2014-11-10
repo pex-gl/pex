@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Blur5.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Blur5.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom  = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
+<span class="hljs-keyword">var</span> FXStage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./FXStage'</span>);
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+
+<span class="hljs-keyword">var</span> Blur5HGLSL = fs.readFileSync(__dirname + <span class="hljs-string">'/Blur5H.glsl'</span>, <span class="hljs-string">'utf8'</span>);
+<span class="hljs-keyword">var</span> Blur5VGLSL = fs.readFileSync(__dirname + <span class="hljs-string">'/Blur5V.glsl'</span>, <span class="hljs-string">'utf8'</span>);
+
+FXStage.prototype.blur5 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> </span>{
+  options = options || {};
+  <span class="hljs-keyword">var</span> outputSize = <span class="hljs-keyword">this</span>.getOutputSize(options.width, options.height);
+  <span class="hljs-keyword">var</span> rth = <span class="hljs-keyword">this</span>.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+  <span class="hljs-keyword">var</span> rtv = <span class="hljs-keyword">this</span>.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+  <span class="hljs-keyword">var</span> source = <span class="hljs-keyword">this</span>.getSourceTexture();
+  <span class="hljs-keyword">var</span> programH = <span class="hljs-keyword">this</span>.getShader(Blur5HGLSL);
+  programH.use();
+  programH.uniforms.imageSize(Vec2.create(source.width, source.height));
+  rth.bindAndClear();
+  <span class="hljs-keyword">this</span>.drawFullScreenQuad(outputSize.width, outputSize.height, source, programH);
+  rth.unbind();
+  <span class="hljs-keyword">var</span> programV = <span class="hljs-keyword">this</span>.getShader(Blur5VGLSL);
+  programV.use();
+  programV.uniforms.imageSize(Vec2.create(source.width, source.height));
+  rtv.bindAndClear();
+  <span class="hljs-keyword">this</span>.drawFullScreenQuad(outputSize.width, outputSize.height, rth.getColorAttachment(<span class="hljs-number">0</span>), programV);
+  rtv.unbind();
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.asFXStage(rtv, <span class="hljs-string">'blur5'</span>);
+};
+
+<span class="hljs-built_in">module</span>.exports = FXStage;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

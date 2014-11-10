@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>HTMLCanvasRenderer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>HTMLCanvasRenderer.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> glu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-glu'</span>);
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> plask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'plask'</span>);
+<span class="hljs-keyword">var</span> Context = glu.Context;
+<span class="hljs-keyword">var</span> Texture2D = glu.Texture2D;
+<span class="hljs-keyword">var</span> Rect = geom.Rect;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">HTMLCanvasRenderer</span><span class="hljs-params">(width, height, highdpi)</span> </span>{
+  <span class="hljs-keyword">this</span>.gl = Context.currentContext;
+  <span class="hljs-keyword">this</span>.highdpi = highdpi || <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">this</span>.canvas = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'canvas'</span>);
+  <span class="hljs-keyword">this</span>.tex = Texture2D.create(width, height);
+  <span class="hljs-keyword">this</span>.canvas.width = width;
+  <span class="hljs-keyword">this</span>.canvas.height = height;
+  <span class="hljs-keyword">this</span>.ctx = <span class="hljs-keyword">this</span>.canvas.getContext(<span class="hljs-string">'2d'</span>);
+  <span class="hljs-keyword">this</span>.dirty = <span class="hljs-literal">true</span>;
+}
+
+HTMLCanvasRenderer.prototype.isAnyItemDirty = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(items)</span> </span>{
+  <span class="hljs-keyword">var</span> dirty = <span class="hljs-literal">false</span>;
+  items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(item)</span> </span>{
+    <span class="hljs-keyword">if</span> (item.dirty) {
+      item.dirty = <span class="hljs-literal">false</span>;
+      dirty = <span class="hljs-literal">true</span>;
+    }
+  });
+  <span class="hljs-keyword">return</span> dirty;
+};
+
+HTMLCanvasRenderer.prototype.draw = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(items, scale)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isAnyItemDirty(items)) {
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.ctx;
+  ctx.save();
+  ctx.scale(<span class="hljs-keyword">this</span>.highdpi, <span class="hljs-keyword">this</span>.highdpi);
+  ctx.clearRect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.canvas.width, <span class="hljs-keyword">this</span>.canvas.height);
+  ctx.font = <span class="hljs-string">'10px Monaco'</span>;
+  <span class="hljs-keyword">var</span> dy = <span class="hljs-number">10</span>;
+  <span class="hljs-keyword">var</span> dx = <span class="hljs-number">10</span>;
+  <span class="hljs-keyword">var</span> w = <span class="hljs-number">160</span>;
+
+  <span class="hljs-keyword">var</span> cellSize = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> numRows = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> margin = <span class="hljs-number">3</span>;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; items.length; i++) {
+    <span class="hljs-keyword">var</span> e = items[i];
+
+    <span class="hljs-keyword">if</span> (e.px &amp;&amp; e.px) {
+      dx = e.px / <span class="hljs-keyword">this</span>.highdpi;
+      dy = e.py / <span class="hljs-keyword">this</span>.highdpi;
+    }
+
+    <span class="hljs-keyword">var</span> eh = <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'slider'</span>) eh = <span class="hljs-number">20</span> * scale + <span class="hljs-number">14</span>;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'toggle'</span>) eh = <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'multislider'</span>) eh = <span class="hljs-number">18</span> + e.getValue().length * <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec2'</span>) eh = <span class="hljs-number">20</span> + <span class="hljs-number">2</span> * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec3'</span>) eh = <span class="hljs-number">20</span> + <span class="hljs-number">3</span> * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span>) eh = <span class="hljs-number">20</span> + (e.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>) * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span> &amp;&amp; e.options.paletteImage) eh += (w * e.options.paletteImage.height/e.options.paletteImage.width + <span class="hljs-number">2</span>) * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'button'</span>) eh = <span class="hljs-number">24</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texture2D'</span>) eh = <span class="hljs-number">24</span> + e.texture.height * w / e.texture.width;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'radiolist'</span>) eh = <span class="hljs-number">18</span> + e.items.length * <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texturelist'</span>) {
+      cellSize = <span class="hljs-built_in">Math</span>.floor((w - <span class="hljs-number">2</span>*margin) / e.itemsPerRow);
+      numRows = <span class="hljs-built_in">Math</span>.ceil(e.items.length / e.itemsPerRow);
+      eh = <span class="hljs-number">18</span> + <span class="hljs-number">3</span> + numRows * cellSize;
+    }
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline1D'</span> || e.type == <span class="hljs-string">'spline2D'</span>) eh = <span class="hljs-number">24</span> + w;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) eh = <span class="hljs-number">26</span> * scale;
+
+    <span class="hljs-keyword">if</span> (e.type != <span class="hljs-string">'separator'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(0, 0, 0, 0.56)'</span>;
+      ctx.fillRect(dx, dy, w, eh - <span class="hljs-number">2</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (e.options &amp;&amp; e.options.palette &amp;&amp; !e.options.paletteImage) {
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makePaletteImage</span><span class="hljs-params">(e)</span> </span>{
+        <span class="hljs-keyword">var</span> img = <span class="hljs-keyword">new</span> Image();
+        img.src = e.options.palette;
+        img.onload = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">var</span> canvas = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'canvas'</span>);
+          canvas.width = w;
+          canvas.height = w * img.height / img.width;
+          <span class="hljs-keyword">var</span> ctx = canvas.getContext(<span class="hljs-string">'2d'</span>);
+          ctx.drawImage(img, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, canvas.width, canvas.height);
+          e.options.paletteImage = canvas;
+          e.options.paletteImage.ctx = ctx;
+          e.options.paletteImage.data = ctx.getImageData(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, canvas.width, canvas.height).data;
+          e.dirty = <span class="hljs-literal">true</span>;
+        }
+      }
+      makePaletteImage(e);
+    }
+
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'slider'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, (w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>) * e.getNormalizedValue(), eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec2'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        ctx.fillStyle = <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, w - <span class="hljs-number">6</span>, <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec3'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        ctx.fillStyle = <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, w - <span class="hljs-number">6</span>, <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = e.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        ctx.fillStyle = <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, w - <span class="hljs-number">6</span>, <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      <span class="hljs-keyword">if</span> (e.options.paletteImage) {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'e.options.paletteImage'</span>)
+        ctx.drawImage(e.options.paletteImage, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + <span class="hljs-number">14</span> * numSliders, w - <span class="hljs-number">6</span>, w * e.options.paletteImage.height/e.options.paletteImage.width);
+      }
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'button'</span>) {
+      ctx.fillStyle = e.active ? <span class="hljs-string">'rgba(255, 255, 0, 1)'</span> : <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      ctx.fillStyle = e.active ? <span class="hljs-string">'rgba(100, 100, 100, 1)'</span> : <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">15</span>);
+      <span class="hljs-keyword">if</span> (e.options.color) {
+        <span class="hljs-keyword">var</span> c = e.options.color;
+        ctx.fillStyle = <span class="hljs-string">'rgba('</span> + c.x * <span class="hljs-number">255</span> + <span class="hljs-string">', '</span> + c.y * <span class="hljs-number">255</span> + <span class="hljs-string">', '</span> + c.z * <span class="hljs-number">255</span> + <span class="hljs-string">', 1)'</span>;
+        ctx.fillRect(dx + w - <span class="hljs-number">8</span>, dy + <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      }
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'toggle'</span>) {
+      <span class="hljs-keyword">var</span> on = e.contextObject[e.attributeName];
+      ctx.fillStyle = on ? <span class="hljs-string">'rgba(255, 255, 0, 1)'</span> : <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title, dx + eh, dy + <span class="hljs-number">12</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'radiolist'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(e.title, dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      <span class="hljs-keyword">var</span> itemHeight = <span class="hljs-number">20</span> * scale;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; e.items.length; j++) {
+        <span class="hljs-keyword">var</span> item = e.items[j];
+        <span class="hljs-keyword">var</span> on = e.contextObject[e.attributeName] == item.value;
+        ctx.fillStyle = on ? <span class="hljs-string">'rgba(255, 255, 0, 1)'</span> : <span class="hljs-string">'rgba(150, 150, 150, 1)'</span>;
+        ctx.fillRect(dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + j * itemHeight + dy + <span class="hljs-number">3</span>, itemHeight - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>, itemHeight - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+        ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+        ctx.fillText(item.name, dx + <span class="hljs-number">5</span> + itemHeight - <span class="hljs-number">5</span>, <span class="hljs-number">18</span> + j * itemHeight + dy + <span class="hljs-number">13</span>);
+      }
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, itemHeight - <span class="hljs-number">5</span>, e.items.length * itemHeight - <span class="hljs-number">5</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texturelist'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(e.title, dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; e.items.length; j++) {
+        <span class="hljs-keyword">var</span> col = j % e.itemsPerRow;
+        <span class="hljs-keyword">var</span> row = <span class="hljs-built_in">Math</span>.floor(j / e.itemsPerRow);
+        <span class="hljs-keyword">var</span> itemColor = <span class="hljs-keyword">this</span>.controlBgPaint;
+        <span class="hljs-keyword">var</span> shrink = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">if</span> (e.items[j].value == e.contextObject[e.attributeName]) {
+          ctx.fillStyle = <span class="hljs-string">'none'</span>;
+          ctx.strokeStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+          ctx.lineWidth = <span class="hljs-string">'2'</span>;
+          ctx.strokeRect(dx + <span class="hljs-number">3</span> + col * cellSize + <span class="hljs-number">1</span>, dy + <span class="hljs-number">18</span> + row * cellSize + <span class="hljs-number">1</span>, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span>, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span>)
+          ctx.lineWidth = <span class="hljs-string">'1'</span>;
+          shrink = <span class="hljs-number">2</span>;
+        }
+        <span class="hljs-keyword">if</span> (!e.items[j].activeArea) {
+          e.items[j].activeArea = <span class="hljs-keyword">new</span> Rect();
+        }
+        e.items[j].activeArea.set(dx + <span class="hljs-number">3</span> + col * cellSize + shrink, dy + <span class="hljs-number">18</span> + row * cellSize + shrink, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span> * shrink, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span> * shrink);
+      }
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, cellSize * numRows - <span class="hljs-number">5</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texture2D'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">15</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) {
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(0, 0, 0, 1)'</span>;
+      ctx.fillText(items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">16</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'separator'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    }
+    <span class="hljs-keyword">else</span> {
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">13</span>);
+    }
+    dy += eh;
+  }
+  ctx.restore();
+  <span class="hljs-keyword">this</span>.updateTexture();
+};
+
+HTMLCanvasRenderer.prototype.getTexture = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.tex;
+};
+
+HTMLCanvasRenderer.prototype.getImageColor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(image, x, y)</span> </span>{
+  <span class="hljs-keyword">var</span> r = image.data[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">0</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">var</span> g = image.data[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">1</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">var</span> b = image.data[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">2</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">return</span> { r: r, g: g, b: b };
+}
+
+HTMLCanvasRenderer.prototype.updateTexture = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> gl = <span class="hljs-keyword">this</span>.gl;
+  <span class="hljs-keyword">this</span>.tex.bind();
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, <span class="hljs-literal">true</span>);
+  gl.texImage2D(gl.TEXTURE_2D, <span class="hljs-number">0</span>, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, <span class="hljs-keyword">this</span>.canvas);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.bindTexture(gl.TEXTURE_2D, <span class="hljs-literal">null</span>);
+};
+
+<span class="hljs-built_in">module</span>.exports = HTMLCanvasRenderer;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

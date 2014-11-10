@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Program.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Program.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Context = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Context'</span>);
+<span class="hljs-keyword">var</span> sys = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-sys'</span>);
+<span class="hljs-keyword">var</span> IO = sys.IO;
+
+<span class="hljs-keyword">var</span> kVertexShaderPrefix = <span class="hljs-string">''</span> +
+  <span class="hljs-string">'#ifdef GL_ES\n'</span> +
+  <span class="hljs-string">'precision highp float;\n'</span> +
+  <span class="hljs-string">'#endif\n'</span> +
+  <span class="hljs-string">'#define VERT\n'</span>;
+
+<span class="hljs-keyword">var</span> kFragmentShaderPrefix = <span class="hljs-string">''</span> +
+  <span class="hljs-string">'#ifdef GL_ES\n'</span> +
+  <span class="hljs-string">'#ifdef GL_FRAGMENT_PRECISION_HIGH\n'</span> +
+  <span class="hljs-string">'  precision highp float;\n'</span> +
+  <span class="hljs-string">'#else\n'</span> +
+  <span class="hljs-string">'  precision mediump float;\n'</span> +
+  <span class="hljs-string">'#endif\n'</span> +
+  <span class="hljs-string">'#endif\n'</span> +
+  <span class="hljs-string">'#define FRAG\n'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Program</span><span class="hljs-params">(vertSrc, fragSrc)</span> </span>{
+  <span class="hljs-keyword">this</span>.gl = Context.currentContext;
+  <span class="hljs-keyword">this</span>.handle = <span class="hljs-keyword">this</span>.gl.createProgram();
+  <span class="hljs-keyword">this</span>.uniforms = {};
+  <span class="hljs-keyword">this</span>.attributes = {};
+  <span class="hljs-keyword">this</span>.addSources(vertSrc, fragSrc);
+  <span class="hljs-keyword">this</span>.ready = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.vertShader &amp;&amp; <span class="hljs-keyword">this</span>.fragShader) {
+    <span class="hljs-keyword">this</span>.link();
+  }
+}
+
+Program.prototype.addSources = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vertSrc, fragSrc)</span> </span>{
+  <span class="hljs-keyword">if</span> (fragSrc == <span class="hljs-literal">null</span>) {
+    fragSrc = vertSrc;
+  }
+  <span class="hljs-keyword">if</span> (vertSrc) {
+    <span class="hljs-keyword">this</span>.addVertexSource(vertSrc);
+  }
+  <span class="hljs-keyword">if</span> (fragSrc) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.addFragmentSource(fragSrc);
+  }
+};
+
+Program.prototype.addVertexSource = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vertSrc)</span> </span>{
+  <span class="hljs-keyword">this</span>.vertShader = <span class="hljs-keyword">this</span>.gl.createShader(<span class="hljs-keyword">this</span>.gl.VERTEX_SHADER);
+  <span class="hljs-keyword">this</span>.gl.shaderSource(<span class="hljs-keyword">this</span>.vertShader, kVertexShaderPrefix + vertSrc + <span class="hljs-string">'\n'</span>);
+  <span class="hljs-keyword">this</span>.gl.compileShader(<span class="hljs-keyword">this</span>.vertShader);
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.gl.getShaderParameter(<span class="hljs-keyword">this</span>.vertShader, <span class="hljs-keyword">this</span>.gl.COMPILE_STATUS)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-keyword">this</span>.gl.getShaderInfoLog(<span class="hljs-keyword">this</span>.vertShader));
+  }
+};
+
+Program.prototype.addFragmentSource = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragSrc)</span> </span>{
+  <span class="hljs-keyword">this</span>.fragShader = <span class="hljs-keyword">this</span>.gl.createShader(<span class="hljs-keyword">this</span>.gl.FRAGMENT_SHADER);
+  <span class="hljs-keyword">this</span>.gl.shaderSource(<span class="hljs-keyword">this</span>.fragShader, kFragmentShaderPrefix + fragSrc + <span class="hljs-string">'\n'</span>);
+  <span class="hljs-keyword">this</span>.gl.compileShader(<span class="hljs-keyword">this</span>.fragShader);
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.gl.getShaderParameter(<span class="hljs-keyword">this</span>.fragShader, <span class="hljs-keyword">this</span>.gl.COMPILE_STATUS)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-keyword">this</span>.gl.getShaderInfoLog(<span class="hljs-keyword">this</span>.fragShader));
+  }
+};
+
+Program.prototype.link = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.gl.attachShader(<span class="hljs-keyword">this</span>.handle, <span class="hljs-keyword">this</span>.vertShader);
+  <span class="hljs-keyword">this</span>.gl.attachShader(<span class="hljs-keyword">this</span>.handle, <span class="hljs-keyword">this</span>.fragShader);
+  <span class="hljs-keyword">this</span>.gl.linkProgram(<span class="hljs-keyword">this</span>.handle);
+
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.gl.getProgramParameter(<span class="hljs-keyword">this</span>.handle, <span class="hljs-keyword">this</span>.gl.LINK_STATUS)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-keyword">this</span>.gl.getProgramInfoLog(<span class="hljs-keyword">this</span>.handle));
+  }
+
+  <span class="hljs-keyword">var</span> numUniforms = <span class="hljs-keyword">this</span>.gl.getProgramParameter(<span class="hljs-keyword">this</span>.handle, <span class="hljs-keyword">this</span>.gl.ACTIVE_UNIFORMS);
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numUniforms; i++) {
+    <span class="hljs-keyword">var</span> info = <span class="hljs-keyword">this</span>.gl.getActiveUniform(<span class="hljs-keyword">this</span>.handle, i);
+    <span class="hljs-keyword">if</span> (info.size &gt; <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;info.size; j++) {
+        <span class="hljs-keyword">var</span> arrayElementName = info.name.replace(<span class="hljs-regexp">/\[\d+\]/</span>, <span class="hljs-string">'['</span> + j + <span class="hljs-string">']'</span>);
+        <span class="hljs-keyword">var</span> location = <span class="hljs-keyword">this</span>.gl.getUniformLocation(<span class="hljs-keyword">this</span>.handle, arrayElementName);
+        <span class="hljs-keyword">this</span>.uniforms[arrayElementName] = Program.makeUniformSetter(<span class="hljs-keyword">this</span>.gl, info.type, location);
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">var</span> location = <span class="hljs-keyword">this</span>.gl.getUniformLocation(<span class="hljs-keyword">this</span>.handle, info.name);
+      <span class="hljs-keyword">this</span>.uniforms[info.name] = Program.makeUniformSetter(<span class="hljs-keyword">this</span>.gl, info.type, location);
+    }
+  }
+
+  <span class="hljs-keyword">var</span> numAttributes = <span class="hljs-keyword">this</span>.gl.getProgramParameter(<span class="hljs-keyword">this</span>.handle, <span class="hljs-keyword">this</span>.gl.ACTIVE_ATTRIBUTES);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numAttributes; i++) {
+    info = <span class="hljs-keyword">this</span>.gl.getActiveAttrib(<span class="hljs-keyword">this</span>.handle, i);
+    <span class="hljs-keyword">var</span> location = <span class="hljs-keyword">this</span>.gl.getAttribLocation(<span class="hljs-keyword">this</span>.handle, info.name);
+    <span class="hljs-keyword">this</span>.attributes[info.name] = location;
+  }
+  <span class="hljs-keyword">this</span>.ready = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Program.prototype.use = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (Program.currentProgram !== <span class="hljs-keyword">this</span>.handle) {
+    Program.currentProgram = <span class="hljs-keyword">this</span>.handle;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.gl.useProgram(<span class="hljs-keyword">this</span>.handle);
+  }
+};
+
+Program.prototype.dispose = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.gl.deleteShader(<span class="hljs-keyword">this</span>.vertShader);
+  <span class="hljs-keyword">this</span>.gl.deleteShader(<span class="hljs-keyword">this</span>.fragShader);
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.gl.deleteProgram(<span class="hljs-keyword">this</span>.handle);
+};
+
+Program.load = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(url, callback, options)</span> </span>{
+  <span class="hljs-keyword">var</span> program;
+  program = <span class="hljs-keyword">new</span> Program();
+  IO.loadTextFile(url, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(source)</span> </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Program.Compiling "</span> + url);
+    program.addSources(source);
+    program.link();
+    <span class="hljs-keyword">if</span> (callback) {
+      callback();
+    }
+    <span class="hljs-keyword">if</span> (options &amp;&amp; options.autoreload) {
+      <span class="hljs-keyword">return</span> IO.watchTextFile(url, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(source)</span> </span>{
+        <span class="hljs-keyword">var</span> e;
+        <span class="hljs-keyword">try</span> {
+          program.gl.detachShader(program.handle, program.vertShader);
+          program.gl.detachShader(program.handle, program.fragShader);
+          program.addSources(source);
+          <span class="hljs-keyword">return</span> program.link();
+        } <span class="hljs-keyword">catch</span> (_error) {
+          e = _error;
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Program.load : failed to reload "</span> + url);
+          <span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.log(e);
+        }
+      });
+    }
+  });
+  <span class="hljs-keyword">return</span> program;
+};
+
+Program.makeUniformSetter = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(gl, type, location)</span> </span>{
+  <span class="hljs-keyword">var</span> setterFun = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">switch</span> (type) {
+    <span class="hljs-keyword">case</span> gl.BOOL:
+    <span class="hljs-keyword">case</span> gl.INT:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+        <span class="hljs-keyword">return</span> gl.uniform1i(location, value);
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.SAMPLER_2D:
+    <span class="hljs-keyword">case</span> gl.SAMPLER_CUBE:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+        <span class="hljs-keyword">return</span> gl.uniform1i(location, value);
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.FLOAT:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+        <span class="hljs-keyword">return</span> gl.uniform1f(location, value);
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.FLOAT_VEC2:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+        <span class="hljs-keyword">return</span> gl.uniform2f(location, v.x, v.y);
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.FLOAT_VEC3:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+        <span class="hljs-keyword">return</span> gl.uniform3f(location, v.x, v.y, v.z);
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.FLOAT_VEC4:
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+        <span class="hljs-keyword">if</span> (v.r != <span class="hljs-literal">null</span>) {
+          gl.uniform4f(location, v.r, v.g, v.b, v.a);
+        }
+        <span class="hljs-keyword">if</span> (v.x != <span class="hljs-literal">null</span>) {
+          <span class="hljs-keyword">return</span> gl.uniform4f(location, v.x, v.y, v.z, v.w);
+        }
+      };
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> gl.FLOAT_MAT4:
+      <span class="hljs-keyword">var</span> mv = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Float32Array</span>(<span class="hljs-number">16</span>);
+      setterFun = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m)</span> </span>{
+        mv[<span class="hljs-number">0</span>] = m.a11;
+        mv[<span class="hljs-number">1</span>] = m.a21;
+        mv[<span class="hljs-number">2</span>] = m.a31;
+        mv[<span class="hljs-number">3</span>] = m.a41;
+        mv[<span class="hljs-number">4</span>] = m.a12;
+        mv[<span class="hljs-number">5</span>] = m.a22;
+        mv[<span class="hljs-number">6</span>] = m.a32;
+        mv[<span class="hljs-number">7</span>] = m.a42;
+        mv[<span class="hljs-number">8</span>] = m.a13;
+        mv[<span class="hljs-number">9</span>] = m.a23;
+        mv[<span class="hljs-number">10</span>] = m.a33;
+        mv[<span class="hljs-number">11</span>] = m.a43;
+        mv[<span class="hljs-number">12</span>] = m.a14;
+        mv[<span class="hljs-number">13</span>] = m.a24;
+        mv[<span class="hljs-number">14</span>] = m.a34;
+        mv[<span class="hljs-number">15</span>] = m.a44;
+        <span class="hljs-keyword">return</span> gl.uniformMatrix4fv(location, <span class="hljs-literal">false</span>, mv);
+      };
+  }
+  <span class="hljs-keyword">if</span> (setterFun) {
+    setterFun.type = type;
+    <span class="hljs-keyword">return</span> setterFun;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Unknown uniform type: '</span> + type);
+    };
+  }
+};
+
+<span class="hljs-built_in">module</span>.exports = Program;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

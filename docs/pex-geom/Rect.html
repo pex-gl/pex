@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Rect.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Rect.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Rect</span><span class="hljs-params">(x, y, width, height)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = x;
+  <span class="hljs-keyword">this</span>.y = y;
+  <span class="hljs-keyword">this</span>.width = width;
+  <span class="hljs-keyword">this</span>.height = height;
+}
+
+Rect.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = x;
+  <span class="hljs-keyword">this</span>.y = y;
+  <span class="hljs-keyword">this</span>.width = width;
+  <span class="hljs-keyword">this</span>.height = height;
+};
+
+Rect.prototype.contains = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> </span>{
+  <span class="hljs-keyword">return</span> point.x &gt;= <span class="hljs-keyword">this</span>.x &amp;&amp; point.x &lt;= <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.width &amp;&amp; point.y &gt;= <span class="hljs-keyword">this</span>.y &amp;&amp; point.y &lt;= <span class="hljs-keyword">this</span>.y + <span class="hljs-keyword">this</span>.height;
+};
+
+<span class="hljs-built_in">module</span>.exports = Rect;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

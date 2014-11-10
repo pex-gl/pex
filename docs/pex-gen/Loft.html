@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Loft.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Loft.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+<span class="hljs-keyword">var</span> Mat4 = geom.Mat4;
+<span class="hljs-keyword">var</span> Quat = geom.Quat;
+<span class="hljs-keyword">var</span> Path = geom.Path;
+<span class="hljs-keyword">var</span> Spline1D = geom.Spline1D;
+<span class="hljs-keyword">var</span> Spline3D = geom.Spline3D;
+<span class="hljs-keyword">var</span> acos = <span class="hljs-built_in">Math</span>.acos;
+<span class="hljs-keyword">var</span> PI = <span class="hljs-built_in">Math</span>.PI;
+<span class="hljs-keyword">var</span> min = <span class="hljs-built_in">Math</span>.min;
+<span class="hljs-keyword">var</span> LineBuilder = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./LineBuilder'</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clamp</span><span class="hljs-params">(value, min, max)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(min, <span class="hljs-built_in">Math</span>.min(value, max));
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Version history</p>
+<ol>
+<li>Naive implementation
+<a href="https://gist.github.com/roxlu/2859605">https://gist.github.com/roxlu/2859605</a></li>
+<li>Fixed twists
+<a href="http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/">http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/</a>
+<a href="http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html">http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html</a></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> EPSILON = <span class="hljs-number">0.00001</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Loft</span><span class="hljs-params">(path, options)</span> </span>{
+  options = options || {};
+  Geometry.call(<span class="hljs-keyword">this</span>, { vertices: <span class="hljs-literal">true</span>, normals: <span class="hljs-literal">true</span>, texCoords: <span class="hljs-literal">true</span>, edges: <span class="hljs-literal">false</span>, faces: <span class="hljs-literal">true</span> });
+  <span class="hljs-keyword">var</span> defaults = {
+    numSteps: <span class="hljs-number">200</span>,
+    numSegments: <span class="hljs-number">8</span>,
+    r: <span class="hljs-number">0.3</span>,
+    shapePath: <span class="hljs-literal">null</span>,
+    xShapeScale: <span class="hljs-number">1</span>,
+    caps: <span class="hljs-literal">false</span>,
+    initialNormal: <span class="hljs-literal">null</span>,
+    adjustAngle: <span class="hljs-number">0</span>
+  };
+  path.samplesCount = <span class="hljs-number">5000</span>;
+  <span class="hljs-keyword">if</span> (options.shapePath &amp;&amp; !options.numSegments) {
+    options.numSegments = options.shapePath.points.length;
+  }
+  <span class="hljs-keyword">this</span>.options = options = merge(defaults, options);
+  <span class="hljs-keyword">this</span>.path = path;
+  <span class="hljs-keyword">if</span> (path.isClosed()) options.caps = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">this</span>.shapePath = options.shapePath || <span class="hljs-keyword">this</span>.makeShapePath(options.numSegments);
+  <span class="hljs-keyword">this</span>.adjustAngle = options.adjustAngle;
+  <span class="hljs-keyword">this</span>.rfunc = <span class="hljs-keyword">this</span>.makeRadiusFunction(options.r);
+  <span class="hljs-keyword">this</span>.rufunc = options.ru ? <span class="hljs-keyword">this</span>.makeRadiusFunction(options.ru) : <span class="hljs-keyword">this</span>.rfunc;
+  <span class="hljs-keyword">this</span>.rvfunc = options.rv ? <span class="hljs-keyword">this</span>.makeRadiusFunction(options.rv) : (options.ru ? <span class="hljs-keyword">this</span>.rufunc : <span class="hljs-keyword">this</span>.rfunc);
+  <span class="hljs-keyword">this</span>.points = <span class="hljs-keyword">this</span>.samplePoints(path, options.numSteps, path.isClosed());
+  <span class="hljs-keyword">this</span>.tangents = <span class="hljs-keyword">this</span>.sampleTangents(path, options.numSteps, path.isClosed());
+  <span class="hljs-keyword">this</span>.frames = <span class="hljs-keyword">this</span>.makeFrames(<span class="hljs-keyword">this</span>.points, <span class="hljs-keyword">this</span>.tangents, path.isClosed());
+  <span class="hljs-keyword">this</span>.buildGeometry(options.caps);
+}
+
+Loft.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);
+
+Loft.prototype.buildGeometry = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(caps)</span> </span>{
+  caps = <span class="hljs-keyword">typeof</span> caps !== <span class="hljs-string">'undefined'</span> ? caps : <span class="hljs-literal">false</span>;
+
+  <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> numSteps = <span class="hljs-keyword">this</span>.options.numSteps;
+  <span class="hljs-keyword">var</span> numSegments = <span class="hljs-keyword">this</span>.options.numSegments;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.frames.length; i++) {
+    <span class="hljs-keyword">var</span> frame = <span class="hljs-keyword">this</span>.frames[i];
+    <span class="hljs-keyword">var</span> ru = <span class="hljs-keyword">this</span>.rufunc(i, numSteps);
+    <span class="hljs-keyword">var</span> rv = <span class="hljs-keyword">this</span>.rvfunc(i, numSteps);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;numSegments; j++) {
+      <span class="hljs-keyword">if</span> (numSegments == <span class="hljs-keyword">this</span>.shapePath.points.length) {
+        p = <span class="hljs-keyword">this</span>.shapePath.getPoint(j / (numSegments-<span class="hljs-number">1</span>));
+      }
+      <span class="hljs-keyword">else</span> {
+        p = <span class="hljs-keyword">this</span>.shapePath.getPointAt(j / (numSegments-<span class="hljs-number">1</span>));
+      }
+      p.x *= ru;
+      p.y *= rv;
+      p = p.transformMat4(frame.m).add(frame.position);
+      <span class="hljs-keyword">this</span>.vertices.push(p);
+      <span class="hljs-keyword">this</span>.texCoords.push(<span class="hljs-keyword">new</span> Vec2(j / numSegments, i / numSteps));
+      <span class="hljs-keyword">this</span>.normals.push(p.dup().sub(frame.position).normalize());
+    }
+  }
+
+  <span class="hljs-keyword">if</span> (caps) {
+    <span class="hljs-keyword">this</span>.vertices.push(<span class="hljs-keyword">this</span>.frames[<span class="hljs-number">0</span>].position);
+    <span class="hljs-keyword">this</span>.texCoords.push(<span class="hljs-keyword">new</span> Vec2(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+    <span class="hljs-keyword">this</span>.normals.push(<span class="hljs-keyword">this</span>.frames[<span class="hljs-number">0</span>].tangent.dup().scale(-<span class="hljs-number">1</span>));
+    <span class="hljs-keyword">this</span>.vertices.push(<span class="hljs-keyword">this</span>.frames[<span class="hljs-keyword">this</span>.frames.length - <span class="hljs-number">1</span>].position);
+    <span class="hljs-keyword">this</span>.texCoords.push(<span class="hljs-keyword">new</span> Vec2(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+    <span class="hljs-keyword">this</span>.normals.push(<span class="hljs-keyword">this</span>.frames[<span class="hljs-keyword">this</span>.frames.length - <span class="hljs-number">1</span>].tangent.dup().scale(-<span class="hljs-number">1</span>));
+  }
+
+  index = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.frames.length; i++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;numSegments; j++) {
+      <span class="hljs-keyword">if</span> (i &lt; numSteps - <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">this</span>.faces.push([index + (j + <span class="hljs-number">1</span>) % numSegments + numSegments, index + (j + <span class="hljs-number">1</span>) % numSegments, index + j, index + j + numSegments ]);
+      }
+    }
+    index += numSegments;
+  }
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.path.isClosed()) {
+    index -= numSegments;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;numSegments; j++) {
+      <span class="hljs-keyword">this</span>.faces.push([(j + <span class="hljs-number">1</span>) % numSegments, index + (j + <span class="hljs-number">1</span>) % numSegments, index + j, j]);
+    }
+  }
+  <span class="hljs-keyword">if</span> (caps) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;numSegments; j++) {
+      <span class="hljs-keyword">this</span>.faces.push([j, (j + <span class="hljs-number">1</span>) % numSegments, <span class="hljs-keyword">this</span>.vertices.length - <span class="hljs-number">2</span>]);
+      <span class="hljs-keyword">this</span>.faces.push([<span class="hljs-keyword">this</span>.vertices.length - <span class="hljs-number">1</span>, index - numSegments + (j + <span class="hljs-number">1</span>) % numSegments, index - numSegments + j]);
+    }
+  }
+};
+
+Loft.prototype.makeShapePath = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(numSegments)</span> </span>{
+  <span class="hljs-keyword">var</span> shapePath = <span class="hljs-keyword">new</span> Path();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numSegments; i++) {
+    <span class="hljs-keyword">var</span> t = i / numSegments;
+    <span class="hljs-keyword">var</span> a = t * <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.PI;
+    <span class="hljs-keyword">var</span> p = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-built_in">Math</span>.cos(a), <span class="hljs-built_in">Math</span>.sin(a), <span class="hljs-number">0</span>);
+    shapePath.addPoint(p);
+  }
+  shapePath.close();
+  <span class="hljs-keyword">return</span> shapePath;
+};
+
+Loft.prototype.makeFrames = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(points, tangents, closed, rot)</span> </span>{
+  <span class="hljs-keyword">if</span> (rot == <span class="hljs-literal">null</span>) {
+    rot = <span class="hljs-number">0</span>;
+  }
+  <span class="hljs-keyword">var</span> tangent = tangents[<span class="hljs-number">0</span>];
+  <span class="hljs-keyword">var</span> atx = <span class="hljs-built_in">Math</span>.abs(tangent.x);
+  <span class="hljs-keyword">var</span> aty = <span class="hljs-built_in">Math</span>.abs(tangent.y);
+  <span class="hljs-keyword">var</span> atz = <span class="hljs-built_in">Math</span>.abs(tangent.z);
+  <span class="hljs-keyword">var</span> v = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">if</span> (atz &gt; atx &amp;&amp; atz &gt;= aty) {
+    v = tangent.dup().cross(<span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>));
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (aty &gt; atx &amp;&amp; aty &gt;= atz) {
+    v = tangent.dup().cross(<span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+  }
+  <span class="hljs-keyword">else</span> {
+    v = tangent.dup().cross(<span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
+  }
+  <span class="hljs-keyword">var</span> normal = <span class="hljs-keyword">this</span>.options.initialNormal || Vec3.create().asCross(tangent, v).normalize();
+  <span class="hljs-keyword">var</span> binormal = Vec3.create().asCross(tangent, normal).normalize();
+  <span class="hljs-keyword">var</span> prevBinormal = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> prevNormal = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> frames = [];
+  <span class="hljs-keyword">var</span> rotation = <span class="hljs-keyword">new</span> Quat();
+  v = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.points.length; i++) {
+    <span class="hljs-keyword">var</span> position = points[i];
+    tangent = tangents[i];
+    <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span>) {
+      normal = normal.dup();
+      binormal = binormal.dup();
+      prevTangent = tangents[i - <span class="hljs-number">1</span>];
+      v.asCross(prevTangent, tangent);
+      <span class="hljs-keyword">if</span> (v.length() &gt; EPSILON) {
+        v.normalize();
+        theta = acos(prevTangent.dot(tangent));
+        rotation.setAxisAngle(v, theta * <span class="hljs-number">180</span> / PI);
+        normal.transformQuat(rotation);
+      }
+      binormal.asCross(tangent, normal);
+    }
+    <span class="hljs-keyword">var</span> m = <span class="hljs-keyword">new</span> Mat4().set4x4r(binormal.x, normal.x, tangent.x, <span class="hljs-number">0</span>, binormal.y, normal.y, tangent.y, <span class="hljs-number">0</span>, binormal.z, normal.z, tangent.z, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+    frames.push({
+      tangent: tangent,
+      normal: normal,
+      binormal: binormal,
+      position: position,
+      m: m
+    });
+  }
+  <span class="hljs-keyword">if</span> (closed) {
+    firstNormal = frames[<span class="hljs-number">0</span>].normal;
+    lastNormal = frames[frames.length - <span class="hljs-number">1</span>].normal;
+    theta = <span class="hljs-built_in">Math</span>.acos(clamp(firstNormal.dot(lastNormal), <span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
+    theta /= frames.length - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span> (tangents[<span class="hljs-number">0</span>].dot(v.asCross(firstNormal, lastNormal)) &gt; <span class="hljs-number">0</span>) {
+      theta = -theta;
+    }
+    frames.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(frame, frameIndex)</span> </span>{
+      rotation.setAxisAngle(frame.tangent, theta * frameIndex * <span class="hljs-number">180</span> / PI);
+      frame.normal.transformQuat(rotation);
+      frame.binormal.asCross(frame.tangent, frame.normal);
+      frame.m.set4x4r(frame.binormal.x, frame.normal.x, frame.tangent.x, <span class="hljs-number">0</span>, frame.binormal.y, frame.normal.y, frame.tangent.y, <span class="hljs-number">0</span>, frame.binormal.z, frame.normal.z, frame.tangent.z, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+    });
+  }
+  <span class="hljs-keyword">return</span> frames;
+};
+
+Loft.prototype.samplePoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(path, numSteps, closed)</span> </span>{
+  <span class="hljs-keyword">var</span> points = [];
+  <span class="hljs-keyword">var</span> N = closed ? numSteps : (numSteps - <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numSteps; i++) {
+    points.push(path.getPointAt(i / N));
+  }
+  <span class="hljs-keyword">return</span> points;
+};
+
+Loft.prototype.sampleTangents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(path, numSteps, closed)</span> </span>{
+  <span class="hljs-keyword">var</span> points = [];
+  <span class="hljs-keyword">var</span> N = closed ? numSteps : (numSteps - <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numSteps; i++) {
+    points.push(path.getTangentAt(i / N));
+  }
+  <span class="hljs-keyword">return</span> points;
+};
+
+Loft.prototype.makeRadiusFunction = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{
+  <span class="hljs-keyword">var</span> rfunc;
+  <span class="hljs-keyword">if</span> (r <span class="hljs-keyword">instanceof</span> Spline1D) {
+    <span class="hljs-keyword">return</span> rfunc = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(t, n)</span> </span>{
+      <span class="hljs-keyword">return</span> r.getPointAt(t / (n - <span class="hljs-number">1</span>));
+    };
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> rfunc = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(t)</span> </span>{
+      <span class="hljs-keyword">return</span> r;
+    };
+  }
+};
+
+Loft.prototype.toDebugLines = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(lineLength)</span> </span>{
+  lineLength = lineLength || <span class="hljs-number">0.5</span>
+  <span class="hljs-keyword">var</span> lineBuilder = <span class="hljs-keyword">new</span> LineBuilder();
+  <span class="hljs-keyword">var</span> red = { r: <span class="hljs-number">1</span>, g: <span class="hljs-number">0</span>, b: <span class="hljs-number">0</span>, a: <span class="hljs-number">1</span>};
+  <span class="hljs-keyword">var</span> green = { r: <span class="hljs-number">0</span>, g: <span class="hljs-number">1</span>, b: <span class="hljs-number">0</span>, a: <span class="hljs-number">1</span>};
+  <span class="hljs-keyword">var</span> blue = { r: <span class="hljs-number">0</span>, g: <span class="hljs-number">0.5</span>, b: <span class="hljs-number">1</span>, a: <span class="hljs-number">1</span>};
+  <span class="hljs-keyword">this</span>.frames.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(frame, frameIndex)</span> </span>{
+    lineBuilder.addLine(frame.position, frame.position.dup().add(frame.tangent.dup().scale(lineLength)), red, red);
+    lineBuilder.addLine(frame.position, frame.position.dup().add(frame.normal.dup().scale(lineLength)), green, green);
+    lineBuilder.addLine(frame.position, frame.position.dup().add(frame.binormal.dup().scale(lineLength)), blue, blue);
+  });
+  <span class="hljs-keyword">return</span> lineBuilder;
+}
+
+
+<span class="hljs-built_in">module</span>.exports = Loft;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

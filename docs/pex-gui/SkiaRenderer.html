@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>SkiaRenderer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>SkiaRenderer.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> glu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-glu'</span>);
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> plask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'plask'</span>);
+<span class="hljs-keyword">var</span> Context = glu.Context;
+<span class="hljs-keyword">var</span> Texture2D = glu.Texture2D;
+<span class="hljs-keyword">var</span> SkCanvas = plask.SkCanvas;
+<span class="hljs-keyword">var</span> SkPaint = plask.SkPaint;
+<span class="hljs-keyword">var</span> Rect = geom.Rect;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">SkiaRenderer</span><span class="hljs-params">(width, height, highdpi)</span> </span>{
+  <span class="hljs-keyword">this</span>.tex = Texture2D.create(width, height);
+  <span class="hljs-keyword">this</span>.highdpi = highdpi || <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">this</span>.gl = Context.currentContext;
+  <span class="hljs-keyword">this</span>.tex = Texture2D.create(width, height);
+  <span class="hljs-keyword">this</span>.canvas = <span class="hljs-keyword">new</span> SkCanvas.create(width, height);
+  <span class="hljs-keyword">this</span>.fontPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.fontPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.fontPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.fontPaint.setTextSize(<span class="hljs-number">10</span>);
+  <span class="hljs-keyword">this</span>.fontPaint.setFontFamily(<span class="hljs-string">'Monaco'</span>);
+  <span class="hljs-keyword">this</span>.fontPaint.setStrokeWidth(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">this</span>.headerFontPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.headerFontPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.headerFontPaint.setColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.headerFontPaint.setTextSize(<span class="hljs-number">10</span>);
+  <span class="hljs-keyword">this</span>.headerFontPaint.setFontFamily(<span class="hljs-string">'Monaco'</span>);
+  <span class="hljs-keyword">this</span>.headerFontPaint.setStrokeWidth(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">this</span>.fontHighlightPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.fontHighlightPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.fontHighlightPaint.setColor(<span class="hljs-number">100</span>, <span class="hljs-number">100</span>, <span class="hljs-number">100</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.fontHighlightPaint.setTextSize(<span class="hljs-number">10</span>);
+  <span class="hljs-keyword">this</span>.fontHighlightPaint.setFontFamily(<span class="hljs-string">'Monaco'</span>);
+  <span class="hljs-keyword">this</span>.fontHighlightPaint.setStrokeWidth(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">this</span>.panelBgPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.panelBgPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.panelBgPaint.setColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">150</span>);
+  <span class="hljs-keyword">this</span>.headerBgPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.headerBgPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.headerBgPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.controlBgPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.controlBgPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.controlBgPaint.setColor(<span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.controlHighlightPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.controlHighlightPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.controlHighlightPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.controlHighlightPaint.setAntiAlias(<span class="hljs-literal">true</span>);
+  <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint.setStyle(SkPaint.kStrokeStyle);
+  <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint.setAntiAlias(<span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint.setStrokeWidth(<span class="hljs-number">2</span>);
+  <span class="hljs-keyword">this</span>.controlFeaturePaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.controlFeaturePaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.controlFeaturePaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.controlFeaturePaint.setAntiAlias(<span class="hljs-literal">true</span>);
+  <span class="hljs-keyword">this</span>.imagePaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.imagePaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.imagePaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.colorPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.colorPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.colorPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+}
+
+SkiaRenderer.prototype.isAnyItemDirty = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(items)</span> </span>{
+  <span class="hljs-keyword">var</span> dirty = <span class="hljs-literal">false</span>;
+  items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{
+    <span class="hljs-keyword">if</span> (item.dirty) {
+      item.dirty = <span class="hljs-literal">false</span>;
+      dirty = <span class="hljs-literal">true</span>;
+    }
+  });
+  <span class="hljs-keyword">return</span> dirty;
+};
+
+SkiaRenderer.prototype.draw = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(items, scale)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isAnyItemDirty(items)) {
+    <span class="hljs-keyword">return</span>;
+  }
+  <span class="hljs-keyword">var</span> canvas = <span class="hljs-keyword">this</span>.canvas;
+  canvas.save();
+  canvas.scale(<span class="hljs-keyword">this</span>.highdpi, <span class="hljs-keyword">this</span>.highdpi);
+  canvas.drawColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, plask.SkPaint.kClearMode);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>transparent</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> dy = <span class="hljs-number">10</span>;
+  <span class="hljs-keyword">var</span> dx = <span class="hljs-number">10</span>;
+  <span class="hljs-keyword">var</span> w = <span class="hljs-number">160</span>;
+  <span class="hljs-keyword">var</span> cellSize = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> numRows = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> margin = <span class="hljs-number">3</span>;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; items.length; i++) {
+    <span class="hljs-keyword">var</span> e = items[i];
+    <span class="hljs-keyword">if</span> (e.px &amp;&amp; e.px) {
+      dx = e.px / <span class="hljs-keyword">this</span>.highdpi;
+      dy = e.py / <span class="hljs-keyword">this</span>.highdpi;
+    }
+    <span class="hljs-keyword">var</span> eh = <span class="hljs-number">20</span>;
+
+    <span class="hljs-keyword">if</span> (e.options &amp;&amp; e.options.palette &amp;&amp; !e.options.paletteImage) {
+      e.options.paletteImage = plask.SkCanvas.createFromImage(e.options.palette);
+    }
+
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'slider'</span>) eh = <span class="hljs-number">20</span> * scale + <span class="hljs-number">14</span>;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'toggle'</span>) eh = <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'multislider'</span>) eh = <span class="hljs-number">18</span> + e.getValue().length * <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec2'</span>) eh = <span class="hljs-number">20</span> + <span class="hljs-number">2</span> * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec3'</span>) eh = <span class="hljs-number">20</span> + <span class="hljs-number">3</span> * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span>) eh = <span class="hljs-number">20</span> + (e.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>) * <span class="hljs-number">14</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span> &amp;&amp; e.options.paletteImage) eh += (w * e.options.paletteImage.height/e.options.paletteImage.width + <span class="hljs-number">2</span>) * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'button'</span>) eh = <span class="hljs-number">24</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texture2D'</span>) eh = <span class="hljs-number">24</span> + e.texture.height * w / e.texture.width;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'radiolist'</span>) eh = <span class="hljs-number">18</span> + e.items.length * <span class="hljs-number">20</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texturelist'</span>) {
+      cellSize = <span class="hljs-built_in">Math</span>.floor((w - <span class="hljs-number">2</span>*margin) / e.itemsPerRow);
+      numRows = <span class="hljs-built_in">Math</span>.ceil(e.items.length / e.itemsPerRow);
+      eh = <span class="hljs-number">18</span> + <span class="hljs-number">3</span> + numRows * cellSize;
+    }
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline1D'</span> || e.type == <span class="hljs-string">'spline2D'</span>) eh = <span class="hljs-number">24</span> + w;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) eh = <span class="hljs-number">26</span> * scale;
+
+    <span class="hljs-keyword">if</span> (e.type != <span class="hljs-string">'separator'</span>) {
+      canvas.drawRect(<span class="hljs-keyword">this</span>.panelBgPaint, dx, dy, dx + w, dy + eh - <span class="hljs-number">2</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'slider'</span>) {
+      <span class="hljs-keyword">var</span> value = e.getValue();
+      canvas.drawRect(<span class="hljs-keyword">this</span>.controlBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
+      canvas.drawRect(<span class="hljs-keyword">this</span>.controlHighlightPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, dx + <span class="hljs-number">3</span> + (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(), dy + eh - <span class="hljs-number">5</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'multislider'</span>) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; e.getValue().length; j++) {
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">20</span> * scale, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">20</span> * scale - <span class="hljs-number">6</span>);
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlHighlightPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">20</span> * scale, dx + <span class="hljs-number">3</span> + (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">20</span> * scale - <span class="hljs-number">6</span>);
+      }
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec2'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlHighlightPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + <span class="hljs-number">3</span> + (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'vec3'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlHighlightPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + <span class="hljs-number">3</span> + (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'color'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = e.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; numSliders; j++) {
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlHighlightPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + j * <span class="hljs-number">14</span> * scale, dx + <span class="hljs-number">3</span> + (w - <span class="hljs-number">6</span>) * e.getNormalizedValue(j), dy + <span class="hljs-number">18</span> + (j + <span class="hljs-number">1</span>) * <span class="hljs-number">14</span> * scale - <span class="hljs-number">3</span>);
+      }
+      <span class="hljs-keyword">var</span> c = e.getValue();
+      <span class="hljs-keyword">this</span>.colorPaint.setColor(<span class="hljs-number">255</span>*c.r, <span class="hljs-number">255</span>*c.g, <span class="hljs-number">255</span>*c.b, <span class="hljs-number">255</span>);
+      canvas.drawRect(<span class="hljs-keyword">this</span>.colorPaint, dx + w - <span class="hljs-number">12</span> - <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span> + <span class="hljs-number">12</span>);
+      <span class="hljs-keyword">if</span> (e.options.paletteImage) {
+        canvas.drawCanvas(<span class="hljs-keyword">this</span>.imagePaint, e.options.paletteImage, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + <span class="hljs-number">14</span> * numSliders, dx + w - <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span> + <span class="hljs-number">14</span> * numSliders + w * e.options.paletteImage.height/e.options.paletteImage.width);
+      }
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title + <span class="hljs-string">' : '</span> + e.getStrValue(), dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'button'</span>) {
+      <span class="hljs-keyword">var</span> btnColor = e.active ? <span class="hljs-keyword">this</span>.controlHighlightPaint : <span class="hljs-keyword">this</span>.controlBgPaint;
+      <span class="hljs-keyword">var</span> btnFont = e.active ? <span class="hljs-keyword">this</span>.fontHighlightPaint : <span class="hljs-keyword">this</span>.fontPaint;
+      canvas.drawRect(btnColor, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span>);
+      <span class="hljs-keyword">if</span> (e.options.color) {
+        <span class="hljs-keyword">var</span> c = e.options.color;
+        <span class="hljs-keyword">this</span>.controlFeaturePaint.setColor(<span class="hljs-number">255</span> * c.x, <span class="hljs-number">255</span> * c.y, <span class="hljs-number">255</span> * c.z, <span class="hljs-number">255</span>);
+        canvas.drawRect(<span class="hljs-keyword">this</span>.controlFeaturePaint, dx + w - <span class="hljs-number">8</span>, dy + <span class="hljs-number">3</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
+      }
+      canvas.drawText(btnFont, items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">15</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'toggle'</span>) {
+      <span class="hljs-keyword">var</span> on = e.contextObject[e.attributeName];
+      <span class="hljs-keyword">var</span> toggleColor = on ? <span class="hljs-keyword">this</span>.controlHighlightPaint : <span class="hljs-keyword">this</span>.controlBgPaint;
+      canvas.drawRect(toggleColor, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, dx + eh - <span class="hljs-number">5</span>, dy + eh - <span class="hljs-number">5</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span>, eh - <span class="hljs-number">5</span>);
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title, dx + eh, dy + <span class="hljs-number">13</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'radiolist'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.title, dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">14</span>);
+      <span class="hljs-keyword">var</span> itemColor = <span class="hljs-keyword">this</span>.controlBgPaint;
+      <span class="hljs-keyword">var</span> itemHeight = <span class="hljs-number">20</span> * scale;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; e.items.length; j++) {
+        <span class="hljs-keyword">var</span> item = e.items[j];
+        <span class="hljs-keyword">var</span> on = e.contextObject[e.attributeName] == item.value;
+        <span class="hljs-keyword">var</span> itemColor = on ? <span class="hljs-keyword">this</span>.controlHighlightPaint : <span class="hljs-keyword">this</span>.controlBgPaint;
+        canvas.drawRect(itemColor, dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + j * itemHeight + dy + <span class="hljs-number">3</span>, dx + itemHeight - <span class="hljs-number">5</span>, itemHeight + j * itemHeight + dy + <span class="hljs-number">18</span> - <span class="hljs-number">5</span>);
+        canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, item.name, dx + itemHeight, <span class="hljs-number">18</span> + j * itemHeight + dy + <span class="hljs-number">13</span>);
+      }
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, itemHeight - <span class="hljs-number">5</span>, e.items.length * itemHeight - <span class="hljs-number">5</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texturelist'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.title, dx + <span class="hljs-number">4</span>, dy + <span class="hljs-number">14</span>);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; e.items.length; j++) {
+        <span class="hljs-keyword">var</span> col = j % e.itemsPerRow;
+        <span class="hljs-keyword">var</span> row = <span class="hljs-built_in">Math</span>.floor(j / e.itemsPerRow);
+        <span class="hljs-keyword">var</span> itemColor = <span class="hljs-keyword">this</span>.controlBgPaint;
+        <span class="hljs-keyword">var</span> shrink = <span class="hljs-number">0</span>;
+        canvas.drawRect(itemColor, dx + <span class="hljs-number">3</span> + col * cellSize, dy + <span class="hljs-number">18</span> + row * cellSize, dx + <span class="hljs-number">3</span> + (col + <span class="hljs-number">1</span>) * cellSize - <span class="hljs-number">1</span>, dy + <span class="hljs-number">18</span> + (row + <span class="hljs-number">1</span>) * cellSize - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">if</span> (e.items[j].value == e.contextObject[e.attributeName]) {
+          <span class="hljs-keyword">var</span> strokeColor = <span class="hljs-keyword">this</span>.controlStrokeHighlightPaint;
+          canvas.drawRect(strokeColor, dx + <span class="hljs-number">3</span> + col * cellSize + <span class="hljs-number">1</span>, dy + <span class="hljs-number">18</span> + row * cellSize + <span class="hljs-number">1</span>, dx + <span class="hljs-number">3</span> + (col + <span class="hljs-number">1</span>) * cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">1</span>, dy + <span class="hljs-number">18</span> + (row + <span class="hljs-number">1</span>) * cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">1</span>);
+          shrink = <span class="hljs-number">2</span>;
+        }
+        <span class="hljs-keyword">if</span> (!e.items[j].activeArea) {
+          e.items[j].activeArea = <span class="hljs-keyword">new</span> Rect();
+        }
+        e.items[j].activeArea.set(dx + <span class="hljs-number">3</span> + col * cellSize + shrink, dy + <span class="hljs-number">18</span> + row * cellSize + shrink, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span> * shrink, cellSize - <span class="hljs-number">1</span> - <span class="hljs-number">2</span> * shrink);
+      }
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, cellSize * numRows - <span class="hljs-number">5</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'texture2D'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline1D'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      <span class="hljs-keyword">var</span> itemHeight = w;
+      <span class="hljs-keyword">var</span> itemColor = <span class="hljs-keyword">this</span>.controlBgPaint;
+      canvas.drawRect(itemColor, dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, dx + itemHeight - <span class="hljs-number">5</span>, itemHeight + dy + <span class="hljs-number">18</span>);
+      <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">new</span> plask.SkPath();
+      path.moveTo(dx + <span class="hljs-number">3</span>, itemHeight + dy + <span class="hljs-number">18</span>)
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;=<span class="hljs-number">20</span>; j++) {
+        <span class="hljs-keyword">var</span> p = e.contextObject[e.attributeName].getPointAt(j/<span class="hljs-number">20</span>);
+        <span class="hljs-keyword">var</span> x = j/<span class="hljs-number">20</span> * (w - dx);
+        <span class="hljs-keyword">var</span> y = p * itemHeight * <span class="hljs-number">0.99</span>;
+        path.lineTo(dx + <span class="hljs-number">3</span> + x,  itemHeight + dy + <span class="hljs-number">18</span> - y);
+      }
+      <span class="hljs-keyword">this</span>.controlHighlightPaint.setStroke();
+      canvas.drawPath(<span class="hljs-keyword">this</span>.controlHighlightPaint, path);
+      <span class="hljs-keyword">this</span>.controlHighlightPaint.setFill();
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(e.contextObject.animParam.highlight) != <span class="hljs-string">'undefined'</span>) {
+        <span class="hljs-keyword">this</span>.controlFeaturePaint.setStroke();
+        canvas.drawLine(<span class="hljs-keyword">this</span>.controlFeaturePaint, dx + <span class="hljs-number">3</span> + w * e.contextObject.animParam.highlight, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, dx + <span class="hljs-number">3</span> + w * e.contextObject.animParam.highlight, itemHeight + dy + <span class="hljs-number">18</span>);
+        <span class="hljs-keyword">this</span>.controlFeaturePaint.setFill();
+      }
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">18</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, w - <span class="hljs-number">5</span> - <span class="hljs-number">18</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline2D'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      <span class="hljs-keyword">var</span> itemHeight = w;
+      <span class="hljs-keyword">var</span> itemColor = <span class="hljs-keyword">this</span>.controlBgPaint;
+      canvas.drawRect(itemColor, dx + <span class="hljs-number">3</span>, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, dx + itemHeight - <span class="hljs-number">5</span>, itemHeight + dy + <span class="hljs-number">18</span>);
+      <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">new</span> plask.SkPath();
+      path.moveTo(dx + <span class="hljs-number">3</span>, itemHeight + dy + <span class="hljs-number">18</span>)
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;=<span class="hljs-number">40</span>; j++) {
+        <span class="hljs-keyword">var</span> p = e.contextObject[e.attributeName].getPointAt(j/<span class="hljs-number">40</span>);
+        <span class="hljs-keyword">var</span> x = p.x * (w - dx);
+        <span class="hljs-keyword">var</span> y = p.y * itemHeight * <span class="hljs-number">0.99</span>;
+        path.lineTo(dx + <span class="hljs-number">3</span> + x,  itemHeight + dy + <span class="hljs-number">18</span> - y);
+      }
+      <span class="hljs-keyword">this</span>.controlHighlightPaint.setStroke();
+      canvas.drawPath(<span class="hljs-keyword">this</span>.controlHighlightPaint, path);
+      <span class="hljs-keyword">this</span>.controlHighlightPaint.setFill();
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(e.contextObject.animParam.highlight) != <span class="hljs-string">'undefined'</span>) {
+        <span class="hljs-keyword">this</span>.controlFeaturePaint.setStroke();
+        canvas.drawLine(<span class="hljs-keyword">this</span>.controlFeaturePaint, dx + <span class="hljs-number">3</span> + w * e.contextObject.animParam.highlight, <span class="hljs-number">18</span> + dy + <span class="hljs-number">3</span>, dx + <span class="hljs-number">3</span> + w * e.contextObject.animParam.highlight, itemHeight + dy + <span class="hljs-number">18</span>);
+        <span class="hljs-keyword">this</span>.controlFeaturePaint.setFill();
+      }
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) {
+      canvas.drawRect(<span class="hljs-keyword">this</span>.headerBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
+      canvas.drawText(<span class="hljs-keyword">this</span>.headerFontPaint, items[i].title, dx + <span class="hljs-number">6</span>, dy + <span class="hljs-number">16</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'separator'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    }
+    <span class="hljs-keyword">else</span> {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+    }
+    dy += eh;
+  }
+  canvas.restore();
+  <span class="hljs-keyword">this</span>.updateTexture();
+};
+
+SkiaRenderer.prototype.getImageColor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(image, x, y)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Skia stores canvas data as BGR</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> r = image[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">2</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">var</span> g = image[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">1</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">var</span> b = image[(x + y * image.width)*<span class="hljs-number">4</span> + <span class="hljs-number">0</span>]/<span class="hljs-number">255</span>;
+  <span class="hljs-keyword">return</span> { r: r, g: g, b: b };
+}
+
+SkiaRenderer.prototype.getTexture = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.tex;
+};
+
+SkiaRenderer.prototype.updateTexture = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> gl = <span class="hljs-keyword">this</span>.gl;
+  <span class="hljs-keyword">this</span>.tex.bind();
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texImage2DSkCanvas(gl.TEXTURE_2D, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.canvas);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.bindTexture(gl.TEXTURE_2D, <span class="hljs-literal">null</span>);
+};
+
+<span class="hljs-built_in">module</span>.exports = SkiaRenderer;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

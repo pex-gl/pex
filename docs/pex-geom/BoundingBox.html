@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>BoundingBox.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>BoundingBox.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>A bounding box is a box with the smallest possible measure 
+(area for 2D or volume for 3D) for a given geometry or a set of points</p>
+<h2 id="example-use">Example use</h2>
+<pre><code><span class="hljs-keyword">var</span> someGeometryMin = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+<span class="hljs-keyword">var</span> someGeometryMax = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>);
+<span class="hljs-keyword">var</span> bbox = <span class="hljs-keyword">new</span> BoundingBox(someGeometryMin, someGeometryMax);
+<span class="hljs-built_in">console</span>.log(bbox.getSize());
+<span class="hljs-built_in">console</span>.log(bbox.getCenter());
+</code></pre><h2 id="reference">Reference</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Vec3 = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Vec3'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h3 id="boundingbox-min-max-">BoundingBox ( min, max )</h3>
+<p><code>min</code> - <em>{ <a href="Vec3.html">Vec3</a> }</em><br><code>max</code> - <em>{ <a href="Vec3.html">Vec3</a> }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">BoundingBox</span><span class="hljs-params">(min, max)</span> </span>{
+  <span class="hljs-keyword">this</span>.min = min;
+  <span class="hljs-keyword">this</span>.max = max;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="frompositionsize-pos-size-">fromPositionSize ( pos, size )</h3>
+<p><code>pos</code>  - The position of the enclosed geometry <em>{ <a href="Vec3.html">Vec3</a> }</em><br><code>size</code> - Size of the enclosed geometry <em>{ <a href="Vec3.html">Vec3</a> }</em><br>returns <em>{ BoundingBox }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.fromPositionSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pos, size)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BoundingBox(Vec3.create(pos.x - size.x / <span class="hljs-number">2</span>,
+                                     pos.y - size.y / <span class="hljs-number">2</span>,
+                                     pos.z - size.z / <span class="hljs-number">2</span>),
+                                     Vec3.create(pos.x + size.x / <span class="hljs-number">2</span>,
+                                                 pos.y + size.y / <span class="hljs-number">2</span>,
+                                                 pos.z + size.z / <span class="hljs-number">2</span>));
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="frompoints-points-">fromPoints ( points )</h3>
+<p><code>points</code> - Points in space that the bounding box will enclose <em>{ Array of </em>{ <a href="Vec3.html">Vec3</a> }<em> }</em><br>returns <em>{ BoundingBox }</em> </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.fromPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(points)</span> </span>{
+  <span class="hljs-keyword">var</span> bbox = <span class="hljs-keyword">new</span> BoundingBox(points[<span class="hljs-number">0</span>].clone(), points[<span class="hljs-number">0</span>].clone());
+  points.forEach(bbox.addPoint.bind(bbox));
+  <span class="hljs-keyword">return</span> bbox;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="isempty-">isEmpty ()</h3>
+<p>returns <em>{ Boolean }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.prototype.isEmpty = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.min || !<span class="hljs-keyword">this</span>.max) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="addpoint-p-">addPoint (p)</h3>
+<p><code>p</code> - point to be added to the enclosing space of the bounding box <em>{ <a href="Vec3.html">Vec3</a> }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.prototype.addPoint = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isEmpty()) {
+    <span class="hljs-keyword">this</span>.min = p.clone();
+    <span class="hljs-keyword">this</span>.max = p.clone();
+  }
+  <span class="hljs-keyword">if</span> (p.x &lt; <span class="hljs-keyword">this</span>.min.x) <span class="hljs-keyword">this</span>.min.x = p.x;
+  <span class="hljs-keyword">if</span> (p.y &lt; <span class="hljs-keyword">this</span>.min.y) <span class="hljs-keyword">this</span>.min.y = p.y;
+  <span class="hljs-keyword">if</span> (p.z &lt; <span class="hljs-keyword">this</span>.min.z) <span class="hljs-keyword">this</span>.min.z = p.z;
+  <span class="hljs-keyword">if</span> (p.x &gt; <span class="hljs-keyword">this</span>.max.x) <span class="hljs-keyword">this</span>.max.x = p.x;
+  <span class="hljs-keyword">if</span> (p.y &gt; <span class="hljs-keyword">this</span>.max.y) <span class="hljs-keyword">this</span>.max.y = p.y;
+  <span class="hljs-keyword">if</span> (p.z &gt; <span class="hljs-keyword">this</span>.max.z) <span class="hljs-keyword">this</span>.max.z = p.z;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="getsize-">getSize ()</h3>
+<p>returns the size of the bounding box as a <em>{ <a href="Vec3.html">Vec3</a> }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.prototype.getSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> Vec3.create(<span class="hljs-keyword">this</span>.max.x - <span class="hljs-keyword">this</span>.min.x,
+                     <span class="hljs-keyword">this</span>.max.y - <span class="hljs-keyword">this</span>.min.y,
+                     <span class="hljs-keyword">this</span>.max.z - <span class="hljs-keyword">this</span>.min.z);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="getcenter-">getCenter ()</h3>
+<p>returns the center of the bounding box as a <em>{ <a href="Vec3.html">Vec3</a> }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.prototype.getCenter = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> Vec3.create(<span class="hljs-keyword">this</span>.min.x + (<span class="hljs-keyword">this</span>.max.x - <span class="hljs-keyword">this</span>.min.x) / <span class="hljs-number">2</span>,
+                     <span class="hljs-keyword">this</span>.min.y + (<span class="hljs-keyword">this</span>.max.y - <span class="hljs-keyword">this</span>.min.y) / <span class="hljs-number">2</span>,
+                     <span class="hljs-keyword">this</span>.min.z + (<span class="hljs-keyword">this</span>.max.z - <span class="hljs-keyword">this</span>.min.z) / <span class="hljs-number">2</span>);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="contains-p-">contains(p)</h3>
+<p>returns true if point is inside the bounding box</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BoundingBox.prototype.contains = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
+  <span class="hljs-keyword">return</span> p.x &gt;= <span class="hljs-keyword">this</span>.min.x
+      &amp;&amp; p.x &lt;= <span class="hljs-keyword">this</span>.max.x
+      &amp;&amp; p.y &gt;= <span class="hljs-keyword">this</span>.min.y
+      &amp;&amp; p.y &lt;= <span class="hljs-keyword">this</span>.max.y
+      &amp;&amp; p.z &gt;= <span class="hljs-keyword">this</span>.min.z
+      &amp;&amp; p.z &lt;= <span class="hljs-keyword">this</span>.max.z;
+}
+
+<span class="hljs-built_in">module</span>.exports = BoundingBox;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

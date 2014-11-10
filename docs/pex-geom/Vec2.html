@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Vec2.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Vec2.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Vec2</span><span class="hljs-params">(x, y)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = x != <span class="hljs-literal">null</span> ? x : <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.y = y != <span class="hljs-literal">null</span> ? y : <span class="hljs-number">0</span>;
+}
+
+Vec2.create = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec2(x, y);
+};
+
+Vec2.fromArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec2(a[<span class="hljs-number">0</span>], a[<span class="hljs-number">1</span>]);
+}
+
+Vec2.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = x;
+  <span class="hljs-keyword">this</span>.y = y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.equals = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, tolerance)</span> </span>{
+  <span class="hljs-keyword">if</span> (tolerance == <span class="hljs-literal">null</span>) {
+    tolerance = <span class="hljs-number">0.0000001</span>;
+  }
+  <span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x) &lt;= tolerance) &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y) &lt;= tolerance);
+};
+
+Vec2.prototype.hash = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.x + <span class="hljs-number">12</span> * <span class="hljs-keyword">this</span>.y;
+};
+
+Vec2.prototype.setVec2 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = v.x;
+  <span class="hljs-keyword">this</span>.y = v.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">this</span>.x += v.x;
+  <span class="hljs-keyword">this</span>.y += v.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.sub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">this</span>.x -= v.x;
+  <span class="hljs-keyword">this</span>.y -= v.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.scale = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+  <span class="hljs-keyword">this</span>.x *= f;
+  <span class="hljs-keyword">this</span>.y *= f;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.distance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">var</span> dx = v.x - <span class="hljs-keyword">this</span>.x;
+  <span class="hljs-keyword">var</span> dy = v.y - <span class="hljs-keyword">this</span>.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(dx * dx + dy * dy);
+};
+
+Vec2.prototype.squareDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">var</span> dx = v.x - <span class="hljs-keyword">this</span>.x;
+  <span class="hljs-keyword">var</span> dy = v.y - <span class="hljs-keyword">this</span>.y;
+  <span class="hljs-keyword">return</span> dx * dx + dy * dy;
+};
+
+Vec2.prototype.dot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x * b.x + <span class="hljs-keyword">this</span>.y * b.y;
+};
+
+Vec2.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = v.x;
+  <span class="hljs-keyword">this</span>.y = v.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec2(<span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y);
+};
+
+Vec2.prototype.dup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.clone();
+};
+
+Vec2.prototype.asAdd = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = a.x + b.x;
+  <span class="hljs-keyword">this</span>.y = a.y + b.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.asSub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = a.x - b.x;
+  <span class="hljs-keyword">this</span>.y = a.y - b.y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-keyword">this</span>.x * <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.y * <span class="hljs-keyword">this</span>.y);
+};
+
+Vec2.prototype.normalize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> len = <span class="hljs-keyword">this</span>.length();
+  <span class="hljs-keyword">if</span> (len &gt; <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">this</span>.scale(<span class="hljs-number">1</span> / len);
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.lerp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, t)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = <span class="hljs-keyword">this</span>.x + (v.x - <span class="hljs-keyword">this</span>.x) * t;
+  <span class="hljs-keyword">this</span>.y = <span class="hljs-keyword">this</span>.y + (v.y - <span class="hljs-keyword">this</span>.y) * t;
+}
+
+Vec2.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"{"</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.x*<span class="hljs-number">1000</span>)/<span class="hljs-number">1000</span> + <span class="hljs-string">", "</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.y*<span class="hljs-number">1000</span>)/<span class="hljs-number">1000</span> + <span class="hljs-string">"}"</span>;
+};
+
+<span class="hljs-built_in">module</span>.exports = Vec2;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

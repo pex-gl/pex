@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Geometry.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Geometry.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>A collection of vertices, vertex attributes and faces or edges defining a 3d shape.
+(area for 2D or volume for 3D) for a given geometry or a set of points</p>
+<h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> vertices = [
+   <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>),
+   <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+   <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
+ ];
+ <span class="hljs-keyword">var</span> faces = [
+   <span class="hljs-keyword">new</span> Face3(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+ ];
+
+ <span class="hljs-keyword">var</span> geom = <span class="hljs-keyword">new</span> Geometry({
+   vertices: vertices,
+   faces: faces
+ });
+ geom.computeNormals();
+
+ <span class="hljs-keyword">var</span> material = <span class="hljs-keyword">new</span> SolidColorMaterial();
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(geom, material);
+</code></pre><p>Geometry can’t be rendered by itself. First it has to be convertet to a Vbo. The Mesh from pex-glu class does it for us automaticaly.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="reference">Reference</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Vec3 = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Vec3'</span>);
+<span class="hljs-keyword">var</span> Ray = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Ray'</span>);
+<span class="hljs-keyword">var</span> BoundingBox = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./BoundingBox'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="private-utility-functions">Private utility functions</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>where does this should go? geom.Utils expanded to geom?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">centroid</span><span class="hljs-params">(points)</span> </span>{
+  <span class="hljs-keyword">var</span> n = points.length;
+  <span class="hljs-keyword">var</span> center = points.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(center, p)</span> </span>{
+    <span class="hljs-keyword">return</span> center.add(p);
+  }, <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+  center.scale(<span class="hljs-number">1</span> / points.length);
+  <span class="hljs-keyword">return</span> center;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">edgeLoop</span><span class="hljs-params">(edge, cb)</span> </span>{
+  <span class="hljs-keyword">var</span> curr = edge;
+
+  <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">do</span> {
+    cb(curr, i++);
+    curr = next(curr);
+  }
+  <span class="hljs-keyword">while</span>(curr != edge);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">vertexEdgeLoop</span><span class="hljs-params">(edge, cb)</span> </span>{
+  <span class="hljs-keyword">var</span> curr = edge;
+
+  <span class="hljs-keyword">do</span> {
+    cb(curr);
+    curr = prev(curr).opposite;
+  }
+  <span class="hljs-keyword">while</span>(curr != edge);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span><span class="hljs-params">(edge)</span> </span>{
+  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot + <span class="hljs-number">1</span>) % edge.face.length]
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">prev</span><span class="hljs-params">(edge)</span> </span>{
+  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot - <span class="hljs-number">1</span> + edge.face.length) % edge.face.length]
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">elements</span><span class="hljs-params">(list, indices)</span> </span>{
+  <span class="hljs-keyword">return</span> indices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{ <span class="hljs-keyword">return</span> list[i]; })
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">move</span><span class="hljs-params">(a, b, t)</span> </span>{
+  <span class="hljs-keyword">return</span> b.dup().sub(a).normalize().scale(t).add(a);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="geometry-o-">Geometry(o)</h3>
+<p><code>o</code> - options <em>{ Object }</em><br>Available options<br><code>vertices</code> - <em>{ Array of Vec3 }</em> or <em>{ Boolean }</em> = false<br><code>normals</code> - <em>{ Array of Vec3 }</em> or <em>{ Boolean }</em> = false<br><code>texCoords</code> - <em>{ Array of Vec2 }</em> or <em>{ Boolean }</em> = false<br><code>tangents</code> - <em>{ Array of Vec3 }</em> or <em>{ Boolean }</em> = false<br><code>colors</code> - <em>{ Array of Color }</em> or <em>{ Boolean }</em> = false<br><code>indices</code> - <em>{ Array of Int }</em> = []<br><code>edges</code> - <em>{ Array of [Int, Int] }</em> = []<br><code>faces</code> - <em>{ Array of [Int, Int, …] }</em> = []</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Geometry</span><span class="hljs-params">(o)</span> </span>{
+  o = o || {};
+  <span class="hljs-keyword">this</span>.attribs = {};
+
+  <span class="hljs-keyword">if</span> (o.vertices) <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'vertices'</span>, <span class="hljs-string">'position'</span>, o.vertices, <span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">if</span> (o.normals) <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'normals'</span>, <span class="hljs-string">'normal'</span>, o.normals, <span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">if</span> (o.texCoords) <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'texCoords'</span>, <span class="hljs-string">'texCoord'</span>, o.texCoords, <span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">if</span> (o.tangents) <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'tangents'</span>, <span class="hljs-string">'tangent'</span>, o.tangents, <span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">if</span> (o.colors) <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'colors'</span>, <span class="hljs-string">'color'</span>, o.colors, <span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">if</span> (o.indices) <span class="hljs-keyword">this</span>.addIndices(o.indices);
+  <span class="hljs-keyword">if</span> (o.edges) <span class="hljs-keyword">this</span>.addEdges(o.edges);
+  <span class="hljs-keyword">if</span> (o.faces) <span class="hljs-keyword">this</span>.addFaces(o.faces);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="generatevolumepoints-numpoints-">generateVolumePoints(numPoints)</h3>
+<p><code>numPoints</code> - number of points to generate <em>{ Int }</em> = 5000<br>Generates poins inside of the geometry</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.generateVolumePoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(numPoints)</span> </span>{
+  numPoints = numPoints || <span class="hljs-number">5000</span>;
+
+  <span class="hljs-keyword">var</span> bbox = BoundingBox.fromPoints(<span class="hljs-keyword">this</span>.vertices);
+  <span class="hljs-keyword">var</span> xMulti = -bbox.min.x + bbox.max.x;
+  <span class="hljs-keyword">var</span> yMulti = -bbox.min.y + bbox.max.y;
+  <span class="hljs-keyword">var</span> zMulti = -bbox.min.z + bbox.max.z;
+
+  <span class="hljs-keyword">var</span> pointsCounter = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> hits = [];
+  <span class="hljs-keyword">var</span> generatedPoints = [];
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; ; i++) {
+
+    <span class="hljs-keyword">if</span> (pointsCounter &gt;= numPoints) <span class="hljs-keyword">break</span>;
+
+    <span class="hljs-keyword">var</span> boxFace = (<span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">6</span>) + <span class="hljs-number">1</span>);
+
+    <span class="hljs-keyword">var</span> topX = bottomX = (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * xMulti;
+    <span class="hljs-keyword">var</span> topY = (<span class="hljs-built_in">Math</span>.random() + <span class="hljs-number">0.5</span>) * yMulti;
+    <span class="hljs-keyword">var</span> topZ = bottomZ= (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * zMulti;
+    <span class="hljs-keyword">var</span> bottomY = -topY;
+
+    <span class="hljs-keyword">var</span> leftX =  -(<span class="hljs-built_in">Math</span>.random() + <span class="hljs-number">0.5</span>) * xMulti;
+    <span class="hljs-keyword">var</span> leftY = rightY = (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * yMulti;
+    <span class="hljs-keyword">var</span> leftZ = rightZ = (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * zMulti;
+    <span class="hljs-keyword">var</span> rightX = -leftX;
+
+    <span class="hljs-keyword">var</span> backX = frontX = (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * xMulti;
+    <span class="hljs-keyword">var</span> backY = frontY = (<span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">0.5</span>) * yMulti;
+    <span class="hljs-keyword">var</span> backZ = -(<span class="hljs-built_in">Math</span>.random() + <span class="hljs-number">0.5</span>) * zMulti;
+    <span class="hljs-keyword">var</span> frontZ = -backZ;
+
+    <span class="hljs-keyword">switch</span> (boxFace) {
+      <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>left to right</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(leftX, leftY, leftZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(rightX, rightY, rightZ);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>right to left</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(rightX, rightY, rightZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(leftX, leftY, leftZ);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>top to bottom</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(topX, topY, topZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(bottomX, bottomY, bottomY);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>bottom to top</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(bottomX, bottomY, bottomZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(topX, topY, topZ);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>back to front</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(backX, backY, backZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(frontX, frontY, frontZ);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>front to back</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">new</span> Vec3(frontX, frontY, frontZ);
+      <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">new</span> Vec3(backX, backY, backZ);
+      <span class="hljs-keyword">break</span>;
+
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">break</span>;
+    }
+
+    <span class="hljs-keyword">var</span> rayOrigin = A.dup();
+    <span class="hljs-keyword">var</span> rayDirection = B.dup().sub(A).normalize();
+
+    <span class="hljs-keyword">var</span> triangulatedGeom = <span class="hljs-keyword">this</span>.clone().triangulate();
+    <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> pointsForRay = [];
+
+    triangulatedGeom.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+
+      <span class="hljs-keyword">var</span> triangle = {};
+      triangle.a = triangulatedGeom.vertices[face[<span class="hljs-number">0</span>]];
+      triangle.b = triangulatedGeom.vertices[face[<span class="hljs-number">1</span>]];
+      triangle.c = triangulatedGeom.vertices[face[<span class="hljs-number">2</span>]];
+
+      <span class="hljs-keyword">var</span> ray = <span class="hljs-keyword">new</span> Ray(rayOrigin, rayDirection);
+      <span class="hljs-keyword">var</span> point = ray.hitTestTriangle(triangle);
+      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(point)) {
+        pointsCounter++;
+        counter++;
+        pointsForRay.push(point);
+      }
+
+    });
+
+    pointsForRay.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> </span>{
+      <span class="hljs-keyword">if</span> (counter % <span class="hljs-number">2</span> !== <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
+      hits.push(point);
+   });
+
+    <span class="hljs-keyword">if</span> (hits.length &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">continue</span>;
+    <span class="hljs-keyword">var</span> pointA = hits[hits.length - <span class="hljs-number">2</span>];
+    <span class="hljs-keyword">var</span> pointB = hits[hits.length - <span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> direction = pointB.dup().sub(pointA);
+
+    <span class="hljs-keyword">var</span> randomPoint = pointA.dup().addScaled(direction, <span class="hljs-built_in">Math</span>.random());
+    generatedPoints.push(randomPoint);
+  }
+
+  <span class="hljs-keyword">return</span> generatedPoints;
+
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h3 id="generatesurfacepoints-numpoints-">generateSurfacePoints(numPoints)</h3>
+<p><code>numPoints</code> - number of points to generate <em>{ Int }</em> = 5000<br>Generates poins on the surface of the geometry</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.generateSurfacePoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(numPoints)</span> </span>{
+  numPoints = numPoints || <span class="hljs-number">5000</span>;
+
+  <span class="hljs-keyword">var</span> faceAreas = [];
+  <span class="hljs-keyword">var</span> triangles = [];
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k=<span class="hljs-number">0</span>, length=<span class="hljs-keyword">this</span>.faces.length; k&lt;length; k++) {
+
+    <span class="hljs-keyword">var</span> triangle = {};
+
+    <span class="hljs-keyword">var</span> AVertIndex = <span class="hljs-keyword">this</span>.faces[k][<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">var</span> BVertIndex = <span class="hljs-keyword">this</span>.faces[k][<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> CVertIndex = <span class="hljs-keyword">this</span>.faces[k][<span class="hljs-number">2</span>];
+
+    <span class="hljs-keyword">var</span> A = <span class="hljs-keyword">this</span>.vertices[AVertIndex];
+    <span class="hljs-keyword">var</span> B = <span class="hljs-keyword">this</span>.vertices[BVertIndex];
+    <span class="hljs-keyword">var</span> C = <span class="hljs-keyword">this</span>.vertices[CVertIndex];
+
+    <span class="hljs-keyword">var</span> AB = B.dup().sub(A);
+    <span class="hljs-keyword">var</span> AC = C.dup().sub(A);
+
+    <span class="hljs-keyword">var</span> cross = AB.cross(AC);
+    <span class="hljs-keyword">var</span> area = <span class="hljs-number">0.5</span> * <span class="hljs-built_in">Math</span>.sqrt(cross.x * cross.x + cross.y * cross.y + cross.z * cross.z);
+
+    triangle.A = A;
+    triangle.B = B;
+    triangle.C = C;
+    triangles.push(triangle);
+
+    faceAreas.push(area);
+
+  }
+
+  <span class="hljs-keyword">var</span> min = <span class="hljs-built_in">Math</span>.min.apply( <span class="hljs-built_in">Math</span>, faceAreas );
+  <span class="hljs-keyword">var</span> ratios = faceAreas.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(area)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.ceil(area / min);
+  });
+
+  <span class="hljs-keyword">var</span> chanceIndexes = [];
+  ratios.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ratio, i)</span> </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k=<span class="hljs-number">0</span>;k&lt;ratio;k++) {
+      chanceIndexes.push(i);
+    }
+  });
+
+  <span class="hljs-keyword">var</span> generatedPoints = [];
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;numPoints; i++) {
+
+    <span class="hljs-keyword">var</span> randomIndex = <span class="hljs-built_in">Math</span>.ceil(<span class="hljs-built_in">Math</span>.random() * chanceIndexes.length) - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">var</span> triangle = triangles[chanceIndexes[randomIndex]];
+    <span class="hljs-keyword">var</span> A = triangle.A.clone();
+    <span class="hljs-keyword">var</span> B = triangle.B.clone();
+    <span class="hljs-keyword">var</span> C = triangle.C.clone();
+
+    <span class="hljs-keyword">var</span> u = <span class="hljs-built_in">Math</span>.random();
+    <span class="hljs-keyword">var</span> v = <span class="hljs-built_in">Math</span>.random();
+
+    <span class="hljs-keyword">if</span> ((u + v) &gt; <span class="hljs-number">1</span>) {
+      u = <span class="hljs-number">1</span> - u;
+      v = <span class="hljs-number">1</span> - v;
+    }
+
+    <span class="hljs-keyword">var</span> w = <span class="hljs-number">1</span> - (u + v);
+
+    <span class="hljs-keyword">var</span> newA = A.dup().scale(u);
+    <span class="hljs-keyword">var</span> newB = B.dup().scale(v);
+    <span class="hljs-keyword">var</span> newC = C.dup().scale(w);
+
+    <span class="hljs-keyword">var</span> s = newA.add(newB).add(newC);
+
+    generatedPoints.push(s);
+
+  }
+
+  <span class="hljs-keyword">return</span> generatedPoints;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h3 id="addattribute-propertyname-attributename-data-dynamic-">addAttribute(propertyName, attributeName, data, dynamic)</h3>
+<p><code>propertyName</code> - geometry object property name <em>{ String }</em><br><code>attributeName</code> - shader attribute name <em>{ String }</em><br><code>data</code> - <em>{ Array of Vec2/Vec3/Vec4/Color }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br>Adds addtribute</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addAttrib = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(propertyName, attributeName, data, dynamic)</span> </span>{
+  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">null</span>) {
+    data = <span class="hljs-literal">null</span>;
+  }
+  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">null</span>) {
+    dynamic = <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">this</span>[propertyName] = data &amp;&amp; data.length ? data : [];
+  <span class="hljs-keyword">this</span>[propertyName].name = attributeName;
+  <span class="hljs-keyword">this</span>[propertyName].dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>[propertyName].dynamic = dynamic;
+  <span class="hljs-keyword">this</span>.attribs[propertyName] = <span class="hljs-keyword">this</span>[propertyName];
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="addfaces-data-dynamic-">addFaces(data, dynamic)</h3>
+<p><code>data</code> - <em>{ Array of [Int, Int, .. ] }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br>Adds faces index array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addFaces = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, dynamic)</span> </span>{
+  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">null</span>) {
+    data = <span class="hljs-literal">null</span>;
+  }
+  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">null</span>) {
+    dynamic = <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">this</span>.faces = data &amp;&amp; data.length ? data : [];
+  <span class="hljs-keyword">this</span>.faces.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.faces.dynamic = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h3 id="addedges-data-dynamic-">addEdges(data, dynamic)</h3>
+<p><code>data</code> - <em>{ Array of [Int, Int] }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br>Adds edges index array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addEdges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, dynamic)</span> </span>{
+  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">null</span>) {
+    data = <span class="hljs-literal">null</span>;
+  }
+  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">null</span>) {
+    dynamic = <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">this</span>.edges = data &amp;&amp; data.length ? data : [];
+  <span class="hljs-keyword">this</span>.edges.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.edges.dynamic = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3 id="addindices-data-dynamic-">addIndices(data, dynamic)</h3>
+<p><code>data</code> - <em>{ Array of Int }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br>Adds index array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addIndices = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, dynamic)</span> </span>{
+  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">null</span>) {
+    data = <span class="hljs-literal">null</span>;
+  }
+  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">null</span>) {
+    dynamic = <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">this</span>.indices = data &amp;&amp; data.length ? data : [];
+  <span class="hljs-keyword">this</span>.indices.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.indices.dynamic = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Geometry.prototype.isDirty = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attibs)</span> </span>{
+  <span class="hljs-keyword">var</span> dirty = <span class="hljs-literal">false</span>;
+  dirty || (dirty = <span class="hljs-keyword">this</span>.faces &amp;&amp; <span class="hljs-keyword">this</span>.faces.dirty);
+  dirty || (dirty = <span class="hljs-keyword">this</span>.edges &amp;&amp; <span class="hljs-keyword">this</span>.edges.dirty);
+  <span class="hljs-keyword">for</span> (attribAlias <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.attribs) {
+    <span class="hljs-keyword">var</span> attrib = <span class="hljs-keyword">this</span>.attribs[attribAlias];
+    dirty || (dirty = attrib.dirty);
+  }
+  <span class="hljs-keyword">return</span> dirty;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="addedge-a-b-">addEdge(a, b)</h3>
+<p><code>a</code> - stating edge index <em>{ Int }</em><br><code>b</code> - ending edge index <em>{ Int }</em><br>Computes unique edges from existing faces.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addEdge = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.edges) {
+    <span class="hljs-keyword">this</span>.addEdges();
+  }
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.edgeHash) {
+    <span class="hljs-keyword">this</span>.edgeHash = {};
+  }
+  <span class="hljs-keyword">var</span> ab = a + <span class="hljs-string">'_'</span> + b;
+  <span class="hljs-keyword">var</span> ba = b + <span class="hljs-string">'_'</span> + a;
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.edgeHash[ab] &amp;&amp; !<span class="hljs-keyword">this</span>.edgeHash[ba]) {
+    <span class="hljs-keyword">this</span>.edges.push([a, b]);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.edgeHash[ab] = <span class="hljs-keyword">this</span>.edgeHash[ba] = <span class="hljs-literal">true</span>;
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3 id="computeedges-">computeEdges()</h3>
+<p>Computes unique edges from existing faces.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.computeEdges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.edges) {
+    <span class="hljs-keyword">this</span>.addEdges();
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">this</span>.edgeHash = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">this</span>.edges.length = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.faces &amp;&amp; <span class="hljs-keyword">this</span>.faces.length) {
+    <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;face.length; i++) {
+        <span class="hljs-keyword">this</span>.addEdge(face[i], face[(i+<span class="hljs-number">1</span>)%face.length]);
+      }
+    }.bind(<span class="hljs-keyword">this</span>));
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.vertices.length-<span class="hljs-number">1</span>; i++) {
+      <span class="hljs-keyword">this</span>.addEdge(i, i+<span class="hljs-number">1</span>);
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="computenormals-">computeNormals()</h3>
+<p>Computes per vertex normal by averaging the normals of faces connected with that vertex.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.computeNormals = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.faces) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-string">'Geometry[2]omputeSmoothNormals no faces found'</span>;
+  }
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.normals) {
+    <span class="hljs-keyword">this</span>.addAttrib(<span class="hljs-string">'normals'</span>, <span class="hljs-string">'normal'</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>);
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.normals.length &gt; <span class="hljs-keyword">this</span>.vertices.length) {
+    <span class="hljs-keyword">this</span>.normals.length = <span class="hljs-keyword">this</span>.vertices.length;
+  }
+  <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">while</span> (<span class="hljs-keyword">this</span>.normals.length &lt; <span class="hljs-keyword">this</span>.vertices.length) {
+      <span class="hljs-keyword">this</span>.normals.push(<span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+    }
+  }
+
+  <span class="hljs-keyword">var</span> count = [];
+  <span class="hljs-keyword">this</span>.vertices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, i)</span> </span>{
+    count[i] = <span class="hljs-number">0</span>;
+  }.bind(<span class="hljs-keyword">this</span>));
+
+  <span class="hljs-keyword">var</span> ab = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">var</span> ac = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">var</span> n = <span class="hljs-keyword">new</span> Vec3();
+
+  <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+    <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">0</span>]];
+    <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">1</span>]];
+    <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">2</span>]];
+    ab.asSub(b, a).normalize();
+    ac.asSub(c, a).normalize();
+    n.asCross(ab, ac);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;f.length; i++) {
+      <span class="hljs-keyword">this</span>.normals[f[i]].add(n);
+      count[f[i]]++;
+    }
+  }.bind(<span class="hljs-keyword">this</span>));
+
+  <span class="hljs-keyword">this</span>.normals.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n, i)</span> </span>{
+    n.normalize();
+  });
+  <span class="hljs-keyword">this</span>.normals.dirty = <span class="hljs-literal">true</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h3 id="toflatgeometry">toFlatGeometry</h3>
+<p>Builds a copy of this geomety with all faces separated. Useful for flat shading.
+returns new <em>{ Geometry }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.toFlatGeometry = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Geometry({ vertices: <span class="hljs-literal">true</span>, faces: <span class="hljs-literal">true</span> });
+
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+
+  <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+    <span class="hljs-keyword">var</span> newFace = [];
+    face.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vi)</span> </span>{
+      newFace.push(g.vertices.length);
+      g.vertices.push(vertices[vi]);
+    });
+    g.faces.push(newFace);
+  });
+
+  <span class="hljs-keyword">return</span> g;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="clone-">clone()</h3>
+<p>Builds a copy of this geometry.<br>Currenlty only vertices, texCoords, faces and edges are copied.<br>returns new <em>{ Geometry }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> edges = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{ <span class="hljs-keyword">return</span> v.dup(); });
+  <span class="hljs-keyword">var</span> texCoords = <span class="hljs-keyword">this</span>.texCoords ? <span class="hljs-keyword">this</span>.texCoords.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tc)</span> </span>{ <span class="hljs-keyword">return</span> tc.dup(); }) : <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{ <span class="hljs-keyword">return</span> f.slice(<span class="hljs-number">0</span>); });
+  <span class="hljs-keyword">var</span> edges = <span class="hljs-keyword">this</span>.edges ? <span class="hljs-keyword">this</span>.edges.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{ <span class="hljs-keyword">return</span> e.slice(<span class="hljs-number">0</span>); }) : <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry({ vertices: vertices, texCoords: texCoords, faces: faces, edges: edges });
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="triangulate-">triangulate()</h3>
+<p>Splits all the faces into triangles. Non destructive operation.<br>returns new <em>{ Geometry }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.triangulate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">this</span>.clone();
+  g.faces = [];
+  <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+    g.faces.push([face[<span class="hljs-number">0</span>],face[<span class="hljs-number">1</span>],face[<span class="hljs-number">2</span>]]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">2</span>; i&lt;face.length-<span class="hljs-number">1</span>; i++) {
+      g.faces.push([face[<span class="hljs-number">0</span>],face[i],face[i+<span class="hljs-number">1</span>]]);
+    }
+
+  });
+  <span class="hljs-keyword">return</span> g;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>computeHalfEdges()
+Computes half edges used for efficient geometry operations.<br>returns new <em>{ Array of half edge objects }</em><br>Based on ideas from<br><a href="http://fgiesen.wordpress.com/2012/04/03/half-edges-redux/">http://fgiesen.wordpress.com/2012/04/03/half-edges-redux/</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.computeHalfEdges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> halfEdges = <span class="hljs-keyword">this</span>.halfEdges = [];
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+
+  faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face, faceIndex)</span> </span>{
+    face.halfEdges = [];
+    face.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vertexIndex, i)</span> </span>{
+      <span class="hljs-keyword">var</span> v0 = vertexIndex;
+      <span class="hljs-keyword">var</span> v1 = face[(i + <span class="hljs-number">1</span>) % face.length];
+      <span class="hljs-keyword">var</span> halfEdge = {
+        edgeIndex: halfEdges.length,
+        face: face,
+        faceIndex: faceIndex,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>vertexIndex: vertexIndex,</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        slot: i,
+        opposite: <span class="hljs-literal">null</span>,
+        v0: <span class="hljs-built_in">Math</span>.min(v0, v1),
+        v1: <span class="hljs-built_in">Math</span>.max(v0, v1)
+      };
+      face.halfEdges.push(halfEdge);
+      halfEdges.push(halfEdge);
+    });
+  });
+
+  halfEdges.sort(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+    <span class="hljs-keyword">if</span> (a.v0 &gt; b.v0) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a.v0 &lt; b.v0) <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a.v1 &gt; b.v1) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a.v1 &lt; b.v1) <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  });
+
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">1</span>; i&lt;halfEdges.length; i++) {
+    <span class="hljs-keyword">var</span> prev = halfEdges[i-<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> curr = halfEdges[i];
+    <span class="hljs-keyword">if</span> (prev.v0 == curr.v0 &amp;&amp; prev.v1 == curr.v1) {
+      prev.opposite = curr;
+      curr.opposite = prev;
+    }
+  }
+
+  <span class="hljs-keyword">return</span> halfEdges;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h3 id="subdivideedges-">subdivideEdges()</h3>
+<p>Non destructive operation edge subdivision.<br>Subdivides geometry by adding new point in the middle of each edge.<br>returns new <em>{ Geometry }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.subdivideEdges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+
+  <span class="hljs-keyword">var</span> halfEdges = <span class="hljs-keyword">this</span>.computeHalfEdges();
+
+  <span class="hljs-keyword">var</span> newVertices = vertices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{ <span class="hljs-keyword">return</span> v; });
+  <span class="hljs-keyword">var</span> newFaces = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>edge points are an average of both edge vertices</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> edgePoints = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>console.log(‘halfEdges’, halfEdges.length, halfEdges.map(function(e) { return ‘’ + (e.v0) + ‘-‘ + (e.v1); }));</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (!edgePoints[e.edgeIndex]) {
+      <span class="hljs-keyword">var</span> midPoint = centroid([
+        vertices[e.face[e.slot]],
+        vertices[next(e).face[next(e).slot]]
+      ]);
+      edgePoints[e.edgeIndex] = midPoint;
+      edgePoints[e.opposite.edgeIndex] = midPoint;
+      newVertices.push(midPoint);
+    }
+  });
+
+  faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+    <span class="hljs-keyword">var</span> newFace = [];
+    edgeLoop(face.halfEdges[<span class="hljs-number">0</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+      newFace.push(newVertices.indexOf(edgePoints[edge.edgeIndex]));
+    });
+    newFaces.push(newFace);
+  });
+
+  <span class="hljs-keyword">var</span> visitedVertices = [];
+  <span class="hljs-keyword">var</span> verts = <span class="hljs-number">0</span>;
+  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (visitedVertices.indexOf(e.face[e.slot]) !== -<span class="hljs-number">1</span>) <span class="hljs-keyword">return</span>;
+    visitedVertices.push(e.face[e.slot]);
+    <span class="hljs-keyword">var</span> neighborPoints = [];
+    vertexEdgeLoop(e, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+      neighborPoints.push(newVertices.indexOf(edgePoints[edge.edgeIndex]));
+    });
+    neighborPoints.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point, i)</span> </span>{
+      <span class="hljs-keyword">var</span> nextPoint = neighborPoints[(i+<span class="hljs-number">1</span>)%neighborPoints.length];
+      newFaces.push([e.face[e.slot], point, nextPoint]);
+    });
+  });
+
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Geometry({ vertices: newVertices, faces: newFaces });
+  g.computeEdges();
+
+  <span class="hljs-keyword">return</span> g;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h3 id="getfacevertices-">getFaceVertices()</h3>
+<p>Returns vertices for that face
+<code>face</code> - <em>{ Array of Int }</em>
+returns new <em>{ Array of Vec3 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.getFaceVertices = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+  <span class="hljs-keyword">return</span> face.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.vertices[i]; }.bind(<span class="hljs-keyword">this</span>));
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h3 id="catmullclark-">catmullClark()</h3>
+<p>Non destructive Catmull-Clark subdivision
+returns new <em>{ Geometry }</em></p>
+<p>Catmull-Clark subdivision for half-edge meshes
+Based on <a href="http://en.wikipedia.org/wiki/Catmull–Clark_subdivision_surface">http://en.wikipedia.org/wiki/Catmull–Clark_subdivision_surface</a>
+TODO: Study Doo-Sabin scheme for new vertices 1/n<em>F + 1/n</em>R + (n-2)/n*v
+<a href="http://www.cse.ohio-state.edu/~tamaldey/course/784/note20.pdf">http://www.cse.ohio-state.edu/~tamaldey/course/784/note20.pdf</a></p>
+<p>The shady part at the moment is that we put all vertices together at the end and have to manually
+calculate offsets at which each vertex, face and edge point end up</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.catmullClark = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+  <span class="hljs-keyword">var</span> halfEdges = <span class="hljs-keyword">this</span>.computeHalfEdges();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>face points are an average of all face points</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> facePoints = faces.map(<span class="hljs-keyword">this</span>.getFaceVertices.bind(<span class="hljs-keyword">this</span>)).map(centroid);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>edge points are an average of both edge vertices and center points of two neighbor faces</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> edgePoints = [];
+  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (!edgePoints[e.edgeIndex]) {
+      <span class="hljs-keyword">var</span> midPoint = centroid([
+        vertices[e.v0],
+        vertices[e.v1],
+        facePoints[e.faceIndex],
+        facePoints[e.opposite.faceIndex]
+      ]);
+      edgePoints[e.edgeIndex] = midPoint;
+      edgePoints[e.opposite.edgeIndex] = midPoint;
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>vertex points are and average of neighbor edges’ edge points and neighbor faces’ face points</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> vertexPoints = [];
+  halfEdges.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+    <span class="hljs-keyword">var</span> vertexIndex = faces[edge.faceIndex][edge.slot];
+    <span class="hljs-keyword">var</span> vertex = vertices[vertexIndex];
+    <span class="hljs-keyword">if</span> (vertexPoints[vertexIndex]) <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">var</span> neighborFacePoints = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>vertexEdgeLoop(edge).map(function(edge) { return facePoints[edge.faceIndex] } )
+vertexEdgeLoop(edge).map(function(edge) { return edge.face.facePoint } )
+extract(facePoints, vertexEdgeLoop(edge).map(prop(‘faceIndex’))</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> neighborEdgeMidPoints = [];
+    vertexEdgeLoop(edge, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+      neighborFacePoints.push(facePoints[edge.faceIndex]);
+      neighborEdgeMidPoints.push(centroid([vertices[edge.v0], vertices[edge.v1]]));
+    });
+    <span class="hljs-keyword">var</span> facesCentroid = centroid(neighborFacePoints);
+    <span class="hljs-keyword">var</span> edgesCentroid = centroid(neighborEdgeMidPoints);
+
+    <span class="hljs-keyword">var</span> n = neighborFacePoints.length;
+    <span class="hljs-keyword">var</span> v = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+    v.add(facesCentroid);
+    v.add(edgesCentroid.dup().scale(<span class="hljs-number">2</span>));
+    v.add(vertex.dup().scale(n - <span class="hljs-number">3</span>));
+    v.scale(<span class="hljs-number">1</span>/n);
+
+    vertexPoints[vertexIndex] = v;
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>create list of points for the new mesh
+vertx poitns and face points are unique</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> newVertices = vertexPoints.concat(facePoints);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>halfEdge mid points are not (each one is doubled)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (e.added &gt; -<span class="hljs-number">1</span>) <span class="hljs-keyword">return</span>;
+    e.added = newVertices.length;
+    e.opposite.added = newVertices.length;
+    newVertices.push(edgePoints[e.edgeIndex]);
+  })
+
+  <span class="hljs-keyword">var</span> newFaces = [];
+  <span class="hljs-keyword">var</span> newEdges = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>construct new faces from face point, two edges mid points and a vertex between them</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face, faceIndex)</span> </span>{
+    <span class="hljs-keyword">var</span> facePointIndex = faceIndex + vertexPoints.length;
+    edgeLoop(face.halfEdges[<span class="hljs-number">0</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+      <span class="hljs-keyword">var</span> edgeMidPointsIndex = edge.added;
+      <span class="hljs-keyword">var</span> nextEdge = next(edge);
+      <span class="hljs-keyword">var</span> nextEdgeVertexIndex = face[nextEdge.slot];
+      <span class="hljs-keyword">var</span> nextEdgeMidPointIndex = nextEdge.added;
+      newEdges.push([facePointIndex, edgeMidPointsIndex]);
+      newEdges.push([edgeMidPointsIndex, nextEdgeVertexIndex]);
+      newFaces.push([facePointIndex, edgeMidPointsIndex, nextEdgeVertexIndex, nextEdgeMidPointIndex])
+    });
+  });
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry({ vertices: newVertices, faces: newFaces, edges: newEdges });
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <h3 id="catmullclark-">catmullClark()</h3>
+<p>Non destructive Doo-Sabin subdivision<br><code>depth</code> - edge inset depth <em>{ Number }</em><br>returns new <em>{ Geometry }</em><br>Doo-Sabin subdivision as desribed in WIRE AND COLUMN MODELING
+<a href="http://repository.tamu.edu/bitstream/handle/1969.1/548/etd-tamu-2004A-VIZA-mandal-1.pdf">http://repository.tamu.edu/bitstream/handle/1969.1/548/etd-tamu-2004A-VIZA-mandal-1.pdf</a>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.dooSabin = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(depth)</span> </span>{
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+  <span class="hljs-keyword">var</span> halfEdges = <span class="hljs-keyword">this</span>.computeHalfEdges();
+
+  <span class="hljs-keyword">var</span> newVertices = [];
+  <span class="hljs-keyword">var</span> newFaces = [];
+  <span class="hljs-keyword">var</span> newEdges = [];
+
+  depth = depth || <span class="hljs-number">0.1</span>;
+
+  <span class="hljs-keyword">var</span> facePointsByFace = [];
+
+  <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+
+  faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face, faceIndex)</span> </span>{
+    <span class="hljs-keyword">var</span> facePoints = facePointsByFace[faceIndex] = [];
+    edgeLoop(face.halfEdges[<span class="hljs-number">0</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge)</span> </span>{
+      <span class="hljs-keyword">var</span> v = vertices[edge.face[edge.slot]];
+      <span class="hljs-keyword">var</span> p = centroid([
+        v,
+        centroid(elements(vertices, edge.face)),
+        centroid(elements(vertices, [edge.v0, edge.v1])),
+        centroid(elements(vertices, [prev(edge).v0, prev(edge).v1]))
+      ]);
+      facePoints.push(newVertices.length);
+      newVertices.push(move(v, p, depth));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>newVertices.push(p);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    });
+    <span class="hljs-keyword">return</span> facePoints;
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>face face</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face, faceIndex)</span> </span>{
+    newFaces.push(facePointsByFace[faceIndex]);
+  });
+
+  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge, edgeIndex)</span> </span>{
+    <span class="hljs-keyword">if</span> (edge.edgeVisited) <span class="hljs-keyword">return</span>;
+
+    edge.edgeVisited = <span class="hljs-literal">true</span>;
+    edge.opposite.edgeVisited = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>edge face</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> e0 = edge;
+    <span class="hljs-keyword">var</span> e1 = next(e0.opposite);
+    <span class="hljs-keyword">var</span> e2 = e0.opposite;
+    <span class="hljs-keyword">var</span> e3 = next(e0);
+    <span class="hljs-keyword">var</span> newFace = [
+      facePointsByFace[e0.faceIndex][e0.slot],
+      facePointsByFace[e1.faceIndex][e1.slot],
+      facePointsByFace[e2.faceIndex][e2.slot],
+      facePointsByFace[e3.faceIndex][e3.slot]
+    ];
+    newFaces.push(newFace);
+    newEdges.push([newFace[<span class="hljs-number">0</span>], newFace[<span class="hljs-number">3</span>]]);
+    newEdges.push([newFace[<span class="hljs-number">1</span>], newFace[<span class="hljs-number">2</span>]]);
+  });
+
+  halfEdges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edge, edgeIndex)</span> </span>{
+    <span class="hljs-keyword">if</span> (edge.vertexVisited) <span class="hljs-keyword">return</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>vertex face</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> vertexFace = [];
+    vertexEdgeLoop(edge, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+      e.vertexVisited = <span class="hljs-literal">true</span>;
+      vertexFace.push(facePointsByFace[e.faceIndex][e.slot])
+    });
+    newFaces.push(vertexFace)
+    vertexFace.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, index)</span> </span>{
+      newEdges.push([i, vertexFace[(index+<span class="hljs-number">1</span>)%vertexFace.length]]);
+    });
+  });
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry({ vertices: newVertices, faces: newFaces, edges: newEdges });
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <h3 id="catmullclark-edgedepth-insetdepth-">catmullClark(edgeDepth, insetDepth)</h3>
+<p>Non destructive wire modelling.
+<code>edgeDepth</code> - how thick should be the edge <em>{ Number }</em>
+<code>insetDepth</code> - how deeply inside should be the edge <em>{ Number }</em>
+returns new <em>{ Geometry }</em>
+Mesh wire modelling as described in where each edge is replaced by a column
+<a href="http://repository.tamu.edu/bitstream/handle/1969.1/548/etd-tamu-2004A-VIZA-mandal-1.pdf">http://repository.tamu.edu/bitstream/handle/1969.1/548/etd-tamu-2004A-VIZA-mandal-1.pdf</a>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.wire = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(edgeDepth, insetDepth)</span> </span>{
+  insetDepth = (insetDepth != <span class="hljs-literal">null</span>) ? insetDepth : (edgeDepth || <span class="hljs-number">0.1</span>);
+  edgeDepth = edgeDepth || <span class="hljs-number">0.1</span>;
+  <span class="hljs-keyword">var</span> newGeom = <span class="hljs-keyword">this</span>.dooSabin(edgeDepth);
+  newGeom.computeNormals();
+  <span class="hljs-keyword">var</span> halfEdges = newGeom.computeHalfEdges();
+  <span class="hljs-keyword">var</span> innerGeom = <span class="hljs-keyword">this</span>.dooSabin(edgeDepth);
+  innerGeom.computeNormals();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>shrink the inner geometry</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  innerGeom.vertices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, vi)</span> </span>{
+    v.sub(innerGeom.normals[vi].dup().scale(insetDepth));
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>remove middle faces</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> cutFaces = newGeom.faces.splice(<span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.faces.length);
+  innerGeom.faces.splice(<span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.faces.length);
+
+  <span class="hljs-keyword">var</span> vertexOffset = newGeom.vertices.length;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>add inner vertices to new geom</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  innerGeom.vertices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, vi)</span> </span>{
+    newGeom.vertices.push(v);
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>add inner faces to new geom</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  innerGeom.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+    newGeom.faces.push(f.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vi)</span> </span>{
+      <span class="hljs-keyword">return</span> vi + vertexOffset;
+    }).reverse());
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>add inner edges to new geom</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  innerGeom.edges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    newGeom.edges.push(e.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(vi)</span> </span>{
+      <span class="hljs-keyword">return</span> vi + vertexOffset;
+    }));
+  });
+
+  cutFaces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face)</span> </span>{
+    edgeLoop(face.halfEdges[<span class="hljs-number">0</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+      <span class="hljs-keyword">var</span> pe = prev(e);
+      newGeom.faces.push([
+        pe.face[pe.slot],
+        e.face[e.slot],
+        e.face[e.slot] + vertexOffset,
+        pe.face[pe.slot] + vertexOffset
+      ]);
+
+      newGeom.edges.push([
+        pe.face[pe.slot],
+        pe.face[pe.slot] + vertexOffset
+      ]);
+
+      newGeom.edges.push([
+        e.face[e.slot],
+        e.face[e.slot] + vertexOffset
+      ]);
+    });
+  });
+
+  <span class="hljs-keyword">return</span> newGeom;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <h3 id="extrude-height-faceindices-shrink-">extrude(height, faceIndices, shrink)</h3>
+<p>Non destructive face extrusion.
+, faceIndices, shrink
+<code>height</code> - how much to extrude along the normal <em>{ Number }</em><br><code>faceIndices</code> - indices of faces to extrude <em>{ Array of Int }</em><br><code>shrink</code> - how much to shring new extruded face, 0 - at all, 1 - will create point <em>{ Number }</em><br>returns new <em>{ Geometry }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.extrude = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(height, faceIndices, shrink)</span> </span>{
+  height = height || <span class="hljs-number">0.1</span>;
+  shrink = shrink || <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">if</span> (!faceIndices) faceIndices = <span class="hljs-keyword">this</span>.faces.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(face, faceIndex)</span> </span>{ <span class="hljs-keyword">return</span> faceIndex; });
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">this</span>.clone();
+  <span class="hljs-keyword">var</span> halfEdges = g.computeHalfEdges();
+
+  <span class="hljs-keyword">var</span> ab = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">var</span> ac = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">var</span> faceNormal = <span class="hljs-keyword">new</span> Vec3();
+  <span class="hljs-keyword">var</span> tmp = <span class="hljs-keyword">new</span> Vec3();
+
+  faceIndices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(faceIndex)</span> </span>{
+    <span class="hljs-keyword">var</span> face = g.faces[faceIndex];
+    <span class="hljs-keyword">var</span> faceVerts = elements(g.vertices, face);
+    <span class="hljs-keyword">var</span> faceTexCoords = g.texCoords ? elements(g.texCoords, face) : <span class="hljs-literal">null</span>;
+
+    <span class="hljs-keyword">var</span> a = faceVerts[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">var</span> b = faceVerts[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> c = faceVerts[<span class="hljs-number">2</span>];
+    ab.asSub(b, a).normalize();
+    ac.asSub(c, a).normalize();
+    faceNormal.asCross(ab, ac).normalize();
+    faceNormal.scale(height);
+
+    <span class="hljs-keyword">var</span> newVerts = faceVerts.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+      <span class="hljs-keyword">return</span> v.dup().add(faceNormal);
+    });
+
+    <span class="hljs-keyword">var</span> newVertsIndices = [];
+
+    newVerts.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nv)</span> </span>{
+      newVertsIndices.push(g.vertices.length);
+      g.vertices.push(nv);
+    });
+
+    <span class="hljs-keyword">if</span> (faceTexCoords) {
+      <span class="hljs-keyword">var</span> newTexCoords = faceTexCoords.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tc)</span> </span>{
+        <span class="hljs-keyword">return</span> tc.dup();
+      });
+
+      newTexCoords.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tc)</span> </span>{
+        g.texCoords.push(tc);
+      });
+    }
+
+    <span class="hljs-keyword">if</span> (shrink) {
+      <span class="hljs-keyword">var</span> c = centroid(newVerts);
+      newVerts.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nv)</span> </span>{
+        tmp.asSub(c, nv);
+        tmp.scale(shrink);
+        nv.add(tmp);
+      })
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>add new face for each extruded edge</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    edgeLoop(face.halfEdges[<span class="hljs-number">0</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+      g.faces.push([
+        face[e.slot],
+        face[next(e).slot],
+        newVertsIndices[next(e).slot],
+        newVertsIndices[e.slot]
+      ]);
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>add edges</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (g.edges) {
+      newVertsIndices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, index)</span> </span>{
+        g.edges.push([i, face[index]]);
+      });
+      newVertsIndices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i, index)</span> </span>{
+        g.edges.push([i, newVertsIndices[(index+<span class="hljs-number">1</span>)%newVertsIndices.length]]);
+      });
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>push the old face outside</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    newVertsIndices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nvi, i)</span> </span>{
+      face[i] = nvi;
+    });
+  });
+
+  <span class="hljs-keyword">return</span> g;
+}
+
+<span class="hljs-built_in">module</span>.exports = Geometry;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

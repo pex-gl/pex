@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>GUI.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>GUI.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> glu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-glu'</span>);
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> sys = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-sys'</span>);
+<span class="hljs-keyword">var</span> color = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-color'</span>);
+<span class="hljs-keyword">var</span> Platform = sys.Platform;
+<span class="hljs-keyword">var</span> GUIControl = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./GUIControl'</span>);
+<span class="hljs-keyword">var</span> SkiaRenderer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./SkiaRenderer'</span>);
+<span class="hljs-keyword">var</span> HTMLCanvasRenderer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./HTMLCanvasRenderer'</span>);
+<span class="hljs-keyword">var</span> Context = glu.Context;
+<span class="hljs-keyword">var</span> ScreenImage = glu.ScreenImage;
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+<span class="hljs-keyword">var</span> Rect = geom.Rect;
+<span class="hljs-keyword">var</span> Spline1D = geom.Spline1D;
+<span class="hljs-keyword">var</span> Spline2D = geom.Spline2D;
+<span class="hljs-keyword">var</span> IO = sys.IO;
+<span class="hljs-keyword">var</span> Color = color.Color;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><code>window</code> - parent window
+<code>x</code> - gui x position
+<code>y</code> - gui y position
+<code>scale</code> - slider scale, usefull for touch
+do not mistake that for highdpi as his is handled automatically based on window.settings.highdpi</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">GUI</span><span class="hljs-params">(window, x, y, scale)</span> </span>{
+  <span class="hljs-keyword">this</span>.gl = Context.currentContext;
+  <span class="hljs-keyword">this</span>.window = <span class="hljs-built_in">window</span>;
+  <span class="hljs-keyword">this</span>.x = x === <span class="hljs-literal">undefined</span> ? <span class="hljs-number">0</span> : x;
+  <span class="hljs-keyword">this</span>.y = y === <span class="hljs-literal">undefined</span> ? <span class="hljs-number">0</span> : y;
+  <span class="hljs-keyword">this</span>.mousePos = Vec2.create();
+  <span class="hljs-keyword">this</span>.scale = scale || <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">this</span>.highdpi = <span class="hljs-built_in">window</span>.settings.highdpi || <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">if</span> (Platform.isPlask) {
+    <span class="hljs-keyword">this</span>.renderer = <span class="hljs-keyword">new</span> SkiaRenderer(<span class="hljs-built_in">window</span>.width, <span class="hljs-built_in">window</span>.height, <span class="hljs-keyword">this</span>.highdpi);
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Platform.isBrowser) {
+    <span class="hljs-keyword">this</span>.renderer = <span class="hljs-keyword">new</span> HTMLCanvasRenderer(<span class="hljs-built_in">window</span>.width, <span class="hljs-built_in">window</span>.height, <span class="hljs-keyword">this</span>.highdpi);
+  }
+  <span class="hljs-keyword">this</span>.screenBounds = <span class="hljs-keyword">new</span> Rect(<span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y, <span class="hljs-built_in">window</span>.width, <span class="hljs-built_in">window</span>.height);
+  <span class="hljs-keyword">this</span>.screenImage = <span class="hljs-keyword">new</span> ScreenImage(<span class="hljs-keyword">this</span>.renderer.getTexture(), <span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y, <span class="hljs-built_in">window</span>.width, <span class="hljs-built_in">window</span>.height, <span class="hljs-built_in">window</span>.width, <span class="hljs-built_in">window</span>.height);
+  <span class="hljs-keyword">this</span>.items = [];
+  <span class="hljs-keyword">this</span>.bindEventListeners(<span class="hljs-built_in">window</span>);
+  <span class="hljs-keyword">this</span>.enabled = <span class="hljs-literal">true</span>;
+}
+
+GUI.prototype.bindEventListeners = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(window)</span> </span>{
+  <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+  <span class="hljs-built_in">window</span>.on(<span class="hljs-string">'leftMouseDown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+    self.onMouseDown(e);
+  });
+  <span class="hljs-built_in">window</span>.on(<span class="hljs-string">'mouseDragged'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+    self.onMouseDrag(e);
+  });
+  <span class="hljs-built_in">window</span>.on(<span class="hljs-string">'leftMouseUp'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+    self.onMouseUp(e);
+  });
+};
+
+GUI.prototype.onMouseDown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.enabled) <span class="hljs-keyword">return</span>;
+
+  <span class="hljs-keyword">this</span>.activeControl = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">this</span>.mousePos.set(e.x / <span class="hljs-keyword">this</span>.highdpi - <span class="hljs-keyword">this</span>.x, e.y / <span class="hljs-keyword">this</span>.highdpi - <span class="hljs-keyword">this</span>.y);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.items.length; i++) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.items[i].activeArea.contains(<span class="hljs-keyword">this</span>.mousePos)) {
+      <span class="hljs-keyword">this</span>.activeControl = <span class="hljs-keyword">this</span>.items[i];
+      <span class="hljs-keyword">this</span>.activeControl.active = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'button'</span>) {
+        <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.methodName]();
+      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'toggle'</span>) {
+        <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName] = !<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName];
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+          <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+        }
+      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'radiolist'</span>) {
+        <span class="hljs-keyword">var</span> hitY = <span class="hljs-keyword">this</span>.mousePos.y - <span class="hljs-keyword">this</span>.activeControl.activeArea.y;
+        <span class="hljs-keyword">var</span> hitItemIndex = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.activeControl.items.length * hitY / <span class="hljs-keyword">this</span>.activeControl.activeArea.height);
+        <span class="hljs-keyword">if</span> (hitItemIndex &lt; <span class="hljs-number">0</span>)
+          <span class="hljs-keyword">continue</span>;
+        <span class="hljs-keyword">if</span> (hitItemIndex &gt;= <span class="hljs-keyword">this</span>.activeControl.items.length)
+          <span class="hljs-keyword">continue</span>;
+        <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName] = <span class="hljs-keyword">this</span>.activeControl.items[hitItemIndex].value;
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+          <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.items[hitItemIndex].value);
+        }
+      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'texturelist'</span>) {
+        <span class="hljs-keyword">var</span> clickedItem = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">this</span>.activeControl.items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{
+          <span class="hljs-keyword">if</span> (item.activeArea.contains(<span class="hljs-keyword">this</span>.mousePos)) {
+            clickedItem = item;
+          }
+        }.bind(<span class="hljs-keyword">this</span>))
+
+        <span class="hljs-keyword">if</span> (!clickedItem)
+          <span class="hljs-keyword">continue</span>;
+
+        <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName] = clickedItem.value;
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+          <span class="hljs-keyword">this</span>.activeControl.onchange(clickedItem.value);
+        }
+      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'color'</span>) {
+        <span class="hljs-keyword">var</span> aa = <span class="hljs-keyword">this</span>.activeControl.activeArea;
+        <span class="hljs-keyword">var</span> numSliders = <span class="hljs-keyword">this</span>.activeControl.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>;
+        <span class="hljs-keyword">var</span> slidersHeight = aa.height;
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.options.palette) {
+          <span class="hljs-keyword">var</span> iw = <span class="hljs-keyword">this</span>.activeControl.options.paletteImage.width;
+          <span class="hljs-keyword">var</span> ih = <span class="hljs-keyword">this</span>.activeControl.options.paletteImage.height;
+          <span class="hljs-keyword">var</span> y = e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y;
+          slidersHeight = aa.height - aa.width * ih / iw;
+          <span class="hljs-keyword">var</span> imageDisplayHeight = aa.width * ih / iw;
+          <span class="hljs-keyword">var</span> imageStartY = aa.height - imageDisplayHeight;
+
+          <span class="hljs-keyword">if</span> (y &gt; imageStartY) {
+            <span class="hljs-keyword">var</span> u = (e.x /<span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+            <span class="hljs-keyword">var</span> v = (y - imageStartY) / imageDisplayHeight;
+            <span class="hljs-keyword">var</span> x = <span class="hljs-built_in">Math</span>.floor(iw * u);
+            <span class="hljs-keyword">var</span> y = <span class="hljs-built_in">Math</span>.floor(ih * v);
+            <span class="hljs-keyword">var</span> color = <span class="hljs-keyword">this</span>.renderer.getImageColor(<span class="hljs-keyword">this</span>.activeControl.options.paletteImage, x, y);
+            <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].r = color.r;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].g = color.g;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].b = color.b;
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+              <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+            }
+            <span class="hljs-keyword">continue</span>;
+          }
+        }
+      }
+      e.handled = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">this</span>.onMouseDrag(e);
+      <span class="hljs-keyword">break</span>;
+    }
+  }
+};
+
+GUI.prototype.onMouseDrag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.enabled) <span class="hljs-keyword">return</span>;
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl) {
+    <span class="hljs-keyword">var</span> aa = <span class="hljs-keyword">this</span>.activeControl.activeArea;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'slider'</span>) {
+      <span class="hljs-keyword">var</span> val = (e.x / <span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+      val = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(val, <span class="hljs-number">1</span>));
+      <span class="hljs-keyword">this</span>.activeControl.setNormalizedValue(val);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+        <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+      }
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'multislider'</span>) {
+      <span class="hljs-keyword">var</span> val = (e.x / <span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+      val = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(val, <span class="hljs-number">1</span>));
+      <span class="hljs-keyword">var</span> idx = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.activeControl.getValue().length * (e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y) / aa.height);
+      <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(<span class="hljs-keyword">this</span>.activeControl.clickedSlider)) {
+        idx = <span class="hljs-keyword">this</span>.activeControl.clickedSlider;
+      }
+      <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.activeControl.clickedSlider = idx;
+      }
+      <span class="hljs-keyword">this</span>.activeControl.setNormalizedValue(val, idx);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+        <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+      }
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'vec2'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">var</span> val = (e.x / <span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+      val = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(val, <span class="hljs-number">1</span>));
+      <span class="hljs-keyword">var</span> idx = <span class="hljs-built_in">Math</span>.floor(numSliders * (e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y) / aa.height);
+      <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(<span class="hljs-keyword">this</span>.activeControl.clickedSlider)) {
+        idx = <span class="hljs-keyword">this</span>.activeControl.clickedSlider;
+      }
+      <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.activeControl.clickedSlider = idx;
+      }
+      <span class="hljs-keyword">this</span>.activeControl.setNormalizedValue(val, idx);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+        <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+      }
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'vec3'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">var</span> val = (e.x / <span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+      val = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(val, <span class="hljs-number">1</span>));
+      <span class="hljs-keyword">var</span> idx = <span class="hljs-built_in">Math</span>.floor(numSliders * (e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y) / aa.height);
+      <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(<span class="hljs-keyword">this</span>.activeControl.clickedSlider)) {
+        idx = <span class="hljs-keyword">this</span>.activeControl.clickedSlider;
+      }
+      <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.activeControl.clickedSlider = idx;
+      }
+      <span class="hljs-keyword">this</span>.activeControl.setNormalizedValue(val, idx);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+        <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+      }
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'color'</span>) {
+      <span class="hljs-keyword">var</span> numSliders = <span class="hljs-keyword">this</span>.activeControl.options.alpha ? <span class="hljs-number">4</span> : <span class="hljs-number">3</span>;
+      <span class="hljs-keyword">var</span> slidersHeight = aa.height;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.options.palette) {
+        <span class="hljs-keyword">var</span> iw = <span class="hljs-keyword">this</span>.activeControl.options.paletteImage.width;
+        <span class="hljs-keyword">var</span> ih = <span class="hljs-keyword">this</span>.activeControl.options.paletteImage.height;
+        <span class="hljs-keyword">var</span> y = e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y;
+        slidersHeight = aa.height - aa.width * ih / iw;
+        <span class="hljs-keyword">var</span> imageDisplayHeight = aa.width * ih / iw;
+        <span class="hljs-keyword">var</span> imageStartY = aa.height - imageDisplayHeight;
+        <span class="hljs-keyword">if</span> (y &gt; imageStartY &amp;&amp; <span class="hljs-built_in">isNaN</span>(<span class="hljs-keyword">this</span>.activeControl.clickedSlider)) {
+            <span class="hljs-keyword">var</span> u = (e.x /<span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+            <span class="hljs-keyword">var</span> v = (y - imageStartY) / imageDisplayHeight;
+            <span class="hljs-keyword">var</span> x = <span class="hljs-built_in">Math</span>.floor(iw * u);
+            <span class="hljs-keyword">var</span> y = <span class="hljs-built_in">Math</span>.floor(ih * v);
+            <span class="hljs-keyword">var</span> color = <span class="hljs-keyword">this</span>.renderer.getImageColor(<span class="hljs-keyword">this</span>.activeControl.options.paletteImage, x, y);
+            <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].r = color.r;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].g = color.g;
+            <span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName].b = color.b;
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+              <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+            }
+            e.handled = <span class="hljs-literal">true</span>;
+            <span class="hljs-keyword">return</span>;
+          }
+      }
+
+      <span class="hljs-keyword">var</span> val = (e.x / <span class="hljs-keyword">this</span>.highdpi - aa.x) / aa.width;
+      val = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.min(val, <span class="hljs-number">1</span>));
+      <span class="hljs-keyword">var</span> idx = <span class="hljs-built_in">Math</span>.floor(numSliders * (e.y / <span class="hljs-keyword">this</span>.highdpi - aa.y) / slidersHeight);
+      <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(<span class="hljs-keyword">this</span>.activeControl.clickedSlider)) {
+        idx = <span class="hljs-keyword">this</span>.activeControl.clickedSlider;
+      }
+      <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.activeControl.clickedSlider = idx;
+      }
+      <span class="hljs-keyword">this</span>.activeControl.setNormalizedValue(val, idx);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.onchange) {
+        <span class="hljs-keyword">this</span>.activeControl.onchange(<span class="hljs-keyword">this</span>.activeControl.contextObject[<span class="hljs-keyword">this</span>.activeControl.attributeName]);
+      }
+      <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    }
+    e.handled = <span class="hljs-literal">true</span>;
+  }
+};
+
+GUI.prototype.onMouseUp = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.enabled) <span class="hljs-keyword">return</span>;
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl) {
+    <span class="hljs-keyword">this</span>.activeControl.active = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.activeControl.dirty = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">this</span>.activeControl.clickedSlider = <span class="hljs-literal">undefined</span>;
+    <span class="hljs-keyword">this</span>.activeControl = <span class="hljs-literal">null</span>;
+  }
+};
+
+GUI.prototype.addHeader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'header'</span>,
+    title: title,
+    dirty: <span class="hljs-literal">true</span>,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    setTitle: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
+      <span class="hljs-keyword">this</span>.title = title;
+      <span class="hljs-keyword">this</span>.dirty = <span class="hljs-literal">true</span>;
+    }
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addSeparator = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'separator'</span>,
+    dirty: <span class="hljs-literal">true</span>,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addLabel = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'label'</span>,
+    title: title,
+    dirty: <span class="hljs-literal">true</span>,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    setTitle: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
+      <span class="hljs-keyword">this</span>.title = title;
+      <span class="hljs-keyword">this</span>.dirty = <span class="hljs-literal">true</span>;
+    }
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addParam = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title, contextObject, attributeName, options, onchange)</span> </span>{
+  options = options || {};
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(options.min) == <span class="hljs-string">'undefined'</span>) options.min = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(options.max) == <span class="hljs-string">'undefined'</span>) options.max = <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">if</span> (contextObject[attributeName] === <span class="hljs-literal">false</span> || contextObject[attributeName] === <span class="hljs-literal">true</span>) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'toggle'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(contextObject[attributeName])) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'slider'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'multislider'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Vec2) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'vec2'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Vec3) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'vec3'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Color) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'color'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Spline1D) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'spline1D'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Spline2D) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'spline2D'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+};
+
+GUI.prototype.addButton = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title, contextObject, methodName, options)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'button'</span>,
+    title: title,
+    contextObject: contextObject,
+    methodName: methodName,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    dirty: <span class="hljs-literal">true</span>,
+    options: options || {}
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addRadioList = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title, contextObject, attributeName, items, onchange)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'radiolist'</span>,
+    title: title,
+    contextObject: contextObject,
+    attributeName: attributeName,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    items: items,
+    onchange: onchange,
+    dirty: <span class="hljs-literal">true</span>
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addTextureList = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title, contextObject, attributeName, items, itemsPerRow, onchange)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'texturelist'</span>,
+    title: title,
+    contextObject: contextObject,
+    attributeName: attributeName,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    items: items,
+    itemsPerRow: itemsPerRow || <span class="hljs-number">4</span>,
+    onchange: onchange,
+    dirty: <span class="hljs-literal">true</span>
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.addTexture2D = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title, texture)</span> </span>{
+  <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+    type: <span class="hljs-string">'texture2D'</span>,
+    title: title,
+    texture: texture,
+    activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+    dirty: <span class="hljs-literal">true</span>
+  });
+  <span class="hljs-keyword">this</span>.items.push(ctrl);
+  <span class="hljs-keyword">return</span> ctrl;
+};
+
+GUI.prototype.dispose = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+};
+
+GUI.prototype.draw = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.enabled) {
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.items.length === <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">return</span>;
+  }
+  <span class="hljs-keyword">this</span>.renderer.draw(<span class="hljs-keyword">this</span>.items, <span class="hljs-keyword">this</span>.scale);
+
+  glu.enableDepthReadAndWrite(<span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+
+  <span class="hljs-keyword">var</span> gl = Context.currentContext;
+  gl.disable(gl.DEPTH_TEST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  <span class="hljs-keyword">this</span>.screenImage.draw();
+  gl.disable(gl.BLEND);
+  gl.enable(gl.DEPTH_TEST);
+  <span class="hljs-keyword">this</span>.drawTextures();
+};
+
+GUI.prototype.drawTextures = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.items.length; i++) {
+    <span class="hljs-keyword">var</span> item = <span class="hljs-keyword">this</span>.items[i];
+    <span class="hljs-keyword">var</span> scale = <span class="hljs-keyword">this</span>.scale * <span class="hljs-keyword">this</span>.highdpi;
+    <span class="hljs-keyword">if</span> (item.type == <span class="hljs-string">'texture2D'</span>) {
+      <span class="hljs-keyword">var</span> bounds = <span class="hljs-keyword">new</span> Rect(item.activeArea.x * scale, item.activeArea.y * scale, item.activeArea.width * scale, item.activeArea.height * scale);
+      <span class="hljs-keyword">this</span>.screenImage.setBounds(bounds);
+      <span class="hljs-keyword">this</span>.screenImage.setImage(item.texture);
+      <span class="hljs-keyword">this</span>.screenImage.draw();
+    }
+    <span class="hljs-keyword">if</span> (item.type == <span class="hljs-string">'texturelist'</span>) {
+      item.items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(textureItem)</span> </span>{
+        <span class="hljs-keyword">var</span> bounds = <span class="hljs-keyword">new</span> Rect(textureItem.activeArea.x * scale, textureItem.activeArea.y * scale, textureItem.activeArea.width * scale, textureItem.activeArea.height * scale);
+        <span class="hljs-keyword">this</span>.screenImage.setBounds(bounds);
+        <span class="hljs-keyword">this</span>.screenImage.setImage(textureItem.texture);
+        <span class="hljs-keyword">this</span>.screenImage.draw();
+      }.bind(<span class="hljs-keyword">this</span>));
+    }
+  }
+  <span class="hljs-keyword">this</span>.screenImage.setBounds(<span class="hljs-keyword">this</span>.screenBounds);
+  <span class="hljs-keyword">this</span>.screenImage.setImage(<span class="hljs-keyword">this</span>.renderer.getTexture());
+};
+
+GUI.prototype.serialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> data = {};
+  <span class="hljs-keyword">this</span>.items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(item, i)</span> </span>{
+    data[item.title] = item.getSerializedValue();
+  });
+  <span class="hljs-keyword">return</span> data;
+};
+
+GUI.prototype.deserialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> </span>{
+  <span class="hljs-keyword">this</span>.items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(item, i)</span> </span>{
+    <span class="hljs-keyword">if</span> (data[item.title] !== <span class="hljs-literal">undefined</span>) {
+      item.setSerializedValue(data[item.title]);
+      item.dirty = <span class="hljs-literal">true</span>;
+    }
+  });
+};
+
+GUI.prototype.save = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(path)</span> </span>{
+  <span class="hljs-keyword">var</span> data = <span class="hljs-keyword">this</span>.serialize();
+  IO.saveTextFile(path, <span class="hljs-built_in">JSON</span>.stringify(data));
+};
+
+GUI.prototype.load = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(path, callback)</span> </span>{
+  <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+  IO.loadTextFile(path, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(dataStr)</span> </span>{
+    <span class="hljs-keyword">var</span> data = <span class="hljs-built_in">JSON</span>.parse(dataStr);
+    self.deserialize(data);
+    <span class="hljs-keyword">if</span> (callback) {
+      callback();
+    }
+  });
+};
+
+GUI.prototype.setEnabled = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(state)</span> </span>{
+  <span class="hljs-keyword">this</span>.enabled = state;
+}
+
+GUI.prototype.isEnabled = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.enabled;
+}
+
+GUI.prototype.toggleEnabled = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.enabled = !<span class="hljs-keyword">this</span>.enabled;
+}
+
+<span class="hljs-built_in">module</span>.exports = GUI;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

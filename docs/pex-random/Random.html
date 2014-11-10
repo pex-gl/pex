@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Random.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Random.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> seedrandom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'seedrandom'</span>);
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> SimplexNoise = <span class="hljs-built_in">require</span>(<span class="hljs-string">'simplex-noise'</span>);
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+
+<span class="hljs-keyword">var</span> simplex = <span class="hljs-keyword">new</span> SimplexNoise(<span class="hljs-built_in">Math</span>.random);
+
+<span class="hljs-keyword">var</span> Random = {};
+
+Random.seed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+  <span class="hljs-built_in">Math</span>.seedrandom(s);
+  simplex = <span class="hljs-keyword">new</span> SimplexNoise(<span class="hljs-built_in">Math</span>.random);
+};
+
+Random.float = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(min, max)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">0</span>) {
+    min = <span class="hljs-number">0</span>;
+    max = <span class="hljs-number">1</span>;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">1</span>) {
+    max = min;
+    min = <span class="hljs-number">0</span>;
+  }
+  <span class="hljs-keyword">return</span> min + (max - min) * <span class="hljs-built_in">Math</span>.random();
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Using max safe integer as max value unless otherwise specified
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Random.int = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(min, max)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">0</span>) {
+    min = <span class="hljs-number">0</span>;
+    max = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">53</span>) - <span class="hljs-number">1</span>;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">1</span>) {
+    max = min;
+    min = <span class="hljs-number">0</span>;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor(Random.float(min, max));
+};
+
+Random.vec2 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> r == <span class="hljs-string">'undefined'</span>) r = <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> x = <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> y = <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> rr = <span class="hljs-built_in">Math</span>.random() * r;
+  <span class="hljs-keyword">var</span> len = <span class="hljs-built_in">Math</span>.sqrt(x*x + y*y);
+  <span class="hljs-keyword">return</span> Vec2.create(rr * x / len, rr * y / len);
+};
+
+Random.vec3 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> r == <span class="hljs-string">'undefined'</span>) r = <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> x = <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> y = <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> z = <span class="hljs-number">2</span> * <span class="hljs-built_in">Math</span>.random() - <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> rr = <span class="hljs-built_in">Math</span>.random() * r;
+  <span class="hljs-keyword">var</span> len = <span class="hljs-built_in">Math</span>.sqrt(x*x + y*y + z*z);
+  <span class="hljs-keyword">return</span> Vec3.create(rr * x/len, rr * y/len, rr * z/len);
+};
+
+Random.vec2InRect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(rect)</span> </span>{
+  <span class="hljs-keyword">return</span> Vec2.create(rect.x + <span class="hljs-built_in">Math</span>.random() * rect.width, rect.y + <span class="hljs-built_in">Math</span>.random() * rect.height);
+};
+
+Random.vec3InBoundingBox = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bbox)</span> </span>{
+  <span class="hljs-keyword">var</span> x = bbox.min.x + <span class="hljs-built_in">Math</span>.random() * (bbox.max.x - bbox.min.x);
+  <span class="hljs-keyword">var</span> y = bbox.min.y + <span class="hljs-built_in">Math</span>.random() * (bbox.max.y - bbox.min.y);
+  <span class="hljs-keyword">var</span> z = bbox.min.z + <span class="hljs-built_in">Math</span>.random() * (bbox.max.z - bbox.min.z);
+  <span class="hljs-keyword">return</span> Vec3.create(x, y, z);
+};
+
+Random.chance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(probability)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.random() &lt;= probability;
+};
+
+Random.element = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(list)</span> </span>{
+  <span class="hljs-keyword">return</span> list[<span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * list.length)];
+};
+
+Random.noise2 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> </span>{
+  <span class="hljs-keyword">return</span> simplex.noise2D(x, y);
+};
+
+Random.noise3 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
+  <span class="hljs-keyword">return</span> simplex.noise3D(x, y, z);
+};
+
+Random.noise4 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z, w)</span> </span>{
+  <span class="hljs-keyword">return</span> simplex.noise4D(x, y, z, w);
+};
+
+<span class="hljs-built_in">module</span>.exports = Random;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

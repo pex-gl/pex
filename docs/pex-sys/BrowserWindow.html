@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>BrowserWindow.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>BrowserWindow.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Platform = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Platform'</span>);
+<span class="hljs-keyword">var</span> Log = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Log'</span>);
+<span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);
+
+<span class="hljs-keyword">var</span> requestAnimFrameFps = <span class="hljs-number">60</span>;
+
+<span class="hljs-keyword">if</span> (Platform.isBrowser) {
+  <span class="hljs-built_in">window</span>.requestAnimFrame = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">window</span>.requestAnimationFrame || <span class="hljs-built_in">window</span>.webkitRequestAnimationFrame || <span class="hljs-built_in">window</span>.mozRequestAnimationFrame || <span class="hljs-built_in">window</span>.oRequestAnimationFrame || <span class="hljs-built_in">window</span>.msRequestAnimationFrame || <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback, element)</span> </span>{
+      <span class="hljs-built_in">window</span>.setTimeout(callback, <span class="hljs-number">1000</span> / requestAnimFrameFps);
+    };
+  }();
+}
+<span class="hljs-keyword">var</span> eventListeners = [];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fireEvent</span><span class="hljs-params">(eventType, event)</span> </span>{
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; eventListeners.length; i++) {
+    <span class="hljs-keyword">if</span> (eventListeners[i].eventType == eventType) {
+      eventListeners[i].handler(event);
+    }
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">registerEvents</span><span class="hljs-params">(canvas, win)</span> </span>{
+  makeMouseDownHandler(canvas, win);
+  makeMouseUpHandler(canvas, win);
+  makeMouseDraggedHandler(canvas, win);
+  makeMouseMovedHandler(canvas, win);
+  makeScrollWheelHandler(canvas, win);
+  makeTouchDownHandler(canvas, win);
+  makeTouchUpHandler(canvas, win);
+  makeTouchMoveHandler(canvas, win);
+  makeKeyDownHandler(canvas, win);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeMouseDownHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'mousedown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    fireEvent(<span class="hljs-string">'leftMouseDown'</span>, {
+      x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * win.settings.highdpi,
+      y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * win.settings.highdpi,
+      option: e.altKey,
+      shift: e.shiftKey,
+      control: e.ctrlKey
+    });
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeMouseUpHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'mouseup'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    fireEvent(<span class="hljs-string">'leftMouseUp'</span>, {
+      x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * win.settings.highdpi,
+      y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * win.settings.highdpi,
+      option: e.altKey,
+      shift: e.shiftKey,
+      control: e.ctrlKey
+    });
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeMouseDraggedHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  <span class="hljs-keyword">var</span> down = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">var</span> px = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> py = <span class="hljs-number">0</span>;
+  canvas.addEventListener(<span class="hljs-string">'mousedown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    down = <span class="hljs-literal">true</span>;
+    px = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * win.settings.highdpi;
+    py = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * win.settings.highdpi;
+  });
+  canvas.addEventListener(<span class="hljs-string">'mouseup'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    down = <span class="hljs-literal">false</span>;
+  });
+  canvas.addEventListener(<span class="hljs-string">'mousemove'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (down) {
+      <span class="hljs-keyword">var</span> x = (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * win.settings.highdpi;
+      <span class="hljs-keyword">var</span> y = (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * win.settings.highdpi;
+      fireEvent(<span class="hljs-string">'mouseDragged'</span>, {
+        x: x,
+        y: y,
+        dx: x - px,
+        dy: y - py,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
+      });
+      px = x;
+      py = y;
+    }
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeMouseMovedHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'mousemove'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    fireEvent(<span class="hljs-string">'mouseMoved'</span>, {
+      x: (e.offsetX || e.layerX || e.clientX - e.target.offsetLeft) * win.settings.highdpi,
+      y: (e.offsetY || e.layerY || e.clientY - e.target.offsetTop) * win.settings.highdpi,
+      option: e.altKey,
+      shift: e.shiftKey,
+      control: e.ctrlKey
+    });
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeScrollWheelHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  <span class="hljs-keyword">var</span> mousewheelevt = <span class="hljs-regexp">/Firefox/i</span>.test(navigator.userAgent) ? <span class="hljs-string">'DOMMouseScroll'</span> : <span class="hljs-string">'mousewheel'</span>;
+  <span class="hljs-built_in">document</span>.addEventListener(mousewheelevt, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    fireEvent(<span class="hljs-string">'scrollWheel'</span>, {
+      x: (e.offsetX || e.layerX) * win.settings.highdpi,
+      y: (e.offsetY || e.layerY) * win.settings.highdpi,
+      dy: e.wheelDelta / <span class="hljs-number">10</span> || -e.detail / <span class="hljs-number">10</span>,
+      option: e.altKey,
+      shift: e.shiftKey,
+      control: e.ctrlKey
+    });
+  });
+}
+<span class="hljs-keyword">var</span> lastTouch = <span class="hljs-literal">null</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeTouchDownHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'touchstart'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    lastTouch = {
+      clientX: e.touches[<span class="hljs-number">0</span>].clientX * win.settings.highdpi,
+      clientY: e.touches[<span class="hljs-number">0</span>].clientY * win.settings.highdpi
+    };
+    <span class="hljs-keyword">var</span> touches = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-keyword">this</span>, e.touches).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(touch)</span> </span>{
+      touch.x = touch.clientX * win.settings.highdpi;
+      touch.y = touch.clientY * win.settings.highdpi;
+      <span class="hljs-keyword">return</span> touch;
+    });
+    fireEvent(<span class="hljs-string">'leftMouseDown'</span>, {
+      x: e.touches[<span class="hljs-number">0</span>].clientX * win.settings.highdpi,
+      y: e.touches[<span class="hljs-number">0</span>].clientY * win.settings.highdpi,
+      option: <span class="hljs-literal">false</span>,
+      shift: <span class="hljs-literal">false</span>,
+      control: <span class="hljs-literal">false</span>,
+      touches: touches
+    });
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeTouchUpHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'touchend'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">var</span> touches = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-keyword">this</span>, e.touches).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(touch)</span> </span>{
+      touch.x = touch.clientX * win.settings.highdpi;
+      touch.y = touch.clientY * win.settings.highdpi;
+      <span class="hljs-keyword">return</span> touch;
+    });
+    fireEvent(<span class="hljs-string">'leftMouseUp'</span>, {
+      x: lastTouch ? lastTouch.clientX : <span class="hljs-number">0</span>,
+      y: lastTouch ? lastTouch.clientY : <span class="hljs-number">0</span>,
+      option: <span class="hljs-literal">false</span>,
+      shift: <span class="hljs-literal">false</span>,
+      control: <span class="hljs-literal">false</span>,
+      touches: touches
+    });
+    lastTouch = <span class="hljs-literal">null</span>;
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeTouchMoveHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  canvas.addEventListener(<span class="hljs-string">'touchmove'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    e.preventDefault();
+    lastTouch = {
+      clientX: e.touches[<span class="hljs-number">0</span>].clientX * win.settings.highdpi,
+      clientY: e.touches[<span class="hljs-number">0</span>].clientY * win.settings.highdpi
+    };
+    <span class="hljs-keyword">var</span> touches = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-keyword">this</span>, e.touches).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(touch)</span> </span>{
+      touch.x = touch.clientX * win.settings.highdpi;
+      touch.y = touch.clientY * win.settings.highdpi;
+      <span class="hljs-keyword">return</span> touch;
+    });
+    fireEvent(<span class="hljs-string">'mouseDragged'</span>, {
+      x: e.touches[<span class="hljs-number">0</span>].clientX * win.settings.highdpi,
+      y: e.touches[<span class="hljs-number">0</span>].clientY * win.settings.highdpi,
+      option: <span class="hljs-literal">false</span>,
+      shift: <span class="hljs-literal">false</span>,
+      control: <span class="hljs-literal">false</span>,
+      touches: touches
+    });
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeKeyDownHandler</span><span class="hljs-params">(canvas, win)</span> </span>{
+  <span class="hljs-keyword">var</span> timeout = <span class="hljs-number">0</span>;
+  <span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keydown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    timeout = setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      fireEvent(<span class="hljs-string">'keyDown'</span>, {
+        str: <span class="hljs-string">''</span>,
+        keyCode: e.keyCode,
+        option: e.altKey,
+        shift: e.shiftKey,
+        control: e.ctrlKey
+      }, <span class="hljs-number">1</span>);
+    });
+  });
+  <span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'keypress'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+    <span class="hljs-keyword">if</span> (timeout) {
+      clearTimeout(timeout);
+      timeout = <span class="hljs-number">0</span>;
+    }
+    fireEvent(<span class="hljs-string">'keyDown'</span>, {
+      str: <span class="hljs-built_in">String</span>.fromCharCode(e.charCode),
+      keyCode: e.keyCode,
+      option: e.altKey,
+      shift: e.shiftKey,
+      control: e.ctrlKey
+    });
+  });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">simpleWindow</span><span class="hljs-params">(obj)</span> </span>{
+  <span class="hljs-keyword">var</span> canvas = obj.settings.canvas;
+  <span class="hljs-keyword">if</span> (obj.settings.fullscreen) {
+    obj.settings.width = <span class="hljs-built_in">window</span>.innerWidth;
+    obj.settings.height = <span class="hljs-built_in">window</span>.innerHeight;
+  }
+  <span class="hljs-keyword">if</span> (!canvas) {
+    canvas = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'canvas'</span>);
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (obj.settings.width &amp;&amp; obj.settings.height) {
+    canvas.width = obj.settings.width;
+    canvas.height = obj.settings.height;
+  }
+  <span class="hljs-keyword">else</span> {
+    obj.settings.width = canvas.width;
+    obj.settings.height = canvas.height;
+  }
+  <span class="hljs-keyword">if</span> (!canvas) {
+    canvas = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'canvas'</span>);
+    canvas.width = obj.settings.width;
+    canvas.height = obj.settings.height;
+  }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">window</span>.devicePixelRatio == <span class="hljs-number">2</span>) {
+    <span class="hljs-keyword">if</span> (obj.settings.highdpi == <span class="hljs-number">2</span>) {
+      canvas.width = obj.settings.width * <span class="hljs-number">2</span>;
+      canvas.height = obj.settings.height * <span class="hljs-number">2</span>;
+      canvas.style.width = obj.settings.width + <span class="hljs-string">'px'</span>;
+      canvas.style.height = obj.settings.height + <span class="hljs-string">'px'</span>;
+      obj.settings.width = canvas.width;
+      obj.settings.height = canvas.height;
+    }
+  }
+  <span class="hljs-keyword">else</span> {
+    obj.settings.highdpi = <span class="hljs-number">1</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (obj.settings.multisample) {
+    canvas.msaaEnabled = <span class="hljs-literal">true</span>;
+    canvas.msaaSamples = <span class="hljs-number">2</span>;
+  }
+
+  obj.width = obj.settings.width;
+  obj.height = obj.settings.height;
+  obj.canvas = canvas;
+  canvas.style.backgroundColor = <span class="hljs-string">'#000000'</span>;
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">go</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">if</span> (obj.stencil === <span class="hljs-literal">undefined</span>)
+      obj.stencil = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">if</span> (obj.settings.fullscreen) {
+      <span class="hljs-built_in">document</span>.body.style.margin = <span class="hljs-string">'0'</span>;
+      <span class="hljs-built_in">document</span>.body.style.padding = <span class="hljs-string">'0'</span>;
+      <span class="hljs-built_in">document</span>.body.style.overflow = <span class="hljs-string">'hidden'</span>;
+    }
+    <span class="hljs-keyword">var</span> gl = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">var</span> ctx = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">if</span> (obj.settings.type == <span class="hljs-string">'3d'</span>) {
+      <span class="hljs-keyword">try</span> {
+        gl = canvas.getContext(<span class="hljs-string">'experimental-webgl'</span>, {
+          antialias: <span class="hljs-literal">true</span>,
+          stencil: obj.settings.stencil,
+          premultipliedAlpha : obj.settings.premultipliedAlpha,
+          preserveDrawingBuffer: obj.settings.preserveDrawingBuffer
+        });
+      }
+      <span class="hljs-keyword">catch</span> (err) {
+        Log.error(err.message);
+        <span class="hljs-keyword">return</span>;
+      }
+      <span class="hljs-keyword">if</span> (gl === <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'No WebGL context is available.'</span>;
+      }
+    }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (obj.settings.type == <span class="hljs-string">'2d'</span>) {
+      ctx = canvas.getContext(<span class="hljs-string">'2d'</span>);
+    }
+    obj.framerate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fps)</span> </span>{
+      requestAnimFrameFps = fps;
+    };
+    obj.on = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(eventType, handler)</span> </span>{
+      eventListeners.push({
+        eventType: eventType,
+        handler: handler
+      });
+    };
+    registerEvents(canvas, obj);
+    obj.dispose = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      obj.__disposed = <span class="hljs-literal">true</span>;
+    };
+    obj.gl = gl;
+    obj.ctx = ctx;
+    obj.init();
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawloop</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (!obj.__disposed) {
+        obj.draw();
+        requestAnimFrame(drawloop);
+      }
+    }
+    requestAnimFrame(drawloop);
+  }
+  <span class="hljs-keyword">if</span> (!canvas.parentNode) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>.body) {
+      <span class="hljs-built_in">document</span>.body.appendChild(canvas);
+      go();
+    }<span class="hljs-keyword">else</span> {
+      <span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'load'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-built_in">document</span>.body.appendChild(canvas);
+        go();
+      }, <span class="hljs-literal">false</span>);
+    }
+  }
+  <span class="hljs-keyword">else</span> {
+    go();
+  }
+  <span class="hljs-keyword">return</span> obj;
+}
+
+<span class="hljs-keyword">var</span> BrowserWindow = { simpleWindow: simpleWindow };
+
+<span class="hljs-built_in">module</span>.exports = BrowserWindow;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

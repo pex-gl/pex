@@ -1,0 +1,12 @@
+[
+  { "url": "http://variable.io", "thumb": "assets/rose.jpg" },
+  { "url": "http://variable.io/fibers/", "thumb": "assets/fibers.jpg" },
+  { "url": "http://variable.io/flora/", "thumb": "assets/flora.jpg" },
+  { "url": "http://variable.io/flora/", "thumb": "assets/instancae.jpg" },
+  { "url": "http://variable.io/digital-type-wall/", "thumb": "assets/monotype.jpg" },
+  { "url": "http://variable.io/festival-activity/", "thumb": "assets/roskilde.jpg" },
+  { "url": "http://variable.io/sea-transport-network/", "thumb": "assets/seatransport.jpg" },
+  { "url": "http://variable.io/tangent/", "thumb": "assets/tangent.jpg" },
+  { "url": "http://variable.io/threads/", "thumb": "assets/threads.jpg" },
+  { "url": "http://marcinignac.com/projects/geo-editor/", "thumb": "assets/geo-editor.png" }
+]

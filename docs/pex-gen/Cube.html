@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Cube.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Cube.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Cube geometry generator.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="parent-class-geometry-geometry-html-">Parent class : <a href="../Geometry.html">Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> cube = <span class="hljs-keyword">new</span> Cube(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>);
+ <span class="hljs-keyword">var</span> cubeMesh = <span class="hljs-keyword">new</span> Mesh(cube, <span class="hljs-keyword">new</span> Materials.TestMaterial());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="cube-sx-sy-sz-nx-ny-nz-">Cube ( sx, sy, sz, nx, ny, nz )</h3>
+<p><code>sx</code> - size x / width <em>{ Number }</em><br><code>sy</code> - size y / height <em>{ Number }</em><br><code>sz</code> - size z / depth <em>{ Number }</em><br><code>nx</code> - number of subdivisions on x axis <em>{ Number/Int }</em><br><code>ny</code> - number of subdivisions on y axis <em>{ Number/Int }</em><br><code>nz</code> - number of subdivisions on z axis <em>{ Number/Int }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Cube</span><span class="hljs-params">(sx, sy, sz, nx, ny, nz)</span> </span>{
+  sx = sx != <span class="hljs-literal">null</span> ? sx : <span class="hljs-number">1</span>;
+  sy = sy != <span class="hljs-literal">null</span> ? sy : sx != <span class="hljs-literal">null</span> ? sx : <span class="hljs-number">1</span>;
+  sz = sz != <span class="hljs-literal">null</span> ? sz : sx != <span class="hljs-literal">null</span> ? sx : <span class="hljs-number">1</span>;
+  nx = nx || <span class="hljs-number">1</span>;
+  ny = ny || <span class="hljs-number">1</span>;
+  nz = nz || <span class="hljs-number">1</span>;
+
+  Geometry.call(<span class="hljs-keyword">this</span>, { vertices: <span class="hljs-literal">true</span>, normals: <span class="hljs-literal">true</span>, texCoords: <span class="hljs-literal">true</span>, faces: <span class="hljs-literal">true</span> });
+
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+  <span class="hljs-keyword">var</span> texCoords = <span class="hljs-keyword">this</span>.texCoords;
+  <span class="hljs-keyword">var</span> normals = <span class="hljs-keyword">this</span>.normals;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+
+  <span class="hljs-keyword">var</span> vertexIndex = <span class="hljs-number">0</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>How faces are constructed:</p>
+<pre><code>0-----1 . . 2       n  &lt;----  n+1
+|   / .     .       |         A
+| /   .     .       V         |
+3 . . 4 . . 5      n+nu --&gt; n+nu+1
+.     .     .
+.     .     .
+6 . . 7 . . 8
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makePlane</span><span class="hljs-params">(u, v, w, su, sv, nu, nv, pw, flipu, flipv)</span> </span>{
+    <span class="hljs-keyword">var</span> vertShift = vertexIndex;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;=nv; j++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;=nu; i++) {
+        vert = vertices[vertexIndex] = Vec3.create();
+        vert[u] = (-su / <span class="hljs-number">2</span> + i * su / nu) * flipu;
+        vert[v] = (-sv / <span class="hljs-number">2</span> + j * sv / nv) * flipv;
+        vert[w] = pw;
+        normal = normals[vertexIndex] = Vec3.create();
+        normal[u] = <span class="hljs-number">0</span>;
+        normal[v] = <span class="hljs-number">0</span>;
+        normal[w] = pw / <span class="hljs-built_in">Math</span>.abs(pw);
+        texCoord = texCoords[vertexIndex] = Vec2.create();
+        texCoord.x = i / nu;
+        texCoord.y = <span class="hljs-number">1.0</span> - j / nv;
+        ++vertexIndex;
+      }
+    }
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j=<span class="hljs-number">0</span>; j&lt;=nv-<span class="hljs-number">1</span>; j++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;=nu-<span class="hljs-number">1</span>; i++) {
+        <span class="hljs-keyword">var</span> n = vertShift + j * (nu + <span class="hljs-number">1</span>) + i;
+        faces.push([n, n + nu + <span class="hljs-number">1</span>, n + nu + <span class="hljs-number">2</span>, n + <span class="hljs-number">1</span>]);
+      }
+    }
+  }
+
+  makePlane(<span class="hljs-string">'x'</span>, <span class="hljs-string">'y'</span>, <span class="hljs-string">'z'</span>, sx, sy, nx, ny, sz / <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>);
+  makePlane(<span class="hljs-string">'x'</span>, <span class="hljs-string">'y'</span>, <span class="hljs-string">'z'</span>, sx, sy, nx, ny, -sz / <span class="hljs-number">2</span>, -<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>);
+  makePlane(<span class="hljs-string">'z'</span>, <span class="hljs-string">'y'</span>, <span class="hljs-string">'x'</span>, sz, sy, nz, ny, -sx / <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>);
+  makePlane(<span class="hljs-string">'z'</span>, <span class="hljs-string">'y'</span>, <span class="hljs-string">'x'</span>, sz, sy, nz, ny, sx / <span class="hljs-number">2</span>, -<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>);
+  makePlane(<span class="hljs-string">'x'</span>, <span class="hljs-string">'z'</span>, <span class="hljs-string">'y'</span>, sx, sz, nx, nz, sy / <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+  makePlane(<span class="hljs-string">'x'</span>, <span class="hljs-string">'z'</span>, <span class="hljs-string">'y'</span>, sx, sz, nx, nz, -sy / <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>);
+
+  <span class="hljs-keyword">this</span>.computeEdges();
+}
+
+Cube.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);
+
+<span class="hljs-built_in">module</span>.exports = Cube;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

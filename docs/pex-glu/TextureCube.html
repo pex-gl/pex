@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>TextureCube.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>TextureCube.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> sys = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-sys'</span>);
+<span class="hljs-keyword">var</span> IO = sys.IO;
+<span class="hljs-keyword">var</span> Platform = sys.Platform;
+<span class="hljs-keyword">var</span> Context = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Context'</span>);
+<span class="hljs-keyword">var</span> Texture = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Texture'</span>);
+<span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h3 id="texturecube-">TextureCube ( )</h3>
+<p>Does nothing, use <em>load()</em> method instead.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">TextureCube</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>.gl = Context.currentContext;
+  Texture.call(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.gl.TEXTURE_CUBE_MAP);
+}
+
+TextureCube.prototype = <span class="hljs-built_in">Object</span>.create(Texture.prototype);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="load-src-">load ( src )</h3>
+<p>Load texture from file (in Plask) or url (in the web browser).</p>
+<p><code>src</code> - path to file or url (e.g. <em>path/file_####.jpg</em>) <em>{ String }</em></p>
+<p>Returns the loaded texture <em>{ Texture2D }</em></p>
+<p><em>Note</em> the path or url must contain #### that will be replaced by
+id (e.g. <em>posx</em>) of the cube side*</p>
+<p><em>Note: In Plask the texture is ready immediately, in the web browser it’s
+first black until the file is loaded and texture can be populated with the image data.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>TextureCube.load = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(files, options, callback)</span> </span>{
+  <span class="hljs-keyword">var</span> defaultOptions = {
+    mipmap: <span class="hljs-literal">false</span>,
+    nearest: <span class="hljs-literal">false</span>
+  };
+  options = merge(defaultOptions, options);
+
+  <span class="hljs-keyword">var</span> gl = Context.currentContext;
+  <span class="hljs-keyword">var</span> texture = <span class="hljs-keyword">new</span> TextureCube();
+  <span class="hljs-keyword">var</span> cubeMapTargets = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+  ];
+
+  <span class="hljs-keyword">var</span> minFilter = gl.LINEAR;
+  <span class="hljs-keyword">var</span> magFilter = gl.LINEAR;
+
+  <span class="hljs-keyword">if</span> (options.nearest) {
+    magFilter = gl.NEAREST;
+    minFilter = gl.NEAREST;
+  }
+
+  <span class="hljs-keyword">if</span> (options.mipmap || files.length &gt; <span class="hljs-number">6</span>) {
+    minFilter = gl.LINEAR_MIPMAP_LINEAR;
+  }
+
+  gl.bindTexture(texture.target, texture.handle);
+  gl.texParameteri(texture.target, gl.TEXTURE_MAG_FILTER, magFilter);
+  gl.texParameteri(texture.target, gl.TEXTURE_MIN_FILTER, minFilter);
+  gl.texParameteri(texture.target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(texture.target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  texture.ready = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">var</span> loadedImages = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; files.length; i++) {
+    IO.loadImageData(gl, texture.handle, texture.target, cubeMapTargets[i%<span class="hljs-number">6</span>], files[i], { flip: <span class="hljs-literal">false</span>, lod: <span class="hljs-built_in">Math</span>.floor(i/<span class="hljs-number">6</span>) }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(image)</span> </span>{
+      texture.width = image.width;
+      texture.height = image.height;
+      <span class="hljs-keyword">if</span> (++loadedImages == files.length) {
+        <span class="hljs-keyword">if</span> (options.mipmap) {
+          gl.bindTexture(texture.target, texture.handle);
+          gl.generateMipmap(texture.target);
+        }
+        texture.ready = <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">if</span> (callback) callback(texture);
+      }
+    });
+  }
+  <span class="hljs-keyword">return</span> texture;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="dispose-">dispose ( )</h3>
+<p>Frees the texture data.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>TextureCube.prototype.dispose = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.handle) {
+    <span class="hljs-keyword">this</span>.gl.deleteTexture(<span class="hljs-keyword">this</span>.handle);
+    <span class="hljs-keyword">this</span>.handle = <span class="hljs-literal">null</span>;
+  }
+};
+
+<span class="hljs-built_in">module</span>.exports = TextureCube;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
