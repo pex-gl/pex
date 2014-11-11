@@ -18,7 +18,7 @@
 <!--/header-->
 
 <!--projects-->
-<div id="projects">
+<div id="projects" class="section">
 <h1>Featured Projects</h1>
 <ul>
 {{#each projects}}
@@ -29,7 +29,8 @@
 <!--/projects-->
 
 <!--code-->
-<div id="code">
+<div id="code" class="section">
+  <div class="columns">
   <div class="col" style="flex:1; -webkit-flex:1">
     <h1>Installation</h1>
     <p>Pex is using <a href="http://nodejs.org">node.js</a> and npm</p><br/>
@@ -53,7 +54,8 @@ var Color = require('pex-color').Color;
 sys.Window.create({
   init: function() {
     var cube = new gen.Cube();
-    this.mesh = new glu.Mesh(cube, new materials.ShowNormals());
+    this.material = new materials.ShowNormals();
+    this.mesh = new glu.Mesh(cube, this.material);
 
     var aspectRatio = this.width / this.height;
     this.camera = new glu.PerspectiveCamera(60, aspectRatio);
@@ -72,10 +74,11 @@ sys.Window.create({
     <canvas id="cubeCanvas" width="300" height="300"></canvas>
   </div>
 </div>
+</div>
 <!--/code-->
 
 <!--start-->
-<div id="start">
+<div id="start" class="section">
 <h1>Getting Started</h1>
 <ul class="">
 <li><a href="https://github.com/vorg/pex#how-to-use">Basic Tutorial</a></li>
@@ -85,7 +88,7 @@ sys.Window.create({
 <!--/start-->
 
 <!--docs-->
-<div id="docs">
+<div id="docs" class="section">
 <h1>Packages Reference</h1>
 <ul class="packages">
 {{#each packages}}
@@ -101,12 +104,12 @@ sys.Window.create({
 <!--/docs-->
 
 <!--examples-->
-<div id="examples">
+<div id="examples" class="section">
 <h1>Examples</h1>
 
 {{#each examples}}
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/{{this}}">
     <img src="examples/{{this}}/thumb.jpg" width="300"/>
     <p>{{this}}</p>
   </a>
@@ -115,6 +118,15 @@ sys.Window.create({
 
 </div>
 <!--/examples-->
+
+<div id="contributors" class="section">
+<h1>Contributors</h1>
+<a href="http://github.com/vorg/">Marcin Ignac</a>,
+<a href="http://github.com/deanm/">Dean McNamee</a>,
+<a href="https://github.com/szymonkaliski">Szymon Kaliski</a>,
+<a href="http://github.com/nicknikolov/">Nick Nickolov</a>,
+<a href="http://github.com/dawidgorny/">Dawid Górny</a>
+</div>
 
 <div id="footer">
 <pre class="pex">
