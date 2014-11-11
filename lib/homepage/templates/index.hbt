@@ -106,7 +106,7 @@ sys.Window.create({
 
 {{#each examples}}
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/{{this}}">
     <img src="examples/{{this}}/thumb.jpg" width="300"/>
     <p>{{this}}</p>
   </a>
