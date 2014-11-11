@@ -127,11 +127,29 @@ a.disabled:hover {
 
 /*--------------------- code ----------------------------*/
 
-#code {
-  padding: 0 2em 2em 2em;
+.section {
+  padding: 0 2em 0 2em;
+  clear: both;
+  overflow: auto;
+}
+
+.section:after {
+  content: ' ';
+  display: block;
+  box-sizing: border-box;
+  clear: both;
+  padding-top: 2em;
   border-bottom: 0.2em solid #1abc9c;
-  display: flex; display: -webkit-flex;
+}
+
+/*--------------------- code ----------------------------*/
+
+#code {
   font-size: 90%;
+}
+
+#code .columns {
+  display: flex; display: -webkit-flex;
 }
 
 #code .col {
@@ -158,8 +176,6 @@ a.disabled:hover {
 /*--------------------- projects ----------------------------*/
 
 #projects {
-  padding: 0 2em 2em 2em;
-  border-bottom: 0.2em solid #1abc9c;
 }
 
 #projects ul {
@@ -193,15 +209,12 @@ a.disabled:hover {
 /*--------------------- start ----------------------------*/
 
 #start {
-  padding: 0 2em 2em 2em;
-  border-bottom: 0.2em solid #1abc9c;
+
 }
 
 /*--------------------- examples ----------------------------*/
 
 #examples {
-  padding-left: 2em;
-  padding-bottom: 2em;
   overflow: auto;
 }
 
@@ -236,12 +249,6 @@ a.disabled:hover {
 
 /*--------------------- docs ----------------------------*/
 
-#docs {
-  padding-left: 2em;
-  padding-bottom: 2em;
-  border-bottom: 0.2em solid #2980b9;
-}
-
 #docs .packages {
   column-width: 15em; -webkit-column-width: 15em; -moz-column-width: 15em;
   column-gap: 0; -webkit-column-gap: 0; -moz-column-gap: 0;
@@ -269,6 +276,14 @@ a.disabled:hover {
 #docs .ver {
   opacity: 0.5;
   font-size: 50% !important;
+}
+
+/*--------------------- contributors ----------------------------*/
+
+#contributors {
+  padding-left: 2em;
+  padding-bottom: 2em;
+  overflow: auto;
 }
 
 /*--------------------- footer ----------------------------*/
