@@ -119,6 +119,15 @@ sys.Window.create({
 </div>
 <!--/examples-->
 
+<div id="contributors" class="section">
+<h1>Contributors</h1>
+<a href="http://github.com/vorg/">Marcin Ignac</a>,
+<a href="http://github.com/deanm/">Dean McNamee</a>,
+<a href="https://github.com/szymonkaliski">Szymon Kaliski</a>,
+<a href="http://github.com/nicknikolov/">Nick Nickolov</a>,
+<a href="http://github.com/dawidgorny/">Dawid Górny</a>
+</div>
+
 <div id="footer">
 <pre class="pex">
 
