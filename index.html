@@ -18,7 +18,7 @@
 <!--/header-->
 
 <!--projects-->
-<div id="projects">
+<div id="projects" class="section">
 <h1>Featured Projects</h1>
 <ul>
 <li><div class="thumb" style="background-image:url(projects/assets/rose.jpg)"></div></li>
@@ -36,7 +36,8 @@
 <!--/projects-->
 
 <!--code-->
-<div id="code">
+<div id="code" class="section">
+  <div class="columns">
   <div class="col" style="flex:1; -webkit-flex:1">
     <h1>Installation</h1>
     <p>Pex is using <a href="http://nodejs.org">node.js</a> and npm</p><br/>
@@ -60,7 +61,8 @@ var Color = require('pex-color').Color;
 sys.Window.create({
   init: function() {
     var cube = new gen.Cube();
-    this.mesh = new glu.Mesh(cube, new materials.ShowNormals());
+    this.material = new materials.ShowNormals();
+    this.mesh = new glu.Mesh(cube, this.material);
 
     var aspectRatio = this.width / this.height;
     this.camera = new glu.PerspectiveCamera(60, aspectRatio);
@@ -79,10 +81,11 @@ sys.Window.create({
     <canvas id="cubeCanvas" width="300" height="300"></canvas>
   </div>
 </div>
+</div>
 <!--/code-->
 
 <!--start-->
-<div id="start">
+<div id="start" class="section">
 <h1>Getting Started</h1>
 <ul class="">
 <li><a href="https://github.com/vorg/pex#how-to-use">Basic Tutorial</a></li>
@@ -92,15 +95,15 @@ sys.Window.create({
 <!--/start-->
 
 <!--docs-->
-<div id="docs">
+<div id="docs" class="section">
 <h1>Packages Reference</h1>
 <ul class="packages">
 <li>
-  <h2>pex-color <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-color <a href="https://github.com/vorg/pex-color" class="ver">0.3.1</a></h2>
     <h4><a href="docs/pex-color/Color.html"  >Color</a></h4>
 </li>
 <li>
-  <h2>pex-fx <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-fx <a href="https://github.com/vorg/pex-fx.git" class="ver">0.0.5</a></h2>
     <h4><a href="docs/pex-fx/Add.html" class="disabled" >Add</a></h4>
     <h4><a href="docs/pex-fx/Blit.html" class="disabled" >Blit</a></h4>
     <h4><a href="docs/pex-fx/Blur.html" class="disabled" >Blur</a></h4>
@@ -120,7 +123,7 @@ sys.Window.create({
     <h4><a href="docs/pex-fx/TonemapReinhard.html" class="disabled" >TonemapReinhard</a></h4>
 </li>
 <li>
-  <h2>pex-gen <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-gen <a href="https://github.com/vorg/pex-gen.git" class="ver">0.0.4</a></h2>
     <h4><a href="docs/pex-gen/Box.html"  >Box</a></h4>
     <h4><a href="docs/pex-gen/Cube.html"  >Cube</a></h4>
     <h4><a href="docs/pex-gen/Cylinder.html" class="disabled" >Cylinder</a></h4>
@@ -136,7 +139,7 @@ sys.Window.create({
     <h4><a href="docs/pex-gen/Tetrahedron.html" class="disabled" >Tetrahedron</a></h4>
 </li>
 <li>
-  <h2>pex-geom <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-geom <a href="https://github.com/vorg/pex-geom.git" class="ver">0.7.1</a></h2>
     <h4><a href="docs/pex-geom/BoundingBox.html"  >BoundingBox</a></h4>
     <h4><a href="docs/pex-geom/Geometry.html"  >Geometry</a></h4>
     <h4><a href="docs/pex-geom/Mat4.html"  >Mat4</a></h4>
@@ -156,7 +159,7 @@ sys.Window.create({
     <h4><a href="docs/pex-geom/Vec4.html" class="disabled" >Vec4</a></h4>
 </li>
 <li>
-  <h2>pex-glu <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-glu <a href="https://github.com/vorg/pex-glu.git" class="ver">0.1.0</a></h2>
     <h4><a href="docs/pex-glu/Arcball.html" class="disabled" >Arcball</a></h4>
     <h4><a href="docs/pex-glu/Buffer.html" class="disabled" >Buffer</a></h4>
     <h4><a href="docs/pex-glu/Context.html" class="disabled" >Context</a></h4>
@@ -174,14 +177,14 @@ sys.Window.create({
     <h4><a href="docs/pex-glu/Utils.html" class="disabled" >Utils</a></h4>
 </li>
 <li>
-  <h2>pex-gui <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-gui <a href="https://github.com/vorg/pex-gui.git" class="ver">0.3.1</a></h2>
     <h4><a href="docs/pex-gui/GUI.html" class="disabled" >GUI</a></h4>
     <h4><a href="docs/pex-gui/GUIControl.html" class="disabled" >GUIControl</a></h4>
     <h4><a href="docs/pex-gui/HTMLCanvasRenderer.html" class="disabled" >HTMLCanvasRenderer</a></h4>
     <h4><a href="docs/pex-gui/SkiaRenderer.html" class="disabled" >SkiaRenderer</a></h4>
 </li>
 <li>
-  <h2>pex-helpers <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-helpers <a href="https://github.com/vorg/pex-helpers.git" class="ver">0.0.2</a></h2>
     <h4><a href="docs/pex-helpers/AxisHelper.html" class="disabled" >AxisHelper</a></h4>
     <h4><a href="docs/pex-helpers/EdgeHelper.html" class="disabled" >EdgeHelper</a></h4>
     <h4><a href="docs/pex-helpers/FaceHelper.html" class="disabled" >FaceHelper</a></h4>
@@ -190,7 +193,7 @@ sys.Window.create({
     <h4><a href="docs/pex-helpers/VertexNormalHelper.html" class="disabled" >VertexNormalHelper</a></h4>
 </li>
 <li>
-  <h2>pex-materials <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-materials <a href="https://github.com/vorg/pex-materials" class="ver">0.1.0</a></h2>
     <h4><a href="docs/pex-materials/BlinnPhong.html" class="disabled" >BlinnPhong</a></h4>
     <h4><a href="docs/pex-materials/Diffuse.html" class="disabled" >Diffuse</a></h4>
     <h4><a href="docs/pex-materials/FlatToonShading.html" class="disabled" >FlatToonShading</a></h4>
@@ -211,7 +214,7 @@ sys.Window.create({
     <h4><a href="docs/pex-materials/TexturedTriPlanar.html" class="disabled" >TexturedTriPlanar</a></h4>
 </li>
 <li>
-  <h2>pex-sys <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-sys <a href="https://github.com/vorg/pex-sys.git" class="ver">0.1.0</a></h2>
     <h4><a href="docs/pex-sys/BrowserWindow.html" class="disabled" >BrowserWindow</a></h4>
     <h4><a href="docs/pex-sys/IO.html" class="disabled" >IO</a></h4>
     <h4><a href="docs/pex-sys/Log.html" class="disabled" >Log</a></h4>
@@ -220,18 +223,18 @@ sys.Window.create({
     <h4><a href="docs/pex-sys/Window.html" class="disabled" >Window</a></h4>
 </li>
 <li>
-  <h2>pex-random <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-random <a href="https://github.com/vorg/pex-random" class="ver">0.2.1</a></h2>
     <h4><a href="docs/pex-random/Random.html" class="disabled" >Random</a></h4>
 </li>
 <li>
-  <h2>pex-space-colonization <a href="" class="ver">0.0.0</a></h2>
+  <h2>pex-space-colonization <a href="https://github.com/nicknikolov/pex-space-colonization" class="ver">1.0.1</a></h2>
 </li>
 </ul>
 </div>
 <!--/docs-->
 
 <!--examples-->
-<div id="examples">
+<div id="examples" class="section">
 <h1>Examples</h1>
 
 <div class="thumb">
@@ -241,271 +244,271 @@ sys.Window.create({
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/color.Color.spectrum">
     <img src="examples/color.Color.spectrum/thumb.jpg" width="300"/>
     <p>color.Color.spectrum</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/fx.SSAO">
     <img src="examples/fx.SSAO/thumb.jpg" width="300"/>
     <p>fx.SSAO</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.Cube">
     <img src="examples/gen.Cube/thumb.jpg" width="300"/>
     <p>gen.Cube</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.IsoSurface">
     <img src="examples/gen.IsoSurface/thumb.jpg" width="300"/>
     <p>gen.IsoSurface</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.LineBuilder">
     <img src="examples/gen.LineBuilder/thumb.jpg" width="300"/>
     <p>gen.LineBuilder</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.Loft">
     <img src="examples/gen.Loft/thumb.jpg" width="300"/>
     <p>gen.Loft</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.Primitives">
     <img src="examples/gen.Primitives/thumb.jpg" width="300"/>
     <p>gen.Primitives</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gen.Sphere">
     <img src="examples/gen.Sphere/thumb.jpg" width="300"/>
     <p>gen.Sphere</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry">
     <img src="examples/geom.Geometry/thumb.jpg" width="300"/>
     <p>geom.Geometry</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.catmullClark">
     <img src="examples/geom.Geometry.catmullClark/thumb.jpg" width="300"/>
     <p>geom.Geometry.catmullClark</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.dooSabin">
     <img src="examples/geom.Geometry.dooSabin/thumb.jpg" width="300"/>
     <p>geom.Geometry.dooSabin</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.extrude">
     <img src="examples/geom.Geometry.extrude/thumb.jpg" width="300"/>
     <p>geom.Geometry.extrude</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.generateSurfacePoints">
     <img src="examples/geom.Geometry.generateSurfacePoints/thumb.jpg" width="300"/>
     <p>geom.Geometry.generateSurfacePoints</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.generateVolumePoints">
     <img src="examples/geom.Geometry.generateVolumePoints/thumb.jpg" width="300"/>
     <p>geom.Geometry.generateVolumePoints</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.subdivideEdges">
     <img src="examples/geom.Geometry.subdivideEdges/thumb.jpg" width="300"/>
     <p>geom.Geometry.subdivideEdges</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.triangulate">
     <img src="examples/geom.Geometry.triangulate/thumb.jpg" width="300"/>
     <p>geom.Geometry.triangulate</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Geometry.wire">
     <img src="examples/geom.Geometry.wire/thumb.jpg" width="300"/>
     <p>geom.Geometry.wire</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Octree">
     <img src="examples/geom.Octree/thumb.jpg" width="300"/>
     <p>geom.Octree</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Path">
     <img src="examples/geom.Path/thumb.jpg" width="300"/>
     <p>geom.Path</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Path.getClosestPoint">
     <img src="examples/geom.Path.getClosestPoint/thumb.jpg" width="300"/>
     <p>geom.Path.getClosestPoint</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Quat.fromDirection">
     <img src="examples/geom.Quat.fromDirection/thumb.jpg" width="300"/>
     <p>geom.Quat.fromDirection</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/geom.Ray.hitTestTriangle">
     <img src="examples/geom.Ray.hitTestTriangle/thumb.jpg" width="300"/>
     <p>geom.Ray.hitTestTriangle</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Arcball">
     <img src="examples/glu.Arcball/thumb.jpg" width="300"/>
     <p>glu.Arcball</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Arcball.pannning">
     <img src="examples/glu.Arcball.pannning/thumb.jpg" width="300"/>
     <p>glu.Arcball.pannning</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Mesh.drawInstances">
     <img src="examples/glu.Mesh.drawInstances/thumb.jpg" width="300"/>
     <p>glu.Mesh.drawInstances</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Mesh.position">
     <img src="examples/glu.Mesh.position/thumb.jpg" width="300"/>
     <p>glu.Mesh.position</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Mesh.primitiveTypes">
     <img src="examples/glu.Mesh.primitiveTypes/thumb.jpg" width="300"/>
     <p>glu.Mesh.primitiveTypes</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.RenderTarget">
     <img src="examples/glu.RenderTarget/thumb.jpg" width="300"/>
     <p>glu.RenderTarget</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.RenderTarget.customTextures">
     <img src="examples/glu.RenderTarget.customTextures/thumb.jpg" width="300"/>
     <p>glu.RenderTarget.customTextures</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.RenderTarget.multipleRenderTargets">
     <img src="examples/glu.RenderTarget.multipleRenderTargets/thumb.jpg" width="300"/>
     <p>glu.RenderTarget.multipleRenderTargets</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Texture2D.genNoise">
     <img src="examples/glu.Texture2D.genNoise/thumb.jpg" width="300"/>
     <p>glu.Texture2D.genNoise</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.Texture2D.lod">
     <img src="examples/glu.Texture2D.lod/thumb.jpg" width="300"/>
     <p>glu.Texture2D.lod</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.TextureCube">
     <img src="examples/glu.TextureCube/thumb.jpg" width="300"/>
     <p>glu.TextureCube</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.TextureCube.lod">
     <img src="examples/glu.TextureCube.lod/thumb.jpg" width="300"/>
     <p>glu.TextureCube.lod</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/glu.TextureCube.mipmap">
     <img src="examples/glu.TextureCube.mipmap/thumb.jpg" width="300"/>
     <p>glu.TextureCube.mipmap</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gui.GUI">
     <img src="examples/gui.GUI/thumb.jpg" width="300"/>
     <p>gui.GUI</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gui.GUI.colorPalette">
     <img src="examples/gui.GUI.colorPalette/thumb.jpg" width="300"/>
     <p>gui.GUI.colorPalette</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/gui.GUI.textureList">
     <img src="examples/gui.GUI.textureList/thumb.jpg" width="300"/>
     <p>gui.GUI.textureList</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/helpers.All">
     <img src="examples/helpers.All/thumb.jpg" width="300"/>
     <p>helpers.All</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/materials.All">
     <img src="examples/materials.All/thumb.jpg" width="300"/>
     <p>materials.All</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/materials.All.spaceTransformations">
     <img src="examples/materials.All.spaceTransformations/thumb.jpg" width="300"/>
     <p>materials.All.spaceTransformations</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/materials.Textured">
     <img src="examples/materials.Textured/thumb.jpg" width="300"/>
     <p>materials.Textured</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/materials.TexturedCubeMap">
     <img src="examples/materials.TexturedCubeMap/thumb.jpg" width="300"/>
     <p>materials.TexturedCubeMap</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/materials.TexturedEnvMap">
     <img src="examples/materials.TexturedEnvMap/thumb.jpg" width="300"/>
     <p>materials.TexturedEnvMap</p>
   </a>
 </div>
 <div class="thumb">
-  <a href="examples/color.Color.lerp">
+  <a href="examples/random.noise3">
     <img src="examples/random.noise3/thumb.jpg" width="300"/>
     <p>random.noise3</p>
   </a>
@@ -513,6 +516,15 @@ sys.Window.create({
 
 </div>
 <!--/examples-->
+
+<div id="contributors" class="section">
+<h1>Contributors</h1>
+<a href="http://github.com/vorg/">Marcin Ignac</a>,
+<a href="http://github.com/deanm/">Dean McNamee</a>,
+<a href="https://github.com/szymonkaliski">Szymon Kaliski</a>,
+<a href="http://github.com/nicknikolov/">Nick Nickolov</a>,
+<a href="http://github.com/dawidgorny/">Dawid Górny</a>
+</div>
 
 <div id="footer">
 <pre class="pex">
