@@ -27,12 +27,10 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Dodecahedron geometry generator.
+Based on <a href="http://paulbourke.net/geometry/platonic/">http://paulbourke.net/geometry/platonic/</a></p>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
-<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
-<span class="hljs-keyword">var</span> Geometry = geom.Geometry;</pre></div></div>
             
         </li>
         
@@ -43,8 +41,41 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Dodecahedron
-Based on <a href="http://paulbourke.net/geometry/platonic/">http://paulbourke.net/geometry/platonic/</a></p>
+              <h2 id="parent-class-geom-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">geom.Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Dodecahedron(<span class="hljs-number">0.5</span>);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(g, <span class="hljs-keyword">new</span> materials.SolidColor());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="dodecahedron-r-">Dodecahedron ( r )</h3>
+<p><code>r</code> - radius <em>{ Number = 0.5 }</em>  </p>
 
             </div>
             

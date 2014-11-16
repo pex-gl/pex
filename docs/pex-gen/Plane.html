@@ -40,7 +40,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="parent-class-geometry-core-geometry-html-">Parent class : <a href="../core/Geometry.html">Geometry</a></h2>
+              <h2 id="parent-class-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">Geometry</a></h2>
 
             </div>
             
@@ -54,8 +54,8 @@
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <h2 id="example-use">Example use</h2>
-<pre><code> <span class="hljs-keyword">var</span> plane = <span class="hljs-keyword">new</span> Plane(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-string">'x'</span>, <span class="hljs-string">'y'</span>);
- <span class="hljs-keyword">var</span> planeMesh = <span class="hljs-keyword">new</span> Mesh(plane, <span class="hljs-keyword">new</span> Materials.TestMaterial());
+<pre><code> <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Plane(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">10</span>, <span class="hljs-number">10</span>, <span class="hljs-string">'x'</span>, <span class="hljs-string">'y'</span>);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(g, <span class="hljs-keyword">new</span> Materials.SolidColor());
 </code></pre>
             </div>
             
@@ -74,10 +74,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="reference">Reference</h2>
-<h3 id="plane-sx-sy-nx-ny-u-v-">Plane ( sx, sy, nx, ny, u, v)</h3>
-<p><code>su</code> - size u / width <em>{ Number }</em><br><code>sv</code> - size v / height <em>{ Number }</em><br><code>nu</code> - number of subdivisions on u axis <em>{ Number/Int }</em><br><code>nv</code> - number of subdivisions on v axis <em>{ Number/Int }</em><br><code>u</code> - first axis <em>{ String }</em> = “x”
-<code>v</code> - second axis <em>{ Number/Int }</em> = “y”</p>
+              <h3 id="plane-sx-sy-nx-ny-u-v-">Plane ( sx, sy, nx, ny, u, v)</h3>
+<p><code>su</code> - size u / width <em>{ Number = 1 }</em><br><code>sv</code> - size v / height <em>{ Number = 1 }</em><br><code>nu</code> - number of subdivisions on u axis <em>{ Number/Int = 1 }</em><br><code>nv</code> - number of subdivisions on v axis <em>{ Number/Int = 1 }</em><br><code>u</code> - first axis <em>{ String = “x” }</em>
+<code>v</code> - second axis <em>{ String = “y” }</em></p>
 
             </div>
             

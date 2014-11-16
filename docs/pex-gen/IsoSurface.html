@@ -27,23 +27,182 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Marching Cubes implementation</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="parent-class-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> spheres = <span class="hljs-keyword">this</span>.spheres = [
+   { position: <span class="hljs-keyword">new</span> Vec3(-<span class="hljs-number">0.2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), radius: <span class="hljs-number">0.2</span>, force: <span class="hljs-number">1.0</span> },
+   { position: <span class="hljs-keyword">new</span> Vec3( <span class="hljs-number">0.3</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), radius: <span class="hljs-number">0.25</span>, force: <span class="hljs-number">1.0</span> },
+   { position: <span class="hljs-keyword">new</span> Vec3( <span class="hljs-number">0.3</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0</span>), radius: <span class="hljs-number">0.3</span>, force: <span class="hljs-number">1.0</span> },
+   { position: <span class="hljs-keyword">new</span> Vec3( <span class="hljs-number">0.0</span>, -<span class="hljs-number">0.5</span>, <span class="hljs-number">0</span>), radius: <span class="hljs-number">0.4</span>, force: <span class="hljs-number">1.0</span> }
+ ];
+
+ <span class="hljs-keyword">var</span> isoSurface = <span class="hljs-keyword">new</span> IsoSurface(<span class="hljs-number">16</span>, <span class="hljs-number">1</span>);
+ isoSurface.update(spheres);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(isoSurface, <span class="hljs-keyword">new</span> materials.ShowColors());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
 <span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
 <span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
-<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="isosurface-numofgridpts-size-">IsoSurface ( numOfGridPts, size )</h3>
+<p><code>numOfGridPts</code> - number of grid pooints <em>{ Number/Int = 16 }</em><br><code>size</code> - grid bounding box size <em>{ Number = 1 }</em>  </p>
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">IsoSurface</span><span class="hljs-params">(gridres, size)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">IsoSurface</span><span class="hljs-params">(numOfGridPts, size)</span> </span>{
   size = size || <span class="hljs-number">1</span>;
-  <span class="hljs-keyword">this</span>.numOfGridPts = gridres;
+  <span class="hljs-keyword">this</span>.numOfGridPts = numOfGridPts || <span class="hljs-number">16</span>;
 
   <span class="hljs-keyword">this</span>.tresholdValue = <span class="hljs-number">1</span>;
 
   <span class="hljs-keyword">this</span>.makeGrid(size);
+
+  Geometry.call(<span class="hljs-keyword">this</span>, { vertices: <span class="hljs-literal">true</span>, normals: <span class="hljs-literal">true</span>, texCoords: <span class="hljs-literal">true</span>, faces: <span class="hljs-literal">true</span> });
 }
 
+IsoSurface.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="update-spheres-">update ( spheres )</h3>
+<p><code>spheres</code> - array of scalar field values  <em>{ Array of { position: Vec3, radius: Number, force: Number } }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>IsoSurface.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(spheres)</span> </span>{
+  <span class="hljs-keyword">var</span> grid = <span class="hljs-keyword">this</span>.grid;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts; x++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts; y++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts; z++) {
+        grid[x][y][z].value = <span class="hljs-keyword">this</span>.findValue(grid[x][y][z].position, spheres);
+      }
+    }
+  }
+
+  <span class="hljs-keyword">for</span> (x=<span class="hljs-number">1</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; x++) {
+    <span class="hljs-keyword">for</span> (y=<span class="hljs-number">1</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; y++) {
+      <span class="hljs-keyword">for</span> (z=<span class="hljs-number">1</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; z++) {
+        grid[x][y][z].normal.x = grid[x-<span class="hljs-number">1</span>][y][z].value - grid[x+<span class="hljs-number">1</span>][y][z].value;
+        grid[x][y][z].normal.y = grid[x][y-<span class="hljs-number">1</span>][z].value - grid[x][y+<span class="hljs-number">1</span>][z].value;
+        grid[x][y][z].normal.z = grid[x][y][z-<span class="hljs-number">1</span>].value - grid[x][y][z+<span class="hljs-number">1</span>].value;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>grid[x][y][z].normal.normalize();</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      }
+    }
+  }
+
+  <span class="hljs-keyword">for</span> (x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts; x++) {
+    <span class="hljs-keyword">var</span> nx = x;
+    <span class="hljs-keyword">if</span> (x == <span class="hljs-number">0</span>) nx += <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (x == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) nx -= <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span> (y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts; y++) {
+      <span class="hljs-keyword">var</span> ny = y;
+      <span class="hljs-keyword">if</span> (y == <span class="hljs-number">0</span>) ny += <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (y == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) ny -= <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">for</span> (z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts; z++) {
+        <span class="hljs-keyword">var</span> nz = z;
+        <span class="hljs-keyword">if</span> (z == <span class="hljs-number">0</span>) nz += <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (z == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) nz -= <span class="hljs-number">1</span>;
+        grid[x][y][z].normal.x = grid[nx][ny][nz].normal.x;
+        grid[x][y][z].normal.y = grid[nx][ny][nz].normal.y;
+        grid[x][y][z].normal.z = grid[nx][ny][nz].normal.z;
+      }
+    }
+  }
+
+
+
+  <span class="hljs-keyword">this</span>.vertices.length = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.normals.length = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.texCoords.length = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.faces.length = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">this</span>.vertices.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.normals.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.texCoords.dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.faces.dirty = <span class="hljs-literal">true</span>;
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; x++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; y++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; z++) {
+        <span class="hljs-keyword">this</span>.marchCube(x,y,z);
+      }
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="internal-methods">Internal methods</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
 IsoSurface.prototype.makeGrid = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(size)</span> </span>{
   <span class="hljs-keyword">var</span> numOfPts2 = <span class="hljs-number">2</span>/(<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>);
 
@@ -82,84 +241,6 @@ IsoSurface.prototype.makeGrid = <span class="hljs-function"><span class="hljs-ke
   }
 }
 
-IsoSurface.prototype.update = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(spheres)</span> </span>{
-  <span class="hljs-keyword">var</span> grid = <span class="hljs-keyword">this</span>.grid;
-
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts; x++) {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts; y++) {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts; z++) {
-        grid[x][y][z].value = <span class="hljs-keyword">this</span>.findValue(grid[x][y][z].position, spheres);
-      }
-    }
-  }
-
-  <span class="hljs-keyword">for</span> (x=<span class="hljs-number">1</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; x++) {
-    <span class="hljs-keyword">for</span> (y=<span class="hljs-number">1</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; y++) {
-      <span class="hljs-keyword">for</span> (z=<span class="hljs-number">1</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; z++) {
-        grid[x][y][z].normal.x = grid[x-<span class="hljs-number">1</span>][y][z].value - grid[x+<span class="hljs-number">1</span>][y][z].value;
-        grid[x][y][z].normal.y = grid[x][y-<span class="hljs-number">1</span>][z].value - grid[x][y+<span class="hljs-number">1</span>][z].value;
-        grid[x][y][z].normal.z = grid[x][y][z-<span class="hljs-number">1</span>].value - grid[x][y][z+<span class="hljs-number">1</span>].value;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>grid[x][y][z].normal.normalize();</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      }
-    }
-  }
-
-  <span class="hljs-keyword">for</span> (x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts; x++) {
-    <span class="hljs-keyword">var</span> nx = x;
-    <span class="hljs-keyword">if</span> (x == <span class="hljs-number">0</span>) nx += <span class="hljs-number">1</span>;
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (x == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) nx -= <span class="hljs-number">1</span>;
-    <span class="hljs-keyword">for</span> (y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts; y++) {
-      <span class="hljs-keyword">var</span> ny = y;
-      <span class="hljs-keyword">if</span> (y == <span class="hljs-number">0</span>) ny += <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (y == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) ny -= <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">for</span> (z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts; z++) {
-        <span class="hljs-keyword">var</span> nz = z;
-        <span class="hljs-keyword">if</span> (z == <span class="hljs-number">0</span>) nz += <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (z == <span class="hljs-keyword">this</span>.numOfGridPts - <span class="hljs-number">1</span>) nz -= <span class="hljs-number">1</span>;
-        grid[x][y][z].normal.x = grid[nx][ny][nz].normal.x;
-        grid[x][y][z].normal.y = grid[nx][ny][nz].normal.y;
-        grid[x][y][z].normal.z = grid[nx][ny][nz].normal.z;
-      }
-    }
-  }
-
-
-  <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.geom) {
-    <span class="hljs-keyword">this</span>.geom = <span class="hljs-keyword">new</span> Geometry({vertices: <span class="hljs-literal">true</span>, normals: <span class="hljs-literal">true</span>, texCoords: <span class="hljs-literal">true</span>, faces: <span class="hljs-literal">true</span>});
-  }
-  <span class="hljs-keyword">else</span> {
-    <span class="hljs-keyword">this</span>.geom.vertices.length = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.geom.normals.length = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.geom.texCoords.length = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.geom.faces.length = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.geom.vertices.dirty = <span class="hljs-literal">true</span>;
-    <span class="hljs-keyword">this</span>.geom.normals.dirty = <span class="hljs-literal">true</span>;
-    <span class="hljs-keyword">this</span>.geom.texCoords.dirty = <span class="hljs-literal">true</span>;
-    <span class="hljs-keyword">this</span>.geom.faces.dirty = <span class="hljs-literal">true</span>;
-  }
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x=<span class="hljs-number">0</span>; x&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; x++) {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y=<span class="hljs-number">0</span>; y&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; y++) {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> z=<span class="hljs-number">0</span>; z&lt;<span class="hljs-keyword">this</span>.numOfGridPts-<span class="hljs-number">1</span>; z++) {
-        <span class="hljs-keyword">this</span>.marchCube(x,y,z);
-      }
-    }
-  }
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.geom;
-};
-
 IsoSurface.prototype.marchCube = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(iX, iY, iZ)</span> </span>{
   <span class="hljs-keyword">var</span> cubeindex = <span class="hljs-number">0</span>;
   <span class="hljs-keyword">var</span> edgeFlags;
@@ -196,16 +277,16 @@ IsoSurface.prototype.marchCube = <span class="hljs-function"><span class="hljs-k
   <span class="hljs-keyword">if</span> (edgeFlags &amp; <span class="hljs-number">1024</span>)   <span class="hljs-keyword">this</span>.interpolate(cube.vert[<span class="hljs-number">2</span>], cube.vert[<span class="hljs-number">6</span>], EdgeVertex[<span class="hljs-number">10</span>]);
   <span class="hljs-keyword">if</span> (edgeFlags &amp; <span class="hljs-number">2048</span>)   <span class="hljs-keyword">this</span>.interpolate(cube.vert[<span class="hljs-number">3</span>], cube.vert[<span class="hljs-number">7</span>], EdgeVertex[<span class="hljs-number">11</span>]);
 
-  <span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>.geom.vertices.length;</pre></div></div>
+  <span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>.vertices.length;</pre></div></div>
             
         </li>
         
         
-        <li id="section-3">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>rysujemy trojkaty, moze ich byc max 5</p>
 
@@ -221,12 +302,12 @@ IsoSurface.prototype.marchCube = <span class="hljs-function"><span class="hljs-k
 
     <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> v=<span class="hljs-number">0</span>;v&lt;<span class="hljs-number">3</span>;v++) {
       d2 = EdgeVertex[TriangleConnectionTable[cubeindex][<span class="hljs-number">3</span>*tri+v]];
-      <span class="hljs-keyword">this</span>.geom.vertices.push(d2.position);
-      <span class="hljs-keyword">this</span>.geom.normals.push(d2.normal);
-      <span class="hljs-keyword">this</span>.geom.texCoords.push(<span class="hljs-keyword">new</span> Vec2(d2.normal.x*<span class="hljs-number">0.5</span>+<span class="hljs-number">0.5</span>, d2.normal.y*<span class="hljs-number">0.5</span>+<span class="hljs-number">0.5</span>));
+      <span class="hljs-keyword">this</span>.vertices.push(d2.position);
+      <span class="hljs-keyword">this</span>.normals.push(d2.normal);
+      <span class="hljs-keyword">this</span>.texCoords.push(<span class="hljs-keyword">new</span> Vec2(d2.normal.x*<span class="hljs-number">0.5</span>+<span class="hljs-number">0.5</span>, d2.normal.y*<span class="hljs-number">0.5</span>+<span class="hljs-number">0.5</span>));
     }
 
-    <span class="hljs-keyword">this</span>.geom.faces.push([i++, i++, i++]);
+    <span class="hljs-keyword">this</span>.faces.push([i++, i++, i++]);
   }
 }
 

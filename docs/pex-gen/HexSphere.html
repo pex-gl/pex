@@ -27,44 +27,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>HexSphere geometry generator.</p>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
-<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
-<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
-<span class="hljs-keyword">var</span> Icosahedron = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Icosahedron'</span>);
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span><span class="hljs-params">(edge)</span> </span>{
-  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot + <span class="hljs-number">1</span>) % edge.face.length]
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">prev</span><span class="hljs-params">(edge)</span> </span>{
-  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot - <span class="hljs-number">1</span> + edge.face.length) % edge.face.length]
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">vertexEdgeLoop</span><span class="hljs-params">(edge, cb)</span> </span>{
-  <span class="hljs-keyword">var</span> curr = edge;
-
-  <span class="hljs-keyword">do</span> {
-    cb(curr);
-    curr = prev(curr).opposite;
-  }
-  <span class="hljs-keyword">while</span>(curr != edge);
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">centroid</span><span class="hljs-params">(points)</span> </span>{
-  <span class="hljs-keyword">var</span> n = points.length;
-  <span class="hljs-keyword">var</span> center = points.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(center, p)</span> </span>{
-    <span class="hljs-keyword">return</span> center.add(p);
-  }, <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
-  center.scale(<span class="hljs-number">1</span> / points.length);
-  <span class="hljs-keyword">return</span> center;
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">elements</span><span class="hljs-params">(list, indices)</span> </span>{
-  <span class="hljs-keyword">return</span> indices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{ <span class="hljs-keyword">return</span> list[i]; })
-}</pre></div></div>
             
         </li>
         
@@ -75,7 +40,42 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>HexSphere</p>
+              <h2 id="parent-class-geom-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">geom.Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> HexSphere(<span class="hljs-number">0.5</span>);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(g, <span class="hljs-keyword">new</span> materials.SolidColor());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
+<span class="hljs-keyword">var</span> Icosahedron = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Icosahedron'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="hexsphere-r-level-">HexSphere ( r, level )</h3>
+<p><code>r</code> - radius <em>{ Number = 0.5 }</em><br><code>level</code> - number of subdivisions <em>{ Number/Int = 1 }</em>  </p>
 
             </div>
             
@@ -105,11 +105,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>collect center points of neighbor faces</p>
 
@@ -142,6 +142,51 @@
 HexSphere.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);
 
 <span class="hljs-built_in">module</span>.exports = HexSphere;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="utility-functions">Utility functions</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span><span class="hljs-params">(edge)</span> </span>{
+  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot + <span class="hljs-number">1</span>) % edge.face.length]
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">prev</span><span class="hljs-params">(edge)</span> </span>{
+  <span class="hljs-keyword">return</span> edge.face.halfEdges[(edge.slot - <span class="hljs-number">1</span> + edge.face.length) % edge.face.length]
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">vertexEdgeLoop</span><span class="hljs-params">(edge, cb)</span> </span>{
+  <span class="hljs-keyword">var</span> curr = edge;
+
+  <span class="hljs-keyword">do</span> {
+    cb(curr);
+    curr = prev(curr).opposite;
+  }
+  <span class="hljs-keyword">while</span>(curr != edge);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">centroid</span><span class="hljs-params">(points)</span> </span>{
+  <span class="hljs-keyword">var</span> n = points.length;
+  <span class="hljs-keyword">var</span> center = points.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(center, p)</span> </span>{
+    <span class="hljs-keyword">return</span> center.add(p);
+  }, <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+  center.scale(<span class="hljs-number">1</span> / points.length);
+  <span class="hljs-keyword">return</span> center;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">elements</span><span class="hljs-params">(list, indices)</span> </span>{
+  <span class="hljs-keyword">return</span> indices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{ <span class="hljs-keyword">return</span> list[i]; })
+}</pre></div></div>
             
         </li>
         

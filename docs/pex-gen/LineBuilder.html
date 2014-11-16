@@ -27,10 +27,48 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Line based geometry generator useful for debugging.</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="parent-class-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+ <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+ <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+ <span class="hljs-keyword">var</span> d = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+
+ <span class="hljs-keyword">var</span> lineBuilder = <span class="hljs-keyword">new</span> LineBuilder();
+ lineBuilder.addLine(a, b, Color.Red);
+ lineBuilder.addLine(a, c, Color.Green);
+ lineBuilder.addLine(a, d, Color.Blue);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(lineBuilder, <span class="hljs-keyword">new</span> materials.ShowColors());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
 <span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
 <span class="hljs-keyword">var</span> Geometry = geom.Geometry;
 
@@ -38,9 +76,23 @@
   Geometry.call(<span class="hljs-keyword">this</span>, { vertices: <span class="hljs-literal">true</span>, colors: <span class="hljs-literal">true</span> })
 }
 
-LineBuilder.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);
+LineBuilder.prototype = <span class="hljs-built_in">Object</span>.create(Geometry.prototype);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="addline-a-b-colora-colorb-">addLine ( a, b, colorA, colorB )</h3>
+<p>Draws line between points a and b<br><code>a</code> -  <em>{ Vec3 = required }</em><br><code>b</code> -  <em>{ Vec3 = required }</em><br><code>colorA</code> - start color of the line <em>{ Color = White }</em><br><code>colorB</code> - end color of the line <em>{ Color = White }</em>  </p>
 
-LineBuilder.prototype.addLine = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b, colorA, colorB)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>LineBuilder.prototype.addLine = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b, colorA, colorB)</span> </span>{
   colorA = colorA || { r: <span class="hljs-number">1</span>, g: <span class="hljs-number">1</span>, b: <span class="hljs-number">1</span>, a: <span class="hljs-number">1</span> };
   colorB = colorB || colorA;
   <span class="hljs-keyword">this</span>.vertices.push(Vec3.create().copy(a));
@@ -50,11 +102,26 @@ LineBuilder.prototype.addLine = <span class="hljs-function"><span class="hljs-ke
   <span class="hljs-keyword">this</span>.vertices.dirty = <span class="hljs-literal">true</span>;
   <span class="hljs-keyword">this</span>.colors.dirty = <span class="hljs-literal">true</span>;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="addpath-path-color-numsamples-showpoints-">addPath ( path, color, numSamples, showPoints )</h3>
+<p>Draws path as a sequence of line segments<br><code>path</code> - path to draw <em>{ Path/Spline = required }</em><br><code>color</code> - line color <em>{ Color = White }</em><br><code>numSamples</code> - line sampling resolution <em>{ Number/Int = num line points }</em><br><code>showPoints</code> - render little crosses representing points <em>{ bool = false }</em>  </p>
 
-LineBuilder.prototype.addPath = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(path, color, numSamples, showPoints)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>LineBuilder.prototype.addPath = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(path, color, numSamples, showPoints)</span> </span>{
   numSamples = numSamples || path.points.length;
   color = color || { r: <span class="hljs-number">1</span>, g: <span class="hljs-number">1</span>, b: <span class="hljs-number">1</span>, a: <span class="hljs-number">1</span> };
+  showPoints = showPoints || <span class="hljs-literal">false</span>;
 
   <span class="hljs-keyword">var</span> prevPoint = path.getPointAt(<span class="hljs-number">0</span>);
   <span class="hljs-keyword">if</span> (showPoints) <span class="hljs-keyword">this</span>.addCross(prevPoint, <span class="hljs-number">0.1</span>, color);
@@ -73,9 +140,24 @@ LineBuilder.prototype.addPath = <span class="hljs-function"><span class="hljs-ke
   <span class="hljs-keyword">this</span>.vertices.dirty = <span class="hljs-literal">true</span>;
   <span class="hljs-keyword">this</span>.colors.dirty = <span class="hljs-literal">true</span>;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="addcross-pos-size-color-">addCross ( pos, size, color )</h3>
+<p>Draws cross at the given point
+<code>pos</code> - cross center <em>{ Vec3 = required }</em><br><code>size</code> - cross size <em>{ Number = 0.1 }</em><br><code>color</code> - cross color <em>{ Color = White }</em>  </p>
 
-LineBuilder.prototype.addCross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pos, size, color)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>LineBuilder.prototype.addCross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(pos, size, color)</span> </span>{
   size = size || <span class="hljs-number">0.1</span>;
   <span class="hljs-keyword">var</span> halfSize = size / <span class="hljs-number">2</span>;
   color = color || { r: <span class="hljs-number">1</span>, g: <span class="hljs-number">1</span>, b: <span class="hljs-number">1</span>, a: <span class="hljs-number">1</span> };

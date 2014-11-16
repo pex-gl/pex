@@ -27,10 +27,79 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Loft geometry generator.<br>Extruded 2d shape along a 3d curve.  </p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="parent-class-geom-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">geom.Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> spline = <span class="hljs-keyword">new</span> geom.Spline3D([
+   { x: -<span class="hljs-number">1.0</span>, y: <span class="hljs-number">0.0</span>, z: <span class="hljs-number">0.0</span> },
+   { x:  <span class="hljs-number">0.0</span>, y: <span class="hljs-number">0.5</span>, z: <span class="hljs-number">0.0</span> },
+   { x:  <span class="hljs-number">1.0</span>, y: <span class="hljs-number">0.0</span>, z: <span class="hljs-number">0.0</span> },
+ ]);
+
+ <span class="hljs-keyword">var</span> shapePath = <span class="hljs-keyword">new</span> geom.Path([
+   <span class="hljs-keyword">new</span> Vec3(-<span class="hljs-number">0.1</span>, -<span class="hljs-number">0.4</span>, <span class="hljs-number">0</span>),
+   <span class="hljs-keyword">new</span> Vec3( <span class="hljs-number">0.1</span>, -<span class="hljs-number">0.4</span>, <span class="hljs-number">0</span>),
+   <span class="hljs-keyword">new</span> Vec3( <span class="hljs-number">0.1</span>,  <span class="hljs-number">0.4</span>, <span class="hljs-number">0</span>),
+   <span class="hljs-keyword">new</span> Vec3(-<span class="hljs-number">0.1</span>,  <span class="hljs-number">0.4</span>, <span class="hljs-number">0</span>)
+ ]);
+
+ <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Loft(spline1, {
+   shapePath: shapePath,
+   caps: <span class="hljs-literal">true</span>,
+   numSteps: <span class="hljs-number">10</span>,
+   numSegments: <span class="hljs-number">4</span>
+ });
+
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(g, <span class="hljs-keyword">new</span> materials.SolidColor());
+</code></pre>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="version-history">Version history</h2>
+<ol>
+<li>Naive implementation
+<a href="https://gist.github.com/roxlu/2859605">https://gist.github.com/roxlu/2859605</a></li>
+<li>Fixed twists
+<a href="http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/">http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/</a>
+<a href="http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html">http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html</a></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> merge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'merge'</span>);
 <span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
 <span class="hljs-keyword">var</span> Geometry = geom.Geometry;
 <span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
@@ -45,45 +114,42 @@
 <span class="hljs-keyword">var</span> min = <span class="hljs-built_in">Math</span>.min;
 <span class="hljs-keyword">var</span> LineBuilder = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./LineBuilder'</span>);
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clamp</span><span class="hljs-params">(value, min, max)</span> </span>{
-  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(min, <span class="hljs-built_in">Math</span>.min(value, max));
-}</pre></div></div>
+<span class="hljs-keyword">var</span> EPSILON = <span class="hljs-number">0.00001</span>;</pre></div></div>
             
         </li>
         
         
-        <li id="section-2">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Version history</p>
-<ol>
-<li>Naive implementation
-<a href="https://gist.github.com/roxlu/2859605">https://gist.github.com/roxlu/2859605</a></li>
-<li>Fixed twists
-<a href="http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/">http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/</a>
-<a href="http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html">http://www.cs.cmu.edu/afs/andrew/scs/cs/15-462/web/old/asst2camera.html</a></li>
-</ol>
+              <h3 id="loft-path-options-">Loft ( path, options)</h3>
+<p><code>path</code> - path along which we will extrude the shape <em>{ Path/Spline = required }</em><br><code>options</code> - available options <em>{ Object }</em>  </p>
+<ul>
+<li><code>numSteps</code> - number of extrusion steps along the path <em>{ Number/Int = 200 }</em>  </li>
+<li><code>numSegments</code> - number of sides of the extruded shape <em>{ Number/Int = 8 }</em>  </li>
+<li><code>r</code> - radius scale of the extruded shape <em>{ Number = 1 }</em>  </li>
+<li><code>shapePath</code> - shape to be extruded, if none a circle will be generated <em>{ Path = null }</em>  </li>
+<li><code>xShapeScale</code> - distorion scale along extruded shape x axis <em>{ Number = 1 }</em>  </li>
+<li><code>caps</code> - generate ending caps geometry <em>{ bool = false }</em>  </li>
+<li><code>initialNormal</code> - starting frame normal <em>{ Vec3 = null }</em>  </li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> EPSILON = <span class="hljs-number">0.00001</span>;
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Loft</span><span class="hljs-params">(path, options)</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Loft</span><span class="hljs-params">(path, options)</span> </span>{
   options = options || {};
   Geometry.call(<span class="hljs-keyword">this</span>, { vertices: <span class="hljs-literal">true</span>, normals: <span class="hljs-literal">true</span>, texCoords: <span class="hljs-literal">true</span>, edges: <span class="hljs-literal">false</span>, faces: <span class="hljs-literal">true</span> });
   <span class="hljs-keyword">var</span> defaults = {
     numSteps: <span class="hljs-number">200</span>,
     numSegments: <span class="hljs-number">8</span>,
-    r: <span class="hljs-number">0.3</span>,
+    r: <span class="hljs-number">1</span>,
     shapePath: <span class="hljs-literal">null</span>,
     xShapeScale: <span class="hljs-number">1</span>,
     caps: <span class="hljs-literal">false</span>,
-    initialNormal: <span class="hljs-literal">null</span>,
-    adjustAngle: <span class="hljs-number">0</span>
+    initialNormal: <span class="hljs-literal">null</span>
   };
   path.samplesCount = <span class="hljs-number">5000</span>;
   <span class="hljs-keyword">if</span> (options.shapePath &amp;&amp; !options.numSegments) {
@@ -93,7 +159,6 @@
   <span class="hljs-keyword">this</span>.path = path;
   <span class="hljs-keyword">if</span> (path.isClosed()) options.caps = <span class="hljs-literal">false</span>;
   <span class="hljs-keyword">this</span>.shapePath = options.shapePath || <span class="hljs-keyword">this</span>.makeShapePath(options.numSegments);
-  <span class="hljs-keyword">this</span>.adjustAngle = options.adjustAngle;
   <span class="hljs-keyword">this</span>.rfunc = <span class="hljs-keyword">this</span>.makeRadiusFunction(options.r);
   <span class="hljs-keyword">this</span>.rufunc = options.ru ? <span class="hljs-keyword">this</span>.makeRadiusFunction(options.ru) : <span class="hljs-keyword">this</span>.rfunc;
   <span class="hljs-keyword">this</span>.rvfunc = options.rv ? <span class="hljs-keyword">this</span>.makeRadiusFunction(options.rv) : (options.ru ? <span class="hljs-keyword">this</span>.rufunc : <span class="hljs-keyword">this</span>.rfunc);
@@ -288,8 +353,25 @@ Loft.prototype.toDebugLines = <span class="hljs-function"><span class="hljs-keyw
     lineBuilder.addLine(frame.position, frame.position.dup().add(frame.binormal.dup().scale(lineLength)), blue, blue);
   });
   <span class="hljs-keyword">return</span> lineBuilder;
-}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="utility-functions">Utility functions</h2>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clamp</span><span class="hljs-params">(value, min, max)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(min, <span class="hljs-built_in">Math</span>.min(value, max));
+}
 
 <span class="hljs-built_in">module</span>.exports = Loft;</pre></div></div>
             

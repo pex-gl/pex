@@ -27,15 +27,59 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>Cylinder geometry generator.</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="parent-class-geom-geometry-pex-geom-geometry-html-">Parent class : <a href="../pex-geom/Geometry.html">geom.Geometry</a></h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Cylinder(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">8</span>, <span class="hljs-number">4</span>);
+ <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(g, <span class="hljs-keyword">new</span> materials.SolidColor());
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
 <span class="hljs-keyword">var</span> Vec2 = geom.Vec2;
 <span class="hljs-keyword">var</span> Vec3 = geom.Vec3;
-<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="cylinder-rbottom-rtop-height-numsides-numsegments-bottomcap-topcap-centered-">Cylinder ( rBottom, rTop, height, numSides, numSegments, bottomCap, topCap, centered )</h3>
+<p><code>rBottom</code> - bottom radius <em>{ Number = 0.5 }</em><br><code>rTop</code> - top radius <em>{ Number = 0.5 }</em><br><code>height</code> - height <em>{ Number = 1 }</em><br><code>numSides</code> - number of subdivisions on XZ axis <em>{ Number = 8 }</em><br><code>numSegments</code> - number of subdivisions on Y axis <em>{ Number = 4 }</em><br><code>bottomCap</code> - generate bottom cap faces <em>{ bool = true }</em><br><code>topCap</code> - generate top cap faces <em>{ bool = true }</em><br><code>centered</code> - center around (0,0,0) <em>{ bool = true }</em></p>
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Cylinder</span><span class="hljs-params">(rBottom, rTop, height, numSides, numSegments, bottomCap, topCap, centered)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Cylinder</span><span class="hljs-params">(rBottom, rTop, height, numSides, numSegments, bottomCap, topCap, centered)</span> </span>{
   rTop = rTop != <span class="hljs-literal">null</span> ? rTop : <span class="hljs-number">0.5</span>;
   rBottom = rBottom != <span class="hljs-literal">null</span> ? rBottom : <span class="hljs-number">0.5</span>;
   height = height != <span class="hljs-literal">null</span> ? height : <span class="hljs-number">1</span>;
