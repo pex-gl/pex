@@ -32,7 +32,7 @@
 <h1>Featured Projects</h1>
 <ul>
 {{#each projects}}
-<li><div class="thumb" style="background-image:url({{thumb}})"></div></li>
+<li><a href="{{url}}"><div class="thumb" style="background-image:url({{thumb}})"></div></a></li>
 {{/each}}
 </ul>
 </div>
