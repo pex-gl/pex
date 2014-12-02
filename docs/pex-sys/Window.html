@@ -48,7 +48,8 @@
   <span class="hljs-string">'highdpi'</span>: <span class="hljs-number">1</span>,
   <span class="hljs-string">'stencil'</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-string">'premultipliedAlpha'</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-string">'preserveDrawingBuffer'</span>: <span class="hljs-literal">false</span>
+  <span class="hljs-string">'preserveDrawingBuffer'</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-string">'screen'</span>: <span class="hljs-number">0</span>
 };
 
 <span class="hljs-keyword">var</span> Window = {
@@ -56,6 +57,26 @@
   create: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> </span>{
     obj.settings = obj.settings || {};
     obj.settings = merge(DefaultSettings, obj.settings);
+
+    <span class="hljs-keyword">if</span> (obj.settings.fullscreen) {
+      <span class="hljs-keyword">var</span> screens;
+
+      <span class="hljs-keyword">if</span> (Platform.isPlask) {
+        screens = plask.Window.screensInfo();
+      }
+      <span class="hljs-keyword">else</span> {
+        screens = [ { width: <span class="hljs-built_in">window</span>.innerWidth, height: <span class="hljs-built_in">window</span>.innerHeight } ];
+      }
+
+      <span class="hljs-keyword">if</span> (obj.settings.screen !== <span class="hljs-literal">undefined</span>) {
+        <span class="hljs-keyword">var</span> screen = screens[obj.settings.screen];
+        <span class="hljs-keyword">if</span> (screen) {
+          obj.settings.position = { x: <span class="hljs-number">0</span>, y: screen.height };
+          obj.settings.width = screen.width * obj.settings.highdpi;
+          obj.settings.height = screen.height * obj.settings.highdpi;
+        }
+      }
+    }
 
     obj.__init = obj.init;
     obj.init = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{

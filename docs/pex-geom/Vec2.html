@@ -43,9 +43,22 @@ Vec2.fromArray = <span class="hljs-function"><span class="hljs-keyword">function
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec2(a[<span class="hljs-number">0</span>], a[<span class="hljs-number">1</span>]);
 }
 
+Vec2.fromDirection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(angle, dist)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec2().setDirection(angle, dist);
+}
+
 Vec2.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y)</span> </span>{
   <span class="hljs-keyword">this</span>.x = x;
   <span class="hljs-keyword">this</span>.y = y;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
+Vec2.prototype.setDirection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(angle, dist)</span> </span>{
+  dist = dist || <span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">this</span>.x = dist * <span class="hljs-built_in">Math</span>.cos(angle / <span class="hljs-number">360</span> * <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>);
+  <span class="hljs-keyword">this</span>.y = dist * <span class="hljs-built_in">Math</span>.sin(angle / <span class="hljs-number">360</span> * <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>);
+
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };
 
@@ -96,6 +109,12 @@ Vec2.prototype.squareDistance = <span class="hljs-function"><span class="hljs-ke
   <span class="hljs-keyword">return</span> dx * dx + dy * dy;
 };
 
+Vec2.prototype.simpleDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">var</span> dx = <span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x);
+  <span class="hljs-keyword">var</span> dy = <span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.min(dx, dy);
+};
+
 Vec2.prototype.dot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b)</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x * b.x + <span class="hljs-keyword">this</span>.y * b.y;
 };
@@ -126,6 +145,14 @@ Vec2.prototype.asSub = <span class="hljs-function"><span class="hljs-keyword">fu
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };
 
+Vec2.prototype.direction = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> rad = <span class="hljs-built_in">Math</span>.atan2(<span class="hljs-keyword">this</span>.y, <span class="hljs-keyword">this</span>.x);
+  <span class="hljs-keyword">var</span> deg = rad * <span class="hljs-number">180</span> / <span class="hljs-built_in">Math</span>.PI;
+  <span class="hljs-keyword">if</span> (deg &lt; <span class="hljs-number">0</span>) deg = <span class="hljs-number">360</span> + deg;
+
+  <span class="hljs-keyword">return</span> deg;
+};
+
 Vec2.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-keyword">this</span>.x * <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.y * <span class="hljs-keyword">this</span>.y);
 };
@@ -138,9 +165,20 @@ Vec2.prototype.normalize = <span class="hljs-function"><span class="hljs-keyword
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };
 
+Vec2.prototype.limit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+  <span class="hljs-keyword">var</span> len = <span class="hljs-keyword">this</span>.length();
+
+  <span class="hljs-keyword">if</span> (len &gt; s &amp;&amp; len &gt; <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">this</span>.scale(s / len);
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
 Vec2.prototype.lerp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, t)</span> </span>{
   <span class="hljs-keyword">this</span>.x = <span class="hljs-keyword">this</span>.x + (v.x - <span class="hljs-keyword">this</span>.x) * t;
   <span class="hljs-keyword">this</span>.y = <span class="hljs-keyword">this</span>.y + (v.y - <span class="hljs-keyword">this</span>.y) * t;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 }
 
 Vec2.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{

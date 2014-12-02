@@ -763,11 +763,16 @@ returns new <em>{ Geometry }</em>  </p>
             
             <div class="content"><div class='highlight'><pre>Geometry.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">var</span> edges = <span class="hljs-literal">null</span>;
-  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{ <span class="hljs-keyword">return</span> v.dup(); });
-  <span class="hljs-keyword">var</span> texCoords = <span class="hljs-keyword">this</span>.texCoords ? <span class="hljs-keyword">this</span>.texCoords.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tc)</span> </span>{ <span class="hljs-keyword">return</span> tc.dup(); }) : <span class="hljs-literal">null</span>;
-  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{ <span class="hljs-keyword">return</span> f.slice(<span class="hljs-number">0</span>); });
-  <span class="hljs-keyword">var</span> edges = <span class="hljs-keyword">this</span>.edges ? <span class="hljs-keyword">this</span>.edges.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{ <span class="hljs-keyword">return</span> e.slice(<span class="hljs-number">0</span>); }) : <span class="hljs-literal">null</span>;
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry({ vertices: vertices, texCoords: texCoords, faces: faces, edges: edges });
+  <span class="hljs-keyword">var</span> clonedAttribs = {};
+  <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.attribs).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attribName)</span> </span>{
+    <span class="hljs-keyword">var</span> attrib = <span class="hljs-keyword">this</span>.attribs[attribName];
+    clonedAttribs[attribName] = attrib.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+      <span class="hljs-keyword">return</span> v.dup ? v.dup() : v;
+    })
+  }.bind(<span class="hljs-keyword">this</span>));
+  clonedAttribs.faces = <span class="hljs-keyword">this</span>.faces.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{ <span class="hljs-keyword">return</span> f.slice(<span class="hljs-number">0</span>); });
+  clonedAttribs.edges = <span class="hljs-keyword">this</span>.edges ? <span class="hljs-keyword">this</span>.edges.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{ <span class="hljs-keyword">return</span> e.slice(<span class="hljs-number">0</span>); }) : <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry(clonedAttribs);
 }</pre></div></div>
             
         </li>
@@ -778,6 +783,61 @@ returns new <em>{ Geometry }</em>  </p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>/### merge(g)
+Returns new combined geometry. This is not a boolean operation, faces and vertices inside the mesh will be kept.
+<code>g</code> - another geometry to merge with <em>{ Geometry }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.merge = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(g)</span> </span>{
+  <span class="hljs-keyword">var</span> edges = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> mergedAttribs = {};
+  <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.attribs).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attribName)</span> </span>{
+    <span class="hljs-keyword">var</span> myAttrib = <span class="hljs-keyword">this</span>.attribs[attribName];
+    <span class="hljs-keyword">var</span> anotherAttrib = g.attribs[attribName];
+    <span class="hljs-keyword">if</span> (anotherAttrib) {
+      mergedAttribs[attribName] = [];
+      myAttrib.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+        mergedAttribs[attribName].push(v.dup ? v.dup() : v);
+      })
+      anotherAttrib.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+        mergedAttribs[attribName].push(v.dup ? v.dup() : v);
+      })
+    }
+  }.bind(<span class="hljs-keyword">this</span>));
+  <span class="hljs-keyword">var</span> myVerticesLength = <span class="hljs-keyword">this</span>.vertices.length;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.faces &amp;&amp; g.faces) {
+    mergedAttribs.faces = [];
+    <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+      mergedAttribs.faces.push(f.slice(<span class="hljs-number">0</span>));
+    });
+    g.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+      <span class="hljs-keyword">var</span> newFace = f.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fi)</span> </span>{ <span class="hljs-keyword">return</span> fi + myVerticesLength; })
+      mergedAttribs.faces.push(newFace);
+    })
+  }
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.edges &amp;&amp; g.edges) {
+    mergedAttribs.edges = [];
+    <span class="hljs-keyword">this</span>.edges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+      mergedAttribs.edges.push(f.slice(<span class="hljs-number">0</span>));
+    });
+    g.edges.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+      <span class="hljs-keyword">var</span> newEdge = e.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ei)</span> </span>{ <span class="hljs-keyword">return</span> ei + myVerticesLength; })
+      mergedAttribs.edges.push(newEdge);
+    })
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Geometry(mergedAttribs);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h3 id="triangulate-">triangulate()</h3>
 <p>Splits all the faces into triangles. Non destructive operation.<br>returns new <em>{ Geometry }</em></p>
@@ -800,11 +860,11 @@ returns new <em>{ Geometry }</em>  </p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>computeHalfEdges()
 Computes half edges used for efficient geometry operations.<br>returns new <em>{ Array of half edge objects }</em><br>Based on ideas from<br><a href="http://fgiesen.wordpress.com/2012/04/03/half-edges-redux/">http://fgiesen.wordpress.com/2012/04/03/half-edges-redux/</a></p>
@@ -828,11 +888,11 @@ Computes half edges used for efficient geometry operations.<br>returns new <em>{
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>vertexIndex: vertexIndex,</p>
 
@@ -871,11 +931,11 @@ Computes half edges used for efficient geometry operations.<br>returns new <em>{
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h3 id="subdivideedges-">subdivideEdges()</h3>
 <p>Non destructive operation edge subdivision.<br>Subdivides geometry by adding new point in the middle of each edge.<br>returns new <em>{ Geometry }</em></p>
@@ -894,11 +954,11 @@ Computes half edges used for efficient geometry operations.<br>returns new <em>{
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>edge points are an average of both edge vertices</p>
 
@@ -909,11 +969,11 @@ Computes half edges used for efficient geometry operations.<br>returns new <em>{
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>console.log(‘halfEdges’, halfEdges.length, halfEdges.map(function(e) { return ‘’ + (e.v0) + ‘-‘ + (e.v1); }));</p>
 
@@ -963,11 +1023,11 @@ Computes half edges used for efficient geometry operations.<br>returns new <em>{
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h3 id="getfacevertices-">getFaceVertices()</h3>
 <p>Returns vertices for that face
@@ -983,11 +1043,11 @@ returns new <em>{ Array of Vec3 }</em></p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h3 id="catmullclark-">catmullClark()</h3>
 <p>Non destructive Catmull-Clark subdivision
@@ -1009,11 +1069,11 @@ calculate offsets at which each vertex, face and edge point end up</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>face points are an average of all face points</p>
 
@@ -1024,11 +1084,11 @@ calculate offsets at which each vertex, face and edge point end up</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>edge points are an average of both edge vertices and center points of two neighbor faces</p>
 
@@ -1051,11 +1111,11 @@ calculate offsets at which each vertex, face and edge point end up</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>vertex points are and average of neighbor edges’ edge points and neighbor faces’ face points</p>
 
@@ -1071,11 +1131,11 @@ calculate offsets at which each vertex, face and edge point end up</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>vertexEdgeLoop(edge).map(function(edge) { return facePoints[edge.faceIndex] } )
 vertexEdgeLoop(edge).map(function(edge) { return edge.face.facePoint } )
@@ -1104,11 +1164,11 @@ extract(facePoints, vertexEdgeLoop(edge).map(prop(‘faceIndex’))</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>create list of points for the new mesh
 vertx poitns and face points are unique</p>
@@ -1120,11 +1180,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>halfEdge mid points are not (each one is doubled)</p>
 
@@ -1143,11 +1203,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>construct new faces from face point, two edges mid points and a vertex between them</p>
 
@@ -1172,11 +1232,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <h3 id="catmullclark-">catmullClark()</h3>
 <p>Non destructive Doo-Sabin subdivision<br><code>depth</code> - edge inset depth <em>{ Number }</em><br>returns new <em>{ Geometry }</em><br>Doo-Sabin subdivision as desribed in WIRE AND COLUMN MODELING
@@ -1215,11 +1275,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>newVertices.push(p);</p>
 
@@ -1232,11 +1292,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>face face</p>
 
@@ -1255,11 +1315,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>edge face</p>
 
@@ -1286,11 +1346,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>vertex face</p>
 
@@ -1313,11 +1373,11 @@ vertx poitns and face points are unique</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <h3 id="catmullclark-edgedepth-insetdepth-">catmullClark(edgeDepth, insetDepth)</h3>
 <p>Non destructive wire modelling.
@@ -1341,11 +1401,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>shrink the inner geometry</p>
 
@@ -1358,11 +1418,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>remove middle faces</p>
 
@@ -1376,11 +1436,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>add inner vertices to new geom</p>
 
@@ -1393,11 +1453,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>add inner faces to new geom</p>
 
@@ -1412,11 +1472,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>add inner edges to new geom</p>
 
@@ -1456,11 +1516,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <h3 id="extrude-height-faceindices-shrink-">extrude(height, faceIndices, shrink)</h3>
 <p>Non destructive face extrusion.
@@ -1527,11 +1587,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-50">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>add new face for each extruded edge</p>
 
@@ -1549,11 +1609,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-51">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>add edges</p>
 
@@ -1571,11 +1631,11 @@ Mesh wire modelling as described in where each edge is replaced by a column
         </li>
         
         
-        <li id="section-52">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>push the old face outside</p>
 
@@ -1586,6 +1646,32 @@ Mesh wire modelling as described in where each edge is replaced by a column
     });
   });
 
+  <span class="hljs-keyword">return</span> g;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>/### transform(m)
+Returns new geometry with all vertices transform with the given matrix
+<code>m</code> - transformation matrix <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.transform = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m)</span> </span>{
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">this</span>.clone();
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;g.vertices.length; i++) {
+    g.vertices[i].transformMat4(m);
+  }
+  <span class="hljs-keyword">if</span> (g.normals) {
+    g.computeNormals();
+  }
   <span class="hljs-keyword">return</span> g;
 }
 

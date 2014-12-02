@@ -90,6 +90,13 @@ Vec3.prototype.squareDistance = <span class="hljs-function"><span class="hljs-ke
   <span class="hljs-keyword">return</span> dx * dx + dy * dy + dz * dz;
 };
 
+Vec3.prototype.simpleDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">var</span> dx = <span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x);
+  <span class="hljs-keyword">var</span> dy = <span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y);
+  <span class="hljs-keyword">var</span> dz = <span class="hljs-built_in">Math</span>.abs(v.z - <span class="hljs-keyword">this</span>.z);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.min(dx, dy, dz);
+};
+
 Vec3.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">this</span>.x = v.x;
   <span class="hljs-keyword">this</span>.y = v.y;
@@ -170,6 +177,16 @@ Vec3.prototype.normalize = <span class="hljs-function"><span class="hljs-keyword
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };
 
+Vec3.prototype.limit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+  <span class="hljs-keyword">var</span> len = <span class="hljs-keyword">this</span>.length();
+
+  <span class="hljs-keyword">if</span> (len &gt; s &amp;&amp; len &gt; <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">this</span>.scale(s / len);
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};
+
 Vec3.prototype.transformQuat = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q)</span> </span>{
   <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x;
   <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y;
@@ -211,6 +228,7 @@ Vec3.prototype.lerp = <span class="hljs-function"><span class="hljs-keyword">fun
   <span class="hljs-keyword">this</span>.x = <span class="hljs-keyword">this</span>.x + (v.x - <span class="hljs-keyword">this</span>.x) * t;
   <span class="hljs-keyword">this</span>.y = <span class="hljs-keyword">this</span>.y + (v.y - <span class="hljs-keyword">this</span>.y) * t;
   <span class="hljs-keyword">this</span>.z = <span class="hljs-keyword">this</span>.z + (v.z - <span class="hljs-keyword">this</span>.z) * t;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 }
 
 Vec3.Zero = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
