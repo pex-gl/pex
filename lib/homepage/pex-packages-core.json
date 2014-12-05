@@ -1,0 +1,11 @@
+[
+  { "name" : "pex-color" },
+  { "name" : "pex-fx" },
+  { "name" : "pex-gen" },
+  { "name" : "pex-geom" },
+  { "name" : "pex-glu" },
+  { "name" : "pex-gui" },
+  { "name" : "pex-materials" },
+  { "name" : "pex-sys" },
+  { "name" : "pex-random" }
+]

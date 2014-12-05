@@ -100,8 +100,20 @@ sys.Window.create({
 <!--docs-->
 <div id="docs" class="section">
 <h1>Packages Reference</h1>
+<h2>Core</h2>
 <ul class="packages">
-{{#each packages}}
+{{#each corePackages}}
+<li>
+  <h2>{{name}} <a href="{{homepage}}" class="ver">{{version}}</a></h2>
+  {{#each classes}}
+    <h4><a href="docs/{{../name}}/{{name}}.html" {{#unless validDocs }}class="disabled"{{/unless}} >{{name}}</a></h4>
+  {{/each}}
+</li>
+{{/each}}
+</ul>
+<h2>Contributions</h2>
+<ul class="packages">
+{{#each contribPackages}}
 <li>
   <h2>{{name}} <a href="{{homepage}}" class="ver">{{version}}</a></h2>
   {{#each classes}}
