@@ -32,13 +32,15 @@ program
   });
 
 program
-  .command('homepage')
+  .command('homepage [mode]')
   .description('generate pex homepage')
-  .action(function() {
-    homepage.generate();
+  .action(function(mode) {
+    if (mode == 'docs') homepage.generateDocs();
+    else if (mode == 'examples') homepage.generateExamples();
+    else if (mode == 'projects') homepage.generateProjects();
+    else if (mode == 'page') homepage.generatePage();
+    else homepage.generate();
   });
-
-
 
 program.on('--help', function(){
   console.log('  Examples:');
