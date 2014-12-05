@@ -76,6 +76,10 @@ a.disabled:hover {
   text-decoration: none;
 }
 
+a.bg {
+  color: #999;
+}
+
 /*--------------------- header ----------------------------*/
 
 #header {
@@ -210,6 +214,14 @@ a.disabled:hover {
 
 #start {
 
+}
+
+#start .tutorials {
+}
+
+#start .tutorials li {
+  font-size: 150%;
+  line-height: 150%;
 }
 
 /*--------------------- examples ----------------------------*/

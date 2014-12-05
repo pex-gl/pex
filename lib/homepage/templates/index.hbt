@@ -90,9 +90,8 @@ sys.Window.create({
 <!--start-->
 <div id="start" class="section">
 <h1>Getting Started</h1>
-<ul class="">
+<ul class="tutorials">
 <li><a href="https://github.com/vorg/pex#how-to-use">Basic Tutorial</a></li>
-<li><a href="http://github.com/vorg/pex">Source Code @ Github</a></li>
 </ul>
 </div>
 <!--/start-->
@@ -127,7 +126,7 @@ sys.Window.create({
 
 <!--examples-->
 <div id="examples" class="section">
-<h1>Examples</h1>
+<h1>Examples <a href="http://github.com/vorg/pex-examples/" class="bg">(Source Code)</a></h1>
 
 {{#each examples}}
 <div class="thumb">
