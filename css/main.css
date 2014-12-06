@@ -76,6 +76,10 @@ a.disabled:hover {
   text-decoration: none;
 }
 
+a.bg {
+  color: #999;
+}
+
 /*--------------------- header ----------------------------*/
 
 #header {
@@ -212,6 +216,14 @@ a.disabled:hover {
 
 }
 
+#start .tutorials {
+}
+
+#start .tutorials li {
+  font-size: 150%;
+  line-height: 150%;
+}
+
 /*--------------------- examples ----------------------------*/
 
 #examples {
@@ -260,12 +272,20 @@ a.disabled:hover {
 }
 
 #docs h2 {
-  margin-top: 1em;
+  margin-top: 0em;
+  padding-top: 1em;
   margin-bottom: 0.5em;
 }
 
-#docs li:first-child h2 {
-  margin-top: 0;
+#docs h1 + h2 {
+  margin-bottom: 1em;
+}
+
+#docs .packages + h2 {
+  margin-top: 1em;
+}
+
+#docs .packages li {
 }
 
 #docs h3, #docs h4, #docs h5 {

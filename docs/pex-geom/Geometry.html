@@ -407,21 +407,25 @@
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h3 id="addattribute-propertyname-attributename-data-dynamic-">addAttribute(propertyName, attributeName, data, dynamic)</h3>
-<p><code>propertyName</code> - geometry object property name <em>{ String }</em><br><code>attributeName</code> - shader attribute name <em>{ String }</em><br><code>data</code> - <em>{ Array of Vec2/Vec3/Vec4/Color }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br>Adds addtribute</p>
+<p><code>propertyName</code> - geometry object property name <em>{ String }</em><br><code>attributeName</code> - shader attribute name <em>{ String }</em><br><code>data</code> - <em>{ Array of Vec2/Vec3/Vec4/Color }</em><br><code>dynamic</code> - is data static or updated every frame (dynamic) <em>{ Boolean }</em> = false<br><code>instanced</code> - is the attribute instanced <em>{ Boolean }</em> = false<br>Adds addtribute</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Geometry.prototype.addAttrib = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(propertyName, attributeName, data, dynamic)</span> </span>{
-  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">null</span>) {
+            <div class="content"><div class='highlight'><pre>Geometry.prototype.addAttrib = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(propertyName, attributeName, data, dynamic, instanced)</span> </span>{
+  <span class="hljs-keyword">if</span> (data == <span class="hljs-literal">undefined</span>) {
     data = <span class="hljs-literal">null</span>;
   }
-  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">null</span>) {
+  <span class="hljs-keyword">if</span> (dynamic == <span class="hljs-literal">undefined</span>) {
     dynamic = <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">if</span> (instanced == <span class="hljs-literal">undefined</span>) {
+    instanced = <span class="hljs-literal">false</span>;
   }
   <span class="hljs-keyword">this</span>[propertyName] = data &amp;&amp; data.length ? data : [];
   <span class="hljs-keyword">this</span>[propertyName].name = attributeName;
   <span class="hljs-keyword">this</span>[propertyName].dirty = <span class="hljs-literal">true</span>;
   <span class="hljs-keyword">this</span>[propertyName].dynamic = dynamic;
+  <span class="hljs-keyword">this</span>[propertyName].instanced = instanced;
   <span class="hljs-keyword">this</span>.attribs[propertyName] = <span class="hljs-keyword">this</span>[propertyName];
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };</pre></div></div>
@@ -615,31 +619,37 @@ Geometry.prototype.isDirty = <span class="hljs-function"><span class="hljs-keywo
     }
   }
 
+  
+  <span class="hljs-keyword">var</span> vertices = <span class="hljs-keyword">this</span>.vertices;
+  <span class="hljs-keyword">var</span> faces = <span class="hljs-keyword">this</span>.faces;
+  <span class="hljs-keyword">var</span> normals = <span class="hljs-keyword">this</span>.normals;
+
   <span class="hljs-keyword">var</span> count = [];
-  <span class="hljs-keyword">this</span>.vertices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, i)</span> </span>{
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;vertices.length; i++) {
     count[i] = <span class="hljs-number">0</span>;
-  }.bind(<span class="hljs-keyword">this</span>));
+  }
 
   <span class="hljs-keyword">var</span> ab = <span class="hljs-keyword">new</span> Vec3();
   <span class="hljs-keyword">var</span> ac = <span class="hljs-keyword">new</span> Vec3();
   <span class="hljs-keyword">var</span> n = <span class="hljs-keyword">new</span> Vec3();
 
-  <span class="hljs-keyword">this</span>.faces.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
-    <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">0</span>]];
-    <span class="hljs-keyword">var</span> b = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">1</span>]];
-    <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.vertices[f[<span class="hljs-number">2</span>]];
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> fi=<span class="hljs-number">0</span>; fi&lt;faces.length; fi++) {
+    <span class="hljs-keyword">var</span> f = faces[fi];
+    <span class="hljs-keyword">var</span> a = vertices[f[<span class="hljs-number">0</span>]];
+    <span class="hljs-keyword">var</span> b = vertices[f[<span class="hljs-number">1</span>]];
+    <span class="hljs-keyword">var</span> c = vertices[f[<span class="hljs-number">2</span>]];
     ab.asSub(b, a).normalize();
     ac.asSub(c, a).normalize();
     n.asCross(ab, ac);
     <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;f.length; i++) {
-      <span class="hljs-keyword">this</span>.normals[f[i]].add(n);
+      normals[f[i]].add(n);
       count[f[i]]++;
     }
-  }.bind(<span class="hljs-keyword">this</span>));
+  }
 
-  <span class="hljs-keyword">this</span>.normals.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n, i)</span> </span>{
-    n.normalize();
-  });
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;normals.length; i++) {
+    normals[i].normalize();
+  }
   <span class="hljs-keyword">this</span>.normals.dirty = <span class="hljs-literal">true</span>;
 };</pre></div></div>
             

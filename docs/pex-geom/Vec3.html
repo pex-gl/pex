@@ -27,99 +27,363 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
+              <p>3D Vector (x, y, z)</p>
+<h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> right = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+ <span class="hljs-keyword">var</span> forward = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, -<span class="hljs-number">1</span>);
+ <span class="hljs-keyword">var</span> up = Vec3.create().asCross(right, foward);
+</code></pre>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
               
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="reference">Reference</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="vec3-x-y-z-">Vec3(x, y, z)</h3>
+<p>Constructor<br><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>z</code> - <em>{ Number }</em>  </p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Vec3</span><span class="hljs-params">(x, y, z)</span> </span>{
   <span class="hljs-keyword">this</span>.x = x != <span class="hljs-literal">null</span> ? x : <span class="hljs-number">0</span>;
   <span class="hljs-keyword">this</span>.y = y != <span class="hljs-literal">null</span> ? y : <span class="hljs-number">0</span>;
   <span class="hljs-keyword">this</span>.z = z != <span class="hljs-literal">null</span> ? z : <span class="hljs-number">0</span>;
-}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="create-x-y-z-">create(x, y, z)</h3>
+<p>Creates new Vec3 vector x, y, z numbers<br><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>z</code> - <em>{ Number }</em>  </p>
 
-Vec3.create = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.create = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec3(x, y, z);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="fromarray-a-">fromArray(a)</h3>
+<p>Creates new Vec3 from an array<br><code>a</code> - <em>{ Array of Number }</em>  </p>
 
-Vec3.fromArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.fromArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec3(a[<span class="hljs-number">0</span>], a[<span class="hljs-number">1</span>], a[<span class="hljs-number">2</span>]);
-}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="set-x-y-z-">set(x, y, z)</h3>
+<p><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>z</code> - <em>{ Number }</em>  </p>
 
-Vec3.prototype.hash = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.x + <span class="hljs-number">12</span> * <span class="hljs-keyword">this</span>.y + <span class="hljs-number">123</span> * <span class="hljs-keyword">this</span>.z;
-};
-
-Vec3.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, z)</span> </span>{
   <span class="hljs-keyword">this</span>.x = x;
   <span class="hljs-keyword">this</span>.y = y;
   <span class="hljs-keyword">this</span>.z = z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="set-v-">set(v)</h3>
+<p>Sets x, y, z from another Vec3<br><code>v</code> - <em>{ Vec3 }</em>  </p>
 
-Vec3.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.setVec3 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = v.x;
+  <span class="hljs-keyword">this</span>.y = v.y;
+  <span class="hljs-keyword">this</span>.z = v.z;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="equals-v-tolerance-">equals(v, tolerance)</h3>
+<p>Compares this vector to another one with given precision tolerance<br><code>v</code> - <em>{ Vec3 }</em><br><code>tolerance</code> - <em>{ Number = 0.0000001 }</em><br>Returns true if distance between two vectores less than tolerance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.equals = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, tolerance)</span> </span>{
+  <span class="hljs-keyword">if</span> (tolerance == <span class="hljs-literal">undefined</span>) {
+    tolerance = <span class="hljs-number">0.0000001</span>;
+  }
+  <span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x) &lt;= tolerance) &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y) &lt;= tolerance) &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(v.z - <span class="hljs-keyword">this</span>.z) &lt;= tolerance);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="add-v-">add(v)</h3>
+<p>Add another Vec3 to this one<br><code>v</code> - <em>{ Vec3 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">this</span>.x += v.x;
   <span class="hljs-keyword">this</span>.y += v.y;
   <span class="hljs-keyword">this</span>.z += v.z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="sub-v-">sub(v)</h3>
+<p>Subtracts another vector from this one<br><code>v</code> - <em>{ Vec3 }</em></p>
 
-Vec3.prototype.sub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.sub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">this</span>.x -= v.x;
   <span class="hljs-keyword">this</span>.y -= v.y;
   <span class="hljs-keyword">this</span>.z -= v.z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h3 id="sub-v-">sub(v)</h3>
+<p>Scales this vector
+<code>f</code> - <em>{ Number }</em></p>
 
-Vec3.prototype.scale = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.scale = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
   <span class="hljs-keyword">this</span>.x *= f;
   <span class="hljs-keyword">this</span>.y *= f;
   <span class="hljs-keyword">this</span>.z *= f;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h3 id="distance-v-">distance(v)</h3>
+<p>Calculates distance to another vector<br><code>v</code> - <em>{ Vec3 }</em></p>
 
-Vec3.prototype.distance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.distance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">var</span> dx = v.x - <span class="hljs-keyword">this</span>.x;
   <span class="hljs-keyword">var</span> dy = v.y - <span class="hljs-keyword">this</span>.y;
   <span class="hljs-keyword">var</span> dz = v.z - <span class="hljs-keyword">this</span>.z;
   <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(dx * dx + dy * dy + dz * dz);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h3 id="squaredistance-v-">squareDistance(v)</h3>
+<p>Calculates distance^2 to another vector<br><code>v</code> - <em>{ Vec3 }</em></p>
 
-Vec3.prototype.squareDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.squareDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">var</span> dx = v.x - <span class="hljs-keyword">this</span>.x;
   <span class="hljs-keyword">var</span> dy = v.y - <span class="hljs-keyword">this</span>.y;
   <span class="hljs-keyword">var</span> dz = v.z - <span class="hljs-keyword">this</span>.z;
   <span class="hljs-keyword">return</span> dx * dx + dy * dy + dz * dz;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h3 id="simpledistance-v-">simpleDistance(v)</h3>
+<p>Calculates distance to another vecor on the shortest axis<br><code>v</code> - <em>{ Vec3 }</em></p>
 
-Vec3.prototype.simpleDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.simpleDistance = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">var</span> dx = <span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x);
   <span class="hljs-keyword">var</span> dy = <span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y);
   <span class="hljs-keyword">var</span> dz = <span class="hljs-built_in">Math</span>.abs(v.z - <span class="hljs-keyword">this</span>.z);
   <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.min(dx, dy, dz);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h3 id="copy-">copy()</h3>
+<p>Copies x, y from another vector to this one<br><code>v</code> - <em>{ Vec3 }</em></p>
 
-Vec3.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.copy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">this</span>.x = v.x;
   <span class="hljs-keyword">this</span>.y = v.y;
   <span class="hljs-keyword">this</span>.z = v.z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h3 id="clone-">clone()</h3>
+<p>Returns new vector with x, y the same as this one</p>
 
-Vec3.prototype.setVec3 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
-  <span class="hljs-keyword">this</span>.x = v.x;
-  <span class="hljs-keyword">this</span>.y = v.y;
-  <span class="hljs-keyword">this</span>.z = v.z;
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
-
-Vec3.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.clone = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Vec3(<span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y, <span class="hljs-keyword">this</span>.z);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3 id="dup-">dup()</h3>
+<p>Alias of clone. Returns new vector with x, y the same as this one</p>
 
-Vec3.prototype.dup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.dup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.clone();
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="dot-v-">dot(v)</h3>
+<p>Computes dot product with another vector<br><code>v</code> - <em>{ Vec3 }</em><br>Returns Number</p>
 
-Vec3.prototype.cross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.dot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x * b.x + <span class="hljs-keyword">this</span>.y * b.y + <span class="hljs-keyword">this</span>.z * b.z;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3 id="cross-v-">cross(v)</h3>
+<p>Computes cross product with another vector<br><code>v</code> - <em>{ Vec3 }</em><br>Returns Vec3</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.cross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{
   <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x;
   <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y;
   <span class="hljs-keyword">var</span> z = <span class="hljs-keyword">this</span>.z;
@@ -130,54 +394,162 @@ Vec3.prototype.cross = <span class="hljs-function"><span class="hljs-keyword">fu
   <span class="hljs-keyword">this</span>.y = z * vx - x * vz;
   <span class="hljs-keyword">this</span>.z = x * vy - y * vx;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="asadd-a-b-">asAdd(a, b)</h3>
+<p>Sets x, y, z of this vector to the result of adding two other vectors<br><code>a</code> - <em>{ Vec3 }</em><br><code>b</code> - <em>{ Vec3 }</em>  </p>
 
-Vec3.prototype.dot = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(b)</span> </span>{
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x * b.x + <span class="hljs-keyword">this</span>.y * b.y + <span class="hljs-keyword">this</span>.z * b.z;
-};
-
-Vec3.prototype.asAdd = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.asAdd = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
   <span class="hljs-keyword">this</span>.x = a.x + b.x;
   <span class="hljs-keyword">this</span>.y = a.y + b.y;
   <span class="hljs-keyword">this</span>.z = a.z + b.z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h3 id="assub-a-b-">asSub(a, b)</h3>
+<p>Sets x, y, z of this vector to the result of subtracting two other vectors<br><code>a</code> - <em>{ Vec3 }</em><br><code>b</code> - <em>{ Vec3 }</em>  </p>
 
-Vec3.prototype.asSub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.asSub = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
   <span class="hljs-keyword">this</span>.x = a.x - b.x;
   <span class="hljs-keyword">this</span>.y = a.y - b.y;
   <span class="hljs-keyword">this</span>.z = a.z - b.z;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3 id="ascross-a-b-">asCross(a, b)</h3>
+<p>Sets x, y, z of this vector to the result of cross product of two other vectors<br><code>a</code> - <em>{ Vec3 }</em><br><code>b</code> - <em>{ Vec3 }</em>  </p>
 
-Vec3.prototype.asCross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.asCross = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.copy(a).cross(b);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3 id="addscaled-a-f-">addScaled(a, f)</h3>
+<p>Add another vector with scaling it first<br><code>a</code> - <em>{ Vec3 }</em><br><code>f</code> - <em>{ Number }</em>  </p>
 
-Vec3.prototype.addScaled = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, f)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.addScaled = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, f)</span> </span>{
   <span class="hljs-keyword">this</span>.x += a.x * f;
   <span class="hljs-keyword">this</span>.y += a.y * f;
   <span class="hljs-keyword">this</span>.z += a.z * f;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h3 id="length-">length()</h3>
+<p>Computes length of this vector</p>
 
-Vec3.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.length = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-keyword">this</span>.x * <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.y * <span class="hljs-keyword">this</span>.y + <span class="hljs-keyword">this</span>.z * <span class="hljs-keyword">this</span>.z);
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h3 id="lengthsquared-">lengthSquared()</h3>
+<p>Computes length^2 of this vector</p>
 
-Vec3.prototype.lengthSquared = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.lengthSquared = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x * <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.y * <span class="hljs-keyword">this</span>.y + <span class="hljs-keyword">this</span>.z * <span class="hljs-keyword">this</span>.z;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h3 id="normalize-">normalize()</h3>
+<p>Normalizes this vector (sets length to 1)</p>
 
-Vec3.prototype.normalize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.normalize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">var</span> len = <span class="hljs-keyword">this</span>.length();
   <span class="hljs-keyword">if</span> (len &gt; <span class="hljs-number">0</span>) {
     <span class="hljs-keyword">this</span>.scale(<span class="hljs-number">1</span> / len);
   }
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <h3 id="normalize-">normalize()</h3>
+<p>Sets length of this vector to a given number<br><code>s</code> - <em>{ Number }</em></p>
 
-Vec3.prototype.limit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.limit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
   <span class="hljs-keyword">var</span> len = <span class="hljs-keyword">this</span>.length();
 
   <span class="hljs-keyword">if</span> (len &gt; s &amp;&amp; len &gt; <span class="hljs-number">0</span>) {
@@ -185,9 +557,68 @@ Vec3.prototype.limit = <span class="hljs-function"><span class="hljs-keyword">fu
   }
 
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <h3 id="lerp-a-f-">lerp(a, f)</h3>
+<p>Interpolates between this and another vector by given factor<br><code>v</code> - <em>{ Vec3 }</em><br><code>f</code> - <em>{ Number }</em>  </p>
 
-Vec3.prototype.transformQuat = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q)</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.lerp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, t)</span> </span>{
+  <span class="hljs-keyword">this</span>.x = <span class="hljs-keyword">this</span>.x + (v.x - <span class="hljs-keyword">this</span>.x) * t;
+  <span class="hljs-keyword">this</span>.y = <span class="hljs-keyword">this</span>.y + (v.y - <span class="hljs-keyword">this</span>.y) * t;
+  <span class="hljs-keyword">this</span>.z = <span class="hljs-keyword">this</span>.z + (v.z - <span class="hljs-keyword">this</span>.z) * t;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h3 id="transformmat4">transformMat4</h3>
+<p>Transforms this vector by given matrix<br><code>m</code> - <em>{ Mat4 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.transformMat4 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m)</span> </span>{
+  <span class="hljs-keyword">var</span> x = m.a14 + m.a11 * <span class="hljs-keyword">this</span>.x + m.a12 * <span class="hljs-keyword">this</span>.y + m.a13 * <span class="hljs-keyword">this</span>.z;
+  <span class="hljs-keyword">var</span> y = m.a24 + m.a21 * <span class="hljs-keyword">this</span>.x + m.a22 * <span class="hljs-keyword">this</span>.y + m.a23 * <span class="hljs-keyword">this</span>.z;
+  <span class="hljs-keyword">var</span> z = m.a34 + m.a31 * <span class="hljs-keyword">this</span>.x + m.a32 * <span class="hljs-keyword">this</span>.y + m.a33 * <span class="hljs-keyword">this</span>.z;
+  <span class="hljs-keyword">this</span>.x = x;
+  <span class="hljs-keyword">this</span>.y = y;
+  <span class="hljs-keyword">this</span>.z = z;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h3 id="transformquat">transformQuat</h3>
+<p>Transforms this vector by given quaternion<br><code>m</code> - <em>{ Quat }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.transformQuat = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q)</span> </span>{
   <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x;
   <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y;
   <span class="hljs-keyword">var</span> z = <span class="hljs-keyword">this</span>.z;
@@ -203,33 +634,43 @@ Vec3.prototype.transformQuat = <span class="hljs-function"><span class="hljs-key
   <span class="hljs-keyword">this</span>.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
   <span class="hljs-keyword">this</span>.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h3 id="tostring-">toString()</h3>
+<p>Returns string representation of this vector</p>
 
-Vec3.prototype.transformMat4 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m)</span> </span>{
-  <span class="hljs-keyword">var</span> x = m.a14 + m.a11 * <span class="hljs-keyword">this</span>.x + m.a12 * <span class="hljs-keyword">this</span>.y + m.a13 * <span class="hljs-keyword">this</span>.z;
-  <span class="hljs-keyword">var</span> y = m.a24 + m.a21 * <span class="hljs-keyword">this</span>.x + m.a22 * <span class="hljs-keyword">this</span>.y + m.a23 * <span class="hljs-keyword">this</span>.z;
-  <span class="hljs-keyword">var</span> z = m.a34 + m.a31 * <span class="hljs-keyword">this</span>.x + m.a32 * <span class="hljs-keyword">this</span>.y + m.a33 * <span class="hljs-keyword">this</span>.z;
-  <span class="hljs-keyword">this</span>.x = x;
-  <span class="hljs-keyword">this</span>.y = y;
-  <span class="hljs-keyword">this</span>.z = z;
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-};
-
-Vec3.prototype.equals = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, tolerance)</span> </span>{
-  tolerance = tolerance != <span class="hljs-literal">null</span> ? tolerance : <span class="hljs-number">0.0000001</span>;
-  <span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.abs(v.x - <span class="hljs-keyword">this</span>.x) &lt;= tolerance) &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(v.y - <span class="hljs-keyword">this</span>.y) &lt;= tolerance) &amp;&amp; (<span class="hljs-built_in">Math</span>.abs(v.z - <span class="hljs-keyword">this</span>.z) &lt;= tolerance);
-};
-
-Vec3.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-string">"{"</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.x*<span class="hljs-number">1000</span>)/<span class="hljs-number">1000</span> + <span class="hljs-string">", "</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.y*<span class="hljs-number">1000</span>)/<span class="hljs-number">1000</span> + <span class="hljs-string">", "</span> + <span class="hljs-built_in">Math</span>.floor(<span class="hljs-keyword">this</span>.z*<span class="hljs-number">1000</span>)/<span class="hljs-number">1000</span> + <span class="hljs-string">"}"</span>;
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h3 id="hash-">hash()</h3>
+<p>Returns naive hash string representation of this vector</p>
 
-Vec3.prototype.lerp = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, t)</span> </span>{
-  <span class="hljs-keyword">this</span>.x = <span class="hljs-keyword">this</span>.x + (v.x - <span class="hljs-keyword">this</span>.x) * t;
-  <span class="hljs-keyword">this</span>.y = <span class="hljs-keyword">this</span>.y + (v.y - <span class="hljs-keyword">this</span>.y) * t;
-  <span class="hljs-keyword">this</span>.z = <span class="hljs-keyword">this</span>.z + (v.z - <span class="hljs-keyword">this</span>.z) * t;
-  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-}
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Vec3.prototype.hash = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.x + <span class="hljs-number">12</span> * <span class="hljs-keyword">this</span>.y + <span class="hljs-number">123</span> * <span class="hljs-keyword">this</span>.z;
+};
 
 Vec3.Zero = <span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
 

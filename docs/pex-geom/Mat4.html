@@ -54,8 +54,30 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Mat4</span><span class="hljs-params">()</span> </span>{
-  <span class="hljs-keyword">this</span>.reset();
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Mat4</span><span class="hljs-params">(a11, a12, a13, a14,
+              a21, a22, a23, a24,
+              a31, a32, a33, a34,
+              a41, a42, a43, a44)</span> </span>{
+  <span class="hljs-keyword">this</span>.a11 = a11;
+  <span class="hljs-keyword">this</span>.a12 = a12;
+  <span class="hljs-keyword">this</span>.a13 = a13;
+  <span class="hljs-keyword">this</span>.a14 = a14;
+  <span class="hljs-keyword">this</span>.a21 = a21;
+  <span class="hljs-keyword">this</span>.a22 = a22;
+  <span class="hljs-keyword">this</span>.a23 = a23;
+  <span class="hljs-keyword">this</span>.a24 = a24;
+  <span class="hljs-keyword">this</span>.a31 = a31;
+  <span class="hljs-keyword">this</span>.a32 = a32;
+  <span class="hljs-keyword">this</span>.a33 = a33;
+  <span class="hljs-keyword">this</span>.a34 = a34;
+  <span class="hljs-keyword">this</span>.a41 = a41;
+  <span class="hljs-keyword">this</span>.a42 = a42;
+  <span class="hljs-keyword">this</span>.a43 = a43;
+  <span class="hljs-keyword">this</span>.a44 = a44;
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">this</span>.a11) == <span class="hljs-string">'undefined'</span>) {
+    <span class="hljs-keyword">this</span>.reset();
+  }
 }</pre></div></div>
             
         </li>

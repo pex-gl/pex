@@ -257,7 +257,8 @@ Quat.prototype.setDirection = <span class="hljs-function"><span class="hljs-keyw
     q2 = <span class="hljs-keyword">new</span> Quat();
     q2.setAxisAngle(<span class="hljs-keyword">new</span> Vec3(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>), <span class="hljs-number">180</span>)
     q2.mul(q);
-    <span class="hljs-keyword">return</span> q2;
+    <span class="hljs-keyword">this</span>.copy(q2);
+    <span class="hljs-keyword">return</span>;
   }
   q.w = <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">1.0</span> + m.a11 + m.a22 + m.a33) / <span class="hljs-number">2.0</span>;
   dfWScale = q.w * <span class="hljs-number">4.0</span>;
