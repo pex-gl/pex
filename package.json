@@ -1,6 +1,6 @@
 {
   "name": "pex",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Pex is a javascript 3d library / engine allowing for seamless development between Plask and WebGL in the browser.",
   "keywords": [
     "pex",
