@@ -1,5 +1,6 @@
 [
   { "name" : "pex-helpers" },
+  { "name" : "pex-audio" },
   { "name" : "pex-space-colonization" },
   { "name" : "pex-physics-springs" }
 ]
