@@ -8,5 +8,9 @@
   { "url": "http://variable.io/sea-transport-network/", "thumb": "assets/seatransport.jpg" },
   { "url": "http://variable.io/tangent/", "thumb": "assets/tangent.jpg" },
   { "url": "http://variable.io/threads/", "thumb": "assets/threads.jpg" },
-  { "url": "http://marcinignac.com/projects/geo-editor/", "thumb": "assets/geo-editor.png" }
+  { "url": "http://marcinignac.com/projects/geo-editor/", "thumb": "assets/geo-editor.png" },
+  { "url": "http://marcinignac.com/experiments/deferred-rendering/demo/", "thumb": "assets/deferred-rendering.jpg" },
+  { "url": "http://marcinignac.com/experiments/ssao-gamma/demo/", "thumb": "assets/ssao-gamma.jpg" },
+  { "url": "http://marcinignac.com/experiments/point-light-shadows/demo/", "thumb": "assets/point-light-shadows.jpg" },
+  { "url": "http://marcinignac.com/experiments/continuous-transition/demo/", "thumb": "assets/continuous-transition.jpg" }
 ]

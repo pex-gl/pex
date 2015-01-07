@@ -158,6 +158,24 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
+              <h3 id="frombytearray-a-">fromByteArray(a)</h3>
+<p>Creates new color from array of 4 byte values [r, g, b, a]<br><code>a</code> - array of rgba values <em>{ Array of Numbers/Int 0..255 }</em> = [0, 0, 0, 255]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Color.fromByteArray = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a)</span> </span>{
+ <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Color(a[<span class="hljs-number">0</span>]/<span class="hljs-number">255</span>, a[<span class="hljs-number">1</span>]/<span class="hljs-number">255</span>, a[<span class="hljs-number">2</span>]/<span class="hljs-number">255</span>, (a.length == <span class="hljs-number">4</span>) ? a[<span class="hljs-number">3</span>]/<span class="hljs-number">255</span> : <span class="hljs-number">255</span>);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
               <h3 id="fromhsv-h-s-v-a-">fromHSV(h, s, v, a)</h3>
 <p>Creates new color from hue, saturation and value<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>v</code> - value <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
 
@@ -172,11 +190,11 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h3 id="fromhsl-h-s-l-a-">fromHSL(h, s, l, a)</h3>
 <p>Creates new color from hue, saturation and lightness<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>l</code> - lightness <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
@@ -192,11 +210,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h3 id="fromhex-hex-">fromHex(hex)</h3>
 <p>Creates new color from html hex value e.g. #FF0000<br><code>hex</code> - html hex color string (with or without #) <em>{ String }</em></p>
@@ -212,11 +230,11 @@
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h3 id="fromxyz-x-y-z-">fromXYZ(x, y, z)</h3>
 <p>Creates new color from XYZ representation<br>x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number 0..1 }</em>  </p>
@@ -232,11 +250,11 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <h3 id="fromlab-l-a-b-">fromLab(l, a, b)</h3>
 <p>Creates new color from Lab representation<br>l - <em>{ Number 0..100 }</em><br>a - <em>{ Number -128..127 }</em><br>b - <em>{ Number -128..127 }</em>  </p>
@@ -252,11 +270,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h3 id="set-r-g-b-a-">set(r, g, b, a)</h3>
 <p><code>r</code> - red component <em>{ Number 0..1 }</em> = 0<br><code>g</code> - green component <em>{ Number 0..1 }</em> = 0<br><code>b</code> - blue component <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1</p>
@@ -275,11 +293,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h3 id="sethsv-h-s-l-a-">setHSV(h, s, l, a)</h3>
 <p>Sets rgb color values from a hue, saturation, value and alpha<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>v</code> - value <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1  </p>
@@ -311,11 +329,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h3 id="gethsv-">getHSV()</h3>
 <p>Returns hue, saturation, value and alpha of color as<br><em>{ Object h:0.1, s:0..1, v:0..1, a:0..1 }</em>  </p>
@@ -351,11 +369,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h3 id="sethsl-h-s-l-a-">setHSL(h, s, l, a)</h3>
 <p>Sets rgb color values from a hue, saturation, lightness and alpha<br><code>h</code> - hue <em>{ Number 0..1 }</em> = 0<br><code>s</code> - saturation <em>{ Number 0..1 }</em> = 0<br><code>l</code> - lightness <em>{ Number 0..1 }</em> = 0<br><code>a</code> - alpha opacity <em>{ Number 0..1 }</em> = 1<br>Based on <a href="https://gist.github.com/mjijackson/5311256">https://gist.github.com/mjijackson/5311256</a></p>
@@ -393,11 +411,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h3 id="gethsl-">getHSL()</h3>
 <p>Returns hue, saturation, lightness and alpha of color as<br><em>{ Object h:0.1, s:0..1, l:0..1, a:0..1 }</em><br>Based on <a href="https://gist.github.com/mjijackson/5311256">https://gist.github.com/mjijackson/5311256</a></p>
@@ -436,11 +454,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h3 id="sethex-hex-">setHex(hex)</h3>
 <p>Sets rgb color values from a html hex value e.g. #FF0000<br><code>hex</code> - html hex color string (with or without #) <em>{ String }</em></p>
@@ -465,11 +483,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h3 id="gethex-">getHex()</h3>
 <p>Returns html hex representation of this color <em>{ String }</em></p>
@@ -490,11 +508,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <h3 id="setxyz-x-y-z-">setXYZ(x, y, z)</h3>
 <p>Sets rgb color values from XYZ
@@ -535,11 +553,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h3 id="getxyz-">getXYZ()</h3>
 <p>Returns xyz representation of this color as<br><em>{ Object x:0..1, y:0..1, z:0..1 }</em>  </p>
@@ -569,11 +587,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h3 id="setlab-l-a-b-">setLab(l, a, b)</h3>
 <p>Sets rgb color values from Lab<br>l - <em>{ Number 0..100 }</em><br>a - <em>{ Number -128..127 }</em><br>b - <em>{ Number -128..127 }</em>  </p>
@@ -612,11 +630,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h3 id="getlab-">getLab()</h3>
 <p>Returns Lab representation of this color as<br><em>{ Object l: 0..100, a: -128..127, b: -128..127 }</em>  </p>
@@ -648,11 +666,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h3 id="copy-">copy()</h3>
 <p>Copies rgba values from another color into this instance<br><code>c</code> - another color to copy values from <em>{ Color }</em></p>
@@ -671,11 +689,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h3 id="clone-">clone()</h3>
 <p>Returns a copy of this color <em>{ Color }</em></p>
@@ -689,11 +707,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h3 id="hash-">hash()</h3>
 <p>Returns one (naive) hash number representation of this color <em>{ Number }</em></p>
@@ -707,11 +725,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h3 id="distance-color-">distance(color)</h3>
 <p>Returns distance (CIE76) between this and given color using Lab representation <em>{ Number }</em><br>Based on <a href="http://en.wikipedia.org/wiki/Color_difference">http://en.wikipedia.org/wiki/Color_difference</a></p>
@@ -732,11 +750,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h3 id="lerp-startcolor-endcolor-t-mode-">lerp(startColor, endColor, t, mode)</h3>
 <p>Creates new color from linearly interpolated two colors<br><code>startColor</code> - <em>{ Color }</em><br><code>endColor</code> - <em>{ Color } </em><br><code>t</code> - interpolation ratio <em>{ Number 0..1 }</em><br><code>mode</code> - interpolation mode : ‘rgb’, ‘hsv’, ‘hsl’ <em>{ String }</em> = ‘rgb’  </p>
@@ -782,11 +800,11 @@ x - <em>{ Number 0..1 }</em><br>y - <em>{ Number 0..1 }</em><br>z - <em>{ Number
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h2 id="predefined-colors-ready-to-use">Predefined colors ready to use</h2>
 

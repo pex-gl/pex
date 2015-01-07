@@ -210,19 +210,20 @@ Texture2D.genNoiseRGBA = <span class="hljs-function"><span class="hljs-keyword">
 Texture2D.load = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(src, options, callback)</span> </span>{
   <span class="hljs-keyword">if</span> (!callback &amp;&amp; <span class="hljs-keyword">typeof</span>(options) == <span class="hljs-string">'function'</span>) {
     callback = options;
-    optiosn = <span class="hljs-literal">null</span>;
+    options = <span class="hljs-literal">null</span>;
   }
   <span class="hljs-keyword">var</span> defaultOptions = {
     repeat: <span class="hljs-literal">false</span>,
     mipmap: <span class="hljs-literal">false</span>,
-    nearest: <span class="hljs-literal">false</span>
+    nearest: <span class="hljs-literal">false</span>,
+    flip: <span class="hljs-literal">true</span>
   };
   options = merge(defaultOptions, options);
 
   <span class="hljs-keyword">var</span> gl = Context.currentContext;
   <span class="hljs-keyword">var</span> texture = Texture2D.create(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, options);
   texture.ready = <span class="hljs-literal">false</span>;
-  IO.loadImageData(gl, texture.handle, texture.target, texture.target, src, { flip: <span class="hljs-literal">true</span>, crossOrigin: options.crossOrigin }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(image)</span> </span>{
+  IO.loadImageData(gl, texture.handle, texture.target, texture.target, src, { flip: options.flip, crossOrigin: options.crossOrigin }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(image)</span> </span>{
     <span class="hljs-keyword">if</span> (!image) {
       texture.dispose();
       <span class="hljs-keyword">var</span> noise = Texture2D.getNoise();

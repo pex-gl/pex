@@ -69,6 +69,12 @@
   <span class="hljs-keyword">this</span>.headerBgPaint = <span class="hljs-keyword">new</span> SkPaint();
   <span class="hljs-keyword">this</span>.headerBgPaint.setStyle(SkPaint.kFillStyle);
   <span class="hljs-keyword">this</span>.headerBgPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.textBgPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.textBgPaint.setStyle(SkPaint.kFillStyle);
+  <span class="hljs-keyword">this</span>.textBgPaint.setColor(<span class="hljs-number">50</span>, <span class="hljs-number">50</span>, <span class="hljs-number">50</span>, <span class="hljs-number">255</span>);
+  <span class="hljs-keyword">this</span>.textBorderPaint = <span class="hljs-keyword">new</span> SkPaint();
+  <span class="hljs-keyword">this</span>.textBorderPaint.setStyle(SkPaint.kStrokeStyle);
+  <span class="hljs-keyword">this</span>.textBorderPaint.setColor(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>);
   <span class="hljs-keyword">this</span>.controlBgPaint = <span class="hljs-keyword">new</span> SkPaint();
   <span class="hljs-keyword">this</span>.controlBgPaint.setStyle(SkPaint.kFillStyle);
   <span class="hljs-keyword">this</span>.controlBgPaint.setColor(<span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">255</span>);
@@ -162,6 +168,7 @@ SkiaRenderer.prototype.draw = <span class="hljs-function"><span class="hljs-keyw
     }
     <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline1D'</span> || e.type == <span class="hljs-string">'spline2D'</span>) eh = <span class="hljs-number">24</span> + w;
     <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) eh = <span class="hljs-number">26</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'text'</span>) eh = <span class="hljs-number">45</span> * scale;
 
     <span class="hljs-keyword">if</span> (e.type != <span class="hljs-string">'separator'</span>) {
       canvas.drawRect(<span class="hljs-keyword">this</span>.panelBgPaint, dx, dy, dx + w, dy + eh - <span class="hljs-number">2</span>);
@@ -321,6 +328,15 @@ SkiaRenderer.prototype.draw = <span class="hljs-function"><span class="hljs-keyw
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) {
       canvas.drawRect(<span class="hljs-keyword">this</span>.headerBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
       canvas.drawText(<span class="hljs-keyword">this</span>.headerFontPaint, items[i].title, dx + <span class="hljs-number">6</span>, dy + <span class="hljs-number">16</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'text'</span>) {
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, items[i].title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      canvas.drawRect(<span class="hljs-keyword">this</span>.textBgPaint, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">20</span>, dx + w - <span class="hljs-number">3</span>, dy + eh - <span class="hljs-number">5</span>);
+      canvas.drawText(<span class="hljs-keyword">this</span>.fontPaint, e.contextObject[e.attributeName], dx + <span class="hljs-number">3</span> + <span class="hljs-number">3</span>, dy + <span class="hljs-number">15</span> + <span class="hljs-number">20</span>);
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">20</span>, w - <span class="hljs-number">6</span>, eh - <span class="hljs-number">20</span> - <span class="hljs-number">5</span>);
+      <span class="hljs-keyword">if</span> (e.focus) {
+        canvas.drawRect(<span class="hljs-keyword">this</span>.textBorderPaint, e.activeArea.x, e.activeArea.y, e.activeArea.x + e.activeArea.width, e.activeArea.y + e.activeArea.height);
+      }
     }
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'separator'</span>) {</pre></div></div>
             

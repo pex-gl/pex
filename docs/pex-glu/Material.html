@@ -37,6 +37,7 @@
   <span class="hljs-keyword">this</span>.program = program;
   <span class="hljs-keyword">this</span>.uniforms = uniforms || {};
   <span class="hljs-keyword">this</span>.prevUniforms = {};
+  <span class="hljs-keyword">this</span>.missingUniforms = {};
 }
 
 Material.prototype.use = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
@@ -45,24 +46,43 @@ Material.prototype.use = <span class="hljs-function"><span class="hljs-keyword">
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> name <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.program.uniforms) {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.uniforms[name] == <span class="hljs-literal">null</span>) {
       <span class="hljs-keyword">if</span> (name.indexOf(<span class="hljs-string">'['</span>) == -<span class="hljs-number">1</span>) { <span class="hljs-comment">//don't warn for arrays</span>
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'WARN'</span>, <span class="hljs-string">'Uniform'</span>, name, <span class="hljs-string">'is null'</span>);
+        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.missingUniforms[name]) {
+          <span class="hljs-keyword">this</span>.missingUniforms[name] = <span class="hljs-number">0</span>;
+        }
+        <span class="hljs-keyword">this</span>.missingUniforms[name]++;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>print log message only once, on second frame</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.missingUniforms[name] == <span class="hljs-number">2</span>) {
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'WARN'</span>, <span class="hljs-string">'Uniform'</span>, name, <span class="hljs-string">'is null'</span>);
+        }
       }
-      <span class="hljs-keyword">this</span>.uniforms[name] = <span class="hljs-number">0</span>;
     }
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.program.uniforms[name].type == <span class="hljs-keyword">this</span>.gl.SAMPLER_2D || <span class="hljs-keyword">this</span>.program.uniforms[name].type == <span class="hljs-keyword">this</span>.gl.SAMPLER_CUBE) {
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.program.uniforms[name].type == <span class="hljs-keyword">this</span>.gl.SAMPLER_2D || <span class="hljs-keyword">this</span>.program.uniforms[name].type == <span class="hljs-keyword">this</span>.gl.SAMPLER_CUBE) {
       <span class="hljs-keyword">this</span>.gl.activeTexture(<span class="hljs-keyword">this</span>.gl.TEXTURE0 + numTextures);
-      <span class="hljs-keyword">this</span>.uniforms[name]
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.uniforms[name].width &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.uniforms[name].height &gt; <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">this</span>.gl.bindTexture(<span class="hljs-keyword">this</span>.uniforms[name].target, <span class="hljs-keyword">this</span>.uniforms[name].handle);
         <span class="hljs-keyword">this</span>.program.uniforms[name](numTextures);
       }
       numTextures++;
-    } <span class="hljs-keyword">else</span> {
+    }
+    <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">var</span> newValue = <span class="hljs-keyword">this</span>.uniforms[name];
       <span class="hljs-keyword">var</span> oldValue = <span class="hljs-keyword">this</span>.prevUniforms[name];
       <span class="hljs-keyword">var</span> newHash = <span class="hljs-literal">null</span>;
       <span class="hljs-keyword">if</span> (oldValue !== <span class="hljs-literal">null</span>) {
-        <span class="hljs-keyword">if</span> (newValue.hash) {
+        <span class="hljs-keyword">if</span> (newValue &amp;&amp; newValue.hash) {
           newHash = newValue.hash();
           <span class="hljs-keyword">if</span> (newHash == oldValue) {
             <span class="hljs-keyword">continue</span>;

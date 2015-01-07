@@ -46,7 +46,9 @@
 <span class="hljs-keyword">var</span> Spline1D = geom.Spline1D;
 <span class="hljs-keyword">var</span> Spline2D = geom.Spline2D;
 <span class="hljs-keyword">var</span> IO = sys.IO;
-<span class="hljs-keyword">var</span> Color = color.Color;</pre></div></div>
+<span class="hljs-keyword">var</span> Color = color.Color;
+
+<span class="hljs-keyword">var</span> VK_BACKSPACE = Platform.isPlask ? <span class="hljs-number">51</span> : <span class="hljs-number">8</span>;</pre></div></div>
             
         </li>
         
@@ -97,10 +99,22 @@ GUI.prototype.bindEventListeners = <span class="hljs-function"><span class="hljs
   <span class="hljs-built_in">window</span>.on(<span class="hljs-string">'leftMouseUp'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
     self.onMouseUp(e);
   });
+  <span class="hljs-built_in">window</span>.on(<span class="hljs-string">'keyDown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+    self.onKeyDown(e);
+  });
 };
 
 GUI.prototype.onMouseDown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
   <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.enabled) <span class="hljs-keyword">return</span>;
+
+  <span class="hljs-keyword">this</span>.items.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{
+    <span class="hljs-keyword">if</span> (item.type == <span class="hljs-string">'text'</span>) {
+      <span class="hljs-keyword">if</span> (item.focus) {
+        item.focus = <span class="hljs-literal">false</span>;
+        item.dirty = <span class="hljs-literal">true</span>;
+      }
+    }
+  })
 
   <span class="hljs-keyword">this</span>.activeControl = <span class="hljs-literal">null</span>;
   <span class="hljs-keyword">this</span>.mousePos.set(e.x / <span class="hljs-keyword">this</span>.highdpi - <span class="hljs-keyword">this</span>.x, e.y / <span class="hljs-keyword">this</span>.highdpi - <span class="hljs-keyword">this</span>.y);
@@ -174,6 +188,9 @@ GUI.prototype.onMouseDown = <span class="hljs-function"><span class="hljs-keywor
             <span class="hljs-keyword">continue</span>;
           }
         }
+      }
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.activeControl.type == <span class="hljs-string">'text'</span>) {
+        <span class="hljs-keyword">this</span>.activeControl.focus = <span class="hljs-literal">true</span>;
       }
       e.handled = <span class="hljs-literal">true</span>;
       <span class="hljs-keyword">this</span>.onMouseDrag(e);
@@ -304,6 +321,35 @@ GUI.prototype.onMouseUp = <span class="hljs-function"><span class="hljs-keyword"
   }
 };
 
+GUI.prototype.onKeyDown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(e)</span> </span>{
+  <span class="hljs-keyword">if</span> (e.handled) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> focusedItem = <span class="hljs-keyword">this</span>.items.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{ <span class="hljs-keyword">return</span> item.type == <span class="hljs-string">'text'</span> &amp;&amp; item.focus})[<span class="hljs-number">0</span>];
+  <span class="hljs-keyword">if</span> (focusedItem) {
+    e.handled = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">var</span> c = e.str.charCodeAt(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">if</span> (c &gt;= <span class="hljs-number">32</span> &amp;&amp; c &lt;= <span class="hljs-number">126</span>) {
+      focusedItem.contextObject[focusedItem.attributeName] += e.str;
+      focusedItem.dirty = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">if</span> (focusedItem.onchange) {
+        focusedItem.onchange(focusedItem.contextObject[focusedItem.attributeName]);
+      }
+    }
+    <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">switch</span>(e.keyCode) {
+        <span class="hljs-keyword">case</span> VK_BACKSPACE:
+          <span class="hljs-keyword">var</span> str = focusedItem.contextObject[focusedItem.attributeName];
+          focusedItem.contextObject[focusedItem.attributeName] = str.substr(<span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, str.length-<span class="hljs-number">1</span>));
+          focusedItem.dirty = <span class="hljs-literal">true</span>;
+          <span class="hljs-keyword">if</span> (focusedItem.onchange) {
+            focusedItem.onchange(focusedItem.contextObject[focusedItem.attributeName]);
+          }
+          <span class="hljs-keyword">break</span>;
+      }
+    }
+    e.handled = <span class="hljs-literal">true</span>;
+  }
+}
+
 GUI.prototype.addHeader = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(title)</span> </span>{
   <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
     type: <span class="hljs-string">'header'</span>,
@@ -407,6 +453,20 @@ GUI.prototype.addParam = <span class="hljs-function"><span class="hljs-keyword">
   <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (contextObject[attributeName] <span class="hljs-keyword">instanceof</span> Vec3) {
     <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
       type: <span class="hljs-string">'vec3'</span>,
+      title: title,
+      contextObject: contextObject,
+      attributeName: attributeName,
+      activeArea: <span class="hljs-keyword">new</span> Rect(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
+      options: options,
+      onchange: onchange,
+      dirty: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">this</span>.items.push(ctrl);
+    <span class="hljs-keyword">return</span> ctrl;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> contextObject[attributeName] == <span class="hljs-string">'string'</span>) {
+    <span class="hljs-keyword">var</span> ctrl = <span class="hljs-keyword">new</span> GUIControl({
+      type: <span class="hljs-string">'text'</span>,
       title: title,
       contextObject: contextObject,
       attributeName: attributeName,

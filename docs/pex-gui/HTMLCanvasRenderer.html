@@ -103,6 +103,7 @@ HTMLCanvasRenderer.prototype.draw = <span class="hljs-function"><span class="hlj
     }
     <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'spline1D'</span> || e.type == <span class="hljs-string">'spline2D'</span>) eh = <span class="hljs-number">24</span> + w;
     <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'header'</span>) eh = <span class="hljs-number">26</span> * scale;
+    <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'text'</span>) eh = <span class="hljs-number">45</span> * scale;
 
     <span class="hljs-keyword">if</span> (e.type != <span class="hljs-string">'separator'</span>) {
       ctx.fillStyle = <span class="hljs-string">'rgba(0, 0, 0, 0.56)'</span>;
@@ -244,6 +245,19 @@ HTMLCanvasRenderer.prototype.draw = <span class="hljs-function"><span class="hlj
       ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">3</span>, w - <span class="hljs-number">3</span> - <span class="hljs-number">3</span>, eh - <span class="hljs-number">5</span> - <span class="hljs-number">3</span>);
       ctx.fillStyle = <span class="hljs-string">'rgba(0, 0, 0, 1)'</span>;
       ctx.fillText(items[i].title, dx + <span class="hljs-number">5</span>, dy + <span class="hljs-number">16</span>);
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'text'</span>) {
+      e.activeArea.set(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">20</span>, w - <span class="hljs-number">6</span>, eh - <span class="hljs-number">20</span> - <span class="hljs-number">5</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(items[i].title, dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">13</span>);
+      ctx.fillStyle = <span class="hljs-string">'rgba(50, 50, 50, 1)'</span>;
+      ctx.fillRect(dx + <span class="hljs-number">3</span>, dy + <span class="hljs-number">20</span>, e.activeArea.width, e.activeArea.height);
+      ctx.fillStyle = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+      ctx.fillText(e.contextObject[e.attributeName], dx + <span class="hljs-number">3</span> + <span class="hljs-number">3</span>, dy + <span class="hljs-number">15</span> + <span class="hljs-number">20</span>);
+      <span class="hljs-keyword">if</span> (e.focus) {
+        ctx.strokeStyle = <span class="hljs-string">'rgba(255, 255, 0, 1)'</span>;
+        ctx.strokeRect(e.activeArea.x-<span class="hljs-number">0.5</span>, e.activeArea.y-<span class="hljs-number">0.5</span>, e.activeArea.width, e.activeArea.height);
+      }
     }
     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e.type == <span class="hljs-string">'separator'</span>) {</pre></div></div>
             

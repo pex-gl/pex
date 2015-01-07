@@ -245,11 +245,13 @@
     <span class="hljs-keyword">var</span> height = <span class="hljs-built_in">window</span>.innerHeight;
 
     <span class="hljs-keyword">if</span> (win.settings.fullscreen) {
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = width * win.settings.highdpi;
+      canvas.height = height * win.settings.highdpi;
+      canvas.style.width = width + <span class="hljs-string">'px'</span>;
+      canvas.style.height = height + <span class="hljs-string">'px'</span>;
 
-      win.width = width;
-      win.height = height;
+      win.width = width * win.settings.highdpi;
+      win.height = height * win.settings.highdpi;
     }
 
     fireEvent(<span class="hljs-string">'resize'</span>, { width: width, height: height });

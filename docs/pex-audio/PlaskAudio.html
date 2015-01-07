@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>PlaskAudio.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>PlaskAudio.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Simple audio playback for Plask</p>
+<h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> audio = <span class="hljs-keyword">new</span> Audio(<span class="hljs-string">"assets/test.mp3"</span>);
+ audio.play();
+ audio.volume = <span class="hljs-number">0.5</span>;
+</code></pre>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="reference">Reference</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> AVPlayer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'plask'</span>).AVPlayer;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="audio-file-">Audio(file)</h3>
+<p><code>file</code> - audio file to play</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Audio</span><span class="hljs-params">(file)</span> </span>{
+  <span class="hljs-keyword">this</span>.audio = <span class="hljs-keyword">new</span> AVPlayer();
+  <span class="hljs-keyword">this</span>.audio.appendFile(file);
+
+  <span class="hljs-keyword">this</span>._playing = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">this</span>._loops = <span class="hljs-literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="volume">volume</h3>
+<p>gets or sets playback volume <em>{ Number }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'volume'</span>, {
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+      <span class="hljs-keyword">this</span>.audio.setVolume(value);
+    },
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.audio.volume();
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="isplaying">isPlaying</h3>
+<p>returns true if audio is currently playing, false otherwise <em>{ Boolean }</em>
+FIXME: this is currently not reliable as we don’t have a method to detect if file stopped playing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'isPlaying'</span>, {
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._playing;
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="currenttime">currentTime</h3>
+<p>gets or sets current playback time <em>{ Number }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'currentTime'</span>, {
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.audio.currentTime();
+    },
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(time)</span> </span>{
+      <span class="hljs-keyword">this</span>.audio.seekToTime(time);
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="duration">duration</h3>
+<p>returns total playback time in seconds  <em>{ Number }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'duration'</span>, {
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.audio.duration() || <span class="hljs-number">0</span>;
+    }
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="loop">loop</h3>
+<p>gets or sets loop mode <em>{ Boolean }</em> = false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'loop'</span>, {
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._loops;
+    },
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+      <span class="hljs-keyword">this</span>._loops = value;
+      <span class="hljs-keyword">this</span>.audio.setLoops(value);
+    }
+  });
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="play-">play()</h3>
+<p>start playing the file</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Audio.prototype.play = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>._playing = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">this</span>.audio.setRate(<span class="hljs-number">1</span>);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="pause-">pause()</h3>
+<p>pause playback</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Audio.prototype.pause = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">this</span>._playing = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">this</span>.audio.setRate(<span class="hljs-number">0</span>);
+}
+
+<span class="hljs-built_in">module</span>.exports = Audio;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
