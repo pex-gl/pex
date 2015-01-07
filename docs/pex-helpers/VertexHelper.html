@@ -42,7 +42,14 @@
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">VertexHelper</span><span class="hljs-params">(geometry, color)</span> </span>{
   color = color || Color.Red;
-  Mesh.call(<span class="hljs-keyword">this</span>, geometry, <span class="hljs-keyword">new</span> SolidColor({ color: color, pointSize: <span class="hljs-number">10</span> }), { points: <span class="hljs-literal">true</span> });
+
+  <span class="hljs-keyword">var</span> g = <span class="hljs-keyword">new</span> Geometry({
+    vertices: geometry.vertices.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v)</span> </span>{ <span class="hljs-keyword">return</span> v; }),
+    edges: <span class="hljs-literal">false</span>,
+    faces: <span class="hljs-literal">false</span>
+  });
+
+  Mesh.call(<span class="hljs-keyword">this</span>, g, <span class="hljs-keyword">new</span> SolidColor({ color: color, pointSize: <span class="hljs-number">10</span> }), { points: <span class="hljs-literal">true</span> });
 }
 
 VertexHelper.prototype = <span class="hljs-built_in">Object</span>.create(Mesh.prototype);

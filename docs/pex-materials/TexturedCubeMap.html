@@ -53,6 +53,9 @@
       TexturedCubeMapGLSL = <span class="hljs-string">'#define textureCubeLod textureCubeLodEXT\n'</span> + TexturedCubeMapGLSL;
     }
   }
+  <span class="hljs-keyword">else</span> {
+    TexturedCubeMapGLSL = <span class="hljs-string">'#define LOD_ENABLED 1\n'</span> + TexturedCubeMapGLSL;
+  }
   <span class="hljs-keyword">var</span> program = <span class="hljs-keyword">new</span> Program(TexturedCubeMapGLSL);
   <span class="hljs-keyword">var</span> defaults = {
     lod: -<span class="hljs-number">1</span>

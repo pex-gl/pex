@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>OctreeHelper.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>OctreeHelper.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> glu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-glu'</span>);
+<span class="hljs-keyword">var</span> gen = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-gen'</span>);
+<span class="hljs-keyword">var</span> materials = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-materials'</span>);
+<span class="hljs-keyword">var</span> color = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-color'</span>);
+
+<span class="hljs-keyword">var</span> Geometry = geom.Geometry;
+<span class="hljs-keyword">var</span> Mesh = glu.Mesh;
+<span class="hljs-keyword">var</span> SolidColor = materials.SolidColor;
+<span class="hljs-keyword">var</span> Color = color.Color;
+<span class="hljs-keyword">var</span> Box = gen.Box;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">OctreeHelper</span><span class="hljs-params">(octree, color, level)</span> </span>{
+  color = color || Color.Red;
+  level = (<span class="hljs-keyword">typeof</span>(level) != <span class="hljs-string">'undefined'</span>) ? level : <span class="hljs-number">3</span>;
+  <span class="hljs-keyword">this</span>.cells = octree.getAllCellsAtLevel(level);
+  <span class="hljs-keyword">this</span>.octree = octree;
+  <span class="hljs-keyword">var</span> geometry = <span class="hljs-keyword">new</span> Box();
+  geometry.computeEdges();
+  Mesh.call(<span class="hljs-keyword">this</span>, geometry, <span class="hljs-keyword">new</span> SolidColor({ color: color, pointSize: <span class="hljs-number">10</span> }), { lines: <span class="hljs-literal">true</span> });
+}
+
+OctreeHelper.prototype = <span class="hljs-built_in">Object</span>.create(Mesh.prototype);
+
+OctreeHelper.prototype.draw = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(camera)</span> </span>{
+  <span class="hljs-keyword">this</span>.cells.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cell)</span> </span>{
+    <span class="hljs-keyword">this</span>.position.x = cell.position.x + cell.size.x / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">this</span>.position.y = cell.position.y + cell.size.y / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">this</span>.position.z = cell.position.z + cell.size.z / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">this</span>.scale.x = cell.size.x;
+    <span class="hljs-keyword">this</span>.scale.y = cell.size.y;
+    <span class="hljs-keyword">this</span>.scale.z = cell.size.z;
+    Mesh.prototype.draw.call(<span class="hljs-keyword">this</span>, camera);
+  }.bind(<span class="hljs-keyword">this</span>));
+}
+
+<span class="hljs-built_in">module</span>.exports = OctreeHelper;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

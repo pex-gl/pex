@@ -45,7 +45,7 @@
  });
  geom.computeNormals();
 
- <span class="hljs-keyword">var</span> material = <span class="hljs-keyword">new</span> SolidColorMaterial();
+ <span class="hljs-keyword">var</span> material = <span class="hljs-keyword">new</span> SolidColor();
  <span class="hljs-keyword">var</span> mesh = <span class="hljs-keyword">new</span> Mesh(geom, material);
 </code></pre><p>Geometry can’t be rendered by itself. First it has to be convertet to a Vbo. The Mesh from pex-glu class does it for us automaticaly.</p>
 
