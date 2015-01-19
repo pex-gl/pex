@@ -27,26 +27,245 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>2D Rect (x, y)</p>
+<h2 id="example-use">Example use</h2>
+<pre><code> <span class="hljs-keyword">var</span> rect = <span class="hljs-keyword">new</span> Rect(<span class="hljs-keyword">new</span> Vec2(-<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>), <span class="hljs-keyword">new</span> Vec2(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>));
+ <span class="hljs-keyword">var</span> point = <span class="hljs-keyword">new</span> Vec2(<span class="hljs-number">0.2</span>, <span class="hljs-number">0.9</span>);
+ rect.contains(point); <span class="hljs-comment">//=&gt; true</span>
+</code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Rect</span><span class="hljs-params">(x, y, width, height)</span> </span>{
-  <span class="hljs-keyword">this</span>.x = x;
-  <span class="hljs-keyword">this</span>.y = y;
-  <span class="hljs-keyword">this</span>.width = width;
-  <span class="hljs-keyword">this</span>.height = height;
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="reference">Reference</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> geom = <span class="hljs-built_in">require</span>(<span class="hljs-string">'pex-geom'</span>);
+<span class="hljs-keyword">var</span> Vec2 = geom.Vec2;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="properties">Properties</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3 id="-x-number-">.x - <em>{ Number }</em></h3>
+<h3 id="-y-number-">.y - <em>{ Number }</em></h3>
+<h3 id="-width-number-">.width - <em>{ Number }</em></h3>
+<h3 id="-height-number-">.height - <em>{ Number }</em></h3>
+<h3 id="-min-vec2-">.min - <em>{ Vec2 }</em></h3>
+<h3 id="-max-vec2-">.max - <em>{ Vec2 }</em></h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="rect-min-max-">Rect ( min, max )</h3>
+<p><code>min</code> - bottom left corner <em>{ Vec3 }</em> = ( Infinity, Infinity)<br><code>max</code> - top right corner <em>{ Vec3 }</em> = ( -Infinity, -Infinity)  </p>
+<p>alternative version of the constructor  </p>
+<h3 id="rect-x-y-width-height-">Rect ( x, y, width, height )</h3>
+<p><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>width</code> - <em>{ Number }</em><br><code>height</code> - <em>{ Number }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Rect</span><span class="hljs-params">(min, max)</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">this</span>.min = <span class="hljs-keyword">new</span> Vec2( <span class="hljs-literal">Infinity</span>, <span class="hljs-literal">Infinity</span>);
+    <span class="hljs-keyword">this</span>.max = <span class="hljs-keyword">new</span> Vec2(-<span class="hljs-literal">Infinity</span>, -<span class="hljs-literal">Infinity</span>);
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">2</span>) {
+    <span class="hljs-keyword">this</span>.min = min;
+    <span class="hljs-keyword">this</span>.max = max;
+  }
+  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length == <span class="hljs-number">4</span>) {
+    <span class="hljs-keyword">var</span> x = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">var</span> y = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> w = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">2</span>];
+    <span class="hljs-keyword">var</span> h = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">3</span>];
+
+    <span class="hljs-keyword">this</span>.min = <span class="hljs-keyword">new</span> Vec2(x, y);
+    <span class="hljs-keyword">this</span>.max = <span class="hljs-keyword">new</span> Vec2(x + w, y + h);
+  }
+
+  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'x'</span>, {
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x)</span> </span>{
+      <span class="hljs-keyword">var</span> w = <span class="hljs-keyword">this</span>.max.x - <span class="hljs-keyword">this</span>.min.x;
+      <span class="hljs-keyword">this</span>.min.x = x;
+      <span class="hljs-keyword">this</span>.max.x = x + w;
+    },
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.min.x;
+    }
+  });
+
+  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'y'</span>, {
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(y)</span> </span>{
+      <span class="hljs-keyword">var</span> h = <span class="hljs-keyword">this</span>.max.y - <span class="hljs-keyword">this</span>.min.y;
+      <span class="hljs-keyword">this</span>.min.y = y;
+      <span class="hljs-keyword">this</span>.max.y = y + h;
+    },
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.min.y;
+    }
+  });
+
+  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'width'</span>, {
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(w)</span> </span>{
+      <span class="hljs-keyword">this</span>.max.x = <span class="hljs-keyword">this</span>.min.x + w;
+    },
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.max.x - <span class="hljs-keyword">this</span>.min.x;
+    }
+  });
+
+  <span class="hljs-built_in">Object</span>.defineProperty(<span class="hljs-keyword">this</span>, <span class="hljs-string">'height'</span>, {
+    set: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h)</span> </span>{
+      <span class="hljs-keyword">this</span>.max.y = <span class="hljs-keyword">this</span>.min.y + h;
+    },
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.max.y - <span class="hljs-keyword">this</span>.min.y;
+    }
+  });
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="set-x-y-width-height-">set(x, y, width, height)</h3>
+<p><code>x</code> - <em>{ Number }</em><br><code>y</code> - <em>{ Number }</em><br><code>width</code> - <em>{ Number }</em><br><code>height</code> - <em>{ Number }</em>  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rect.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> </span>{
+  <span class="hljs-keyword">this</span>.min.x = x;
+  <span class="hljs-keyword">this</span>.min.y = y;
+  <span class="hljs-keyword">this</span>.max.x = x + width;
+  <span class="hljs-keyword">this</span>.max.y = y + height;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="contains-p-">contains(p)</h3>
+<p>Returns true if point is inside rectangle, false otherwise<br><code>p</code> - <em>{ Vec2 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rect.prototype.contains = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> </span>{
+  <span class="hljs-keyword">return</span> point.x &gt;= <span class="hljs-keyword">this</span>.min.x &amp;&amp; point.x &lt;= <span class="hljs-keyword">this</span>.max.x &amp;&amp; point.y &gt;= <span class="hljs-keyword">this</span>.min.y &amp;&amp; point.y &lt;= <span class="hljs-keyword">this</span>.max.y;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="getcenter-out-">getCenter(out)</h3>
+<p>Returns center of the rectangle<br><code>out</code> - optional vector to save the center to <em>{ Vec2 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rect.prototype.getCenter = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(out)</span> </span>{
+  out = out || <span class="hljs-keyword">new</span> Vec2();
+  out.asAdd(<span class="hljs-keyword">this</span>.min, <span class="hljs-keyword">this</span>.max).scale(<span class="hljs-number">1</span>/<span class="hljs-number">2</span>);
+  <span class="hljs-keyword">return</span> out;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="getsize-out-">getSize(out)</h3>
+<p>Returns size {width, height} of the rectangle<br><code>out</code> - optional vector to save the size to <em>{ Vec2 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rect.prototype.getSize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(out)</span> </span>{
+  out = out || <span class="hljs-keyword">new</span> Vec2();
+  out.asSub(<span class="hljs-keyword">this</span>.max, <span class="hljs-keyword">this</span>.min);
+  <span class="hljs-keyword">return</span> out;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3 id="frompoints-points-">fromPoints(points)</h3>
+<p>Creates bounding rectangle from a list of points<br><code>points</code> - <em>{ Array of Vec2 }</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Rect.fromPoints = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(points)</span> </span>{
+  <span class="hljs-keyword">var</span> rect = <span class="hljs-keyword">new</span> Rect();
+  <span class="hljs-keyword">var</span> min = rect.min;
+  <span class="hljs-keyword">var</span> max = rect.max;
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;points.length; i++) {
+    <span class="hljs-keyword">var</span> p = points[i];
+    min.x = <span class="hljs-built_in">Math</span>.min(min.x, p.x);
+    min.y = <span class="hljs-built_in">Math</span>.min(min.y, p.y);
+    max.x = <span class="hljs-built_in">Math</span>.max(max.x, p.x);
+    max.y = <span class="hljs-built_in">Math</span>.max(max.y, p.y);
+  }
+  <span class="hljs-keyword">return</span> rect;
 }
-
-Rect.prototype.set = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x, y, width, height)</span> </span>{
-  <span class="hljs-keyword">this</span>.x = x;
-  <span class="hljs-keyword">this</span>.y = y;
-  <span class="hljs-keyword">this</span>.width = width;
-  <span class="hljs-keyword">this</span>.height = height;
-};
-
-Rect.prototype.contains = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point)</span> </span>{
-  <span class="hljs-keyword">return</span> point.x &gt;= <span class="hljs-keyword">this</span>.x &amp;&amp; point.x &lt;= <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.width &amp;&amp; point.y &gt;= <span class="hljs-keyword">this</span>.y &amp;&amp; point.y &lt;= <span class="hljs-keyword">this</span>.y + <span class="hljs-keyword">this</span>.height;
-};
 
 <span class="hljs-built_in">module</span>.exports = Rect;</pre></div></div>
             
