@@ -206,22 +206,9 @@ sys.Window.create({
 </html>
 ```
 
-### Using with Sublime Texture2D
+### Using with Sublime Text
 
-Opening and relaunching with PlaskLauncher is tedious so I [added a Build System](http://www.sublimetext.com/docs/build):
-
-`Plask.sublime-build`
-
-```JSON
-{
-  "cmd" : [
-    "/path/to/PlaskLauncher.app/Contents/Resources/Plask.app/Contents/MacOS/Plask", 
-    "$file"
-  ]
-}
-```
-
-Now you can select `Plask` from `Tools -> Build System -> Plask` and use `Cmd+B` to open currently edited JS file in Plask.
+Opening and relaunching with Plask / PlaskLauncher is tedious so learn how to add [custom build systems for Plask in ST3](http://github.com/vorg/pex/wiki/Sublime-Text-3-Build-Systems).
 
 ## Pex command line reference
 
