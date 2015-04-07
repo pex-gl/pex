@@ -129,23 +129,23 @@ And more:
 
 1. Install [node.js](http://node.js).
 2. Run the following commands in the terminal to install pex.
-		
+
 		npm install -g pex
-		
+
 3. Create your pex project.
-		
+
 		cd path/to/your/workspace/folder/
 		pex init myFirstProject
-		
+
 4. Install dependencies.
-		
+
 		cd myFirstProject
 		npm install
-		
+
 5. Start compilation.
 
 		npm run watch
-		
+
 6. The `watch` command should open a browser window and reload every time you make changes to `main.js` if not, click `myFirstProject/index.html`
 
 6. You should see a colorful cube. Drag your mouse to rotate it.
