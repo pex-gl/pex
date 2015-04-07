@@ -1,5 +1,3 @@
-WORK IN PROGRESS
-
 # Pex 
 
 Pex is a javascript 3d library / engine allowing for seamless development between Plask and WebGL in the browser.
