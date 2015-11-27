@@ -1,11 +1,10 @@
 [
+  { "name" : "pex-cam" },
   { "name" : "pex-color" },
-  { "name" : "pex-fx" },
-  { "name" : "pex-gen" },
+  { "name" : "pex-context" },
+  { "name" : "pex-draw" },
   { "name" : "pex-geom" },
-  { "name" : "pex-glu" },
-  { "name" : "pex-gui" },
-  { "name" : "pex-materials" },
-  { "name" : "pex-sys" },
-  { "name" : "pex-random" }
+  { "name" : "pex-io" },
+  { "name" : "pex-math" },
+  { "name" : "pex-sys" }
 ]
