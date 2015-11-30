@@ -33,8 +33,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vorg/pex.git"
+    "url": "https://github.com/pex-gl/pex.git"
   },
-  "bugs": "https://github.com/vorg/pex/issues",
+  "homepage": "https://github.com/pex-gl/pex",
+  "bugs": "https://github.com/pex-gl/pex/issues",
   "license": "MIT"
 }
