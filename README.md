@@ -31,7 +31,7 @@ This seems like a lot of text but don't be scared! I'ts really easy, especially 
 
 3. There are a few ways to get pex up and running. All of the pex modules are on npm so you could for example install them one by one or put them in your package.json. You could also do:
 
-		$ npm install pex
+		$ [sudo] npm install -g pex or as a module [sudo] npm install pex
 
 	which installs everything neceserry to run pex, generate new projects and documentation files.
 
